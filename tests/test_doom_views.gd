@@ -255,3 +255,176 @@ func test_the_railing_replaces_the_solid_ledge_and_the_map_keys_are_set() -> voi
 		if bool(p["blocked"]) and ends == ["10", "9"]:
 			closed_ledge += 1
 	assert_true(closed_ledge >= 6, "the ledge portals are closed to walkers")
+
+
+# --- the DJ Booth (docs/doom/scenes/booth.md): a separate block, its own constants -------------------------------------------------------------------------------------------
+
+const BOOTH_MAP := "doom_booth"
+const BOOTH_GUIDES := ["bt_guide_mothership", "bt_guide_balcony", "bt_guide_dock"]
+const BOOTH_HOLD_PLACES := ["bt_ref", "bt_hatch_view", "bt_window_view", "bt_dock_view"]
+const BOOTH_NODES := ["doom_booth", "doom_booth.mothership", "doom_booth.balcony", "doom_booth.dock", "doom_booth.return"]
+const BOOTH_EXITS := ["bt_hatch", "bt_bal_top", "bt_dock_in"]
+
+
+func _booth_map() -> StoryMap:
+	return StoryMap.load_chapter(BOOTH_MAP, true)
+
+
+func _booth_pose(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": BOOTH_MAP})
+	return p.pose_at(2.0)
+
+
+func test_booth_map_loads_with_routes_holds_and_the_reference_viewpoint() -> void:
+	var m := _booth_map()
+	assert_true(m != null and m.errors.is_empty(), "the booth map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BOOTH_MAP))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "booth: still flagged approximate")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "booth route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "booth route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["bt_ref"]) >= CHOICE_REF_HOLD, "the booth's reference viewpoint holds at least 8 bars")
+	for id in BOOTH_HOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s has hold_bars" % id)
+	assert_true(float((_booth_pose(m, "bt_ref")["pos"] as Vector2).distance_to(m.waypoint("bt_ref")["at"])) < 0.05, "the camera stands at the booth's reference viewpoint")
+
+
+func test_booth_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _booth_map()
+	if m == null:
+		fail("booth map did not load")
+		return
+	var pose := _booth_pose(m, "bt_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in BOOTH_GUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "booth %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "booth %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "booth %s %s: at least %d px tall (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "booth %s %s: clear of the HUD's corner" % [asp, g])
+			print("  booth %s %-20s rect %s" % [asp, g, str(r)])
+		for i in BOOTH_GUIDES.size():
+			for j in range(i + 1, BOOTH_GUIDES.size()):
+				assert_false((rects[BOOTH_GUIDES[i]] as Rect2).intersects(rects[BOOTH_GUIDES[j]]), "booth %s: %s and %s do not overlap" % [asp, BOOTH_GUIDES[i], BOOTH_GUIDES[j]])
+
+
+func test_booth_guides_keep_their_distance_from_the_camera_places() -> void:
+	var m := _booth_map()
+	if m == null:
+		fail("booth map did not load")
+		return
+	for g in BOOTH_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			var d: float = (m.waypoints[wid]["at"] as Vector2).distance_to(at)
+			if str(wid) in BOOTH_EXITS:
+				assert_true(d >= 1.2, "booth: %s is not on top of %s (%.1f m)" % [g, wid, d])
+			else:
+				assert_true(d >= 1.5, "booth: %s is at least 1.5 m from %s (%.1f m)" % [g, wid, d])
+
+
+func test_booth_overlay_world_nodes_hotspots_and_rail_validate() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "booth: the run loads clean with the flag: %s" % str(on.errors))
+	for id in BOOTH_NODES:
+		assert_true(on.nodes.has(id), "booth: scene %s" % id)
+	assert_true(on.nodes.has("doom_warehouse"), "the warehouse pilot is still there beside the booth")
+	for id in BOOTH_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_false((routes[k].get("via", []) as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+		for k in ["up", "left", "right"]:
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
+	var good: Array = on.nodes["doom_booth"]["rail"]["good"]
+	assert_eq(good.size(), 4, "booth: the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "booth: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "booth: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "bt_ref", "booth: the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "booth: bt_ref is a choice viewpoint holding the whole window")
+	var hs: Array = on.hotspots.get("doom_booth", [])
+	assert_eq(hs.size(), 4, "booth: three guides and the stay hotspot")
+	var dests := []
+	for h in hs:
+		dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		assert_true(h.has("show"), "booth: hotspot %s declares show" % h["id"])
+		if str(h["id"]) != "doom_booth.exit_stay":
+			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "booth: %s is a figure (a guide, no ring)" % h["id"])
+	dests.sort()
+	assert_eq(dests, ["doom_booth", "doom_booth.balcony", "doom_booth.dock", "doom_booth.mothership"], "booth: ahead, left, right and stay")
+
+
+func test_booth_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
+	var on := _doom_run()
+	var m := _booth_map()
+	if m == null:
+		fail("booth map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	for id in BOOTH_NODES:
+		var node: Dictionary = on.nodes[id]
+		for mv in _moves_of(node["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var sid := str(m.waypoint(str(wid))["sector"])
+				assert_true(m.inside(m.waypoint(str(wid))["at"], sid, StoryMap.WAYPOINT_MARGIN) and reach.has(sid) and not m.is_void(sid), "%s: %s stands in a walkable piece" % [id, wid])
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+
+
+func test_booth_railing_visibility_decals_and_the_art_are_in_the_map() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BOOTH_MAP))
+	assert_eq(float(doc["max_step"]), 0.5, "booth: max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "booth: visibility mode clip")
+	var textures: Dictionary = doc["textures"]
+	for k in ["bt_rail", "bt_window"]:
+		assert_true(textures.has(k), "booth: %s is one of the map's textures" % k)
+		var im := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/doom_booth/textures/%s.png" % k))
+		assert_true(im != null and im.get_width() == 128 and im.detect_alpha() != Image.ALPHA_NONE, "booth: %s is a 128 px tile with an alpha channel" % k)
+	var desk := 0
+	var window := 0
+	for w in doc["walls"]:
+		if str(w.get("kind", "")) != "railing":
+			continue
+		assert_true(bool(w.get("blocked", false)), "booth: a railing is shut to walkers")
+		if str(w["tex"]) == "bt_rail":
+			desk += 1
+		elif str(w["tex"]) == "bt_window":
+			window += 1
+	assert_true(desk >= 1, "booth: the desk's edge carries the railing (%d)" % desk)
+	assert_true(window >= 1, "booth: the window onto the balcony is the mesh railing (%d)" % window)
+	var decals := 0
+	var lit := 0
+	for t in doc["things"]:
+		if str(t.get("kind", "")) == "decal":
+			decals += 1
+			if bool(t.get("emissive", false)):
+				lit += 1
+	assert_true(decals >= 8 and lit >= 5, "booth: wall decals (%d), the LEDs and screens emissive (%d)" % [decals, lit])
+	for g in BOOTH_GUIDES:
+		var stem: String = g.trim_prefix("bt_guide_")
+		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
+			assert_true(textures.has("guide_%s_%s" % [stem, st]), "booth: guide sprite %s_%s" % [stem, st])
