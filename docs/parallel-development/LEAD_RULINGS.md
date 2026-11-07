@@ -129,3 +129,17 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     A1's values (`docs/shots/art/a1/frame_check_after.txt`): the post shader is always on, black is lifted
     to the sector's fog colour, people are capped at 1.25x their sheet. A1's change to
     `tests/test_story_crowd_world.gd` (two checks that assumed the old near fade) is accepted.
+34. Merged on 7 November: A3, A5, W4, W9, N2.2, M2.4, A6 (wall decals: a wall-mounted thing is a `decal`,
+    a free-standing one a billboard; `docs/art/WALL_DECALS.md`), W7 (Squadron), N2.4 Hell. The daylight rule
+    for world packages: daylight exteriors are not dimmed to hit a median; p50 at or under 0.42, p95 0.68 to
+    0.78, p5 at or under 0.14, blown under 0.5%. `tests/test_heralds_view.gd` projects points only and does
+    not see walls or the crowd: every entrance package checks its shots by eye for occlusion.
+35. **The owner's direction of 7 November, game-wide:** (a) **more moments with the camera relatively
+    stationary**: the rail arrives at a choice viewpoint and holds there, still, for the choice window, and
+    journeys are paced with holds, not continuous drift; (b) **the red and green rings go**: a choice's
+    state (available, selected, committed, and the cost of a wrong one) is shown by the artwork itself and
+    how it is animated and changes (a door that lights and opens, a figure that beckons or steps aside, a
+    lamp that changes colour, a floor that glows under the thing), never by a routine uniform symbol drawn
+    over the world. This applies to the legacy campaign's hotspots and marks as much as to the Doom scenes
+    and the raves. The contracts (rail, choice states) carry it; a dedicated art and engine package (A7,
+    Opus) replaces the rings in the existing worlds; the shoot sheets stay as the proof.
