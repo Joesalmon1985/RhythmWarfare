@@ -209,7 +209,7 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	var at := Vector2(float(a[0]), float(a[1]))
 	var sec := stage.map.sector_at(at)
 	var room := stage.map.room_of(sec) if sec != "" else ""
-	var crowd: StoryCrowd = stage.crowds.get(room, stage.crowds.get("main", null))
+	var crowd: StoryCrowd = crowd_for_room(room)
 	if crowd == null or sec == "":
 		return {}
 	var rec := {"herald": null, "crowd": crowd, "block": b, "on": true, "at": at, "toward": toward, "quest": str(b["quest"])}
@@ -230,6 +230,26 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 		crowd.props.append(mp)
 		rec["mark"] = mp
 	return rec
+
+
+## The crowd that is drawn while the camera is in `room`: the room's own crowd; for a room without one (the Hospital's day room and quiet room hold no crowd of their own) the crowd whose
+## actors have a home in that room's sectors (StoryStage._enter_room keeps showing the crowd of the last room that has one, and that is where the room's own people are drawn); else the crowd
+## shown now (the room the rail came from); else main. A prop in any other crowd would never be drawn there.
+func crowd_for_room(room: String) -> StoryCrowd:
+	if stage == null:
+		return null
+	if stage.crowds.has(room):
+		return stage.crowds[room]
+	if stage.map != null:
+		for vid in stage.crowds:
+			var c: StoryCrowd = stage.crowds[vid]
+			for id in c.actors:
+				var h: Dictionary = stage.map.home(str(id))
+				if not h.is_empty() and stage.map.room_of(str(h["sector"])) == room:
+					return c
+	if stage.crowds.has(stage.current_view):
+		return stage.crowds[stage.current_view]
+	return stage.crowds.get("main", null)
 
 
 func _herald_prop(id: String, m: Dictionary, sec: String, at: Vector2, crowd: StoryCrowd) -> StoryCrowdProp:

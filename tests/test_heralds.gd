@@ -125,6 +125,17 @@ func test_the_gesture_points_at_the_entrance_whatever_the_camera() -> void:
 	assert_false(StoryHeralds.flip_of(at, Vector2(0.01, -3), 0.0, false))
 
 
+func _stage_for(map_id: String) -> StoryStage:
+	var run := StoryRun.create({}, "res://content/story/%s.json" % map_id)
+	if run.data == null:
+		return null
+	var stage := StoryStage.new()
+	stage.size = Vector2(1280, 460)
+	tree.root.add_child(stage)
+	stage.setup(StoryAssets.load_default(), run.data, run)
+	return stage
+
+
 func _stage() -> StoryStage:
 	var run := StoryRun.create({})
 	var stage := StoryStage.new()
@@ -169,3 +180,41 @@ func test_a_herald_stands_in_its_rooms_crowd_while_its_entrance_is_on_offer_and_
 	hd.clear()
 	assert_false(crowd.props.has(hp), "cleared")
 	stage.queue_free()
+
+
+func test_every_heralds_crowd_is_the_crowd_shown_in_its_room() -> void:
+	var data := RunData.load_default()
+	var bad: Array = []
+	var checked := 0
+	var stages := {}
+	for scene in data.hotspots:
+		for h in data.hotspots[scene]:
+			if not (h as Dictionary).has("herald") or (h["herald"] as Dictionary).has("self"):
+				continue
+			var mid := str(data.nodes[str(h["scene"])]["map"]) if data.nodes.has(str(h["scene"])) else ""
+			if mid == "":
+				continue
+			if not stages.has(mid):
+				stages[mid] = _stage_for(mid)
+			var stage: StoryStage = stages[mid]
+			if stage == null:
+				continue
+			var at := Vector2(float(h["herald"]["at"][0]), float(h["herald"]["at"][1]))
+			var room := stage.map.room_of(stage.map.sector_at(at))
+			var hd := StoryHeralds.new(stage)
+			var got: StoryCrowd = hd.crowd_for_room(room)
+			var shown: StoryCrowd = stage.crowds[room] if stage.crowds.has(room) else null
+			if shown == null:  # a room with no crowd of its own is drawn by the crowd that has people living in it, else by the one shown before
+				for vid in stage.crowds:
+					for aid in (stage.crowds[vid] as StoryCrowd).actors:
+						var home: Dictionary = stage.map.home(str(aid))
+						if shown == null and not home.is_empty() and stage.map.room_of(str(home["sector"])) == room:
+							shown = stage.crowds[vid]
+			checked += 1
+			if shown != null and got != shown:
+				bad.append("%s: herald crowd %s, shown crowd %s" % [h["id"], got.view, shown.view])
+	assert_true(checked > 0)
+	assert_eq(bad, [], "every herald stands in the crowd that is drawn in its room")
+	for w in stages:
+		if stages[w] != null:
+			(stages[w] as Node).queue_free()
