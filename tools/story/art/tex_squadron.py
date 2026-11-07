@@ -22,7 +22,8 @@ from PIL import Image
 from . import lib
 
 BRIEF = os.path.join(lib.ROOT, "tools", "paths", "squadron_tex_brief.json")
-MODULES = ("tex_squadron_airfield", "tex_squadron_airfield2", "tex_squadron_city", "tex_squadron_harbour")
+MODULES = ("tex_squadron_airfield", "tex_squadron_airfield2", "tex_squadron_city", "tex_squadron_harbour", "tex_squadron_surfaces")
+OVERRIDES = ("tex_squadron_surfaces",)  # the redrawn 128 px surfaces and skies (package W7) replace the same ids of the older modules
 
 
 def registry() -> dict:
@@ -35,7 +36,7 @@ def registry() -> dict:
                 raise
             continue
         for k, fn in getattr(mod, "DRAW", {}).items():
-            if k in out:
+            if k in out and m not in OVERRIDES:
                 raise ValueError(f"texture {k} is drawn twice ({m})")
             out[k] = fn
     return out

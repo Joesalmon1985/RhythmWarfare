@@ -17,7 +17,22 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
 
 ## Now
 
-Stage: **A (phase 0 done) and B (starting)**, 7 November.
+Stage: **A phase 1 and B1/B2 in parallel**, 7 November afternoon.
+
+Merged into `feature/one-pc` today: A6 (decals), W7 (Squadron), N2.4 Hell. Filters green except the two
+pinned tests (`test_heralds.gd` ENTRANCES, `test_narrative_run.gd` fixture rows), being fixed on
+`wip/narr-pins` (worktree `MusicGame-pins`). Housekeeping done: 8 stale worktrees and 32 merged local
+branches removed; `feature/story-warehouse-music-test` kept (its upstream differs; owner's call).
+
+Owner's direction of 7 November (ruling 35): more stationary camera moments; the red/green rings replaced
+by the artwork's own state everywhere. In the contracts (rail holds, contract 9 choice states); package A7
+to follow for the legacy worlds.
+
+Running agents: N2.5 returns (`MusicGame-herald`), N2.4 Ward (`MusicGame-import`), env tools / WAD
+converter (`MusicGame-envtools`, `wip/env-tools`), contracts (`MusicGame-contracts`,
+`wip/engine-contracts`), renderer and rail extension (`MusicGame-engine`, `wip/engine-render`, Opus),
+pinned tests (`MusicGame-pins`). Not yet resumed: N2.4 Hospital (`MusicGame-music`), N2.4 Spaceship
+(`MusicGame-graph`), W6 Gospel (`MusicGame-narr`).
 
 Last pause point reached: none yet.
 

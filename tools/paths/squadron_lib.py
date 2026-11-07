@@ -97,6 +97,8 @@ class MapBuilder:
         self.id = mid
         self.fog = fog
         self.sky_tex = sky_tex
+        self.sky_by_name: dict = {}  # name -> sky texture id: a sector whose `sky` names one draws that strip (and its own `fog`) instead of the map's
+        self.sky_extra: dict = {}  # extra keys of the map's `sky` ({repeats, horizon})
         self.sectors, self.walls, self.things, self.waypoints, self.homes, self.actors = [], [], [], [], [], []
         self.spots: dict = {}
         self.rooms: dict = {}  # room (view) id -> {palette}
@@ -118,6 +120,7 @@ class MapBuilder:
 
     def textures_used(self) -> list:
         names = set([self.sky_tex] if self.sky_tex else [])
+        names.update(self.sky_by_name.values())
         for r in self.rooms_obj.values():
             for k in ("floor_tex", "ceil_tex", "wall_tex"):
                 v = r.sec.get(k, "")
@@ -132,6 +135,12 @@ class MapBuilder:
                 names.add(t["sprite"])
         return sorted(names)
 
+    def _sky_json(self) -> dict:
+        sky = {"tex": f"textures/{self.sky_tex}.png", "mode": "cylinder", **self.sky_extra}
+        if self.sky_by_name:
+            sky["by_name"] = {k: f"textures/{v}.png" for k, v in sorted(self.sky_by_name.items())}
+        return sky
+
     def map_json(self, start: str) -> dict:
         names = self.textures_used()
         for n in names:
@@ -144,4 +153,4 @@ class MapBuilder:
             r.spots()
         return {"art": self.id, "units_per_m": 1, "eye_height": 1.6, "start": start, "textures": textures, "sectors": sectors, "walls": self.walls, "things": self.things,
                 "homes": self.homes, "waypoints": self.waypoints, "spots": self.spots, "silhouettes": [], "occluders": [], "rooms": self.rooms,
-                "sky": {"tex": f"textures/{self.sky_tex}.png", "mode": "cylinder"}, "fog": self.fog, "animated": self.animated}
+                "sky": self._sky_json(), "fog": self.fog, "animated": self.animated}

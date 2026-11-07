@@ -1,7 +1,8 @@
 """The Hospital's wall scenery as pixel props (the doors, boards and signs the old wall tiles carried, now stage sprites at 128 texels a metre).
 
 The wall tiles are periodic (tex_hospital.py), so what makes a corridor a corridor is drawn here and placed in the map: scenery doors, notice boards, wall signs, a
-hand-gel dispenser, trolleys, light bars, framed prints, a lit window. The doors share the language of the choice door set (assets/run/choice/hospital/, tools/run/
+hand-gel dispenser, trolleys, light bars, framed prints, a lit window. In content/story/maps/hospital.json the wall-mounted ones are wall decals (kind "decal", flat on
+their wall, docs/art/WALL_DECALS.md) and the trolley and the linen cart are billboards. The doors share the language of the choice door set (assets/run/choice/hospital/, tools/run/
 make_choice_art.py: steel frame #3a4a68..#d8ccb4, blue-grey leaf, wired glass in navy, a hatched kick plate) but are SCENERY: shut, dimmer, no lamp, no sign, no tape.
 Same drawing helpers as hp_pix. Deterministic.
 """

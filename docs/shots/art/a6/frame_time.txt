@@ -1,0 +1,12 @@
+A6 frame time, Hospital corridor (RW_RUN_START=hospital.corridor, virtual clock, perfect bot, 1280x720 window, vsync off, no fps cap).
+240 warm-up frames, then 900 frames: wall-clock frame time, and the root viewport's render CPU time. Interleaved before / after on the same
+build, swapping only content/story/maps/hospital.json (before = billboard cards, after = 45 wall decals). The machine was busy (other agents'
+Godot runs): CPU load 65 to 90 % at the starts of the runs.
+
+run      CPU load  frame ms mean  frame ms p95  render CPU ms mean  render CPU ms p95  decals  billboard nodes
+before   73 %      9.128          14.472        0.609               0.947              0       169
+after    79 %      9.220          14.449        0.616               0.937              45      128
+before   65 %      9.839          15.448        0.651               1.026              0       169
+after    90 %      9.019          14.257        0.633               0.929              45      128
+
+Within noise: no cost from the decals.

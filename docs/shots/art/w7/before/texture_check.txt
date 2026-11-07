@@ -1,0 +1,128 @@
+map texture size colours smooth sat px/m fringe flags
+airfield ceil_beams 64x64 14 0.00 0.50 32 0.000 LOWDENS
+airfield ceil_canvas 64x64 8 0.00 0.30 32 0.000 LOWDENS
+airfield ceil_fuselage 64x64 11 0.42 0.49 43 0.000 LOWDENS
+airfield ceil_hangar 64x64 8 0.00 0.23 26 0.000 LOWDENS
+airfield ceil_plaster 64x64 15 0.00 0.44 26 0.000 LOWDENS
+airfield floor_boards 64x64 11 0.00 0.42 32 0.000 LOWDENS
+airfield floor_concrete 64x64 15 0.00 0.13 26 0.000 LOWDENS
+airfield floor_dust 64x64 12 0.00 0.70 21 0.000 LOWDENS
+airfield floor_lino 64x64 13 0.00 0.38 32 0.000 LOWDENS
+airfield floor_metal 64x64 9 0.01 0.20 43 0.000 LOWDENS
+airfield sky_day 256x64 6 0.00 0.15 256 0.000 
+airfield thing_board 128x128 39 0.01 0.40 128 0.000 
+airfield thing_bomber_nose 256x128 60 0.03 0.29 256 0.000 
+airfield thing_certificate 128x128 22 0.00 0.43 128 0.000 
+airfield thing_cot_empty 128x128 69 0.03 0.34 128 0.000 
+airfield thing_cot_ward 128x128 56 0.08 0.19 128 0.000 
+airfield thing_crate_stack 128x128 49 0.01 0.45 128 0.000 
+airfield thing_desk_lamp 128x128 39 0.02 0.52 128 0.000 
+airfield thing_desk_office 128x128 42 0.01 0.47 128 0.000 
+airfield thing_door_office 128x128 37 0.00 0.52 128 0.000 
+airfield thing_door_open_light 128x128 27 0.10 0.32 128 0.000 
+airfield thing_drip_stand 128x128 49 0.02 0.21 128 0.000 
+airfield thing_emergency_box 128x128 32 0.00 0.65 128 0.000 
+airfield thing_filing_cabinet 128x128 28 0.01 0.12 128 0.000 
+airfield thing_flak_burst 128x128 468 0.15 0.54 128 0.848 
+airfield thing_fuel_drums 128x128 52 0.01 0.40 128 0.000 
+airfield thing_hangar_front 128x128 46 0.04 0.37 128 0.000 
+airfield thing_instrument_panel 128x128 37 0.22 0.46 128 0.000 
+airfield thing_jeep 128x128 60 0.02 0.30 128 0.000 
+airfield thing_kitchen_hatch 128x128 57 0.01 0.49 128 0.000 
+airfield thing_ladder 128x128 26 0.01 0.49 128 0.000 
+airfield thing_lamp_hang 128x128 45 0.05 0.48 128 0.000 
+airfield thing_lamp_red 128x128 32 0.03 0.50 128 0.000 
+airfield thing_ledger 128x128 72 0.00 0.45 128 0.000 
+airfield thing_nose_glass 128x128 24 0.15 0.53 128 0.000 
+airfield thing_release_lever 128x128 52 0.02 0.33 128 0.000 
+airfield thing_sandbags 128x128 31 0.00 0.40 128 0.000 
+airfield thing_scales 128x128 34 0.00 0.67 128 0.000 
+airfield thing_screen_cloth 128x128 16 0.00 0.24 128 0.000 
+airfield thing_shelves_tins 128x128 83 0.01 0.38 128 0.000 
+airfield thing_sign_ledgerless 128x128 23 0.00 0.49 128 0.000 
+airfield thing_stamp_big 128x128 35 0.01 0.61 128 0.000 
+airfield thing_stove 128x128 52 0.02 0.32 128 0.000 
+airfield thing_table_maps 128x128 77 0.01 0.56 128 0.000 
+airfield thing_tent_flap 128x128 28 0.00 0.25 128 0.000 
+airfield thing_truck 256x128 68 0.01 0.37 256 0.000 
+airfield thing_window_hut 128x128 24 0.00 0.47 128 0.000 
+airfield thing_window_office 128x128 26 0.00 0.36 128 0.000 
+airfield thing_windsock 128x128 37 0.01 0.37 128 0.000 
+airfield wall_berm 64x64 17 0.00 0.44 26 0.000 LOWDENS
+airfield wall_bomber 64x64 11 0.51 0.46 43 0.000 LOWDENS
+airfield wall_hangar 64x64 14 0.00 0.35 26 0.000 LOWDENS
+airfield wall_hut 64x64 11 0.00 0.37 32 0.000 LOWDENS
+airfield wall_office 64x64 17 0.00 0.46 26 0.000 LOWDENS
+airfield wall_tent 64x64 13 0.00 0.29 32 0.000 LOWDENS
+city ceil_arcade 64x64 25 0.00 0.53 16 0.000 LOWDENS
+city ceil_fuselage 64x64 11 0.42 0.49 43 0.000 LOWDENS
+city ceil_night_red 64x64 9 0.00 0.82 16 0.000 LOWDENS
+city ceil_plaster 64x64 15 0.00 0.44 26 0.000 LOWDENS
+city floor_carpet 64x64 14 0.01 0.62 26 0.000 LOWDENS
+city floor_cobble 64x64 18 0.02 0.51 26 0.000 LOWDENS
+city floor_metal 64x64 9 0.01 0.20 43 0.000 LOWDENS
+city floor_rubble 64x64 29 0.05 0.38 21 0.000 LOWDENS
+city sky_dusk 256x64 8 0.00 0.40 256 0.000 
+city thing_arch_broken 128x128 39 0.01 0.46 128 0.000 
+city thing_awning 128x128 65 0.03 0.42 128 0.000 
+city thing_broken_wall 128x128 33 0.08 0.60 128 0.000 
+city thing_burnt_car 128x128 47 0.22 0.56 128 0.000 
+city thing_cafe_table 128x128 61 0.08 0.58 128 0.000 
+city thing_count_slate 128x128 28 0.35 0.36 128 0.000 
+city thing_desk_colonel 128x128 75 0.09 0.67 128 0.000 
+city thing_fire_barrel 128x128 41 0.01 0.65 128 0.000 
+city thing_flak_burst 128x128 468 0.15 0.54 128 0.848 
+city thing_globe 128x128 66 0.03 0.46 128 0.000 
+city thing_hq_door 128x128 79 0.06 0.59 128 0.000 
+city thing_instrument_panel 128x128 37 0.22 0.46 128 0.000 
+city thing_jacket_blood 128x128 69 0.02 0.63 128 0.000 
+city thing_lamp_alarm 128x128 26 0.02 0.55 128 0.000 
+city thing_map_wall 128x128 37 0.01 0.28 128 0.000 
+city thing_medal_case 128x128 61 0.03 0.71 128 0.000 
+city thing_medkit 128x128 56 0.02 0.17 128 0.000 
+city thing_night_train 256x128 40 0.28 0.55 256 0.000 
+city thing_nose_glass 128x128 24 0.15 0.53 128 0.000 
+city thing_rubble 128x128 58 0.04 0.43 128 0.000 
+city thing_staff_car 256x128 96 0.05 0.42 256 0.000 
+city thing_street_lamp 128x128 28 0.06 0.32 128 0.000 
+city thing_washing_line 128x128 44 0.05 0.46 128 0.000 
+city thing_window_dusk 128x128 56 0.04 0.60 128 0.000 
+city wall_bomber 64x64 11 0.51 0.46 43 0.000 LOWDENS
+city wall_panel 64x64 10 0.00 0.73 26 0.000 LOWDENS
+city wall_ruin 64x64 91 0.11 0.56 26 0.000 LOWDENS
+city wall_stucco 64x64 43 0.01 0.40 26 0.000 LOWDENS
+harbour ceil_beams 64x64 14 0.00 0.50 32 0.000 LOWDENS
+harbour ceil_cell 64x64 11 0.08 0.55 32 0.000 LOWDENS
+harbour ceil_night_blue 64x64 8 0.00 0.74 16 0.000 LOWDENS
+harbour ceil_sky_day 64x64 10 0.00 0.62 16 0.000 LOWDENS
+harbour floor_boards 64x64 11 0.00 0.42 32 0.000 LOWDENS
+harbour floor_cell 128x128 14 0.04 0.54 64 0.000 
+harbour floor_quay 128x128 32 0.15 0.41 51 0.000 
+harbour floor_sand 128x128 14 0.00 0.65 43 0.000 LOWDENS
+harbour sky_harbour 256x64 10 0.00 0.75 256 0.000 
+harbour thing_aircraft_door 128x128 32 0.00 0.35 128 0.000 
+harbour thing_beam 128x128 80 0.57 0.05 128 1.000 
+harbour thing_birds 128x128 13 0.00 0.08 128 0.000 
+harbour thing_bollard 128x128 37 0.01 0.46 128 0.000 
+harbour thing_bunk 128x128 30 0.03 0.49 128 0.000 
+harbour thing_cell_door 128x128 289 0.03 0.50 128 0.000 
+harbour thing_count_board 128x128 25 0.00 0.43 128 0.000 
+harbour thing_crate_stack 128x128 49 0.01 0.45 128 0.000 
+harbour thing_fishing_boat 256x128 992 0.25 0.64 256 0.000 
+harbour thing_lamp_hang 128x128 45 0.05 0.48 128 0.000 
+harbour thing_nets 128x128 29 0.09 0.43 128 0.000 
+harbour thing_order_paper 128x128 397 0.02 0.52 128 0.000 
+harbour thing_pine_umbrella 128x128 27 0.00 0.74 128 0.000 
+harbour thing_quay_lamp 128x128 118 0.02 0.47 128 0.000 
+harbour thing_radio_broken 128x128 76 0.01 0.40 128 0.000 
+harbour thing_searchlight 128x128 222 0.14 0.30 128 0.000 
+harbour thing_shore_boat 256x128 60 0.00 0.66 256 0.000 
+harbour thing_stove 128x128 52 0.02 0.32 128 0.000 
+harbour thing_sunshade 128x128 43 0.00 0.49 128 0.000 
+harbour thing_window_hut 128x128 24 0.00 0.47 128 0.000 
+harbour thing_window_latch 128x128 472 0.05 0.54 128 0.000 
+harbour thing_wooden_post 128x128 32 0.00 0.41 128 0.000 
+harbour wall_cell 128x128 14 0.02 0.52 64 0.000 
+harbour wall_dunes 128x128 19 0.00 0.44 28 0.000 LOWDENS
+harbour wall_hut 64x64 11 0.00 0.37 32 0.000 LOWDENS
+harbour wall_quay 128x128 20 0.02 0.56 51 0.000 
