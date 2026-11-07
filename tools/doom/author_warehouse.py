@@ -22,6 +22,10 @@ TRACE = os.path.join(ROOT, "tools", "doom", "trace", "warehouse_pilot.json")
 NIGHT = "res://assets/story/night_one/textures/"
 OWN = "textures/"
 MARGIN = 0.5
+MAX_STEP = 0.5  # metres: a floor change across a portal up to this is a step a walker takes (the map key `max_step`, docs/story/HEIGHTS_AND_PATHS.md); taller is a drop
+RAIL_TEX = "wh_railing"  # the lattice tile with alpha (tools/doom/art/make_railing.py)
+RAIL_HEIGHT = 1.0
+VOID_DEPTH = -2.0  # a sector with a floor this low (the ring's four slots, -3 m) is a pit: its rim gets a railing
 
 
 def m(x, y):
@@ -34,28 +38,40 @@ def face(a, b):
     return round(math.degrees(math.atan2(-dx, dy)), 1)
 
 
-# id, doom point, look-at doom point (or a yaw), hold_bars (0 = a moving place), what it is
+# id, doom point, look-at doom point (or a yaw), hold_bars (0 = a moving place), what it is.
+# Names starting wh_v_ are via points only: corners of the polyline moves (tools/run/make_doom.py), never stood on.
 WAYPOINTS = [
     ("wh_arrive", (-720, -715), (500, 500), 0, "arrival: the ring's south-west corner facing the floor (a cut, then a short walk to the reference viewpoint)"),
     ("wh_ref", (-620, -600), (500, 500), 8, "THE reference viewpoint: the ring's south-west corner looking across the fenced floor, the stage ahead, bar left, lounge right"),
     ("wh_ref_back", (-705, -660), (500, 500), 0, "recovery: a stumble back into the corner"),
     ("wh_sw_corner", (-710, -520), (500, 500), 0, "recovery: along the west band"),
-    ("wh_fence", (60, -640), (400, -500), 4, "reveal: along the south railing, the platforms across the floor"),
-    ("wh_plinths", (-640, 100), (0, 0), 4, "reveal: the west band, the platforms across the railing"),
-    ("wh_platform", (66, 22), (-300, -190), 4, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
+    ("wh_fence", (-48, -474), (400, -500), 2, "reveal: on the floor against the south railing, looking along it, the platforms across the floor"),
+    ("wh_plinths", (-640, 100), (0, 0), 2, "reveal: the west band north of the bar, the platforms across the railing"),
+    ("wh_platform", (66, 22), (-300, -190), 2, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
     ("wh_stage_approach", (-360, -470), (-300, -190), 2, "approach to the stage, leg 1: through the south gate onto the floor"),
-    ("wh_stage_steps", (-100, -150), (-300, -190), 0, "approach to the stage, leg 2: the foot of the stage steps"),
-    ("wh_stage_top", (-215, -150), (-300, -190), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
+    ("wh_stage_steps", (-410, -150), (-300, -190), 0, "approach to the stage, leg 2: the foot of the stage steps (west side)"),
+    ("wh_stage_top", (-224, -150), (-300, -190), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
     ("wh_bar_approach", (-640, -500), (-600, -300), 2, "approach to the bar"),
     ("wh_bar_door", (-640, -425), (-600, -300), 0, "THRESHOLD left: the bar room's opening"),
-    ("wh_lounge_approach", (-650, -585), (-465, -590), 2, "approach to the lounge"),
-    ("wh_lounge_door", (-575, -585), (-465, -590), 0, "THRESHOLD right: the lounge room's opening"),
+    ("wh_lounge_approach", (-650, -585), (-465, -604), 2, "approach to the lounge"),
+    ("wh_lounge_door", (-575, -585), (-465, -604), 0, "THRESHOLD right: the lounge room's opening"),
+    # via points (corners of the polyline moves)
+    ("wh_v_lounge_w", (-595, -557), (-360, -560), 0, "via: the ring west of the lounge, before the walkway between the lounge and the railing"),
+    ("wh_v_gate_s", (-360, -560), (-360, -470), 0, "via: the walkway outside the south gate (between the lounge's north wall and the gate)"),
+    ("wh_v_court_sw", (-352, -474), (-360, -560), 0, "via: the floor inside the south gate, west of the south plinth"),
+    ("wh_v_bar_e1", (-541, -458), (-563, -102), 0, "via: the walkway east of the bar, south end"),
+    ("wh_v_bar_e2", (-563, -102), (-640, 100), 0, "via: the west band north of the bar"),
+    ("wh_v_gate_w_out", (-586, -80), (-464, -64), 0, "via: the west band outside the west gate"),
+    ("wh_v_gate_w_in", (-464, -64), (-128, -32), 0, "via: the floor inside the west gate"),
+    ("wh_v_court_n", (-128, -32), (67, -134), 0, "via: the floor north of the stage, west of the pedestal"),
+    ("wh_ped_foot", (67, -134), (66, 22), 0, "via: the foot of the pedestal stairs"),
 ]
-ROUTES = {  # the three destination routes and the stay loop as lists of waypoint ids (the last is the threshold / the return)
-    "ahead": ["wh_stage_approach", "wh_stage_steps", "wh_stage_top"],
+ROUTES = {  # the destination routes and the stay loop as lists of waypoint ids, via points included (the last is the threshold / the return); tools/run/make_doom.py cuts them into moves
+    "ahead": ["wh_v_lounge_w", "wh_v_gate_s", "wh_stage_approach", "wh_stage_steps", "wh_stage_top"],
     "left": ["wh_bar_approach", "wh_bar_door"],
     "right": ["wh_lounge_approach", "wh_lounge_door"],
-    "stay": ["wh_fence", "wh_plinths", "wh_platform", "wh_ref"],
+    "stay": ["wh_v_bar_e1", "wh_v_bar_e2", "wh_plinths", "wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot", "wh_platform", "wh_ped_foot", "wh_fence",
+             "wh_v_court_sw", "wh_v_gate_s", "wh_v_lounge_w", "wh_ref"],
     "arrive": ["wh_arrive", "wh_ref"],
     "stumble": ["wh_ref_back", "wh_sw_corner", "wh_ref"],
 }
@@ -87,7 +103,7 @@ STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
     "stage": ((-300, -190), 2.2, (-330, -190)),
     "bar": ((-600, -300), 2.2, (-600, -250)),
-    "lounge": ((-465, -590), 2.2, (-440, -590)),
+    "lounge": ((-465, -604), 2.2, (-440, -604)),
 }
 THINGS = [  # extra dressing: id, sprite, doom point, y, size
     ("wh_pendant_a", "thing_pendant", (-300, -300), 3.2, 1.0), ("wh_pendant_b", "thing_pendant", (300, -300), 3.2, 1.0),
@@ -101,10 +117,53 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (cobalt over the flo
     ("wh_lt_spot_se", (300, -300), 6.0, 11.0, "#5f88ff", 1.4), ("wh_lt_spot_sw", (-300, -300), 6.0, 11.0, "#5f88ff", 1.4),
     ("wh_lt_stage", (-300, -190), 4.5, 7.0, "#a8c8ff", 1.5),
     ("wh_lt_bar", (-640, -300), 3.4, 6.5, "#ffa84a", 1.8), ("wh_lt_bar2", (-600, -380), 3.0, 5.0, "#ffb860", 1.4),
-    ("wh_lt_lounge", (-465, -640), 3.4, 6.5, "#ffb860", 1.8), ("wh_lt_lounge2", (-480, -590), 3.0, 5.0, "#ffc878", 1.4),
+    ("wh_lt_lounge", (-465, -640), 3.4, 6.5, "#ffb860", 1.8), ("wh_lt_lounge2", (-480, -604), 3.0, 5.0, "#ffc878", 1.4),
     ("wh_lt_ref", (-620, -540), 3.4, 11.0, "#7a98ff", 1.4), ("wh_lt_ring_w", (-640, 100), 3.4, 11.0, "#6a88ff", 1.2), ("wh_lt_ring_s", (60, -640), 3.4, 11.0, "#6a88ff", 1.2),
     ("wh_lt_ring_e", (640, 100), 3.4, 11.0, "#6a88ff", 1.2), ("wh_lt_ring_n", (0, 640), 3.4, 11.0, "#6a88ff", 1.2),
 ]
+
+
+def barriers(d):
+    """Closes what a walker must not cross and puts the railing where the painting has a fence.
+    * A portal whose floors differ by more than MAX_STEP is a drop and is shut to walkers (`blocked`: the sides of the stage and pedestal stairs, the pits, the terrace) as long as
+      every sector stays reachable from the start through the portals that are left (the map loader demands that): a pit or the terrace keeps one portal, the one farthest
+      from the middle (a dead end: no route goes through it, and the rail check never puts a camera there).
+    * The 1 m ledge between the dance floor and the walkway and every shut rim of a pit (a sector with a floor of VOID_DEPTH or lower) are the renderer's `railing` kind: a
+      see-through lattice strip, so the floor is seen through the fence."""
+    sec = {s["id"]: s for s in d["sectors"]}
+    walls = [w for w in d["walls"] if w.get("portal")]
+    start = next(w for w in d["waypoints"] if w["id"] == d["start"])["sector"]
+
+    def all_reachable():
+        adj = {}
+        for w in walls:
+            if not w.get("blocked"):
+                adj.setdefault(w["sector"], set()).add(w["portal"])
+                adj.setdefault(w["portal"], set()).add(w["sector"])
+        seen, queue = {start}, [start]
+        while queue:
+            for n in adj.get(queue.pop(), ()):
+                if n not in seen:
+                    seen.add(n)
+                    queue.append(n)
+        return len(seen) == len(sec)
+
+    def drop_of(w):
+        return abs(float(sec[w["sector"]]["floor"]) - float(sec[w["portal"]]["floor"]))
+
+    def mid_dist(w):
+        return math.hypot((w["from"][0] + w["to"][0]) / 2.0, (w["from"][1] + w["to"][1]) / 2.0)
+
+    for w in sorted((w for w in walls if drop_of(w) > MAX_STEP + 1e-6 and not w.get("blocked")), key=mid_dist):
+        w["blocked"] = True
+        if not all_reachable():
+            del w["blocked"]
+    for w in walls:
+        a, b = sec[w["sector"]], sec[w["portal"]]
+        pit = min(float(a["floor"]), float(b["floor"])) <= VOID_DEPTH
+        ledge = {a["doom_sector"], b["doom_sector"]} == {9, 10}  # courtyard over the stone ring: the render's 1 m ledge
+        if w.get("blocked") and (ledge or pit):
+            w["kind"], w["tex"], w["height"] = "railing", RAIL_TEX, RAIL_HEIGHT
 
 
 def lift(h):
@@ -167,7 +226,11 @@ def main():
         for st, n in STATES.items():
             for i in range(n):
                 tex["guide_%s_%s_%d" % (who, st, i)] = OWN + "guide_%s_%s_%d.png" % (who, st, i)
+    tex[RAIL_TEX] = OWN + RAIL_TEX + ".png"
     d["textures"] = tex
+    d["max_step"] = MAX_STEP
+    d["visibility"] = {"mode": "clip", "depth": 48, "far": 0}  # 72 pieces: the portal walk that narrows its window at every portal (the flood's 7 portals is too few for an open hall)
+    barriers(d)
     d["sky"] = {}
     d["fog"] = {"color": "#2f48ac", "density": 0.021}
     d["palette_weight"] = 1.0
