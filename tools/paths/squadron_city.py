@@ -18,23 +18,22 @@ def T(tid, kind, desc, metres=2.0, size=64):
 
 
 def build():
-    mb = MapBuilder(M, {"color": "#7a6046", "density": 0.016}, T("sky_dusk", "sky", "a sepia dusk strip (256x64): amber glow low at the horizon fading to a brown-grey sky, thin smoke columns, no stars", 1.0, 256))
+    mb = MapBuilder(M, {"color": "#2c1e18", "density": 0.016}, T("sky_dusk", "sky", "a sepia dusk strip (256x64): amber glow low at the horizon fading to a brown-grey sky, thin smoke columns, no stars", 1.0, 256))
     wall_stone = T("wall_stone", "surface", "sepia limestone blocks of an old city wall, chipped corners, shrapnel pocks, soot stains", 3.0)
-    wall_stucco = T("wall_stucco", "surface", "cracked ochre-and-grey stucco with bare brick showing through, faded shutters painted on, stains", 2.5)
-    wall_ruin = T("wall_ruin", "surface", "blown-out brick wall, blackened by fire, rubble at its foot, bare lath, deep shadow", 2.5)
-    wall_panel = T("wall_panel", "surface", "dark oak wall panelling with a gold-trimmed picture rail, polished, a sepia sheen", 2.5)
-    wall_bomber = T("wall_bomber", "surface", "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs", 1.5)
-    floor_cobble = T("floor_cobble", "surface", "sepia cobblestones, wheel ruts, puddles, scattered straw and paper", 2.5)
-    floor_rubble = T("floor_rubble", "surface", "broken paving and rubble, brick dust, charred planks, glass glints", 3.0)
-    floor_carpet = T("floor_carpet", "surface", "a worn burgundy-brown office carpet with a pale border pattern", 2.5)
-    floor_metal = T("floor_metal", "surface", "dark aircraft floor grating with a diamond tread plate strip, oil stains", 1.5)
-    ceil_plaster = T("ceil_plaster", "ceil", "yellowed plaster ceiling with a water stain and a bulb rose", 2.5)
-    ceil_fuselage = T("ceil_fuselage", "ceil", "curved aircraft ceiling ribs, wiring loom, dark green-black", 1.5)
-    ceil_night_red = T("ceil_night_red", "ceil", "a painted night sky ceiling (256 wide look): smoke clouds lit red-orange from below by fires, a few stars", 4.0)
-    ceil_arcade = T("ceil_arcade", "ceil", "dusk sky strip seen between sagging washing lines and wires: sepia-amber, smoke wisps", 4.0)
+    wall_stucco = T("wall_stucco", "surface", "cracked ochre-and-grey stucco with bare brick showing through, faded shutters painted on, stains", 1.25)
+    wall_ruin = T("wall_ruin", "surface", "blown-out brick wall, blackened by fire, rubble at its foot, bare lath, deep shadow", 1.0)
+    wall_panel = T("wall_panel", "surface", "dark oak wall panelling with a gold-trimmed picture rail, polished, a sepia sheen", 1.0)
+    wall_bomber = T("wall_bomber", "surface", "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs", 1.0)
+    floor_cobble = T("floor_cobble", "surface", "sepia cobblestones, wheel ruts, puddles, scattered straw and paper", 1.0)
+    floor_rubble = T("floor_rubble", "surface", "broken paving and rubble, brick dust, charred planks, glass glints", 1.0)
+    floor_carpet = T("floor_carpet", "surface", "a worn burgundy-brown office carpet with a pale border pattern", 1.25)
+    floor_metal = T("floor_metal", "surface", "dark aircraft floor grating with a diamond tread plate strip, oil stains", 1.0)
+    ceil_plaster = T("ceil_plaster", "ceil", "yellowed plaster ceiling with a water stain and a bulb rose", 1.25)
+    ceil_fuselage = T("ceil_fuselage", "ceil", "curved aircraft ceiling ribs, wiring loom, dark green-black", 1.0)
+    mb.sky_by_name["fire"] = T("sky_fire", "sky", "the ruined city at night (256x64): black-red sky, smoke banks lit red-orange from below, a few stars, flak sparks, the ragged line of burning roofs", 1.0, 256)
 
     # ---- the bomber again, red light (C07) --------------------------------------------------------------------------------------------------------------------------
-    br = mb.room("bomber_r", (10, -8, 14, 0), 0, "main", floor_tex=floor_metal, ceil_tex=ceil_fuselage, wall_tex=wall_bomber, ceiling=2.2, light=0.6, ambient=0.9, tint="#ff8068", activities=SOMBRE)
+    br = mb.room("bomber_r", (10, -8, 14, 0), 0, "main", floor_tex=floor_metal, ceil_tex=ceil_fuselage, fog={"color": "#2a0e0c", "density": 0.02}, wall_tex=wall_bomber, ceiling=2.2, light=0.6, ambient=0.9, tint="#ff8068", activities=SOMBRE)
     br.standard_rail("c07", home=(1.2, 0), good=((2.8, -0.6), (4.4, 0.7)), bad=((1.0, 1.3), (2.0, -1.3)), arrive=(0.5, 0))
     br.wp("c07_x_up", 5.3, 0.9, 20)  # the jacket
     br.wp("c07_x_right", 3.0, 1.4, 60)  # the medical kit
@@ -52,7 +51,7 @@ def build():
     br.actor("crew2c", "airman", "a", 4.8, 1.2, fixed=True, same_as="crew2", activity="rock")
 
     # ---- the old city street (C08) ----------------------------------------------------------------------------------------------------------------------------------
-    st = mb.room("street", (0, 0, 24, 8), -90, "street", floor_tex=floor_cobble, ceil_tex=ceil_arcade, wall_tex=wall_stucco, ceiling=6.0, light=0.55, tint="#ffd898", activities=STREET)
+    st = mb.room("street", (0, 0, 24, 8), -90, "street", floor_tex=floor_cobble, ceil_tex="sky", fog={"color": "#6a4c34", "density": 0.01}, wall_tex=wall_stucco, ceiling=6.0, light=0.55, tint="#ffd898", activities=STREET)
     st.standard_rail("c08", home=(2.0, 0), good=((5.0, -1.2), (8.5, 0.8)), bad=((1.2, -2.8), (2.4, 2.6)), arrive=(0.8, 0))
     st.wp("c08_x_up", 19.5, 0.0, 0)  # the damaged arch
     st.wp("c08_x_right", 9.5, -2.0, -30)  # the staff car
@@ -85,6 +84,7 @@ def build():
     of.thing("globe", T("thing_globe", "billboard", "a brass-mounted globe with blank pale continents, in a stand", 1.0, 128), 6.6, -3.8, 0.9, 1.3)
     of.thing("window_dusk", T("thing_window_dusk", "billboard", "a tall window with heavy velvet curtains, an amber dusk sky and a column of smoke beyond", 1.0, 128), 5.0, -4.8, 1.8, 2.0)
     of.thing("count_slate", T("thing_count_slate", "billboard", "a small blackboard on the wall with a painted number in white digits (a tally: the digits are the only marks), a duster", 1.0, 128), 7.6, -1.8, 1.7, 1.1)
+    of.thing("office_bulb_c", "thing_lamp_hang", 4.0, 0.0, 2.55, 0.8, "sway")  # the bulb the old plaster tile carried as a ceiling rose
     of.light("lt_office_c", 4.0, 0.0, 2.6, 6.5, "#ffd890", 1.1)
     of.light("lt_window_dusk", 5.0, -4.6, 1.8, 6.0, "#ffa860", 1.0, 90, 40)
     of.actor("col_c", "officer", "a", 5.9, 0.4, fixed=True, same_as="col", activity="stand", prop="medal")
@@ -92,7 +92,7 @@ def build():
     of.actor("chap", "officer", "c", 3.0, -3.3, fixed=True, activity="stand")
 
     # ---- the ruined city at night (C10) -----------------------------------------------------------------------------------------------------------------------------
-    ru = mb.room("ruins", (24, 0, 46, 10), -90, "ruins", floor_tex=floor_rubble, ceil_tex=ceil_night_red, wall_tex=wall_ruin, ceiling=7.0, light=0.55, ambient=0.8, tint="#e89070", activities=CROWD_OUT)
+    ru = mb.room("ruins", (24, 0, 46, 10), -90, "ruins", floor_tex=floor_rubble, ceil_tex="sky", sky="fire", fog={"color": "#3a1812", "density": 0.012}, wall_tex=wall_ruin, ceiling=3.6, light=0.55, ambient=0.8, tint="#e89070", activities=CROWD_OUT)
     ru.standard_rail("c10", home=(2.0, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, 3.0), (2.8, -3.2)), arrive=(0.8, 0))
     ru.wp("c10_x_up", 2.0, -3.9, 140)  # headquarters (back the way you came)
     ru.wp("c10_x_right", 18.0, 0.0, 0)  # the night train
@@ -104,6 +104,8 @@ def build():
     ru.thing("fire_barrel", T("thing_fire_barrel", "billboard", "an oil drum fire: flames licking out the top, a few sparks", 1.0, 128), 4.0, -2.6, 0.7, 1.1, "flicker")
     ru.thing("broken_wall", T("thing_broken_wall", "billboard", "a freestanding jagged remnant of a brick wall with a hole where a window was, lit from behind by orange", 1.0, 128), 14.0, 3.8, 1.6, 3.2)
     ru.light("lt_ruin_fire", 4.0, -2.6, 1.0, 6.0, "#ff8038", 1.3)
+    ru.light("lt_ruin_fire_b", 10.0, 3.2, 1.6, 8.0, "#ff7430", 1.2)
+    ru.light("lt_ruin_fire_c", 15.0, -3.2, 1.6, 8.0, "#ff8c40", 1.1)
     ru.light("lt_ruin_train", 18.5, 0.0, 2.0, 12.0, "#fff0b0", 1.1, 0, 25)
     ru.actor("surv1", "civilian_city", "a", 4.6, 2.2, activity="sit")
     ru.actor("surv2", "civilian_city", "b", 6.4, -1.4, activity="sit")

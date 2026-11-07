@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://v6x6dy3bovpe"
-path="res://.godot/imported/ceil_arcade.png-76eb359d68a16f99aefc61739310fb81.ctex"
+uid="uid://p1c6yu5a1le2"
+path="res://.godot/imported/thing_lamp_hang.png-a4283acffd6640088629c29b16c3913e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/city/textures/ceil_arcade.png"
-dest_files=["res://.godot/imported/ceil_arcade.png-76eb359d68a16f99aefc61739310fb81.ctex"]
+source_file="res://assets/story/city/textures/thing_lamp_hang.png"
+dest_files=["res://.godot/imported/thing_lamp_hang.png-a4283acffd6640088629c29b16c3913e.ctex"]
 
 [params]
 

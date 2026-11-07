@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bpmtcxw5brhbs"
-path="res://.godot/imported/ceil_night_blue.png-6a233cd68103d8b1a49afc1b2d5f2818.ctex"
+uid="uid://drki7gygqgda3"
+path="res://.godot/imported/thing_tent_eyelet.png-621de8c58bdf3670a2d11e4bb9304eef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/harbour/textures/ceil_night_blue.png"
-dest_files=["res://.godot/imported/ceil_night_blue.png-6a233cd68103d8b1a49afc1b2d5f2818.ctex"]
+source_file="res://assets/story/airfield/textures/thing_tent_eyelet.png"
+dest_files=["res://.godot/imported/thing_tent_eyelet.png-621de8c58bdf3670a2d11e4bb9304eef.ctex"]
 
 [params]
 

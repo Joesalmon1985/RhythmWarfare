@@ -6,13 +6,12 @@
  "textures": {
   "ceil_beams": "textures/ceil_beams.png",
   "ceil_cell": "textures/ceil_cell.png",
-  "ceil_night_blue": "textures/ceil_night_blue.png",
-  "ceil_sky_day": "textures/ceil_sky_day.png",
   "floor_boards": "textures/floor_boards.png",
   "floor_cell": "textures/floor_cell.png",
   "floor_quay": "textures/floor_quay.png",
   "floor_sand": "textures/floor_sand.png",
   "sky_harbour": "textures/sky_harbour.png",
+  "sky_harbour_day": "textures/sky_harbour_day.png",
   "thing_aircraft_door": "textures/thing_aircraft_door.png",
   "thing_beam": "textures/thing_beam.png",
   "thing_birds": "textures/thing_birds.png",
@@ -69,6 +68,10 @@
    "flags": [],
    "floor_tex": "floor_boards",
    "ceil_tex": "ceil_beams",
+   "fog": {
+    "color": "#3a2c1c",
+    "density": 0.016
+   },
    "wall_tex": "wall_hut",
    "activities": {
     "quiet": [
@@ -118,13 +121,13 @@
     ]
    ],
    "floor": 0,
-   "ceiling": 6.0,
+   "ceiling": 3.6,
    "light": 0.55,
    "tint": "#7f9fe0",
    "room": "quay",
    "flags": [],
    "floor_tex": "floor_quay",
-   "ceil_tex": "ceil_night_blue",
+   "ceil_tex": "sky",
    "wall_tex": "wall_quay",
    "ambient": 0.8,
    "activities": {
@@ -175,13 +178,18 @@
     ]
    ],
    "floor": 0,
-   "ceiling": 4.5,
-   "light": 0.78,
+   "ceiling": 2.6,
+   "light": 0.5,
    "tint": "#f4ecd8",
    "room": "coast",
    "flags": [],
    "floor_tex": "floor_sand",
-   "ceil_tex": "ceil_sky_day",
+   "ceil_tex": "sky",
+   "sky": "day",
+   "fog": {
+    "color": "#7c96ae",
+    "density": 0.006
+   },
    "wall_tex": "wall_dunes",
    "activities": {
     "quiet": [
@@ -739,7 +747,7 @@
    "y": 8.0,
    "radius": 30.0,
    "color": "#fff2c0",
-   "strength": 1.4,
+   "strength": 1.0,
    "sector": "coast"
   },
   {
@@ -1631,7 +1639,10 @@
  },
  "sky": {
   "tex": "textures/sky_harbour.png",
-  "mode": "cylinder"
+  "mode": "cylinder",
+  "by_name": {
+   "day": "textures/sky_harbour_day.png"
+  }
  },
  "fog": {
   "color": "#0e1c34",

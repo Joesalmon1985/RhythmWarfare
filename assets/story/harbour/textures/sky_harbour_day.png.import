@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://uuba5jyx45te"
-path="res://.godot/imported/ceil_night_red.png-9b9eb6ce6e8f1ec6dc815b618816110f.ctex"
+uid="uid://ccmgqckrcr24t"
+path="res://.godot/imported/sky_harbour_day.png-c225cc94b8e2da8bf8a32ea4ee704375.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/city/textures/ceil_night_red.png"
-dest_files=["res://.godot/imported/ceil_night_red.png-9b9eb6ce6e8f1ec6dc815b618816110f.ctex"]
+source_file="res://assets/story/harbour/textures/sky_harbour_day.png"
+dest_files=["res://.godot/imported/sky_harbour_day.png-c225cc94b8e2da8bf8a32ea4ee704375.ctex"]
 
 [params]
 
