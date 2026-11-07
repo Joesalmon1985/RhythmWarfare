@@ -1,0 +1,298 @@
+{
+ "world": "doom_balcony",
+ "hotspots": [
+  {
+   "id": "doom_balcony.exit_mothership",
+   "world": "doom_balcony",
+   "scene": "doom_balcony",
+   "map": "doom_balcony",
+   "anchor": {
+    "thing": "bc_guide_mothership"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_balcony.mothership"
+   },
+   "on_failure": {
+    "route": "doom_balcony.mothership",
+    "cinematic": "doom_balcony.stagger_mothership",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "bc_guide_mothership",
+       "sprite": "guide_mothership_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "bc_guide_mothership",
+       "sprite": "guide_mothership_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "bc_guide_mothership",
+       "sprite": "guide_mothership_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "bc_guide_mothership",
+       "sprite": "guide_mothership_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "bc_guide_mothership",
+       "sprite": "guide_mothership_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure",
+    "light": "bc_lamp_mothership"
+   }
+  },
+  {
+   "id": "doom_balcony.exit_floor",
+   "world": "doom_balcony",
+   "scene": "doom_balcony",
+   "map": "doom_balcony",
+   "anchor": {
+    "thing": "bc_guide_floor"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_balcony.floor"
+   },
+   "on_failure": {
+    "route": "doom_balcony.floor",
+    "cinematic": "doom_balcony.stagger_floor",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "bc_guide_floor",
+       "sprite": "guide_floor_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "bc_guide_floor",
+       "sprite": "guide_floor_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "bc_guide_floor",
+       "sprite": "guide_floor_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "bc_guide_floor",
+       "sprite": "guide_floor_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "bc_guide_floor",
+       "sprite": "guide_floor_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure",
+    "light": "bc_lamp_floor"
+   }
+  },
+  {
+   "id": "doom_balcony.exit_booth",
+   "world": "doom_balcony",
+   "scene": "doom_balcony",
+   "map": "doom_balcony",
+   "anchor": {
+    "thing": "bc_guide_booth"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_balcony.booth"
+   },
+   "on_failure": {
+    "route": "doom_balcony.booth",
+    "cinematic": "doom_balcony.stagger_booth",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "bc_guide_booth",
+       "sprite": "guide_booth_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "bc_guide_booth",
+       "sprite": "guide_booth_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "bc_guide_booth",
+       "sprite": "guide_booth_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "bc_guide_booth",
+       "sprite": "guide_booth_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "bc_guide_booth",
+       "sprite": "guide_booth_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure",
+    "light": "bc_lamp_booth"
+   }
+  },
+  {
+   "id": "doom_balcony.exit_stay",
+   "world": "doom_balcony",
+   "scene": "doom_balcony",
+   "map": "doom_balcony",
+   "anchor": {
+    "pos": [
+     0.5,
+     0.4,
+     -3.4
+    ]
+   },
+   "kind": "exit",
+   "radius_m": 1.4,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_balcony"
+   },
+   "on_failure": {
+    "route": "doom_balcony",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "staging": {
+    "archetype": "none",
+    "touch": {
+     "w": 2.6,
+     "h": 1.4
+    }
+   },
+   "show": {
+    "archetype": "none"
+   }
+  }
+ ]
+}

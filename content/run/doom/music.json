@@ -12,7 +12,7 @@
    "temporary": false
   },
   {
-   "id": "doom_balcony",
+   "id": "doom_warehouse.balcony",
    "arrangement": "warehouse_1",
    "slot": 2,
    "alternates": [
@@ -376,6 +376,61 @@
   },
   {
    "id": "doom_mothership.return",
+   "arrangement": "warehouse_1",
+   "slot": 5,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony",
+   "arrangement": "warehouse_1",
+   "slot": 2,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony.mothership",
+   "arrangement": "warehouse_1",
+   "slot": 1,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony.floor",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony.booth",
+   "arrangement": "warehouse_1",
+   "slot": 3,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony.return",
    "arrangement": "warehouse_1",
    "slot": 5,
    "alternates": [

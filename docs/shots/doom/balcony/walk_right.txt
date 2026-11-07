@@ -1,0 +1,14 @@
+MOVE bc_cabin_in via=2 length=6.2
+WALK right 0 t=0.00 @0.500:-1.900:0.8:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK right 1 t=0.38 @0.570:-2.026:-12.1:0.0:1.593 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK right 2 t=0.75 @0.762:-2.372:-28.4:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK right 3 t=1.13 @1.050:-2.889:-29.6:0.0:1.587 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK right 4 t=1.50 @1.405:-3.529:-37.3:0.0:1.590 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK right 5 t=1.88 @1.801:-4.241:-46.0:0.0:1.596 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK right 6 t=2.26 @2.412:-4.732:-58.6:0.0:1.596 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK right 7 t=2.63 @3.189:-4.980:-72.6:0.0:1.590 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK right 8 t=3.01 @3.886:-5.198:-82.3:0.0:1.587 sector=7_0 ground=0.000 above=1.59 still=0.00
+WALK right 9 t=3.39 @4.468:-5.095:-86.5:0.0:1.588 sector=8_0 ground=0.000 above=1.59 still=0.00
+WALK right 10 t=3.76 @4.858:-5.025:-89.4:0.0:1.593 sector=8_0 ground=0.000 above=1.59 still=0.00
+WALK right 11 t=4.14 @5.000:-5.000:-90.0:0.0:1.600 sector=8_0 ground=0.000 above=1.60 still=0.00
+HOLD bc_cabin_in 1.0 moved=0.0028 turned=0.000

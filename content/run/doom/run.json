@@ -55,6 +55,14 @@
    "depth": 2,
    "story": "res://content/run/doom/story_doom_mothership.json",
    "blurb": "A violet atrium, a ring walk over a glowing void. The stair to the Underworld ahead, the platform hatch of the Booth on the left, the dock hatch on the right: follow the guide you like."
+  },
+  {
+   "id": "doom_balcony",
+   "title": "The Balcony (Doom worlds)",
+   "map": "doom_balcony",
+   "depth": 2,
+   "story": "res://content/run/doom/story_doom_balcony.json",
+   "blurb": "A rainy industrial rooftop at night. The bridge to the mothership ahead, the brick stair down to the floor on the left, the lit booth door on the right: follow the guide you like."
   }
  ],
  "nodes": [
@@ -75,7 +83,7 @@
      "loop": true
     },
     {
-     "to": "doom_balcony",
+     "to": "doom_warehouse.balcony",
      "dir": "up",
      "label": "Up the stage steps to the balcony"
     },
@@ -241,14 +249,14 @@
    }
   },
   {
-   "id": "doom_balcony",
+   "id": "doom_warehouse.balcony",
    "world": "doom_warehouse",
    "scene": "balcony",
-   "title": "The Balcony (stand-in)",
+   "title": "The Balcony (stand-in; the real scene is the world doom_balcony)",
    "entry": false,
    "exit_scene": false,
    "role": "dancer",
-   "blurb": "The Balcony (stand-in)",
+   "blurb": "The Balcony (stand-in; the real scene is the world doom_balcony)",
    "next": [
     {
      "to": "doom_warehouse.return",
@@ -5997,6 +6005,859 @@
      ]
     }
    }
+  },
+  {
+   "id": "doom_balcony",
+   "world": "doom_balcony",
+   "scene": "balcony",
+   "title": "The Balcony",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "A rainy industrial rooftop at night. The bridge to the mothership ahead, the brick stair down to the floor on the left, the lit booth door on the right: follow the guide you like.",
+   "next": [
+    {
+     "to": "doom_balcony",
+     "dir": "down",
+     "label": "Stay on the roof",
+     "loop": true
+    },
+    {
+     "to": "doom_balcony.mothership",
+     "dir": "up",
+     "label": "Over the bridge to the mothership"
+    },
+    {
+     "to": "doom_balcony.floor",
+     "dir": "left",
+     "label": "Down the brick stair to the floor"
+    },
+    {
+     "to": "doom_balcony.booth",
+     "dir": "right",
+     "label": "Through the lit door to the booth"
+    }
+   ],
+   "place": {
+    "waypoint": "bc_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "bc_bridge_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a2"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_cabin_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a4"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "bc_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bc_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "bc_arrive",
+     "exits": {
+      "up": "bc_bridge_end",
+      "left": "bc_stair_foot",
+      "right": "bc_cabin_in",
+      "down": "bc_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "bc_bridge_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a1",
+        "bc_v_n",
+        "bc_v_ba",
+        "bc_v_bb",
+        "bc_v_bc"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "bc_stair_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a2",
+        "bc_v_land",
+        "bc_v_s_a",
+        "bc_v_s_b",
+        "bc_v_s_c",
+        "bc_v_s_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "bc_cabin_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_e1",
+        "bc_v_door"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "bc_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "bc_ref_back",
+        "bc_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "bc_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_balcony.mothership",
+   "world": "doom_balcony",
+   "scene": "balcony_mothership",
+   "title": "The Mothership (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Mothership (stand-in)",
+   "next": [
+    {
+     "to": "doom_balcony.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "bc_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "bc_bridge_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a2"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_cabin_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a4"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "bc_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bc_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "bc_arrive",
+     "exits": {
+      "up": "bc_bridge_end",
+      "left": "bc_stair_foot",
+      "right": "bc_cabin_in",
+      "down": "bc_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "bc_bridge_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a1",
+        "bc_v_n",
+        "bc_v_ba",
+        "bc_v_bb",
+        "bc_v_bc"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "bc_stair_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a2",
+        "bc_v_land",
+        "bc_v_s_a",
+        "bc_v_s_b",
+        "bc_v_s_c",
+        "bc_v_s_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "bc_cabin_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_e1",
+        "bc_v_door"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "bc_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "bc_ref_back",
+        "bc_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "bc_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_balcony.floor",
+   "world": "doom_balcony",
+   "scene": "balcony_floor",
+   "title": "The Floor (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Floor (stand-in)",
+   "next": [
+    {
+     "to": "doom_balcony.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "bc_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "bc_bridge_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a2"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_cabin_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a4"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "bc_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bc_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "bc_arrive",
+     "exits": {
+      "up": "bc_bridge_end",
+      "left": "bc_stair_foot",
+      "right": "bc_cabin_in",
+      "down": "bc_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "bc_bridge_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a1",
+        "bc_v_n",
+        "bc_v_ba",
+        "bc_v_bb",
+        "bc_v_bc"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "bc_stair_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a2",
+        "bc_v_land",
+        "bc_v_s_a",
+        "bc_v_s_b",
+        "bc_v_s_c",
+        "bc_v_s_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "bc_cabin_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_e1",
+        "bc_v_door"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "bc_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "bc_ref_back",
+        "bc_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "bc_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_balcony.booth",
+   "world": "doom_balcony",
+   "scene": "balcony_booth",
+   "title": "The Booth (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Booth (stand-in)",
+   "next": [
+    {
+     "to": "doom_balcony.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "bc_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "bc_bridge_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a2"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_cabin_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a4"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "bc_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bc_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "bc_arrive",
+     "exits": {
+      "up": "bc_bridge_end",
+      "left": "bc_stair_foot",
+      "right": "bc_cabin_in",
+      "down": "bc_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "bc_bridge_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a1",
+        "bc_v_n",
+        "bc_v_ba",
+        "bc_v_bb",
+        "bc_v_bc"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "bc_stair_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a2",
+        "bc_v_land",
+        "bc_v_s_a",
+        "bc_v_s_b",
+        "bc_v_s_c",
+        "bc_v_s_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "bc_cabin_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_e1",
+        "bc_v_door"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "bc_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "bc_ref_back",
+        "bc_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "bc_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_balcony.return",
+   "world": "doom_balcony",
+   "scene": "balcony_return",
+   "title": "Back to the Balcony",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Back to the Balcony",
+   "next": [
+    {
+     "to": "doom_balcony",
+     "dir": "up",
+     "label": "Round again",
+     "loop": true
+    },
+    {
+     "to": "doom_balcony",
+     "dir": "left",
+     "label": "Round again",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "bc_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "bc_bridge_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a2"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_cabin_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "bc_v_a4"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "bc_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bc_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "bc_arrive",
+     "exits": {
+      "up": "bc_bridge_end",
+      "left": "bc_stair_foot",
+      "right": "bc_cabin_in",
+      "down": "bc_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "bc_bridge_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a1",
+        "bc_v_n",
+        "bc_v_ba",
+        "bc_v_bb",
+        "bc_v_bc"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "bc_stair_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "bc_v_a2",
+        "bc_v_land",
+        "bc_v_s_a",
+        "bc_v_s_b",
+        "bc_v_s_c",
+        "bc_v_s_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "bc_cabin_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "bc_v_e1",
+        "bc_v_door"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "bc_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "bc_ref_back",
+        "bc_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "bc_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "bc_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
   }
  ],
  "cinematics": {
@@ -6246,6 +7107,42 @@
     {
      "move": "walk",
      "to": "ms_dock_in",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_balcony.stagger_mothership": {
+   "world": "doom_balcony",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bc_bridge_end",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_balcony.stagger_floor": {
+   "world": "doom_balcony",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bc_stair_foot",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_balcony.stagger_booth": {
+   "world": "doom_balcony",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bc_cabin_in",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
