@@ -136,12 +136,8 @@ def write(helpers: dict | None = None) -> None:
     music += bar.music()
     extra_hot["doom_bar"] = bar.hotspots(cin)
     for wid, doc in extra_hot.items():
-        (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "
-", encoding="utf-8", newline="
-")
-    (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "
-", encoding="utf-8", newline="
-")
+        (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (OUT / "music.json").write_text(json.dumps({"nodes": music}, indent=1) + "\n", encoding="utf-8", newline="\n")
     (OUT / "hotspots" / "doom_warehouse.json").write_text(json.dumps(hot, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print("doom overlay: %d scenes, %d hotspots, %d cinematics -> %s" % (len(nodes), len(hot["hotspots"]), len(cin), OUT))
