@@ -21,6 +21,7 @@ const MOVE_STYLES := ["walk", "stagger", "run", "climb", "carried"]
 const BANDS := ["quiet", "dancing", "hype", "euphoric"]  # the energy bands of the chapter files (StoryData.band_of)
 const DANCE_FLAGS := ["dance_floor", "stage"]  # the only sectors where "dance" may appear in an activity list
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered", "out"]
+const DECAL_REACH := 0.35  # metres: a decal's `at` lies this close to a solid wall of its sector, whose inward normal it takes (else it needs a `yaw`)
 
 var id := ""
 var art := ""  # assets/story/<art>/ holds the textures
@@ -31,6 +32,8 @@ var start_id := ""
 var textures: Dictionary = {}  # name -> file relative to the art folder
 var sectors: Array = []  # {id, poly: PackedVector2Array (counter-clockwise), floor, ceiling, floor_tex, ceil_tex, wall_tex, light, tint: Color, room, flags}
 var things: Array = []
+var decals: Array = []  # pictures flat on a wall (things of kind "decal", docs/art/WALL_DECALS.md): {id, sector, at, sprite, size, y (bottom edge above the floor), emissive, yaw?}
+## plus, once the walls are resolved, normal: Vector2 (into the room), base: Vector2 (the bottom centre's ground point, on the wall), wall: the resolved wall ({} with a yaw). Scenery only: not in `things`.
 var lights: Array = []  # static light sources (things of kind "light"): {id, sector, at: Vector2, y (above the sector floor), radius (m), color: Color, strength, cone?: {yaw, angle}, sectors?: Array}; StoryWorld bakes them into vertex colours
 var homes: Dictionary = {}  # actor id -> {sector, at: Vector2}
 var waypoints: Dictionary = {}  # id -> {at: Vector2, yaw: float (degrees), sector}
@@ -114,6 +117,7 @@ func build(d: Dictionary, check_files: bool) -> void:
 	_check_reachability()
 	if errors.is_empty():
 		_resolve_walls()
+		_place_decals()
 
 
 # --- construction and per-element checks ---------------------------------------------------------------------------------------------
@@ -366,6 +370,9 @@ func _build_things(list: Array) -> void:
 		if str(t.get("kind", "billboard")) == "light":
 			_build_light(t, tid, sid, at)
 			continue
+		if str(t.get("kind", "billboard")) == "decal":
+			_build_decal(t, tid, sid, at)
+			continue
 		if not _sector_index.has(sid):
 			errors.append("thing %s: lies in no sector" % tid)
 			continue
@@ -410,6 +417,60 @@ func _build_light(t: Dictionary, tid: String, sid: String, at: Vector2) -> void:
 				errors.append("light %s: reaches unknown sector %s" % [tid, k])
 		l["sectors"] = t["sectors"]
 	lights.append(l)
+
+
+## A decal thing (docs/art/WALL_DECALS.md): {"id", "kind": "decal", "sprite", "at": [x, z] (inside its sector, within DECAL_REACH of a wall), "size": height in metres
+## (default 1; the width follows the sprite's aspect), "y": its bottom edge above the floor (default 0), "yaw"?: degrees, the way its face looks (0 toward -z; overrides the
+## wall's normal), "emissive"?: true (takes the sector's song-time light but not the wall's shade and lamps)}.
+func _build_decal(t: Dictionary, tid: String, sid: String, at: Vector2) -> void:
+	if not _sector_index.has(sid):
+		errors.append("decal %s: lies in no sector" % tid)
+		return
+	var poly: PackedVector2Array = sectors[_sector_index[sid]]["poly"]
+	if poly.size() >= 3 and not Geometry2D.is_point_in_polygon(at, poly) and _dist_to_boundary(at, poly) >= EPS:
+		errors.append("decal %s: %s is not inside sector %s" % [tid, at, sid])
+	if str(t.get("sprite", "")) == "":
+		errors.append("decal %s: no sprite" % tid)
+	if float(t.get("size", 1.0)) <= 0.0:
+		errors.append("decal %s: size must be positive" % tid)
+	var d := {"id": tid, "sector": sid, "at": at, "sprite": str(t.get("sprite", "")), "size": float(t.get("size", 1.0)), "y": float(t.get("y", 0.0)), "emissive": bool(t.get("emissive", false))}
+	if t.has("yaw"):
+		d["yaw"] = float(t["yaw"])
+	decals.append(d)
+
+
+## Each decal's facing: an explicit `yaw`, else the nearest solid wall of its sector within DECAL_REACH (its normal into the room; the decal's foot is `at` dropped onto it).
+## A decal with neither is an error: a picture that would hang in the air.
+func _place_decals() -> void:
+	for d in decals:
+		var at: Vector2 = d["at"]
+		if d.has("yaw"):
+			d["normal"] = forward_of_yaw(float(d["yaw"]))
+			d["base"] = at
+			d["wall"] = {}
+			continue
+		var best := INF
+		var bw: Dictionary = {}
+		for w in _walls_out:
+			if str(w["sector"]) != str(d["sector"]) or str(w["portal"]) != "":
+				continue
+			var dist := _dist_to_segment(at, w["a"], w["b"])
+			if dist < best:
+				best = dist
+				bw = w
+		if bw.is_empty() or best > DECAL_REACH:
+			errors.append("decal %s: no solid wall of sector %s within %.2f m of %s, and no yaw" % [d["id"], d["sector"], DECAL_REACH, at])
+			continue
+		var a: Vector2 = bw["a"]
+		var b: Vector2 = bw["b"]
+		var dir := (b - a).normalized()
+		var n := Vector2(-dir.y, dir.x)
+		var foot := Geometry2D.get_closest_point_to_segment(at, a, b)
+		if not _inside(foot + n * 0.01, str(d["sector"]), 0.0):
+			n = -n
+		d["normal"] = n
+		d["base"] = foot
+		d["wall"] = bw
 
 
 func _inside(p: Vector2, sid: String, margin: float) -> bool:

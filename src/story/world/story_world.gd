@@ -18,6 +18,7 @@ const SHADOW_SIZE := Vector2(0.9, 0.3)  # its ellipse, as a share of the billboa
 const SKY_TEXELS_AROUND := 1024.0  # a sky strip is drawn so that this many texels wrap the horizon (style guide section 7): a 1024-wide strip once, a 256-wide one four times
 const SKY_HORIZON := 0.76  # the strip's row at eye level, as a fraction of its height from the top (the old 80 m cylinder put it here; map `sky.horizon` overrides)
 const SKY_FADE := 8.0  # texels over which the strip's top row dissolves into the zenith colour
+const DECAL_GAP := 0.006  # metres a wall decal stands off its wall (no z-fighting at 90 m with a 24-bit depth buffer and the 0.15 m near plane)
 const SKY_SHADER := """
 shader_type sky;
 // StoryWorld's sky at infinity: the map's sky strip looked up by the view direction alone (StoryWorld.sky_params).
@@ -58,6 +59,7 @@ var _tex: Dictionary = {}  # texture name -> Texture2D
 var _metres: Dictionary = {}  # texture name -> metres per repeat
 var _sector_nodes: Dictionary = {}  # sector id -> {node: MeshInstance3D, mats: Array[StandardMaterial3D]}
 var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, base_scale: Vector3, base_y: float}
+var _decal_nodes: Array = []  # {node: MeshInstance3D (a child of its sector's node), mat, decal: Dictionary}: wall pictures, scenery only (never billboards, people or hotspots)
 var _sky: Sky  # the map's sky at infinity (the environment's background; null: the map has no sky)
 var _sky_mat: ShaderMaterial
 var _sky_tex: Dictionary = {}  # sky name ("" = the map's own) -> Texture2D (the map sky's `by_name`: the camera sector's `sky` picks one)
@@ -94,6 +96,8 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 		_make_sector_mesh(s, by_sector[s["id"]])
 	for t in map.things:
 		_make_thing(t)
+	for d in map.decals:
+		_make_decal(d)
 	_make_shadows()
 	_make_sky()
 	env = _make_environment()
@@ -405,6 +409,129 @@ func _make_thing(t: Dictionary) -> void:
 		"grounded": blend == "" and not t.has("piece") and not t.has("y") and str(t.get("anim", "none")) not in ["bob", "sway"]})
 
 
+## A wall decal (docs/art/WALL_DECALS.md): a quad flat against its wall, facing the map's resolved normal (StoryMap._place_decals), DECAL_GAP off the wall. It is a child of its
+## sector's node (hidden with it) and its material sits in the sector's list, so it takes the sector's song-time light exactly as the wall does; its vertex colours are the
+## wall's own baked light at those points (the wall's shade and lamps, interpolated on the wall's light cells), white when `emissive`. Opaque pass, nearest, alpha scissor.
+func _make_decal(d: Dictionary) -> void:
+	var spr: Dictionary = assets.sprite(str(d["sprite"])) if assets != null else {}
+	var tex: Texture2D = spr.get("tex", null)
+	if tex == null and _tex.has(str(d["sprite"])):
+		tex = _tex[str(d["sprite"])]
+	if tex == null:
+		errors.append("decal %s: no sprite %s" % [d["id"], d["sprite"]])
+		return
+	var sid := str(d["sector"])
+	if not d.has("normal") or not _sector_nodes.has(sid):
+		return
+	var s: Dictionary = map.sector(sid)
+	var h := float(d["size"])
+	var w := h * float(tex.get_width()) / float(tex.get_height())
+	var n: Vector2 = d["normal"]
+	var right := Vector2(n.y, -n.x)  # the viewer's right, facing the wall
+	var base: Vector2 = d["base"]
+	var y0 := float(s["floor"]) + float(d["y"])
+	var wall: Dictionary = d["wall"]
+	var us: Array = [0.0, w]  # the quad is cut where the wall's light cells are, so the lamps' pools on it follow the wall's
+	var vs: Array = [0.0, h]
+	if not wall.is_empty() and not _lights_of(s).is_empty() and not bool(d.get("emissive", false)):
+		var a: Vector2 = wall["a"]
+		var along := ((wall["b"] as Vector2) - a).length()
+		var dirw := ((wall["b"] as Vector2) - a) / along
+		var nu := maxi(int(ceilf(along / LIGHT_CELL)), 1)
+		var t0 := (base - right * w * 0.5 - a).dot(dirw)
+		var t1 := (base + right * w * 0.5 - a).dot(dirw)
+		for k in nu + 1:
+			var tk := along * float(k) / float(nu)
+			if tk > minf(t0, t1) + 1.0e-3 and tk < maxf(t0, t1) - 1.0e-3:
+				us.append((tk - t0) / (t1 - t0) * w)
+		var fy := float(s["floor"])
+		var nv := maxi(int(ceilf((float(s["ceiling"]) - fy) / LIGHT_CELL)), 1)
+		for k in nv + 1:
+			var yk := lerpf(fy, float(s["ceiling"]), float(k) / float(nv)) - y0
+			if yk > 1.0e-3 and yk < h - 1.0e-3:
+				vs.append(yk)
+	us.sort()
+	vs.sort()
+	var v := PackedVector3Array()
+	var uv := PackedVector2Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	for yv in vs:
+		for xu in us:
+			v.append(Vector3(float(xu) - w * 0.5, float(yv), 0.0))
+			uv.append(Vector2(float(xu) / w, 1.0 - float(yv) / h))
+			var g := base + right * (float(xu) - w * 0.5)
+			cols.append(_decal_light(d, s, Vector3(g.x, y0 + float(yv), g.y)))
+	var nu2 := us.size()
+	for iv in vs.size() - 1:
+		for iu in nu2 - 1:
+			var i00 := iv * nu2 + iu
+			idx.append_array([i00, i00 + 1, i00 + nu2 + 1, i00, i00 + nu2 + 1, i00 + nu2])
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = v
+	arrays[Mesh.ARRAY_TEX_UV] = uv
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var mat := _material(tex)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR  # hard alpha: drawn in the walls' opaque pass, no blending over the wall
+	mat.alpha_scissor_threshold = 0.5
+	mesh.surface_set_material(0, mat)
+	var mi := MeshInstance3D.new()
+	mi.name = "Decal_" + str(d["id"])
+	mi.mesh = mesh
+	mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var off := base + n * DECAL_GAP
+	mi.transform = Transform3D(Basis(Vector3(right.x, 0.0, right.y), Vector3.UP, Vector3(n.x, 0.0, n.y)), Vector3(off.x, y0, off.y))
+	(_sector_nodes[sid]["node"] as Node3D).add_child(mi)
+	(_sector_nodes[sid]["mats"] as Array).append(mat)
+	_decal_nodes.append({"node": mi, "mat": mat, "decal": d, "w": w, "h": h})
+
+
+## The baked light of the wall behind a decal at world point p: the wall's flat shade, or its lamp light interpolated on its light cells as _add_wall bakes and draws it
+## (a decal placed by `yaw` alone takes the lamp light at the point). White when emissive (the sector's song-time light still multiplies it, as for an emissive billboard).
+func _decal_light(d: Dictionary, s: Dictionary, p: Vector3) -> Color:
+	if bool(d.get("emissive", false)):
+		return Color.WHITE
+	var n: Vector2 = d["normal"]
+	var shade := WALL_SHADE_X if absf(n.x) > absf(n.y) else 1.0  # (a wall running along z faces along x)
+	var lit := _lights_of(s)
+	if lit.is_empty():
+		return _flat_shade(s, shade)
+	var wall: Dictionary = d["wall"]
+	if wall.is_empty():
+		return _vertex_light(p, shade, s, lit)
+	var a: Vector2 = wall["a"]
+	var b: Vector2 = wall["b"]
+	var along := (b - a).length()
+	var y0 := float(s["floor"])
+	var y1 := float(s["ceiling"])
+	var nu := maxi(int(ceilf(along / LIGHT_CELL)), 1)
+	var nv := maxi(int(ceilf((y1 - y0) / LIGHT_CELL)), 1)
+	var fu := clampf((Vector2(p.x, p.z) - a).dot((b - a) / along) / along, 0.0, 1.0) * float(nu)
+	var fv := clampf((p.y - y0) / (y1 - y0), 0.0, 1.0) * float(nv)
+	var iu := mini(int(fu), nu - 1)
+	var iv := mini(int(fv), nv - 1)
+	var fx := fu - float(iu)
+	var fz := fv - float(iv)
+	var c00 := _wall_cell_light(a, b, y0, y1, nu, nv, iu, iv, shade, s, lit)
+	var c11 := _wall_cell_light(a, b, y0, y1, nu, nv, iu + 1, iv + 1, shade, s, lit)
+	if fx >= fz:  # the wall cell's two triangles: (00, 10, 11) and (00, 11, 01)
+		var c10 := _wall_cell_light(a, b, y0, y1, nu, nv, iu + 1, iv, shade, s, lit)
+		return c00 + (c10 - c00) * fx + (c11 - c10) * fz
+	var c01 := _wall_cell_light(a, b, y0, y1, nu, nv, iu, iv + 1, shade, s, lit)
+	return c00 + (c01 - c00) * fz + (c11 - c01) * fx
+
+
+## The baked light at the wall's light-cell corner (ku, kv) (the vertices _add_wall makes).
+func _wall_cell_light(a: Vector2, b: Vector2, y0: float, y1: float, nu: int, nv: int, ku: int, kv: int, shade: float, s: Dictionary, lit: Array) -> Color:
+	var pt := a.lerp(b, float(ku) / float(nu))
+	return _vertex_light(Vector3(pt.x, lerpf(y0, y1, float(kv) / float(nv)), pt.y), shade, s, lit)
+
+
 ## The static light at a billboard's centre (at most chest height): the flat shade of a sector without lamps, else the ambient plus the lamps' pools, the same falloff the
 ## surfaces around it are baked with. The song-time light of the sector multiplies it.
 func _thing_light(at: Vector2, y: float, s: Dictionary) -> Color:
@@ -706,3 +833,15 @@ func sector_node(id: String) -> MeshInstance3D:
 
 func thing_count() -> int:
 	return _thing_nodes.size()
+
+
+## The wall decals drawn (scenery: not in thing_count, the billboard list or anything the hotspots and the figure cap read).
+func decal_count() -> int:
+	return _decal_nodes.size()
+
+
+func decal_node(id: String) -> MeshInstance3D:
+	for dn in _decal_nodes:
+		if str(dn["decal"]["id"]) == id:
+			return dn["node"]
+	return null
