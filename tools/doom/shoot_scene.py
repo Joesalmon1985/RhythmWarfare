@@ -19,7 +19,7 @@ from PIL import Image, ImageDraw
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 GODOT = os.environ.get("GODOT", os.path.join(ROOT, "tools", "dev", "godot.sh"))
-SCENE = "doom_warehouse"
+SCENE = os.environ.get("RW_SCENE", "doom_warehouse")  # the scene node (and map) the walk strips are shot for
 POSE = re.compile(r"WALK \S+ (\d+) t=(\S+) @(\S+) sector=(\S+) ground=(\S+) above=(\S+)")
 
 
@@ -64,7 +64,7 @@ def godot(args, env_extra=None, timeout=300):
 def walk(out, routes):
     os.makedirs(out, exist_ok=True)
     for route in routes:
-        text = godot(["--headless", "--audio-driver", "Dummy", "--path", ROOT, "-s", "tools/doom/walk_poses.gd", "--", SCENE, route])
+        text = godot(["--headless", "--audio-driver", "Dummy", "--path", ROOT, "-s", "tools/doom/walk_poses.gd", "--", SCENE, route, "res://content/run/doom/run.json", SCENE])
         if "SCRIPT ERROR" in text:
             print("SCRIPT ERROR in walk_poses.gd:\n" + text)
             sys.exit(1)

@@ -27,7 +27,7 @@ MAX_STEP = 0.5
 RAIL_TEX = "bar_railing"
 RAIL_HEIGHT = 1.0
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.82, 0.7, 2.5  # exposure (the Warehouse's figures; A1's night interior median is 0.25 to 0.38 under the renderer's own fog)
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.66, 0.7, 2.5  # exposure (the Warehouse's figures; A1's night interior median is 0.25 to 0.38 under the renderer's own fog)
 
 
 def mz(x, y):
@@ -97,7 +97,7 @@ DECALS = [
     ("bar_d_tapestry_w", "bar_tapestry", (-1.75, 5.05), 0.75, 2.1, False), ("bar_d_lantern_w", "bar_lantern", (-1.75, 4.0), 1.55, 0.7, True),
     ("bar_d_pipe_w1", "bar_pipe_h", (-1.75, -1.0), 2.7, 0.34, False), ("bar_d_pipe_w2", "bar_pipe_h", (-1.75, 4.9), 2.85, 0.3, False),
     ("bar_d_poster_a", "bar_poster_a", (-1.75, -2.1), 1.0, 0.95, False), ("bar_d_poster_b", "bar_poster_b", (-1.75, -0.4), 1.05, 0.95, False),
-    ("bar_d_ivy", "bar_ivy", (-1.75, 0.5), 0.5, 2.6, False), ("bar_d_poster_e", "bar_poster_b", (1.35, -1.6), 1.0, 0.95, False),
+    ("bar_d_ivy", "bar_ivy", (-1.75, 0.5), 1.0, 2.2, False), ("bar_d_poster_e", "bar_poster_b", (1.35, -1.6), 1.0, 0.95, False),
     ("bar_d_sign_floor", "bar_sign_floor", (-1.75, 3.95), 2.45, 0.42, True),
     ("bar_d_lantern_s", "bar_lantern", (-1.15, 7.0), 2.0, 0.7, True),
     ("bar_d_window", "bar_window", (0.1, 12.55), 0.85, 1.0, True), ("bar_d_sign_booth", "bar_sign_booth", (0.1, 12.55), 2.55, 0.5, True),
@@ -127,7 +127,7 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength: warm practical lamps (
     ("bar_lt_way", (-5.0, 2.2), 2.6, 7.0, "#4a6aff", 1.7), ("bar_lt_booth", (0.1, 9.4), 3.2, 6.0, "#40d0d8", 1.3), ("bar_lt_booth_red", (0.1, 12.0), 2.6, 4.0, "#ff4a3a", 0.9),
 ]
 CAST = {"actors": ["c01", "c02", "c03", "c04", "c05", "c06", "c07"], "silhouettes": ["s01", "s02", "s03"]}
-HOMES = {"c01": (3.4, 3.05), "c02": (4.4, 3.05), "c03": (5.4, 3.05), "c04": (6.3, 3.05), "c05": (6.2, 4.4), "c06": (6.2, 7.6), "c07": (3.4, 7.8)}
+HOMES = {"c01": (3.8, 0.8), "c02": (4.8, 0.8), "c03": (5.8, 3.05), "c04": (6.4, 3.05), "c05": (6.4, 4.2), "c06": (6.2, 7.6), "c07": (3.4, 7.8)}  # (none stands in the picture at the reference viewpoint but the two far ones in the nook: the counter and the stools are the foreground)
 SILS = {"s01": (6.5, 6.0), "s02": (2.4, 1.0), "s03": (5.0, 0.8)}
 
 

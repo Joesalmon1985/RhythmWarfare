@@ -1,0 +1,20 @@
+MOVE wb_bridge via=1 length=6.1
+WALK stay 0 t=1.84 @0.297:-1.079:-7.1:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK stay 1 t=3.68 @0.664:-4.011:-34.9:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK stay 2 t=5.52 @2.000:-4.300:0.0:0.0:1.600 sector=10_0 ground=0.000 above=1.60 still=0.00
+HOLD wb_bridge 2.0 moved=0.0028 turned=0.000
+MOVE wb_counter via=2 length=4.7
+WALK stay 3 t=10.11 @0.781:-4.300:149.6:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK stay 4 t=11.95 @1.381:-2.800:-124.8:0.0:1.726 sector=0_0 ground=0.138 above=1.58 still=0.00
+WALK stay 5 t=13.79 @2.600:-2.800:-101.6:0.0:1.913 sector=18_0 ground=0.313 above=1.60 still=0.00
+HOLD wb_counter 2.0 moved=0.0028 turned=0.000
+MOVE wb_way via=2 length=8.0
+WALK stay 6 t=18.39 @0.580:-2.670:-247.6:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK stay 7 t=20.23 @-2.723:-1.400:-270.0:0.0:1.588 sector=1_0 ground=0.000 above=1.59 still=0.00
+WALK stay 8 t=22.07 @-4.800:-1.400:-270.0:0.0:1.600 sector=1_0 ground=0.000 above=1.60 still=0.00
+HOLD wb_way 2.0 moved=0.0028 turned=0.000
+MOVE wb_ref via=1 length=6.2
+WALK stay 9 t=26.67 @-3.186:-1.400:-450.0:0.0:1.588 sector=1_0 ground=0.000 above=1.59 still=0.00
+WALK stay 10 t=28.51 @-0.458:-1.014:-129.7:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK stay 11 t=30.34 @0.100:0.500:0.0:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+HOLD wb_ref 8.0 moved=0.0028 turned=0.000

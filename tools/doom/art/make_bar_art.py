@@ -113,8 +113,8 @@ def tile_cobble():
                     v[(y0 + yy) % h, (x0 + xx) % w] = s
     wet = noise(h, w, 4, 16)
     v = v * 0.85 + wet * 0.2
-    pal = ["#0f0c1e", "#1b1a3a", "#2c2a66", "#3a4aa0", "#5a6ad0", "#c07a46", "#ffb066"]
-    img = ramp(v, pal[:5], 0.8)
+    pal = ["#120a14", "#241426", "#3c2238", "#58334a", "#7a4a5a", "#a06a60"]
+    img = ramp(v, pal, 0.8)
     glint = (wet > 0.66) & (v > 0.5)
     yy, xx = np.mgrid[0:h, 0:w]
     img[glint & (BAYER[yy % 4, xx % 4] < 0.5)] = hexc("#c9824a")
@@ -149,7 +149,7 @@ def tile_step():
     v[-3:, :] = 0.05
     for k in range(3):
         v[:, k * 40 + 20: k * 40 + 22] -= 0.25
-    return ramp(v, ["#14100f", "#2c2420", "#4a3d36", "#6f5e52", "#93806c", "#b8a287"])
+    return ramp(v, ["#160c08", "#2e1a12", "#4e2e1e", "#744430", "#9c6444", "#c08a60"])
 
 
 def tile_counter_front():
@@ -594,9 +594,9 @@ def decal_ivy(name="bar_ivy", seed=9):
         for y in range(0, int(rng.integers(80, 140)), 3):
             x += int(rng.integers(-1, 2))
             s.d.rectangle([x, y, x + 1, y + 2], fill=greens[0] + (255,))
-    for _ in range(46):
+    for _ in range(110):
         x, y = int(rng.integers(6, 106)), int(rng.integers(2, 130 if rng.random() > 0.4 else 80))
-        r = int(rng.integers(5, 9))
+        r = int(rng.integers(3, 6))
         c = greens[int(rng.integers(1, 5))]
         s.d.polygon([(x, y - r), (x + r, y), (x, y + r), (x - r, y)], fill=c + (255,), outline=greens[0] + (255,))
         s.d.line([(x, y - r), (x, y + r)], fill=greens[0] + (255,))
