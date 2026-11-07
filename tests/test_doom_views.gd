@@ -114,20 +114,85 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 	var on := RunData.load_default()
 	OS.set_environment("RW_DOOM_WORLDS", "")
 	assert_true(on.errors.is_empty(), "flag on: the run loads clean: %s" % str(on.errors))
-	for id in ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return", "warehouse"]:
+	for id in ["doom_warehouse", "warehouse"]:
 		assert_true(on.nodes.has(id), "flag on: scene %s" % id)
+	for id in ["doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return"]:
+		assert_false(on.nodes.has(id), "flag on: the stand-in %s is gone (the Warehouse is one geography scene)" % id)
 	var hs: Array = on.hotspots.get("doom_warehouse", [])
 	assert_eq(hs.size(), 4, "the three guides and the stay hotspot")
 	var routes := []
 	for h in hs:
 		routes.append(str((h["on_success"] as Dictionary).get("route", "")))
 	routes.sort()
-	assert_eq(routes, ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill"], "ahead, left (the bar stand-in: the real Bar is the world doom_bar), right (the chill-out stand-in: the real lounge is the world doom_lounge), and stay on the floor")
+	assert_eq(routes, ["doom_balcony", "doom_bar", "doom_lounge", "doom_warehouse"], "ahead the Balcony, left the Bar, right the Chill-out (the worlds' entry scenes), and stay on the floor")
+
+
+# --- the whole overlay: eight one-scene geography worlds, routed by the brief's table (docs/briefs/DOOM_WORLDS_BRIEF.md) -------------------------------------------------------------
+
+const DOOM_TABLE := {  # world -> [ahead (up), left, right]; "Floor" is doom_warehouse, "Chill-out" doom_lounge
+	"doom_warehouse": ["doom_balcony", "doom_bar", "doom_lounge"],
+	"doom_bar": ["doom_booth", "doom_warehouse", "doom_lounge"],
+	"doom_balcony": ["doom_mothership", "doom_warehouse", "doom_booth"],
+	"doom_lounge": ["doom_dock", "doom_bar", "doom_warehouse"],
+	"doom_booth": ["doom_mothership", "doom_balcony", "doom_dock"],
+	"doom_dock": ["doom_mothership", "doom_warehouse", "doom_underworld"],
+	"doom_mothership": ["doom_underworld", "doom_booth", "doom_dock"],
+	"doom_underworld": ["doom_mothership", "doom_warehouse", "doom_dock"],
+}
+
+
+func test_the_overlay_is_one_geography_graph_per_the_brief_table() -> void:
+	var on := _doom_run()
+	assert_eq(on.errors, [], "the overlay loads clean")
+	var doom: Array = on.nodes.keys().filter(func(k: Variant) -> bool: return str(k).begins_with("doom_"))
+	doom.sort()
+	var want: Array = DOOM_TABLE.keys()
+	want.sort()
+	assert_eq(doom, want, "eight Doom scenes, one per world, no stand-in and no return scene")
+	var j := RunJourney.new(on)
+	for w in DOOM_TABLE:
+		var n: Dictionary = on.nodes[w]
+		assert_true(on.is_geography(w) and str(n["world"]) == w and bool(n["entry"]), "%s: the entry scene of its geography world" % w)
+		assert_eq(int(n["depth"]), 1 if w == "doom_warehouse" else 2, "%s: depth" % w)
+		var by_dir := {}
+		for e in n["next"]:
+			by_dir[str(e["dir"])] = e
+		assert_eq(by_dir.size(), 4, "%s: the stay and three routes out" % w)
+		var stay: Dictionary = by_dir.get("down", {})
+		assert_true(str(stay.get("to", "")) == w and bool(stay.get("loop", false)), "%s: down is the stay loop" % w)
+		var outs := []
+		for d in ["up", "left", "right"]:
+			outs.append(str((by_dir.get(d, {}) as Dictionary).get("to", "")))
+		assert_eq(outs, DOOM_TABLE[w], "%s: up / left / right per the table" % w)
+		var rail: Dictionary = n["rail"]
+		for i in 3:
+			var to: String = outs[i]
+			var d: String = ["up", "left", "right"][i]
+			assert_true(on.nodes.has(to) and bool(on.nodes[to]["entry"]) and on.is_geography(to) and to != w, "%s %s: %s is another world's entry scene" % [w, d, to])
+			assert_eq(j.threshold_of(w, to), str(rail["exits"][d]), "%s %s: the threshold is the route move's end, the doorway" % [w, d])
+			assert_eq(str(rail["routes"][d]["to"]), str(rail["exits"][d]), "%s %s: the route move ends at rail.exits.%s" % [w, d, d])
+		var dests := []
+		for h in on.hotspots.get(w, []):
+			dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		dests.sort()
+		var wd: Array = (DOOM_TABLE[w] as Array) + [w]
+		wd.sort()
+		assert_eq(dests, wd, "%s: the guides lead to the three worlds, the stay hotspot stays" % w)
+	var seen := {"doom_warehouse": true}
+	var todo := ["doom_warehouse"]
+	while not todo.is_empty():
+		var w: String = todo.pop_back()
+		for e in on.nodes[w]["next"]:
+			var to := str(e["to"])
+			if not seen.has(to):
+				seen[to] = true
+				todo.append(to)
+	assert_eq(seen.size(), 8, "every world is reachable from the Warehouse floor: %s" % str(seen.keys()))
 
 
 # --- the rail as polyline moves with holds, and the railing (docs/story/HEIGHTS_AND_PATHS.md) ---------------------------------------------------------------------------------
 
-const DOOM_NODES := ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return"]  # the Warehouse world scenes (its map); the Booth, Bar and Lounge worlds are tested below
+const DOOM_NODES := ["doom_warehouse"]  # the Warehouse world: one geography scene (its map); the other worlds are tested below
 const REVEAL_HOLD := 2.0
 
 
@@ -199,7 +264,7 @@ func test_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:
 				assert_false(m.is_void(sid), "%s: %s is not in a void" % [id, wid])
 				assert_true(reach.has(sid), "%s: %s stands in a piece a walker reaches" % [id, wid])
 				assert_true(float(m.sector(sid)["ceiling"]) - float(m.sector(sid)["floor"]) >= m.eye_height + 0.1, "%s: %s has room for the eye" % [id, wid])
-	assert_true(seen > 40, "the loop looked at %d waypoint uses" % seen)
+	assert_true(seen > 25, "the loop looked at %d waypoint uses" % seen)
 
 
 func test_check_rail_paths_reports_no_problem_for_the_warehouse() -> void:
@@ -262,7 +327,7 @@ func test_the_railing_replaces_the_solid_ledge_and_the_map_keys_are_set() -> voi
 const BOOTH_MAP := "doom_booth"
 const BOOTH_GUIDES := ["bt_guide_mothership", "bt_guide_balcony", "bt_guide_dock"]
 const BOOTH_HOLD_PLACES := ["bt_ref", "bt_hatch_view", "bt_window_view", "bt_dock_view"]
-const BOOTH_NODES := ["doom_booth", "doom_booth.mothership", "doom_booth.balcony", "doom_booth.dock", "doom_booth.return"]
+const BOOTH_NODES := ["doom_booth"]
 const BOOTH_EXITS := ["bt_hatch", "bt_bal_top", "bt_dock_in"]
 
 
@@ -369,7 +434,7 @@ func test_booth_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		if str(h["id"]) != "doom_booth.exit_stay":
 			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "booth: %s is a figure (a guide, no ring)" % h["id"])
 	dests.sort()
-	assert_eq(dests, ["doom_booth", "doom_booth.balcony", "doom_booth.dock", "doom_booth.mothership"], "booth: ahead, left, right and stay")
+	assert_eq(dests, ["doom_balcony", "doom_booth", "doom_dock", "doom_mothership"], "booth: ahead the Mothership, left the Balcony, right the Dock, and stay")
 
 
 func test_booth_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
@@ -434,7 +499,7 @@ func test_booth_railing_visibility_decals_and_the_art_are_in_the_map() -> void:
 
 const BAR_ID := "doom_bar"
 const BAR_GUIDES := ["wb_guide_booth", "wb_guide_floor", "wb_guide_chill"]
-const BAR_NODES := ["doom_bar", "doom_bar.booth", "doom_bar.floor", "doom_bar.chill", "doom_bar.return"]
+const BAR_NODES := ["doom_bar"]
 const BAR_THRESHOLDS := ["wb_booth_door", "wb_floor_door", "wb_chill_door"]
 
 
@@ -524,9 +589,9 @@ func test_the_bar_overlay_loads_clean_with_its_world_nodes_and_figure_hotspots()
 	for id in BAR_NODES:
 		assert_true(on.nodes.has(id), "scene %s" % id)
 	var back := []
-	for e in on.nodes["doom_warehouse.return"]["next"]:
+	for e in on.nodes["doom_warehouse"]["next"]:
 		back.append(str(e["to"]))
-	assert_true(back.has("doom_bar"), "the Warehouse's exit scene leads on to the Copper Bar")
+	assert_true(back.has("doom_bar"), "the Warehouse floor leads straight to the Copper Bar")
 	var hs: Array = on.hotspots.get("doom_bar", [])
 	assert_eq(hs.size(), 4, "three guides and the stay hotspot")
 	var routes := []
@@ -546,7 +611,7 @@ func test_the_bar_overlay_loads_clean_with_its_world_nodes_and_figure_hotspots()
 		assert_true(lights.has(lamp), "%s: its lamp %s is a light of the map" % [h["id"], lamp])
 		assert_false(_thing(m, str((h["anchor"] as Dictionary)["thing"])).is_empty(), "%s: its guide is a thing of the map" % h["id"])
 	routes.sort()
-	assert_eq(routes, ["doom_bar", "doom_bar.booth", "doom_bar.chill", "doom_bar.floor"], "ahead, left, right and stay")
+	assert_eq(routes, ["doom_bar", "doom_booth", "doom_lounge", "doom_warehouse"], "ahead the Booth, left the Floor, right the Chill-out, and stay")
 
 
 func test_the_bar_rail_data_validates_and_every_route_is_a_via_polyline_with_holds() -> void:
@@ -655,7 +720,7 @@ const LMAP_ID := "doom_lounge"
 const LGUIDES := ["lg_guide_dock", "lg_guide_bar", "lg_guide_floor"]
 const LTHRESHOLDS := ["lg_ahead_door", "lg_bar_door", "lg_floor_door"]
 const LHOLD_PLACES := ["lg_ref", "lg_west", "lg_north", "lg_east"]
-const LOUNGE_NODES := ["doom_lounge", "doom_lounge.dock", "doom_lounge.bar", "doom_lounge.floor", "doom_lounge.return"]
+const LOUNGE_NODES := ["doom_lounge"]
 
 
 func _lmap() -> StoryMap:
@@ -785,14 +850,14 @@ func test_lounge_overlay_has_its_world_scenes_hotspots_and_the_floor_reaches_it_
 	var routes := {}
 	for h in hs:
 		routes[str(h["id"])] = str((h["on_success"] as Dictionary).get("route", ""))
-	assert_eq(routes["doom_lounge.exit_dock"], "doom_lounge.dock", "ahead: the Dock")
-	assert_eq(routes["doom_lounge.exit_bar"], "doom_lounge.bar", "left: the Bar")
-	assert_eq(routes["doom_lounge.exit_floor"], "doom_lounge.floor", "right: the Floor")
+	assert_eq(routes["doom_lounge.exit_dock"], "doom_dock", "ahead: the Dock")
+	assert_eq(routes["doom_lounge.exit_bar"], "doom_bar", "left: the Bar")
+	assert_eq(routes["doom_lounge.exit_floor"], "doom_warehouse", "right: the Floor")
 	assert_eq(routes["doom_lounge.exit_stay"], "doom_lounge", "bottom: stay")
 	var back := []
-	for e in on.nodes["doom_warehouse.return"]["next"]:
+	for e in on.nodes["doom_warehouse"]["next"]:
 		back.append(str(e["to"]))
-	assert_true(back.has("doom_lounge"), "the Warehouse's exit scene leads on to the lounge world")
+	assert_true(back.has("doom_lounge"), "the Warehouse floor leads straight to the lounge world")
 
 
 func test_lounge_rail_data_validates_and_every_route_is_a_via_polyline_with_holds() -> void:
@@ -844,7 +909,7 @@ func test_lounge_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> v
 				assert_false(m.is_void(sid), "%s: %s is not in a void" % [id, wid])
 				assert_true(reach.has(sid), "%s: %s stands in a piece a walker reaches" % [id, wid])
 				assert_true(float(m.sector(sid)["ceiling"]) - float(m.sector(sid)["floor"]) >= m.eye_height + 0.1, "%s: %s has room for the eye" % [id, wid])
-	assert_true(seen > 40, "the loop looked at %d waypoint uses" % seen)
+	assert_true(seen > 30, "the loop looked at %d waypoint uses" % seen)
 
 
 func test_lounge_check_rail_paths_reports_no_problem() -> void:
@@ -870,7 +935,7 @@ func test_lounge_check_rail_paths_reports_no_problem() -> void:
 const DK_MAP := "doom_dock"
 const DK_GUIDES := ["dk_guide_mothership", "dk_guide_floor", "dk_guide_underworld"]
 const DK_HOLD_PLACES := ["dk_ref", "dk_street_view", "dk_door_view", "dk_yard_view"]
-const DK_NODES := ["doom_dock", "doom_dock.mothership", "doom_dock.floor", "doom_dock.underworld", "doom_dock.return"]
+const DK_NODES := ["doom_dock"]
 const DK_EXITS := ["dk_moth", "dk_floor_door", "dk_under"]
 
 
@@ -1007,7 +1072,7 @@ func test_dock_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		if str(h["id"]) != "doom_dock.exit_stay":
 			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "dock: %s is a figure (a guide, no ring)" % h["id"])
 	dests.sort()
-	assert_eq(dests, ["doom_dock", "doom_dock.floor", "doom_dock.mothership", "doom_dock.underworld"], "dock: ahead, left, right and stay")
+	assert_eq(dests, ["doom_dock", "doom_mothership", "doom_underworld", "doom_warehouse"], "dock: ahead the Mothership, left the Floor, right the Underworld, and stay")
 
 
 func test_dock_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
@@ -1075,7 +1140,7 @@ func test_dock_walls_decals_lights_and_the_art_are_in_the_map() -> void:
 const UW_MAP := "doom_underworld"
 const UW_GUIDES := ["uw_guide_mothership", "uw_guide_floor", "uw_guide_dock"]
 const UW_HOLD_PLACES := ["uw_ref", "uw_ledge_view", "uw_cave_view", "uw_stair_view"]
-const UW_NODES := ["doom_underworld", "doom_underworld.mothership", "doom_underworld.floor", "doom_underworld.dock", "doom_underworld.return"]
+const UW_NODES := ["doom_underworld"]
 const UW_EXITS := ["uw_gate", "uw_cave_in", "uw_shelf_end"]
 
 
@@ -1205,7 +1270,7 @@ func test_underworld_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		if str(h["id"]) != "doom_underworld.exit_stay":
 			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "underworld: %s is a figure (a guide, no ring)" % h["id"])
 	dests.sort()
-	assert_eq(dests, ["doom_underworld", "doom_underworld.dock", "doom_underworld.floor", "doom_underworld.mothership"], "underworld: ahead, left, right and stay")
+	assert_eq(dests, ["doom_dock", "doom_mothership", "doom_underworld", "doom_warehouse"], "underworld: ahead the Mothership, left the Floor, right the Dock, and stay")
 
 
 func test_underworld_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
@@ -1282,7 +1347,7 @@ func test_underworld_the_abyss_is_a_void_shut_by_railings_and_the_art_is_in_the_
 const MS_MAP := "doom_mothership"
 const MS_GUIDES := ["ms_guide_underworld", "ms_guide_booth", "ms_guide_dock"]
 const MS_HOLD_PLACES := ["ms_ref", "ms_hub_view", "ms_stair_view", "ms_bridge_view"]
-const MS_NODES := ["doom_mothership", "doom_mothership.underworld", "doom_mothership.booth", "doom_mothership.dock", "doom_mothership.return"]
+const MS_NODES := ["doom_mothership"]
 const MS_EXITS := ["ms_uw_hatch", "ms_booth_hatch", "ms_dock_in"]
 
 
@@ -1410,7 +1475,7 @@ func test_mothership_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		if str(h["id"]) != "doom_mothership.exit_stay":
 			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "mothership: %s is a figure (a guide, no ring)" % h["id"])
 	dests.sort()
-	assert_eq(dests, ["doom_mothership", "doom_mothership.booth", "doom_mothership.dock", "doom_mothership.underworld"], "mothership: ahead, left, right and stay")
+	assert_eq(dests, ["doom_booth", "doom_dock", "doom_mothership", "doom_underworld"], "mothership: ahead the Underworld, left the Booth, right the Dock, and stay")
 
 
 func test_mothership_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
@@ -1493,7 +1558,7 @@ func test_mothership_the_void_is_shut_by_railings_visibility_decals_and_the_art_
 const BC_MAP := "doom_balcony"
 const BC_GUIDES := ["bc_guide_mothership", "bc_guide_floor", "bc_guide_booth"]
 const BC_HOLD_PLACES := ["bc_ref", "bc_bridge_view", "bc_stair_view", "bc_cabin_view"]
-const BC_NODES := ["doom_balcony", "doom_balcony.mothership", "doom_balcony.floor", "doom_balcony.booth", "doom_balcony.return"]
+const BC_NODES := ["doom_balcony"]
 const BC_EXITS := ["bc_bridge_end", "bc_stair_foot", "bc_cabin_in"]
 
 
@@ -1598,7 +1663,7 @@ func test_balcony_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 	assert_true(on.errors.is_empty(), "balcony: the run loads clean with the flag: %s" % str(on.errors))
 	for id in BC_NODES:
 		assert_true(on.nodes.has(id), "balcony: scene %s" % id)
-	assert_true(on.nodes.has("doom_warehouse.balcony"), "the Warehouse keeps its own stand-in, renamed doom_warehouse.balcony")
+	assert_false(on.nodes.has("doom_warehouse.balcony"), "the Warehouse's balcony stand-in is gone: its guide leads to the world doom_balcony")
 	assert_true(str(on.nodes["doom_balcony"]["world"]) == "doom_balcony" and bool(on.nodes["doom_balcony"]["entry"]), "balcony: doom_balcony is the entry of the world doom_balcony")
 	for id in BC_NODES:
 		var rail: Dictionary = on.nodes[id]["rail"]
@@ -1628,7 +1693,7 @@ func test_balcony_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		if str(h["id"]) != "doom_balcony.exit_stay":
 			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "balcony: %s is a figure (a guide, no ring)" % h["id"])
 	dests.sort()
-	assert_eq(dests, ["doom_balcony", "doom_balcony.booth", "doom_balcony.floor", "doom_balcony.mothership"], "balcony: ahead, left, right and stay")
+	assert_eq(dests, ["doom_balcony", "doom_booth", "doom_mothership", "doom_warehouse"], "balcony: ahead the Mothership, left the Floor, right the Booth, and stay")
 	var labels := []
 	for n in on.nodes["doom_balcony"]["next"]:
 		labels.append(str(n["label"]))
