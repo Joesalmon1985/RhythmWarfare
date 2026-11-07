@@ -52,10 +52,16 @@ An example follows. Its waypoint names are made up for illustration; a working f
 
 1. The route window commits as usual (`RunEngine` gives `route_commit` with `same_world: false`). The departing scene's
    `exits[dir]` doorway and the chosen guide's `committed` state are unchanged.
-2. At beat 61 (3 beats before the downbeat), `RunPlay._update_passage` calls `RunJourney.threshold_leave`. This is one
-   `player_move` to the threshold along the route's `via`. It uses the move's `bars`, shortened so that it ends by the
-   boundary. Its `hold_bars` is kept only if there is time left before the boundary. A route with no move and no
-   threshold has no walk.
+2. The walk out is one `player_move` to the threshold along the route's `via`. It uses the move's `bars` (clamped to
+   2..4), shortened so that it ends by the boundary. Its `hold_bars` is kept only if there is time left before the
+   boundary. A route with no move and no threshold has no walk. The pads keep playing during the walk.
+   - A tap on a guide is the decision (ruling 39). It commits at the tap's own beat: the guide goes `committed`, the
+     others `declined`, and `route_commit` fires. The walk starts there (`RunEngine.tap_commit`, then
+     `RunJourney.commit_walk`). A tap at beat 50 has 14 beats, enough for a 2-bar leg and a 1-bar hold. A tap made
+     before the window opens commits as the window opens. Later taps in the same window are ignored. The choice
+     viewpoint's hold gives way to the walk (`StoryPlayer.end_window_holds`), and the rail takes no more steps.
+   - An untouched default walks from the lock at beat 61 (3 beats before the downbeat): `RunPlay._update_passage`
+     calls `RunJourney.threshold_leave`.
 3. From beat 62 the passage frame shuts to the doorway. On the downbeat the stage swaps to the destination's map.
 4. The destination's `rail.arrival` cuts to its `rail.arrive` and walks home. The frame opens again.
 

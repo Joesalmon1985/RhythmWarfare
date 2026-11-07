@@ -16,12 +16,12 @@
 			"place": {
 				"waypoint": "floor_centre",
 				"rail": {
-					"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3}],
+					"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3, "hold_bars": 3, "choice": true}],
 					"bad": [{"to": "floor_edge", "role": "queasy", "style": "walk", "bars": 2}],
 					"arrive": "door",
 					"exits": {"down": "floor_centre", "up": "to_balcony", "right": "to_bar"},
 					"routes": {
-						"up": {"to": "to_balcony", "via": ["floor_edge"], "style": "walk", "bars": 3, "hold_bars": 1},
+						"up": {"to": "to_balcony", "via": ["floor_edge"], "style": "walk", "bars": 2, "hold_bars": 1},
 						"right": {"to": "to_bar", "via": ["floor_bar"], "style": "walk", "bars": 2, "hold_bars": 1}
 					},
 					"glances": [{"by": -20, "bars": 2}, {"by": 18, "bars": 2}],
@@ -44,7 +44,7 @@
 					"arrive": "deck_gallery_door",
 					"exits": {"down": "deck_centre", "up": "deck_reactor_door", "left": "deck_edge"},
 					"routes": {
-						"up": {"to": "deck_reactor_door", "via": ["deck_gallery_door"], "style": "walk", "bars": 3, "hold_bars": 1},
+						"up": {"to": "deck_reactor_door", "via": ["deck_gallery_door"], "style": "walk", "bars": 2, "hold_bars": 1},
 						"left": {"to": "deck_edge", "via": ["deck_ramp"], "style": "walk", "bars": 3}
 					},
 					"glances": [{"by": -20, "bars": 2}, {"by": 18, "bars": 2}],
