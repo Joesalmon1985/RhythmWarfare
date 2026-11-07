@@ -417,6 +417,17 @@ Needed, not built:
 - H8.3 the cockpit as a low-res overlay layer (`StoryLowRes.add_overlay`) under the activity view.
 - H8.4 `run_play.gd:420` `_show_world`: an activity may ask for another map's stage at `t_seat` and back at exit (race), prebuilt in a guard.
 - H9.1 `hotspot_view.gd` and `choice_staging.gd`: draw states from ChoiceThing data, no ring (package A7).
+- H10 weather (rain scenes: Booth, Dock, Balcony, the Lounge's street; rulings 36, 38). **BUILT** (package A9, wip/engine-rain); guide `docs/engine/WEATHER.md`,
+  tests `tests/test_weather.gd`, sheet `docs/shots/engine/weather/rain_sheet.jpg`:
+  ```
+  map  "weather": {"rain": 0..1, "wind": -60..60 (degrees of slant, + leans toward +x), "drips": [{"at": [x, z], "h": metres above the floor}]}   (StoryMap.weather; errors on bad values)
+  sector "rain": true | false   (true: rain under a roof; false: an open sector kept dry; absent: open = ceil_tex "sky" or "*_sky")
+  sector "wet": 0..1            (the floor gloss; absent: the map's rain on open sectors, 0 elsewhere)
+  StoryMap.rain_open(sid) -> bool, wet_of(sid) -> float, has_weather() -> bool, sky_ceiling(sector) (static)
+  StoryStage.weather: StoryWeather   built beside fx3d only when map.has_weather() (a dry map gets no node), updated in _update_world on song time
+  StoryWeather.update(t, camera, sector_light, vis)   rain_mm / drip_mm / gloss_mm (one MultiMesh each), rain_at(p), streak_pos(i, t, lo), draw_calls()
+  ```
+  Cost at the Dock (640 x 231 low-res, rain 1): +3 draw calls, +886 primitives, weather.update ~8 us CPU on the dev PC; phone GPU time not measured.
 
 ## What is not settled (for the lead or the owner)
 
