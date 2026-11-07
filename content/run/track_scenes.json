@@ -1124,6 +1124,14 @@
       "magic_stage": {
         "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
         "note": "the opening rave track; the bass stem is locked on entry until the bass knob is freed"
+      },
+      "dino_rave": {
+        "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+        "note": "the opening rave track; the bass stem is locked on entry until the bass knob is freed"
+      },
+      "dino_stage": {
+        "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+        "note": "the opening rave track; the bass stem is locked on entry until the bass knob is freed"
       }
     }
   }

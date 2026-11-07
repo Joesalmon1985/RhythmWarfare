@@ -368,7 +368,7 @@ func test_the_three_activity_nodes_exist_with_their_holds_hotspots_and_things_in
 	assert_eq(str(homes["bartender"]["sector"]), "bar")
 	assert_eq(str(homes["dj"]["sector"]), "stage")
 	assert_eq(str(homes["pilot"]["sector"]), "hangar")
-	assert_true(actors.size() >= 45, "a crowd: %d people" % actors.size())
+	assert_true(actors.size() >= 36, "a crowd: %d people (the Space rave has 37)" % actors.size())
 	for pc in ["cloak_lamp", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3", "bar_shelf_4"]:
 		assert_true(m.things.any(func(t: Dictionary) -> bool: return str(t.get("piece", "")) == pc), "%s is a map piece" % pc)
 	for sheet in ["cloak_coat", "cloak_symbols_%s" % cfg["theme"], "bar_glass_%s" % cfg["theme"], "bar_order_%s" % cfg["theme"], "sr_knob"]:

@@ -1,0 +1,592 @@
+{
+ "world": "dino_rave",
+ "hotspots": [
+  {
+   "id": "dino_rave.stage",
+   "world": "dino_rave",
+   "scene": "dino_rave",
+   "map": "dino_rave",
+   "anchor": {
+    "actor": "dj"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_stage"
+   },
+   "on_failure": {
+    "route": "dino_stage"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "dino_rave.cloakroom",
+   "world": "dino_rave",
+   "scene": "dino_rave",
+   "map": "dino_rave",
+   "anchor": {
+    "actor": "attendant"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_cloakroom"
+   },
+   "on_failure": {
+    "route": "dino_cloakroom"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "dino_rave.bar",
+   "world": "dino_rave",
+   "scene": "dino_rave",
+   "map": "dino_rave",
+   "anchor": {
+    "actor": "bartender"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_bar"
+   },
+   "on_failure": {
+    "route": "dino_bar"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "dino_rave.race",
+   "world": "dino_rave",
+   "scene": "dino_rave",
+   "map": "dino_rave",
+   "anchor": {
+    "actor": "pilot"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_race"
+   },
+   "on_failure": {
+    "route": "dino_race"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "dino_rave.home",
+   "world": "dino_rave",
+   "scene": "dino_rave",
+   "map": "dino_rave",
+   "anchor": {
+    "thing": "home_hatch"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "dino_stage.deck",
+   "world": "dino_rave",
+   "scene": "dino_stage",
+   "map": "dino_rave",
+   "anchor": {
+    "thing": "deck"
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "dinos_bass_fixed"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "bass_knob"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
+   "id": "dino_stage.home",
+   "world": "dino_rave",
+   "scene": "dino_stage",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "stage_foot"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "dino_stage.back",
+   "world": "dino_rave",
+   "scene": "dino_stage",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "stage_foot"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_rave"
+   },
+   "on_failure": {
+    "route": "dino_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "dino_cloakroom.cloakroom",
+   "world": "dino_rave",
+   "scene": "dino_cloakroom",
+   "map": "dino_rave",
+   "anchor": {
+    "thing": "cloak_counter"
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "dinos_cloakroom_done"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "cloakroom"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
+   "id": "dino_cloakroom.back",
+   "world": "dino_rave",
+   "scene": "dino_cloakroom",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "cloak_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_rave"
+   },
+   "on_failure": {
+    "route": "dino_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "dino_cloakroom.home",
+   "world": "dino_rave",
+   "scene": "dino_cloakroom",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "cloak_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "dino_bar.bar",
+   "world": "dino_rave",
+   "scene": "dino_bar",
+   "map": "dino_rave",
+   "anchor": {
+    "thing": "bar_counter"
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "dinos_bar_done"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "bar"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
+   "id": "dino_bar.back",
+   "world": "dino_rave",
+   "scene": "dino_bar",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "bar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_rave"
+   },
+   "on_failure": {
+    "route": "dino_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "dino_bar.home",
+   "world": "dino_rave",
+   "scene": "dino_bar",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "bar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "dino_race.back",
+   "world": "dino_rave",
+   "scene": "dino_race",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "hangar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_rave"
+   },
+   "on_failure": {
+    "route": "dino_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "dino_race.home",
+   "world": "dino_rave",
+   "scene": "dino_race",
+   "map": "dino_rave",
+   "anchor": {
+    "waypoint": "hangar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

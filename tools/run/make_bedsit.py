@@ -40,7 +40,7 @@ FACING = {
     "S": ("magic", "magic_rave", "bedsit_s", "threshold_s", 180, "the wardrobe door ajar with iridescent light leaking out, a unicorn figure on the shelf, fairy lights"),
     "W": ("transport", "transport_rave", "bedsit_w", "threshold_w", 90, "the door with a bus timetable pinned to it, a toy car, a blinking indicator light, orange street light under the door"),
 }
-LANDED = {"space_rave": "N", "magic_rave": "S"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_<theme>_rave.py)
+LANDED = {"space_rave": "N", "magic_rave": "S", "dino_rave": "E"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_<theme>_rave.py)
 PLACEHOLDER_RAVES = {FACING[f][1]: f for f in FACINGS if FACING[f][1] not in LANDED}  # scene id -> facing it leaves from (resolve to the bedsit)
 # the raves that are real worlds: theme -> (scene id prefix, title, world blurb, hub blurb, stage blurb, race station title, race hub label, cloakroom blurb, bar blurb)
 RAVES = {
@@ -54,8 +54,13 @@ RAVES = {
               "The dais at the north of the lounge: two steps up to the DJ deck. The bass knob is stuck.", "Carriage house", "The carriage house: a race",
               "The coat check in the lounge's north-west alcove: a counter, a rail of capes and an attendant who wants the right cape for each symbol.",
               "The bar in the lounge's north-east alcove: a cauldron counter, a back shelf of potions and a bartender who remembers the drinks."),
+    "dinos": ("dino", "The Dinosaur Rave", "A basalt ledge over a lava gulf, a causeway to the stage and two islands: a stage, a cloakroom, a bar and a ranger garage.",
+              "A rave over the lava: a basalt ledge, a long railed causeway to the stage and two islands off it. A dinosaur DJ waves from the stage; the cloakroom cave, the tent bar and the ranger garage are across the lava.",
+              "The dais at the end of the causeway: two steps up to the DJ deck under a ribcage arch. The bass knob is stuck.", "Ranger garage", "The ranger garage: a race",
+              "The coat check in a cave on the west island: a stone desk, a rack of hides and an attendant who wants the right hide for each symbol.",
+              "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks."),
 }
-ORDER = ["space", "magic"]  # the order the raves' nodes are written in
+ORDER = ["space", "magic", "dinos"]  # the order the raves' nodes are written in
 
 
 def stations(theme: str) -> dict:
@@ -86,7 +91,12 @@ def place(home: str) -> dict:
 
 
 def srail(home: str, good: list, exits: dict, arrive: str = "") -> dict:
-    r = {"good": good, "bad": [{"to": home, "role": "dancer", "style": "walk", "bars": 2}], "glances": [{"by": 0, "pitch": 0, "bars": 2}], "strolls": [{"fwd": 0.0, "bars": 2}], "exits": exits}
+    # (a setback place is the scene's own last place, holds included: the rooms are relaxed, a slip does not move the camera, and a rail that is back on its good place later in the phase
+    # has no late walk to shorten against the next choice window)
+    bad = dict(good[-1]) if home != "" and good and float(good[-1].get("hold_bars", 0.0)) > 0.0 else {"to": home, "role": "dancer", "style": "walk", "bars": 2}
+    if bad.get("choice"):
+        bad = dict(bad, bars=max(2, min(4, int(bad["bars"]))))
+    r = {"good": good, "bad": [bad], "glances": [{"by": 0, "pitch": 0, "bars": 2}], "strolls": [{"fwd": 0.0, "bars": 2}], "exits": exits}
     if arrive:
         r["arrive"] = arrive
     return r

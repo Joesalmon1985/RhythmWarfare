@@ -127,14 +127,15 @@ def rect(x0, z0, x1, z1):
 
 # ---------------------------------------------------------------------------------------------------------------------------------------- the map under construction
 class RaveMap:
-    def __init__(self, art: str, start: str, geography: dict, textures: dict, sky: dict, fog: dict):
+    def __init__(self, art: str, start: str, geography: dict, textures: dict, sky: dict, fog: dict, gain: float = 1.0, lgain: float = 1.0):
         self.art, self.start, self.geography, self.textures, self.sky, self.fog = art, start, geography, textures, sky, fog
+        self.gain, self.lgain = gain, lgain  # a dark set of tiles is lifted: sector light and lamp strength are multiplied by these when written
         self.sectors, self.walls, self.things, self.lights, self.decals, self.waypoints, self.homes, self.actors = [], [], [], [], [], [], [], []
         self.poly = {}
 
     # ---- sectors and portals
     def sector(self, sid, poly, floor, ceiling, floor_tex, ceil_tex, light, tint, flags=None, room="main", **kw):
-        self.sectors.append(sec(sid, poly, floor, ceiling, floor_tex, ceil_tex, light, tint, flags, room, **kw))
+        self.sectors.append(sec(sid, poly, floor, ceiling, floor_tex, ceil_tex, round(min(1.0, light * self.gain), 3), tint, flags, room, **kw))
         self.poly[sid] = poly
         return poly
 
@@ -185,7 +186,7 @@ class RaveMap:
         self.things.append(d)
 
     def light(self, lid, at, y, radius, color, strength, **kw):
-        d = {"id": lid, "kind": "light", "at": at, "y": y, "radius": radius, "color": color, "strength": strength}
+        d = {"id": lid, "kind": "light", "at": at, "y": y, "radius": radius, "color": color, "strength": round(min(2.5, strength * self.lgain), 3)}
         d.update(kw)
         self.lights.append(d)
 
@@ -243,7 +244,7 @@ def add_stage(m: RaveMap, fr: Frame, fore: str, look: dict) -> None:
     m.bb("stage_beams_l", p0, fr.loc(25.8, -4.4), 4.2, y=3.0, piece=p0)
     m.bb("stage_ring", p1, fr.loc(22.6), 2.6, y=0.9, piece=p1)
     m.bb("stage_dome", p2, fr.loc(26.4), 3.4, y=2.6, piece=p2)
-    m.bb("glow_stage", "glow", fr.loc(25.5), 3.0, y=1.4, anim="pulse", blend="add")
+    m.bb("glow_stage", look.get("glow", "glow"), fr.loc(25.5), 3.0, y=1.4, anim="pulse", blend="add")
     m.light("lt_stage_a", fr.loc(24.0, -3.0), 5.0, 9.0, look["lt_a"], 1.2)
     m.light("lt_stage_b", fr.loc(24.0, 3.0), 5.0, 9.0, look["lt_b"], 1.2)
     m.guide("dj", look["dj"][0], look["dj"][1], "stage", fr.loc(26.2, 0.9), glow=True)
@@ -289,7 +290,7 @@ def add_bar(m: RaveMap, fr: Frame, fore: str, look: dict, bartender: tuple, cust
     m.decal("bar_screen", look["screen"], fr, bfar, 0.0, 2.2, 0.9)
     m.decal("bar_window", look["window_a"], fr, bfar, -3.0, 1.0, 2.2)
     m.decal("bar_window_b", look["window_b"], fr, bfar, 3.0, 1.0, 2.2)
-    m.bb("glow_bar", "glow", fr.loc(22.5), 2.2, y=1.4, anim="pulse", blend="add")
+    m.bb("glow_bar", look.get("glow", "glow"), fr.loc(22.5), 2.2, y=1.4, anim="pulse", blend="add")
     m.bb("bar_counter", look["counter"], fr.loc(20.6), 1.3, y=0.65)
     for i, s_ in enumerate(BAR_BAYS):
         m.bb("bar_cab_%d" % (i + 1), look["cabinet"], fr.loc(22.9, s_), 1.8, y=0.9)
@@ -314,7 +315,7 @@ def add_race(m: RaveMap, fr: Frame, fore: str, look: dict, pilot: tuple, D=7.5, 
     if w0 > 3.0:
         m.decal("hangar_warn", look["side_a"], fr, hfar, -3.7, 0.0, 2.4)
         m.decal("hangar_glow", look["side_b"], fr, hfar, 3.7, 0.0, 2.4)
-    m.bb("glow_hangar", "glow", fr.loc(A_OUT + D - 0.9), 3.0, y=1.4, anim="pulse", blend="add")
+    m.bb("glow_hangar", look.get("glow", "glow"), fr.loc(A_OUT + D - 0.9), 3.0, y=1.4, anim="pulse", blend="add")
     vs = look.get("vehicle_size", 1.5)
     m.bb("hangar_racer", look["vehicle"], fr.loc(A_OUT + D - 1.1), vs, y=vs / 2)
     m.bb("hangar_console", look["console"], fr.loc(A_OUT + 4.6, -(w0 - 0.6)), 1.3, y=0.65)

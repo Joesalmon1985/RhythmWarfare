@@ -159,9 +159,7 @@ def _patched(theme: str):
 def build(theme: str, art: str) -> dict:
     """Writes the rigs of `theme` into assets/story/<art>/source/chars and returns the archetypes block of the manifest."""
     lib.set_chapter(art)
-    chars = os.path.join(lib.SVG_DIR, "chars")
-    if os.path.isdir(chars):
-        shutil.rmtree(chars)
+    chars = os.path.join(lib.SVG_DIR, "chars")  # (written over, never cleared: Godot's .import files beside the SVGs keep their uids)
     ch = _patched(theme)
     orig = {a: {v: tuple(ch.VARIANTS[a][v][r] for r in ROLES) for v in ch.VARIANTS[a]} for a in ch.VARIANTS}
     archetypes = ch.build_all()

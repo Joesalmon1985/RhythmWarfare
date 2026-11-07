@@ -41,6 +41,14 @@
    "story": "res://content/story/magic_rave.json",
    "depth": 2,
    "blurb": "An octagonal lounge of stepped tiers round a sunken dance well: a stage, a cloakroom, a bar and a carriage house."
+  },
+  {
+   "id": "dino_rave",
+   "title": "The Dinosaur Rave",
+   "map": "dino_rave",
+   "story": "res://content/story/dino_rave.json",
+   "depth": 2,
+   "blurb": "A basalt ledge over a lava gulf, a causeway to the stage and two islands: a stage, a cloakroom, a bar and a ranger garage."
   }
  ],
  "nodes": [
@@ -193,67 +201,6 @@
    }
   },
   {
-   "id": "dino_rave",
-   "world": "bedsit",
-   "scene": "dino_rave",
-   "title": "PLACEHOLDER: the dinos rave",
-   "entry": false,
-   "exit_scene": false,
-   "role": "dancer",
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "dinos",
-    "facing": "E"
-   },
-   "ending": "dinos_placeholder",
-   "blurb": "A stand-in for the dinos rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json.",
-   "next": [
-    {
-     "to": "run:warehouse",
-     "dir": "up",
-     "label": "Back to the Warehouse"
-    }
-   ],
-   "place": {
-    "waypoint": "bedsit_e",
-    "rail": {
-     "good": [
-      {
-       "to": "bedsit_e",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 2
-      }
-     ],
-     "bad": [
-      {
-       "to": "bedsit_e",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 2
-      }
-     ],
-     "arrive": "bedsit_e",
-     "glances": [
-      {
-       "by": 0,
-       "pitch": 0,
-       "bars": 2
-      }
-     ],
-     "strolls": [
-      {
-       "fwd": 0.0,
-       "bars": 2
-      }
-     ],
-     "exits": {
-      "up": "threshold_e"
-     }
-    }
-   }
-  },
-  {
    "id": "transport_rave",
    "world": "bedsit",
    "scene": "transport_rave",
@@ -371,7 +318,9 @@
        "to": "hub_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
       }
      ],
      "glances": [
@@ -444,10 +393,11 @@
      ],
      "bad": [
       {
-       "to": "stage_foot",
-       "role": "dancer",
+       "to": "deck_view",
+       "role": "on_stage",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 4
       }
      ],
      "glances": [
@@ -510,10 +460,11 @@
      ],
      "bad": [
       {
-       "to": "cloak_door",
+       "to": "cloak_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -576,10 +527,11 @@
      ],
      "bad": [
       {
-       "to": "bar_door",
+       "to": "bar_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -728,7 +680,9 @@
        "to": "hub_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
       }
      ],
      "glances": [
@@ -801,10 +755,11 @@
      ],
      "bad": [
       {
-       "to": "stage_foot",
-       "role": "dancer",
+       "to": "deck_view",
+       "role": "on_stage",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 4
       }
      ],
      "glances": [
@@ -867,10 +822,11 @@
      ],
      "bad": [
       {
-       "to": "cloak_door",
+       "to": "cloak_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -933,10 +889,11 @@
      ],
      "bad": [
       {
-       "to": "bar_door",
+       "to": "bar_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -979,6 +936,368 @@
    "next": [
     {
      "to": "magic_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_rave",
+   "scene": "hub",
+   "title": "The Dinosaur Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "A rave over the lava: a basalt ledge, a long railed causeway to the stage and two islands off it. A dinosaur DJ waves from the stage; the cloakroom cave, the tent bar and the ranger garage are across the lava.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the door"
+    },
+    {
+     "to": "dino_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "dino_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "dino_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "dino_race",
+     "dir": "s",
+     "label": "The ranger garage: a race"
+    }
+   ],
+   "theme": "dinos",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "dino_arrive"
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The dais at the end of the causeway: two steps up to the DJ deck under a ribcage arch. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "dinos",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The coat check in a cave on the west island: a stone desk, a rack of hides and an attendant who wants the right hide for each symbol.",
+   "theme": "dinos",
+   "activity": "cloakroom",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_door",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_bar",
+   "scene": "bar",
+   "title": "Bar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks.",
+   "theme": "dinos",
+   "activity": "bar",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_race",
+   "scene": "dino_race",
+   "title": "PLACEHOLDER: Ranger garage",
+   "entry": false,
+   "exit_scene": true,
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "dinos",
+    "activity": "race"
+   },
+   "theme": "dinos",
+   "blurb": "A stand-in for the ranger garage activity (id 'race' in content/raves/dinos.json activities), built elsewhere as a minigame. It loops back to the rave.",
+   "next": [
+    {
+     "to": "dino_rave",
      "dir": "up",
      "label": "Back to the rave",
      "loop": true
