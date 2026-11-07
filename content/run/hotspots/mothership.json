@@ -1071,9 +1071,9 @@
    "map": "mothership",
    "anchor": {
     "pos": [
-     33.6,
+     37.2,
      1.2,
-     2.0
+     3.0
     ]
    },
    "kind": "secret",
@@ -1110,12 +1110,12 @@
    "herald": {
     "quest": "gospel",
     "at": [
-     34.517,
-     2.919
+     38.4,
+     3.2
     ],
     "toward": [
-     33.6,
-     2.0
+     37.2,
+     3.0
     ],
     "mark_y": 1.8,
     "gate": true
