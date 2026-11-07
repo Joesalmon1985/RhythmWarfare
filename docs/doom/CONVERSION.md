@@ -96,3 +96,36 @@ Count `SCRIPT ERROR` lines in the Godot output: the runner can print success on 
 | underworld | MAP29 The Living End | `doom_underworld.json` | Three Paths Across the Basalt Abyss-4.png |
 
 (`tools/doom/scenes.json` is the machine-readable table. Output files do not exist until a WAD with geometry is supplied.)
+
+## Approximate reconstructions (hand traces, no WAD)
+
+Because the supplied WAD has no geometry, three scenes exist as **approximate** maps traced by hand, not read from Doom data. The renders at
+ian-albert.com could not be inspected here (they are 1.5 to 2 MB isometric JPEGs rotated 45 degrees, and downloading them was not approved),
+so the traces come from knowledge of the levels and the brief's descriptions. They are marked `doom.approximate: true` with `doom.uncertain`
+notes in the JSON, and the plan PNG carries a red APPROXIMATE stamp. Do not call them an exact import.
+
+`python tools/doom/trace/make_traces.py` writes `tools/doom/trace/<scene>.json` (vertices, linedefs, sidedefs, sectors, things in Doom units,
+derived from polygon rings with shared edges); `python tools/doom/convert.py --scene <scene> --trace tools/doom/trace/<scene>.json` runs the
+identical chain (decomposition, portals, `check_world.py`, `render_plan.py`, `check_doom_map.gd`). A real WAD replaces them with
+`convert.py --scene <scene>` (same output file).
+
+| Scene | Map | Pieces | Portals | Steps over 0.6 m | Drops / ledges over 0.75 m |
+| --- | --- | --- | --- | --- | --- |
+| warehouse | MAP07 | 28 | 59 | 24 | 16 (max 2.00 m) |
+| mothership | MAP11 | 20 | 31 | 2 | 12 (max 8.00 m, the pit) |
+| lounge | MAP08 | 14 | 17 | 1 | 0 |
+
+Uncertain, by scene (the full list is in each trace and output JSON):
+
+* **warehouse (MAP07 Dead Simple):** the whole footprint. Assumed: a 1400 unit square arena at floor 0 (ceiling 256), a 600 unit central platform at
+  +64 with four stair arms of two risers (24 and 48), four 200 unit corner alcoves at +24 with lower ceilings, and an invented exit corridor
+  and room on the north side. Real proportions, rim, raised areas and exits unknown.
+* **mothership (MAP11 Circle of Death):** an octagon of 1280 units across (the real ring may be circular or many-sided) with a walkway about 200
+  wide, a pit at -256 (8 m below the walkway) spanned by one 96 wide bridge, four side rooms and a stepped dais as placeholders. Number
+  and place of bridges and rooms in the real map unknown; the void and the loop are what the pilot needs.
+* **lounge (MAP08 Tricks and Traps):** an octagonal 512 unit hub with a dais and eight door rooms (identical closets, invented heights); the real
+  map's hub size, door positions, connecting rooms and traps unknown.
+
+By eye the plans show the intended shapes (square arena with plus-shaped stairs and notched corners; octagon ring with a void and a bridge).
+Nothing was compared against the real renders. The Hertel-Mehlhorn pieces include long thin triangles around holes (visible as orange
+diagonals in the plans); valid, but a scene author may want to add cut lines for nicer floors.

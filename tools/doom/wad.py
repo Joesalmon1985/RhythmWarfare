@@ -99,6 +99,8 @@ class DoomMap:
         self.sidedefs = []   # dict xoff, yoff, upper, lower, middle, sector
         self.sectors = []    # dict floor, ceiling, floor_tex, ceil_tex, light, special, tag
         self.things = []     # dict x, y, angle, type, flags
+        self.approximate = False  # True for a hand trace (tools/doom/trace), not read from a WAD
+        self.uncertain = []       # notes on geometry that is a guess
 
 
 def parse_map(name, L):
@@ -133,6 +135,22 @@ def parse_map(name, L):
     for sd in m.sidedefs:
         if not 0 <= sd["sector"] < len(m.sectors):
             raise ValueError("%s: sidedef sector %d out of range" % (name, sd["sector"]))
+    return m
+
+
+def load_trace(path):
+    """A hand-authored map in the form a WAD gives (tools/doom/trace/*.json, written by trace/make_traces.py): same keys as DoomMap."""
+    import json
+    with open(path, encoding="utf-8") as f:
+        d = json.load(f)
+    m = DoomMap(d.get("name", os.path.basename(path)))
+    m.vertices = [tuple(v) for v in d["vertices"]]
+    m.linedefs = d["linedefs"]
+    m.sidedefs = d["sidedefs"]
+    m.sectors = d["sectors"]
+    m.things = d.get("things", [])
+    m.approximate = bool(d.get("approximate", True))
+    m.uncertain = d.get("uncertain", [])
     return m
 
 

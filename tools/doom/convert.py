@@ -1,6 +1,7 @@
 """Doom map -> StoryMap JSON (content/story/maps/doom_<scene>.json).
 
   python tools/doom/convert.py --scene warehouse          (one scene of tools/doom/scenes.json)
+  python tools/doom/convert.py --scene warehouse --trace tools/doom/trace/warehouse.json   (approximate, hand-traced, no WAD)
   python tools/doom/convert.py --all                      (all eight)
   python tools/doom/convert.py --map MAP07 --out x.json [--bbox x0,y0,x1,y1] [--sectors 1,2,3]
 
@@ -178,6 +179,10 @@ def convert_map(m, vscale=1.0, bbox=None, sectors_only=None, name="doom"):
                     pts = [(x / U, -y / U) for x, y in pc["ring"]]
                     if _inside_margin(q, pts) >= 0.3:
                         start_pid, start_at, start_yaw = pid, q, float(t["angle"]) - 90.0
+                    else:  # on a diagonal or near a wall: the roomiest spot of the same piece, facing the same way
+                        dd, qq = margin_pole(pc["ring"])
+                        if dd >= 0.3:
+                            start_pid, start_at, start_yaw = pid, qq, float(t["angle"]) - 90.0
                     break
             break
     # --- reachability from the start ----------------------------------------------------------------------------------------------------
@@ -274,6 +279,7 @@ def convert_map(m, vscale=1.0, bbox=None, sectors_only=None, name="doom"):
             "sector_map": sector_map, "dropped_tiny": info["dropped_tiny"], "dropped_unreachable_pieces": info["dropped_unreachable"],
             "dropped_unbuildable_sectors": info["dropped_unbuildable"], "broken_sectors": info["broken_sectors"],
             "doors_opened": info["doors_opened"], "outside_cut_sectors": len(info["outside_cut"]), "warnings": info["warnings"],
+            "approximate": bool(getattr(m, "approximate", False)), "uncertain": list(getattr(m, "uncertain", [])),
             "stats": {"doom_sectors": len(sector_map), "pieces": len(sectors_out), "portals": nportal},
         },
     }
@@ -306,8 +312,8 @@ def write_json(d, path):
         f.write("\n")
 
 
-def run_scene(scene, entry, w, vscale=1.0, out=None, bbox=None, sectors=None):
-    m = w.read_map(entry["map"])
+def run_scene(scene, entry, w, vscale=1.0, out=None, bbox=None, sectors=None, trace=None):
+    m = wadmod.load_trace(trace) if trace else w.read_map(entry["map"])
     bbox = bbox if bbox is not None else entry.get("bbox")
     sectors = sectors if sectors is not None else entry.get("sectors")
     d = convert_map(m, vscale, bbox, sectors, name=entry["map"])
@@ -325,6 +331,7 @@ def main(argv=None):
     ap.add_argument("--map", help="a map lump name, e.g. MAP07 (with --out)")
     ap.add_argument("--out")
     ap.add_argument("--wad")
+    ap.add_argument("--trace", help="a hand-traced map (tools/doom/trace/<scene>.json) used instead of the WAD; the output is marked approximate")
     ap.add_argument("--vscale", type=float, default=1.0)
     ap.add_argument("--bbox", help="x0,y0,x1,y1 in Doom units: keep sectors with a line vertex inside")
     ap.add_argument("--sectors", help="comma separated Doom sector indices to keep")
@@ -333,7 +340,7 @@ def main(argv=None):
     secs = [int(v) for v in a.sectors.split(",")] if a.sectors else None
     scenes = load_scenes()
     try:
-        w = wadmod.Wad.open(a.wad)
+        w = None if a.trace else wadmod.Wad.open(a.wad)
     except OSError as e:
         print("cannot read the WAD (%s); set RW_DOOM_WAD" % e, file=sys.stderr)
         return 2
@@ -345,7 +352,7 @@ def main(argv=None):
             if not names:
                 ap.error("give --scene, --all or --map")
             for n in names:
-                run_scene(n, scenes[n], w, a.vscale, a.out if a.scene else None, bbox, secs)
+                run_scene(n, scenes[n], w, a.vscale, a.out if a.scene else None, bbox, secs, a.trace)
     except (ValueError, KeyError) as e:
         print("conversion failed: %s" % e, file=sys.stderr)
         return 1

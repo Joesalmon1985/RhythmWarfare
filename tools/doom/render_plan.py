@@ -74,6 +74,25 @@ class Canvas:
                 y0 += sy
 
 
+GLYPHS = {  # 5 x 7 pixel capitals for the APPROXIMATE stamp
+    "A": ["01110", "10001", "10001", "11111", "10001", "10001", "10001"], "P": ["11110", "10001", "10001", "11110", "10000", "10000", "10000"],
+    "R": ["11110", "10001", "10001", "11110", "10100", "10010", "10001"], "O": ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+    "X": ["10001", "10001", "01010", "00100", "01010", "10001", "10001"], "I": ["01110", "00100", "00100", "00100", "00100", "00100", "01110"],
+    "M": ["10001", "11011", "10101", "10101", "10001", "10001", "10001"], "T": ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
+    "E": ["11111", "10000", "10000", "11110", "10000", "10000", "11111"]}
+
+
+def stamp(cv, text, x, y, c, k=3):
+    for ch in text:
+        for r, row in enumerate(GLYPHS[ch]):
+            for q, bit in enumerate(row):
+                if bit == "1":
+                    for dx in range(k):
+                        for dy in range(k):
+                            cv.px(x + q * k + dx, y + r * k + dy, c)
+        x += 6 * k
+
+
 def render(d, size=900):
     secs = d["sectors"]
     pts = [tuple(p) for s in secs for p in s["polygon"]]
@@ -107,6 +126,8 @@ def render(d, size=900):
                 cv.line(tp(a), tp(b), (230, 60, 50) if portal_keys[k] else (255, 170, 40))
             else:
                 cv.line(tp(a), tp(b), (235, 235, 235), 2 if sc > 3 else 1)
+    if d.get("doom", {}).get("approximate"):
+        stamp(cv, "APPROXIMATE", 6, 6, (255, 60, 60))
     wp = {w["id"]: w for w in d.get("waypoints", [])}.get(d.get("start"))
     if wp:
         q = tp(wp["at"])
