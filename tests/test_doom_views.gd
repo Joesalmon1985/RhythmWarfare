@@ -1065,3 +1065,213 @@ func test_dock_walls_decals_lights_and_the_art_are_in_the_map() -> void:
 			if not bool(p["blocked"]) and absf(float(m.sector(str(p["a"]))["floor"]) - float(m.sector(str(p["b"]))["floor"])) > 0.5 + 1.0e-6:
 				steps_ok = false
 	assert_true(steps_ok, "dock: every portal a walker can use changes the floor by at most max_step")
+
+
+# --- THE UNDERWORLD (docs/doom/scenes/underworld.md): its own block, its own map (doom_underworld) and world (doom_underworld) -----------------------------------------------------
+# MAP29 The Living End as a basalt plateau over a lava abyss: the reference viewpoint uw_ref, the Mothership guide up the ledge ahead, the Floor guide at the cave mouth left, the Dock guide on the
+# shelf right. The same checks as the Booth's, plus a sightline test from the camera to each guide against the solid walls, and the abyss: every abyss sector is a void, no waypoint is in it,
+# every portal onto it is a closed railing (but one dead end the map loader needs for reachability).
+
+const UW_MAP := "doom_underworld"
+const UW_GUIDES := ["uw_guide_mothership", "uw_guide_floor", "uw_guide_dock"]
+const UW_HOLD_PLACES := ["uw_ref", "uw_ledge_view", "uw_cave_view", "uw_stair_view"]
+const UW_NODES := ["doom_underworld", "doom_underworld.mothership", "doom_underworld.floor", "doom_underworld.dock", "doom_underworld.return"]
+const UW_EXITS := ["uw_gate", "uw_cave_in", "uw_shelf_end"]
+
+
+func _uw_map() -> StoryMap:
+	return StoryMap.load_chapter(UW_MAP, true)
+
+
+func _uw_pose(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": UW_MAP})
+	return p.pose_at(2.0)
+
+
+func test_underworld_map_loads_with_routes_holds_and_the_reference_viewpoint() -> void:
+	var m := _uw_map()
+	assert_true(m != null and m.errors.is_empty(), "the underworld map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % UW_MAP))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "underworld: still flagged approximate")
+	assert_eq(float(doc["max_step"]), 0.5, "underworld: max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "underworld: visibility mode clip")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "underworld route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "underworld route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["uw_ref"]) >= CHOICE_REF_HOLD, "the underworld's reference viewpoint holds at least 8 bars")
+	for id in UW_HOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s has hold_bars" % id)
+	for id in UW_EXITS:
+		assert_true(float(holds[id]) > 0.0, "the threshold %s holds" % id)
+	assert_true(float((_uw_pose(m, "uw_ref")["pos"] as Vector2).distance_to(m.waypoint("uw_ref")["at"])) < 0.05, "the camera stands at the underworld's reference viewpoint")
+
+
+func test_underworld_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _uw_map()
+	if m == null:
+		fail("underworld map did not load")
+		return
+	var pose := _uw_pose(m, "uw_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in UW_GUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "underworld %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "underworld %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "underworld %s %s: at least %d px tall (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "underworld %s %s: clear of the HUD's corner" % [asp, g])
+			print("  underworld %s %-22s rect %s" % [asp, g, str(r)])
+		for i in UW_GUIDES.size():
+			for j in range(i + 1, UW_GUIDES.size()):
+				assert_false((rects[UW_GUIDES[i]] as Rect2).intersects(rects[UW_GUIDES[j]]), "underworld %s: %s and %s do not overlap" % [asp, UW_GUIDES[i], UW_GUIDES[j]])
+
+
+func test_underworld_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _uw_map()
+	if m == null:
+		fail("underworld map did not load")
+		return
+	var cam: Vector2 = m.waypoint("uw_ref")["at"]
+	for g in UW_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a step or a railing: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "%s: the sightline from uw_ref stays clear of solid walls" % g)
+
+
+func test_underworld_guides_keep_their_distance_from_the_camera_places() -> void:
+	var m := _uw_map()
+	if m == null:
+		fail("underworld map did not load")
+		return
+	for g in UW_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			var d: float = (m.waypoints[wid]["at"] as Vector2).distance_to(at)
+			if str(wid) in UW_EXITS:
+				assert_true(d >= 1.2, "underworld: %s is not on top of %s (%.1f m)" % [g, wid, d])
+			else:
+				assert_true(d >= 1.5, "underworld: %s is at least 1.5 m from %s (%.1f m)" % [g, wid, d])
+
+
+func test_underworld_overlay_world_nodes_hotspots_and_rail_validate() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "underworld: the run loads clean with the flag: %s" % str(on.errors))
+	for id in UW_NODES:
+		assert_true(on.nodes.has(id), "underworld: scene %s" % id)
+	assert_true(on.nodes.has("doom_warehouse") and on.nodes.has("doom_booth"), "the warehouse and the booth are still there beside the underworld")
+	for id in UW_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_false((routes[k].get("via", []) as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+		for k in ["up", "left", "right"]:
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
+		assert_eq([str(routes["up"]["to"]), str(routes["left"]["to"]), str(routes["right"]["to"])], UW_EXITS, "%s: the thresholds are the exits' waypoints" % id)
+	var good: Array = on.nodes["doom_underworld"]["rail"]["good"]
+	assert_eq(good.size(), 4, "underworld: the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "underworld: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "underworld: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "uw_ref", "underworld: the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "underworld: uw_ref is a choice viewpoint holding the whole window")
+	var hs: Array = on.hotspots.get("doom_underworld", [])
+	assert_eq(hs.size(), 4, "underworld: three guides and the stay hotspot")
+	var dests := []
+	for h in hs:
+		dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		assert_true(h.has("show"), "underworld: hotspot %s declares show" % h["id"])
+		if str(h["id"]) != "doom_underworld.exit_stay":
+			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "underworld: %s is a figure (a guide, no ring)" % h["id"])
+	dests.sort()
+	assert_eq(dests, ["doom_underworld", "doom_underworld.dock", "doom_underworld.floor", "doom_underworld.mothership"], "underworld: ahead, left, right and stay")
+
+
+func test_underworld_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
+	var on := _doom_run()
+	var m := _uw_map()
+	if m == null:
+		fail("underworld map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	for id in UW_NODES:
+		var node: Dictionary = on.nodes[id]
+		for mv in _moves_of(node["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var sid := str(m.waypoint(str(wid))["sector"])
+				assert_true(m.inside(m.waypoint(str(wid))["at"], sid, StoryMap.WAYPOINT_MARGIN) and reach.has(sid) and not m.is_void(sid), "%s: %s stands in a walkable piece" % [id, wid])
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+
+
+func test_underworld_the_abyss_is_a_void_shut_by_railings_and_the_art_is_in_the_map() -> void:
+	var m := _uw_map()
+	if m == null:
+		fail("underworld map did not load")
+		return
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % UW_MAP))
+	var abyss := {}
+	for s in doc["sectors"]:
+		if str(s.get("room_name", "")).begins_with("abyss"):
+			abyss[str(s["id"])] = true
+			assert_true(m.is_void(str(s["id"])), "underworld: abyss piece %s is a void" % s["id"])
+			assert_true(float(s["floor"]) <= -3.0, "underworld: abyss piece %s lies below the paths" % s["id"])
+	assert_true(abyss.size() >= 3, "underworld: the abyss has pieces (%d)" % abyss.size())
+	for w in m.waypoints.values():
+		assert_false(abyss.has(str(w["sector"])), "underworld: no waypoint stands in the abyss")
+	var rim := 0
+	var open_rim := 0
+	for w in doc["walls"]:
+		if not w.get("portal"):
+			continue
+		if abyss.has(str(w["sector"])) != abyss.has(str(w["portal"])):
+			if str(w.get("kind", "")) == "railing":
+				rim += 1
+				assert_true(bool(w.get("blocked", false)) and str(w["tex"]) == "uw_rail" and float(w["height"]) >= 0.9, "underworld: a rim railing is shut, the chain tile, at least 0.9 m")
+			else:
+				open_rim += 1
+	assert_true(rim >= 10, "underworld: the rim of the abyss carries railings (%d)" % rim)
+	assert_true(open_rim <= 1, "underworld: at most one open rim portal (the map's dead end), found %d" % open_rim)
+	var textures: Dictionary = doc["textures"]
+	var im := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/doom_underworld/textures/uw_rail.png"))
+	assert_true(im != null and im.get_width() == 128 and im.detect_alpha() != Image.ALPHA_NONE, "underworld: uw_rail is a 128 px tile with an alpha channel")
+	var decals := 0
+	var lit := 0
+	for t in doc["things"]:
+		if str(t.get("kind", "")) == "decal":
+			decals += 1
+			if bool(t.get("emissive", false)):
+				lit += 1
+	assert_true(decals >= 4 and lit >= 3, "underworld: wall decals (%d), the lava falls emissive (%d)" % [decals, lit])
+	for g in UW_GUIDES:
+		var stem: String = g.trim_prefix("uw_guide_")
+		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
+			assert_true(textures.has("guide_%s_%s" % [stem, st]), "underworld: guide sprite %s_%s" % [stem, st])
+			assert_true(FileAccess.file_exists("res://assets/story/doom_underworld/textures/guide_%s_%s.png" % [stem, st]), "underworld: the file guide_%s_%s.png exists" % [stem, st])
