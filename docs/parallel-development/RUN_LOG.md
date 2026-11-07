@@ -100,3 +100,9 @@ same/different in replace mode, `src/minigames/cloakroom/`), `wip/play-bar` (`Mu
   checks, 1 failure (fixed since).
 - 7 Nov night: one-pc `b35c2f56` (W6, Ward; red: 4 heralds_view, 2 blackjack, see above);
   shared-contracts `7cfa6cc4`; doom-layout-worlds `f89d96f5`; bedsit-raves `9de607c6`.
+- 7 Nov late: shared wiring on `wip/wiring` (from one-pc `b74aa327`). The herald look stops short of a near wall (camera 0 failures, no gate moved); four hub links and 31 ways back
+  (`<scene>.to_hub`) with a `RunData` hub-route rule and `max_hotspots` 10 on the five hubs; the paths' 5 restarts, 2 second routes and 7 back routes (no path scene under three
+  destinations); the Bassment's own way back from 49 passages (7 have no spot their camera shows); the window look weighs entrances 2 and ways back 0.5; the wall test in
+  `tests/test_heralds_view.gd` (18 hidden entrance samples and 5 unseen ways back pinned as `KNOWN_HIDDEN` / `KNOWN_BACK_UNSEEN`: placement work for the location packages);
+  the Floor's own four entrances (sheet `docs/shots/narrative/n2_4_warehouse/floor_gates_sheet.jpg`: lit and framed in the opening, hidden behind the booth's rails in the route
+  window). Graph target 20 of 20 cells, `check_hotspots` 0 errors.

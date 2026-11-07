@@ -321,7 +321,7 @@ func test_a_wall_or_an_occluder_between_the_eye_and_an_entrance_hides_it() -> vo
 	assert_eq(m.errors, [], "the test map builds")
 	var pose := {"cam": Vector3(0, 1.6, -5), "yaw": 180.0, "sector": "a"}
 	assert_eq(occluder(m, pose, Vector2(0, -1), 1.0), "", "an entrance in the same open room is seen")
-	assert_true(occluder(m, pose, Vector2(-3, 5), 1.0) != "", "an entrance behind the solid half of the dividing wall is hidden")
+	assert_true(occluder(m, pose, Vector2(-7, -2), 1.0) != "", "an entrance beyond the room's side wall is hidden")
 	assert_eq(occluder(m, pose, Vector2(3, 5), 1.5), "", "one seen through the opening is not")
 	assert_true(occluder(m, pose, Vector2(4.5, -0.5), 0.0).begins_with("occluder"), "a low point behind the crate is hidden")
 	assert_eq(occluder(m, pose, Vector2(3.5, -1.5), 2.8), "", "a high point just past the crate shows over it")

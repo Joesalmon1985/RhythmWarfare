@@ -213,10 +213,9 @@ func _th(extra: Dictionary = {}, id := "a") -> Dictionary:
 
 
 func test_the_bassment_loads_passage_keyed_hotspots() -> void:
-	var td := _trial_load([_th(), _th({"anchor": {"waypoint": "chalk_wall"}, "on_success": {"route": "2"}, "default": false}, "b"),
-		_th({"anchor": {"waypoint": "chalk_close"}, "on_success": {"route": "exit"}, "default": false}, "r")])
-	assert_eq(td.errors, [], "passage 1: the ladder (the default), the chalk and the way back up (tools/trial/returns.py)")
-	assert_eq(td.hotspots_of(1).size(), 3)
+	var td := _trial_load([_th(), _th({"anchor": {"waypoint": "chalk_wall"}, "on_success": {"route": "2"}, "default": false}, "b")])
+	assert_eq(td.errors, [], "passage 1: the ladder (the default) and the chalk (it has no way back up: tools/trial/return_spots.json)")
+	assert_eq(td.hotspots_of(1).size(), 2)
 	assert_eq(td.hotspots_of(2).size(), 0, "a passage with none authored has none")
 	assert_eq(td.hotspots_of(1)[0]["world"], "bassment")
 	_clean()
