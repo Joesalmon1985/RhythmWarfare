@@ -1,0 +1,57 @@
+{
+ "version": 1,
+ "scene_id": "bedsit",
+ "map": "bedsit",
+ "start_facing": "N",
+ "facings": {
+  "N": "space",
+  "E": "dinos",
+  "S": "magic",
+  "W": "transport"
+ },
+ "facing_waypoints": {
+  "N": "bedsit_n",
+  "E": "bedsit_e",
+  "S": "bedsit_s",
+  "W": "bedsit_w"
+ },
+ "thresholds": {
+  "N": "threshold_n",
+  "E": "threshold_e",
+  "S": "threshold_s",
+  "W": "threshold_w"
+ },
+ "turn_beats": 2.0,
+ "regions": {
+  "top": [
+   0.25,
+   0.0,
+   0.5,
+   0.42
+  ],
+  "bottom": [
+   0.25,
+   0.72,
+   0.5,
+   0.28
+  ],
+  "left": [
+   0.0,
+   0.0,
+   0.22,
+   1.0
+  ],
+  "right": [
+   0.78,
+   0.0,
+   0.22,
+   1.0
+  ]
+ },
+ "themes": {
+  "space": "res://content/raves/space.json",
+  "magic": "res://content/raves/magic.json",
+  "dinos": "res://content/raves/dinos.json",
+  "transport": "res://content/raves/transport.json"
+ }
+}

@@ -1,0 +1,509 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "bedsit",
+  "title": "The Bedsit",
+  "entry_from": "bedsit.start",
+  "returns_to": "warehouse",
+  "dev": true,
+  "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd."
+ },
+ "timing": {
+  "bpm": 174,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "start_node": "bedsit",
+ "worlds": [
+  {
+   "id": "bedsit",
+   "title": "The Bedsit",
+   "map": "bedsit",
+   "story": "res://content/story/bedsit.json",
+   "depth": 1,
+   "blurb": "One room, four walls, four raves."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "bedsit",
+   "world": "bedsit",
+   "scene": "room",
+   "title": "The Bedsit",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "relaxed": true,
+   "blurb": "Your room. Four walls, four ways out: the window, the desk, the wardrobe, the door.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "n",
+     "label": "Through the north wall"
+    },
+    {
+     "to": "dino_rave",
+     "dir": "e",
+     "label": "Through the east wall"
+    },
+    {
+     "to": "magic_rave",
+     "dir": "s",
+     "label": "Through the south wall"
+    },
+    {
+     "to": "transport_rave",
+     "dir": "w",
+     "label": "Through the west wall"
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "bedsit": {
+    "state_key": "bedsit_facing",
+    "start_facing": "N",
+    "themes": "res://content/bedsit/themes.json",
+    "routes": "res://content/bedsit/routes.json",
+    "viewpoint": {
+     "waypoint": "bedsit_n",
+     "choice_view": true,
+     "hold_bars": 4,
+     "turn_bars": 1
+    },
+    "regions": {
+     "left": {
+      "action": "turn",
+      "dir": -1,
+      "label": "turn 90 degrees left"
+     },
+     "right": {
+      "action": "turn",
+      "dir": 1,
+      "label": "turn 90 degrees right"
+     },
+     "bottom": {
+      "action": "stay",
+      "dir": 0,
+      "label": "stay facing the same way"
+     },
+     "top": {
+      "action": "leave",
+      "label": "leave for the rave of the current facing"
+     }
+    },
+    "facings": {
+     "N": {
+      "yaw": 0,
+      "waypoint": "bedsit_n",
+      "threshold": "threshold_n",
+      "theme": "space",
+      "route": "space_rave",
+      "shows": "the window onto the night sky, a glow behind the rooftops, a model rocket on the sill, a star mobile"
+     },
+     "E": {
+      "yaw": -90,
+      "waypoint": "bedsit_e",
+      "threshold": "threshold_e",
+      "theme": "dinos",
+      "route": "dino_rave",
+      "shows": "a jungle poster whose middle has become a real opening, a plastic dinosaur on the desk, a fern"
+     },
+     "S": {
+      "yaw": 180,
+      "waypoint": "bedsit_s",
+      "threshold": "threshold_s",
+      "theme": "magic",
+      "route": "magic_rave",
+      "shows": "the wardrobe door ajar with iridescent light leaking out, a unicorn figure on the shelf, fairy lights"
+     },
+     "W": {
+      "yaw": 90,
+      "waypoint": "bedsit_w",
+      "threshold": "threshold_w",
+      "theme": "transport",
+      "route": "transport_rave",
+      "shows": "the door with a bus timetable pinned to it, a toy car, a blinking indicator light, orange street light under the door"
+     }
+    }
+   },
+   "place": {
+    "waypoint": "bedsit_n",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_n",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "threshold_n",
+      "e": "threshold_e",
+      "s": "threshold_s",
+      "w": "threshold_w",
+      "up": "threshold_n",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "id": "space_rave",
+   "world": "bedsit",
+   "scene": "space_rave",
+   "title": "PLACEHOLDER: the space rave",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "space",
+    "facing": "N"
+   },
+   "relaxed": true,
+   "blurb": "A stand-in for the space rave, which does not exist yet: it is the bedsit again, still facing N. See content/bedsit/routes.json.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Back to the bedsit",
+     "loop": true
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_n",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_n",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_n",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "id": "dino_rave",
+   "world": "bedsit",
+   "scene": "dino_rave",
+   "title": "PLACEHOLDER: the dinos rave",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "dinos",
+    "facing": "E"
+   },
+   "relaxed": true,
+   "blurb": "A stand-in for the dinos rave, which does not exist yet: it is the bedsit again, still facing E. See content/bedsit/routes.json.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Back to the bedsit",
+     "loop": true
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_e",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_e",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_e",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_e",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_e",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "id": "magic_rave",
+   "world": "bedsit",
+   "scene": "magic_rave",
+   "title": "PLACEHOLDER: the magic rave",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "magic",
+    "facing": "S"
+   },
+   "relaxed": true,
+   "blurb": "A stand-in for the magic rave, which does not exist yet: it is the bedsit again, still facing S. See content/bedsit/routes.json.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Back to the bedsit",
+     "loop": true
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_s",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_s",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_s",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "id": "transport_rave",
+   "world": "bedsit",
+   "scene": "transport_rave",
+   "title": "PLACEHOLDER: the transport rave",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "transport",
+    "facing": "W"
+   },
+   "relaxed": true,
+   "blurb": "A stand-in for the transport rave, which does not exist yet: it is the bedsit again, still facing W. See content/bedsit/routes.json.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Back to the bedsit",
+     "loop": true
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_w",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_w",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_w",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_w",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_w",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "id": "bedsit.end",
+   "world": "bedsit",
+   "scene": "end",
+   "title": "Out of the bedsit",
+   "entry": false,
+   "exit_scene": false,
+   "ending": "leave",
+   "role": "dancer",
+   "blurb": "The development way out: back to the Warehouse.",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "Back to the Warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_s",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_s",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_s"
+     }
+    }
+   }
+  }
+ ],
+ "cinematics": {}
+}

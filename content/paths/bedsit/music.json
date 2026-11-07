@@ -1,0 +1,60 @@
+{
+ "schema": 1,
+ "note": "Every bedsit scene plays one pack, bedsit_room (a synthesised 174 BPM stand-in, tools/content/make_path_placeholders.py bedsit). The real music is the track scene: content/run/track_scenes.json paths.bedsit.",
+ "placeholder": {
+  "genre": "dubstep",
+  "key": 45,
+  "levels_db": {
+   "drums": -20.0,
+   "bass": -13.0,
+   "other": -27.0
+  },
+  "sub_hz": 90.0,
+  "sub_share_min": 0.4,
+  "bass_over_pad_db_min": 8.0
+ },
+ "nodes": [
+  {
+   "id": "bedsit",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": true
+  },
+  {
+   "id": "space_rave",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "dino_rave",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_rave",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "transport_rave",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "bedsit.end",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  }
+ ]
+}
