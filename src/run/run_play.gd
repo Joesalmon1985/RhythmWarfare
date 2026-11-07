@@ -95,6 +95,7 @@ var _stage_hidden := ""
 var rave_host := SpaceRaveHost.new()  # the Space rave's bass lock and stage change (src/bedsit/space_rave_host.gd; inert outside its scenes)
 var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
 var _mg: RunMinigameHost
+var race_host: RaceStageHost  # the street race's stage swap (src/minigames/race/race_stage_host.gd; inert outside a race)
 var card_table: RunCardTable  # the day room's card table in the room: its players follow the table's hotspot (docs/BLACKJACK_INTEGRATION.md, "The table in the room")
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 var run_path := ""  # the path being played ("" = the main run); `data`, `engine`, `hotspots` and `journey` are always the active run's
@@ -155,6 +156,7 @@ func _ready() -> void:
 	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
 	minigames.load_registry()
 	_mg = RunMinigameHost.new(self)
+	race_host = RaceStageHost.new(self)
 	if not virtual_mode:  # (the audio before the first scene: a track scene's stems are decoded now, before the countdown, and the engine asks the audio whether a track is ready)
 		audio = RunAudio.new()
 		add_child(audio)
@@ -844,6 +846,7 @@ func _advance(t: float, audio_t: float) -> void:
 		_playtest_back()
 		return
 	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
+	race_host.step(t)  # the race's street stage (before the host walks the camera home)
 	_rave_step(t)
 	_mg.step(t)
 	_card_table_feed(t)
@@ -1094,7 +1097,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 		hud.show_title(str(node["world_title"]).to_upper(), str(node["title"]).to_upper(), t0)
 	if world_changed and _passage_swap < 0.0:
 		_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
-	if world != active_world:
+	if world != active_world and not race_host.owns_stage():  # (the race's street stays on through the race scene's phase starts)
 		_show_world(world)
 	_run_world = world_key
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse

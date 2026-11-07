@@ -1,0 +1,68 @@
+{
+ "version": 1,
+ "level": "race_space",
+ "placeholder": true,
+ "px_scale_note": "PLACEHOLDER art drawn by tools/story/race_art.py (build_race.py)",
+ "archetypes": {},
+ "silhouettes": {},
+ "stage": {},
+ "textures": {
+  "rc_asphalt": {
+   "file": "textures/rc_asphalt.png",
+   "size": [
+    256,
+    256
+   ],
+   "metres": 4.0
+  },
+  "rc_pave": {
+   "file": "textures/rc_pave.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "rc_kerb": {
+   "file": "textures/rc_kerb.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 0.5
+  },
+  "rc_roof": {
+   "file": "textures/rc_roof.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "rc_facade_0": {
+   "file": "textures/rc_facade_0.png",
+   "size": [
+    256,
+    256
+   ],
+   "metres": 8.0
+  },
+  "rc_facade_1": {
+   "file": "textures/rc_facade_1.png",
+   "size": [
+    256,
+    256
+   ],
+   "metres": 8.0
+  },
+  "rc_facade_2": {
+   "file": "textures/rc_facade_2.png",
+   "size": [
+    256,
+    256
+   ],
+   "metres": 8.0
+  }
+ },
+ "people": {}
+}
