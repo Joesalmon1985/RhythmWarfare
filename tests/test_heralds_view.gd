@@ -43,7 +43,6 @@ const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "w
 	"hospital.garden": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden"],
 	"hospital_late.cafe": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "hospital_late", "hospital_late.cafe"],
 	"hospital_late.quiet": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "hospital_late", "hospital_late.quiet"]}
-	}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.
