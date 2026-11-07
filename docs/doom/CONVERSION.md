@@ -97,35 +97,43 @@ Count `SCRIPT ERROR` lines in the Godot output: the runner can print success on 
 
 (`tools/doom/scenes.json` is the machine-readable table. Output files do not exist until a WAD with geometry is supplied.)
 
-## Approximate reconstructions (hand traces, no WAD)
+## Approximate reconstructions (traced from the ian-albert renders, no WAD)
 
-Because the supplied WAD has no geometry, three scenes exist as **approximate** maps traced by hand, not read from Doom data. The renders at
-ian-albert.com could not be inspected here (they are 1.5 to 2 MB isometric JPEGs rotated 45 degrees, and downloading them was not approved),
-so the traces come from knowledge of the levels and the brief's descriptions. They are marked `doom.approximate: true` with `doom.uncertain`
-notes in the JSON, and the plan PNG carries a red APPROXIMATE stamp. Do not call them an exact import.
+Because the supplied WAD has no geometry, all eight scenes exist as **approximate** maps traced by eye from the owner's downloads of the
+ian-albert renders (`C:\Users\joesa\rw-audio-work\doom\renders\MAPxx.jpg`, never committed). They are marked `doom.approximate: true`
+with `doom.uncertain` notes in each JSON, and the plan PNG carries a red APPROXIMATE stamp. Do not call them an exact import.
 
-`python tools/doom/trace/make_traces.py` writes `tools/doom/trace/<scene>.json` (vertices, linedefs, sidedefs, sectors, things in Doom units,
-derived from polygon rings with shared edges); `python tools/doom/convert.py --scene <scene> --trace tools/doom/trace/<scene>.json` runs the
-identical chain (decomposition, portals, `check_world.py`, `render_plan.py`, `check_doom_map.gd`). A real WAD replaces them with
-`convert.py --scene <scene>` (same output file).
+How they were made: the renders are top-down, rotated 45 degrees (north upper right), at about one render pixel per Doom unit (an assumption: the
+MAP08 hub measures about 510 px, a plausible 512 units). `tools/doom/trace/render_trace.py` holds polygons in thumbnail pixels read by eye
+(`--overlay` draws them over the render to check), rotates them into Doom units (`u = (dx + dy) / sqrt 2 * s`, `v = (dx - dy) / sqrt 2 * s`),
+builds linedefs, sidedefs and sectors (rooms joined by door sectors inserted at the nearest facing edges; nested sectors as holes) and
+writes `tools/doom/trace/<scene>.json` in the form a WAD gives. `convert.py --scene <scene> --trace tools/doom/trace/<scene>.json` then runs
+the identical chain (`RW_DOOM_TRACE=1 bash tools/doom/convert_all.sh` does all eight). A real WAD replaces them with `convert.py --scene <scene>`
+(same output file). `tools/doom/trace/compare.py` writes `docs/shots/doom/compare_<scene>.jpg` (render left, plan right rotated to match).
 
-| Scene | Map | Pieces | Portals | Steps over 0.6 m | Drops / ledges over 0.75 m |
-| --- | --- | --- | --- | --- | --- |
-| warehouse | MAP07 | 28 | 59 | 24 | 16 (max 2.00 m) |
-| mothership | MAP11 | 20 | 31 | 2 | 12 (max 8.00 m, the pit) |
-| lounge | MAP08 | 14 | 17 | 1 | 0 |
+| Scene | Map | Pieces | Portals | Traced sectors kept |
+| --- | --- | --- | --- | --- |
+| warehouse | MAP07 | 44 | 87 | 13 of 13 |
+| bar | MAP02 | 36 | 48 | 10 of 11 |
+| balcony | MAP15 | 33 | 61 | 9 of 10 |
+| lounge | MAP08 | 42 | 45 | 18 of 19 |
+| booth | MAP04 | 24 | 26 | 12 of 12 |
+| dock | MAP13 | 55 | 110 | 15 of 15 |
+| mothership | MAP11 | 44 | 74 | 10 of 11 |
+| underworld | MAP29 | 46 | 85 | 7 of 7 |
 
-Uncertain, by scene (the full list is in each trace and output JSON):
+Common to all eight: heights are NOT in the renders (floors are textured, not coloured by height), so every floor and ceiling height is a guess
+from which areas look raised or sunk; doors, stairs and interiors are mostly not traced; room outlines are coarse readings of a 1500 px
+thumbnail, good to a few percent. Per scene, what the render did and did not let me determine (full notes in each JSON's `doom.uncertain`):
 
-* **warehouse (MAP07 Dead Simple):** the whole footprint. Assumed: a 1400 unit square arena at floor 0 (ceiling 256), a 600 unit central platform at
-  +64 with four stair arms of two risers (24 and 48), four 200 unit corner alcoves at +24 with lower ceilings, and an invented exit corridor
-  and room on the north side. Real proportions, rim, raised areas and exits unknown.
-* **mothership (MAP11 Circle of Death):** an octagon of 1280 units across (the real ring may be circular or many-sided) with a walkway about 200
-  wide, a pit at -256 (8 m below the walkway) spanned by one 96 wide bridge, four side rooms and a stepped dais as placeholders. Number
-  and place of bridges and rooms in the real map unknown; the void and the loop are what the pilot needs.
-* **lounge (MAP08 Tricks and Traps):** an octagonal 512 unit hub with a dais and eight door rooms (identical closets, invented heights); the real
-  map's hub size, door positions, connecting rooms and traps unknown.
+* **warehouse (MAP07 Dead Simple), complete footprint.** Read: square outer grass terrace, grey stone ring, inner grass courtyard with four square platforms and a central pedestal, four slots in the ring, a small room off the north-west side; about 2100 units across (larger than the 1400 first assumed). Not read: heights, the ramps and stairs (brown wedges), the lift squares.
+* **mothership (MAP11 Circle of Death), main masses only.** Read: grass basin with tall brown cliffs north and east, a raised grey walkway ring (irregular ten-sided oval, about 1400 across) around a grass courtyard with a central block, two black voids by the ring, a large brown hall south-east, a room north. The round building in the east is NOT connected (the door link failed, the room was pruned). Not read: heights, the north corridors, far east water rooms, west rooms. The render shows no deep pit under the courtyard: the voids are two slots beside the ring, so the brief's deep central chamber is only partly there.
+* **lounge (MAP08 Tricks and Traps), hub and big rooms.** Read: octagonal hub (about 510 across) with a sunken pool, big rooms radiating out (brown NE, grey E and far NE with a cross-shaped tower, grey SW, cross-shaped south room, snake-shaped room, NW brown room). The west brown room is NOT connected (link failed, pruned). Not read: the eight hub doors of the brief (five links inserted), the trap rooms, the diagonal corridor in the north-west, heights.
+* **bar (MAP02 Underhalls), macro layout.** Read: the winding nukage channel looping round a raised plateau, a brown hall NE, two nukage side rooms W, a diagonal grey plaza S with a brown room SW. The second west pond is NOT connected (pruned). Not read: heights, walkways along the channel, stairs, small rooms; the render looks like open industrial halls rather than low cellar rooms.
+* **booth (MAP04 The Focus), macro layout.** Read: big central hall, start room, stepped NW complex, S-shaped corridor to the east room, L-shaped grey corridor around a dark pit. Not read: the tight windowed control rooms and equipment bays of the brief (not visible at this resolution), heights.
+* **balcony (MAP15 Industrial Zone), CURATED region** (grass plateau, northern and central masses, east lake; not traced: south-west lava circle, southern wooden complex, west paths). Read: two brown towers, a lava moat round an inner tower (the inner keep was pruned as unreachable), a stone block holding a lava pit, a large ring building with a central void, a lake. Not read: heights, bridges between masses (none is visible in the render, so none is traced: the brief's rooftop ledges and bridges are absent), interiors.
+* **dock (MAP13 Downtown), CURATED region** (the street grid with fourteen blocks; not traced: brown fences NE, north arch, west entrance). Read: one huge plaza with separate square blocks; each block is one flat raised room joined to the street along its whole edge (2 m ledge, no doors). Not read: heights, block interiors, door positions, individual loading areas.
+* **underworld (MAP29 The Living End), CURATED region** (the lava basin, the central rock mass, a strip of the north cliff; not traced: north room cluster and lava pool, east lava arms, west rooms). Read: ten-sided lava basin, central rock mass (three nested terraces traced; the render shows ledges winding up it), east brown mass, west ledge, tall north cliff. Not read: heights, the narrow ascending ledge paths, any path from rim to rock (none visible).
 
-By eye the plans show the intended shapes (square arena with plus-shaped stairs and notched corners; octagon ring with a void and a bridge).
-Nothing was compared against the real renders. The Hertel-Mehlhorn pieces include long thin triangles around holes (visible as orange
-diagonals in the plans); valid, but a scene author may want to add cut lines for nicer floors.
+Validator results (0 errors each, `check_world.py --all`): the "not reachable on foot" warnings are the guessed height differences (ledges over
+0.75 m), not connectivity errors. By eye the plans match the renders' main shapes (`docs/shots/doom/compare_*.jpg`); nothing was measured against ground truth.
