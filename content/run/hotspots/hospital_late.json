@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.exit_quiet",
@@ -67,7 +70,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.lamp",
@@ -106,7 +112,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.lamp_lit",
@@ -144,7 +153,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.doctor",
@@ -214,6 +226,9 @@
       "face": "doubt"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -248,7 +263,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.cafe.vending",
@@ -285,7 +303,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.cafe.vending_token",
@@ -323,7 +344,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.cafe.kid",
@@ -386,6 +410,9 @@
      "look_at": "camera",
      "beats": 8
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -420,7 +447,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.quiet.nightlight",
@@ -456,7 +486,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.quiet.nightlight_b",
@@ -490,7 +523,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.exit.exit_hospital_late",
@@ -524,7 +560,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.exit.exit_ward_late",
@@ -558,7 +597,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital_late.exit.mic",
@@ -599,7 +641,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital_late.exit.mic_encore",
@@ -639,7 +684,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   }
  ]
 }

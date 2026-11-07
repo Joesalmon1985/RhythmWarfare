@@ -169,3 +169,41 @@ func test_a_herald_stands_in_its_rooms_crowd_while_its_entrance_is_on_offer_and_
 	hd.clear()
 	assert_false(crowd.props.has(hp), "cleared")
 	stage.queue_free()
+
+
+func test_a_gate_in_a_room_with_no_crowd_of_its_own_is_drawn_from_a_camera_standing_in_that_room() -> void:
+	# ward_late.treat (N2.4): the treatment room has no crowd of its own, so its herald and gate stood in the main crowd, which projects nothing while none of the main room
+	# can be seen: from the window pose 3.5 m in front of the gate neither was drawn. The herald's crowd now counts the sector it stands in.
+	var run := StoryRun.create({}, "res://content/story/mental_hospital.json")
+	var stage := StoryStage.new()
+	stage.size = Vector2(1280, 460)
+	tree.root.add_child(stage)
+	stage.setup(StoryAssets.load_default(), run.data, run)
+	assert_eq(stage.map.room_of("treatment"), "treatment")
+	assert_false(stage.crowds.has("treatment"), "the treatment room has no crowd of its own")
+	var h := HotspotContract.normalize({"id": "ward_late.treat.enter_bassment", "kind": "secret", "anchor": {"pos": [16.4, 1.1, 11.8]}, "on_success": {"route": "bassment"},
+		"herald": {"quest": "dungeon", "at": [14.8, 11.9], "toward": [16.4, 11.8], "mark_y": 1.8, "gate": true}}, "ward_late", "mental_hospital")
+	var hd := StoryHeralds.new(stage)
+	hd.begin_frame(1.0)
+	hd.put(h, "other", "available", {"lamp": 0.65, "floor": 0.18, "tint": Color(1, 0.8, 0.5)})
+	hd.end_frame()
+	var rec: Dictionary = hd._recs[str(h["id"])]
+	var crowd: StoryCrowd = rec["crowd"]
+	var cam2 := Vector2(14.6, 8.6)
+	var d := Vector2(16.4, 11.8) - cam2
+	var yaw := rad_to_deg(atan2(-d.x, -d.y))
+	assert_near(d.length(), 3.67, 0.05, "the camera stands 3.7 m from the gate")
+	var pose := {"cam": Vector3(cam2.x, stage.map.eye_y("treatment"), cam2.y), "yaw": yaw}
+	var vis := stage.map.visible_sectors(cam2, yaw, "treatment", 1280.0 / 460.0)
+	assert_true(vis.has("treatment"), "the camera sees its own room")
+	for cid in stage.crowds:
+		(stage.crowds[cid] as StoryCrowd).set_camera(pose, Vector2(1280, 460), vis)
+		(stage.crowds[cid] as StoryCrowd).set_time(1.0)
+		(stage.crowds[cid] as StoryCrowd).update(1.0, 60.0)
+	var gate: StoryCrowdProp = rec["mark"]
+	var herald: StoryCrowdProp = rec["herald"]
+	assert_true(gate.visible and not gate.items.is_empty(), "the gate 3.7 m in front of the camera is projected (drawn)")
+	assert_true(herald.visible and not herald.items.is_empty(), "and its herald")
+	assert_true(crowd.owns_sector("treatment"), "its crowd counts the sector it stands in")
+	hd.clear()
+	stage.queue_free()

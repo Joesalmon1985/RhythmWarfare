@@ -1,7 +1,8 @@
 class_name ChoiceProps
 extends Node3D
 ## The choice layer's props in the world (docs/CHOICE_CLARITY.md): billboards from assets/run/choice stood at an option's anchor with depth like the map's things (a door that
-## swings open or shut, two boards across a doorway, a round green or square red lamp, a spill of light on the floor, any prop a `states` step names). HotspotView owns one per
+## swings open or shut, two boards across a doorway, a practical lamp lit by the choice's state (ChoiceShow; the round green and square red lamps only while
+## HotspotView.RINGS), a spill of light on the floor, any prop a `states` step names). HotspotView owns one per
 ## stage, adds it under the stage's StoryWorld and sets every prop each frame from ChoiceStaging; a prop not set in a frame is hidden.
 
 const DOOR_FRAMES := 4
@@ -41,8 +42,8 @@ func end_frame() -> void:
 
 
 ## Stand prop `key` (a name unique in the stage) with texture `tex_name`, its bottom centre at `foot` (world), `height` metres tall; `ground`: a flat quad on the floor instead of a
-## standing billboard; `light`: brightness (1 lit by itself, a lamp; under 1 a thing in the room's light); `alpha` 0..1.
-func put(key: String, tex_name: String, foot: Vector3, height: float, light := 0.85, alpha := 1.0, ground := false) -> void:
+## standing billboard; `light`: brightness (1 lit by itself, a lamp; under 1 a thing in the room's light); `alpha` 0..1; `tint`: the colour of its light (a lamp's state).
+func put(key: String, tex_name: String, foot: Vector3, height: float, light := 0.85, alpha := 1.0, ground := false, tint := Color(1, 1, 1)) -> void:
 	var sw := get_parent() as StoryWorld
 	var t := tex_in(tex_name, sw.map.id if sw != null and sw.map != null else "")
 	if t == null:
@@ -79,7 +80,7 @@ func put(key: String, tex_name: String, foot: Vector3, height: float, light := 0
 	var mat2: StandardMaterial3D = rec["mat"]
 	(mi2.mesh as QuadMesh).size = Vector2(w, height)
 	mat2.albedo_texture = t
-	mat2.albedo_color = Color(light, light, light, alpha)
+	mat2.albedo_color = Color(light * tint.r, light * tint.g, light * tint.b, alpha)
 	mi2.position = foot + (Vector3(0.0, 0.02, 0.0) if ground else Vector3(0.0, height * 0.5, 0.0))
 	mi2.visible = alpha > 0.01
 
@@ -95,6 +96,13 @@ func shown_keys() -> Array:
 		if (_nodes[k]["node"] as MeshInstance3D).visible:
 			out.append(k)
 	return out
+
+
+## The colour a shown prop is drawn in (its light times its tint, and its alpha): the tests read a lamp's state from it.
+func colour_of(key: String) -> Color:
+	if not _nodes.has(key) or not (_nodes[key]["node"] as MeshInstance3D).visible:
+		return Color(0, 0, 0, 0)
+	return (_nodes[key]["mat"] as StandardMaterial3D).albedo_color
 
 
 func frame_of(key: String) -> String:

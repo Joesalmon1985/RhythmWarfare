@@ -32,7 +32,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "base.board",
@@ -106,6 +109,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -151,72 +157,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   },
   {
@@ -281,6 +227,9 @@
      "look_at": "camera",
      "beats": 6
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -356,6 +305,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -401,72 +353,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   },
   {
@@ -500,7 +392,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "base.c03.office_door",
@@ -533,7 +428,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "base.c03.clipboard",
@@ -607,6 +505,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -652,72 +553,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   }
  ]

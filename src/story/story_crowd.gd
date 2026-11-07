@@ -467,6 +467,18 @@ func _screen_dx(heading: Vector2) -> float:
 	return heading.dot(StoryProjector.right(float(cam_pose["yaw"])))
 
 
+## Whether sector `sid` counts as this crowd's: while one of its sectors can be seen the crowd projects its people and its props.
+func owns_sector(sid: String) -> bool:
+	return _room_sectors.has(sid)
+
+
+## Sector `sid` counts as this crowd's from now on: a prop standing there (a herald, a quest's gate) is projected whenever that sector can be seen, even when no sector of the
+## crowd's own room can (a room of the map with no crowd of its own, the treatment room of the ward, borrows the main crowd).
+func own_sector(sid: String) -> void:
+	if sid != "" and not _room_sectors.has(sid):
+		_room_sectors.append(sid)
+
+
 func set_camera(pose: Dictionary, size: Vector2, visible_secs: Dictionary) -> void:
 	cam_pose = pose
 	view_size = size

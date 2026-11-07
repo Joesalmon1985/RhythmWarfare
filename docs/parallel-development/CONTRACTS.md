@@ -292,6 +292,37 @@ Fixture: `choice_states.json`. Tests: `test_choice_states_shape_and_sequence`.
 
 ---
 
+## 10. World-staged activities (ruling 38)
+
+An activity is played in the room it is found in, through the stage, with the run's HUD. Nothing else is drawn.
+
+- **Things**: an activity declares its things as dynamic props, `things() -> Array` of
+  `{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, anchor?}` (H8.1 `StoryWorld.set_dynamic_things`): sprite
+  sheets under the scene's `assets/story/<map>/sprites/`, one row per state, the activity sets `frame` (and `at`
+  for a thing that moves: a coat handed over, a glass slid across) from its state machine, in song time. The stage
+  draws them as billboards at depth, culled by sector, lit by the sector's light like the crowd. People in an
+  activity (customers, the attendant, the bartender, the DJ) are crowd actors of the room (`crowd.direct`,
+  `crowd.walk_to`, states idle, look, cheer, clap, hands_up, and the per-activity states the package adds:
+  `waiting`, `happy`, `impatient`), never drawn by the activity.
+- **Static set**: the counter, the shelf, the rail, the deck are map pieces (sprites or decals) authored in the
+  scene's map, ids prefixed with the activity's (`cloak_counter`, `bar_shelf_3`); `piece_on`/`piece_off`/`piece_pulse`
+  switch their lit states (a shelf glass lighting up is a piece turned on).
+- **Camera**: the activity's hotspot route ends at a hold (`hold_bars`) at the spot, facing the things; the activity
+  may ask for a pitch (`view_pitch`) and nothing else; no cut, no fade, no zoom. The hold lasts the activity; the
+  rail restarts from there on the boundary the activity ends on.
+- **HUD and controls**: `RunHud` stays (meter, pips, pause; text silent); the activity's `controls()` (contract 5)
+  are drawn in the pad slots by the host's controls layer (`RunActivityInput`), morphing from the pads over the
+  last beat before the boundary and back over the first beat after, in the pads' frame style, pictograms only.
+  A canvas-layer view (`make_view`) is allowed only for that strip and for feedback attached to a thing
+  (`feedback(thing_id, kind, t)`: tick, cross, glow, drawn by the host at the thing's screen point).
+- **Sound**: the room's music never stops or ducks beyond the stem lock of contract 7; feedback cues are short
+  one-shots on the sfx bus.
+- **Tests**: an activity's state machine is tested without the stage (things()/frames as data); the view test
+  shoots the scene at three moments with the things in place and checks each thing's screen rectangle is inside
+  the stage strip and at least 48 px tall (as `test_doom_views` does for guides).
+- **The card table** (blackjack) is converted to this contract in package A8b; until then it is the one
+  exception, named in every report that mentions it.
+
 ## Engine hooks (lead-owned files; file:line, what changes)
 
 Built on this branch (minimal, tested):
@@ -314,7 +345,7 @@ Needed, not built:
 - H6.1 `run_progress.gd:9` `VERSION := 3`; `:37` accept 2 and 3; `:64` `_fresh` via `RaveSave.migrate`; `:138` `run_started` calls `RaveSave.new_run`.
 - H7.1 `run_track_audio.gd:345` `_make_group`: apply the scene's stem locks (`stem_locks: {track id: [keys]}` set by the host) before the group starts.
 - H7.2 `run_track_audio.gd:317`/`:238`: `unlock_stem_at(key, t, ramp_s)` as a scheduled item run on song time.
-- H8.1 `story_world.gd:624` (and `:354` `thing_pose`): dynamic billboards `set_dynamic_things([{id, sprite, at, sector, size, frame}])`, culled by their current sector.
+- H8.1 `story_world.gd:624` (and `:354` `thing_pose`): dynamic billboards `set_dynamic_things([{id, sprite, at, sector, size, frame}])`, culled by their current sector. Package A8 (contract 10): plus `thing_screen_point(id)` for feedback, and the controls' morph in `RunActivityInput`.
 - H8.2 `story_stage.gd:347`: `pose_fn: Callable` overriding `player.pose_at(t)` (race camera); fov from the pose.
 - H8.3 the cockpit as a low-res overlay layer (`StoryLowRes.add_overlay`) under the activity view.
 - H8.4 `run_play.gd:420` `_show_world`: an activity may ask for another map's stage at `t_seat` and back at exit (race), prebuilt in a guard.
