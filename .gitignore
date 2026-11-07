@@ -9,3 +9,8 @@ midi_export/**/*.wav
 /audition/
 
 content/imports/
+
+# Doom II data stays outside Git (the owner's copy lives in "doom II wads/" in their checkout; tools read RW_DOOM_WAD)
+*.wad
+*.WAD
+/doom II wads/

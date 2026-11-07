@@ -1,0 +1,50 @@
+# RUN_LOG: the resume file for the long run
+
+Read this first in a new session, then `git fetch --all`. The plan is `LONG_RUN_PLAN.md`; stage A's detail
+is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europe/London.
+
+## Owner's answers (7 November 2026, 13:xx)
+
+- WAD: supplied, `C:\Users\joesa\Documents\Cursor\MusicGame\doom II wads\doom2.wad` (IWAD header, 3,342
+  lumps, 4.9 MB; copied to `C:\Users\joesa\rw-audio-work\doom\doom2.wad`, which is what `RW_DOOM_WAD`
+  points at). Never in Git (`.gitignore`: `*.wad`, `/doom II wads/`).
+- Shape: confirmed (bedsit opening; four raves borrowing Mothership, Chill-out, Underworld, Dock
+  geographies; eight Doom scenes behind a flag; legacy campaign kept).
+- Order: stage B starts alongside stage A.
+- Track: the Chase and Status remix of "Valley of the Shadows" (already imported).
+- Push policy unchanged. Owner's words: "start the run and don't finish until everything altogether and
+  done as new playable thing. Make sure to do art polish."
+
+## Now
+
+Stage: **A (phase 0 done) and B (starting)**, 7 November.
+
+Last pause point reached: none yet.
+
+## Branches and their last pushed commit
+
+| Branch | Worktree | Commit | State |
+|---|---|---|---|
+| `feature/one-pc` | `MusicGame-onepc` | see `git log` | integration for stage A |
+| `wip/narr-n2-4-underworld` | (none) | `3c16b4c9` | finished, to merge |
+| `wip/narr-n2-4-mothership` | `MusicGame-graph` | `006f910d` WIP | agent to resume |
+| `wip/narr-n2-4-ward` | `MusicGame-import` | `961561db` WIP | agent to resume (visibility fixes) |
+| `wip/narr-n2-4-hospital` | `MusicGame-music` | `48d3610a` WIP | agent to resume |
+| `wip/narr-n2-5` | `MusicGame-herald` | `1cfd7b8f` WIP | agent to resume |
+| `wip/art-a6` | `MusicGame-art` | `bae5eca0` | report, review, merge |
+| `wip/art-w6` | `MusicGame-narr` | `4b936ba0` WIP | agent to resume (daylight) |
+| `wip/art-w7` | `MusicGame-docs` | `18da401b` | report, review, merge |
+
+Stage B branches: see the table in `LONG_RUN_PLAN.md`; created when stage B starts (below).
+
+## Next action for the lead
+
+1. Resume the stage A agents by message (at most four at once with the stage B agents counted).
+2. Create `feature/shared-contracts`, `feature/doom-layout-worlds`, `feature/bedsit-raves` from
+   `feature/one-pc`; worktrees `MusicGame-env`, `MusicGame-play`, `MusicGame-engine`.
+3. Write `CONTRACTS.md`; start the env tools agent (WAD reader) and the engine owner.
+
+## Checkpoint history
+
+- 7 Nov 13:xx: phase 0 done. Five WIP checkpoints committed and pushed; `wip/art-a6` and `wip/art-w7`
+  pushed. WAD copied outside Git and ignored.
