@@ -2,7 +2,7 @@ picture                   p5   p50   p95   sat   crush  blown  lit mean         
 ref Rave                0.08  0.22  0.62  0.47    0.0%   0.1%  #784e50 h357                    
 ref Hospital            0.09  0.17  0.40  0.58    0.0%   0.0%  #2d405b h215                    
 ref InsaneAsylum        0.04  0.15  0.44  0.43    5.6%   0.2%  #3b4b42 h145                    
-gospel_jordan           0.12  0.34  0.61  0.35    0.0%   0.2%  #625e60 h326                    ok
-gospel_galilee          0.16  0.37  0.55  0.28    0.0%   0.1%  #586161 h176                    ok
-gospel_road             0.17  0.37  0.58  0.36    0.0%   0.1%  #6e5e56 h019                    ok
-gospel_jerusalem        0.12  0.37  0.61  0.33    0.0%   0.2%  #68605f h009                    ok
+gospel_jordan           0.13  0.40  0.69  0.37    0.0%   0.3%  #706a6c h338                    bright
+gospel_galilee          0.15  0.39  0.66  0.30    0.0%   0.2%  #626b6a h175                    bright
+gospel_road             0.18  0.40  0.69  0.39    0.0%   0.3%  #7b685d h022                    bright
+gospel_jerusalem        0.11  0.39  0.67  0.35    0.1%   0.3%  #726a67 h016                    bright
