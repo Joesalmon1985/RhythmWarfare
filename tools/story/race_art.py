@@ -454,7 +454,7 @@ def rain(t: dict) -> Cv:
     cw, ch = 200, 120
     sheet = Cv(cw * 4, ch)
     rng = np.random.RandomState(3)
-    drops = [(rng.rand() * cw, rng.rand() * ch, 5 + rng.rand() * 9) for _ in range(70)]
+    drops = [(rng.rand() * cw, rng.rand() * ch, 5 + rng.rand() * 9) for _ in range(30)]
     for k in range(4):
         f = Cv(cw, ch)
         for (x, y, ln) in drops:
@@ -463,7 +463,7 @@ def rain(t: dict) -> Cv:
             for d in range(int(ln)):
                 py = int(yy + d)
                 if py < ch:
-                    f.a[py, x0, :3] = _hx("#9ab4e8" if d < ln - 2 else "#e8f0ff")
+                    f.a[py, x0, :3] = _hx("#5a6ea8" if d < ln - 2 else "#a8b8e0")
                     f.a[py, x0, 3] = 255
         sheet.stamp(f, k * cw, 0)
     return sheet
