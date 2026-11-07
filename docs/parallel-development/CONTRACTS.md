@@ -366,7 +366,7 @@ Built on this branch (minimal, tested):
 RunData.is_geography(world) -> bool             worlds[world].geography
 RunData.leaves_world(id) -> bool                a route of scene id leads to another world (a geography world's terminal: _terminal, _reaches_exit)
 RunData._validate_geography_routes(id, n)       stay = dir "down" in-world loop; >= 2 routes; a route out -> the ENTRY scene of a geography world; no depth rule
-RunRail.validate: rail.routes {up|left|right|stumble|arrive: {to, via?, bars 2..4, hold_bars >= 0, style?, role?, from?}}   (RunRail.ROUTE_KEYS)
+RunRail.validate: rail.routes {up|left|right|stumble|arrive: {to, via?, bars > 0 (the walk clamps to 2..4), hold_bars >= 0, style?, role?, from?}}   (RunRail.ROUTE_KEYS)
 RunData._validate_places: every routes[*].to / from / via waypoint is in the scene's map
 RunJourney.threshold_of(from, to) -> wp         thresholds[to], else threshold_move(from, to).to, else ""
 RunJourney.threshold_move(from, to) -> {}       the next entry to `to` gives dir; rail.routes[dir] ({} for down, same world, no move)

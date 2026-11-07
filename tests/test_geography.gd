@@ -101,9 +101,9 @@ func test_geography_rules_reject_what_they_must() -> void:
 		_node(run, "geo_lounge")["next"][2]["to"] = "mothership")
 	assert_true(_has(out_of_map.errors, "geo_lounge: the route to mothership leads out of the map of places"), str(out_of_map.errors))
 	var bad_move := _data("bad_move", func(run: Dictionary, _m: Dictionary) -> void:
-		_node(run, "geo_bar")["place"]["rail"]["routes"]["up"]["bars"] = 9
+		_node(run, "geo_bar")["place"]["rail"]["routes"]["up"]["bars"] = 0
 		_node(run, "geo_bar")["place"]["rail"]["routes"]["left"]["via"] = ["no_such_waypoint"])
-	assert_true(_has(bad_move.errors, "rail.routes.up lasts 9.0 bars"), str(bad_move.errors))
+	assert_true(_has(bad_move.errors, "rail.routes.up lasts 0.0 bars"), str(bad_move.errors))
 	assert_true(_has(bad_move.errors, "waypoint 'no_such_waypoint' is not in map mothership"), str(bad_move.errors))
 	# without the flag the same worlds fall under the old rules: a world exit goes one level deeper
 	var flat := _data("flat", func(run: Dictionary, _m: Dictionary) -> void:

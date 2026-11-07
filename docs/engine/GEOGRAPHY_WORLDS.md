@@ -20,7 +20,7 @@ The scene (a `nodes` entry):
 - `place.rail`: `good`, `bad`, `glances`, `strolls` as for any scene. Also:
   - `arrive`: where the player steps in from another world.
   - `exits {dir: waypoint}`: one doorway per `next` direction, `down` included.
-  - `routes {up|left|right: move}`: each move is `{to, via?: [waypoints], bars: 2..4, hold_bars?: >= 0, style?, role?}`.
+  - `routes {up|left|right: move}`: each move is `{to, via?: [waypoints], bars, hold_bars?: >= 0, style?, role?}`. `bars` must be above 0; the walk clamps it to 2..4 bars, then to the time left before the boundary.
     `to` is the threshold, normally the same waypoint as `exits[dir]`. `stumble` and `arrive` keys are allowed. `down` has no move.
 
 All waypoints (`to`, `from`, `via`) must exist in the world's map. A `thresholds {to: waypoint}` dict on the node is

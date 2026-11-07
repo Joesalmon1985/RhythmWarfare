@@ -73,7 +73,7 @@ static func validate(id: String, rail: Variant) -> Array:
 				errors.append("node %s: rail.%s place %s: hold_bars is not negative" % [id, key, p["to"]])
 			if bool(p.get("choice", false)) and float(p.get("hold_bars", 0.0)) < CHOICE_HOLD_BARS - 1.0e-6:
 				errors.append("node %s: rail.%s place %s is a choice viewpoint holding %.1f bars; a choice viewpoint holds at least %.1f (the whole choice window)" % [id, key, p["to"], float(p.get("hold_bars", 0.0)), CHOICE_HOLD_BARS])
-	if r.has("routes"):  # a scene's route moves (docs/engine/GEOGRAPHY_WORLDS.md): {up|left|right|stumble|arrive: {to, via?, bars, hold_bars?, style?, role?, from?}}; a world exit's walk plays its key's move
+	if r.has("routes"):  # a scene's route moves (docs/engine/GEOGRAPHY_WORLDS.md): {up|left|right|stumble|arrive: {to, via?, bars > 0, hold_bars?, style?, role?, from?}}; a world exit's walk plays its key's move
 		if typeof(r["routes"]) != TYPE_DICTIONARY:
 			errors.append("node %s: rail.routes is an object {direction: move}" % id)
 		else:
@@ -84,9 +84,8 @@ static func validate(id: String, rail: Variant) -> Array:
 				if typeof(m) != TYPE_DICTIONARY or str((m as Dictionary).get("to", "")) == "":
 					errors.append("node %s: rail.routes.%s needs `to`" % [id, k])
 					continue
-				var rb := float(m.get("bars", 3.0))
-				if rb < MOVE_BARS_MIN or rb > MOVE_BARS_MAX:
-					errors.append("node %s: rail.routes.%s lasts %.1f bars; moves last %d to %d bars" % [id, k, rb, int(MOVE_BARS_MIN), int(MOVE_BARS_MAX)])
+				if float(m.get("bars", 3.0)) <= 0.0:  # (any length is accepted: the threshold walk clamps it to MOVE_BARS_MIN..MAX, then to the boundary)
+					errors.append("node %s: rail.routes.%s lasts %.1f bars; a move lasts some bars" % [id, k, float(m.get("bars", 3.0))])
 				if m.has("via") and (typeof(m["via"]) != TYPE_ARRAY or (m["via"] as Array).any(func(v: Variant) -> bool: return str(v) == "")):
 					errors.append("node %s: rail.routes.%s: via is a list of waypoints" % [id, k])
 				if float(m.get("hold_bars", 0.0)) < 0.0:
