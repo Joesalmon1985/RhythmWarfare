@@ -65,6 +65,7 @@ var _sky_shown: Texture2D
 var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
+var faces: Array = []  # every vertical face drawn: {sector (whose mesh holds it), portal, kind: wall | step | lip | cliff | railing, y0, y1, tex, a, b} (the tests read it)
 var shadow_count := 0  # floor props with a contact shadow
 var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
 var _last_col: Dictionary = {}  # sector id -> the colour last written to its materials
@@ -191,15 +192,15 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 	var b: Vector2 = w["b"]
 	var floor_y := float(s["floor"])
 	var ceil_y := float(s["ceiling"])
-	var parts: Array = []  # [y0, y1, tex]
+	var parts: Array = []  # [y0, y1, tex, kind]
 	if str(w["portal"]) == "":
-		parts.append([floor_y, ceil_y, str(w["tex"])])
-	else:
+		parts.append([floor_y, ceil_y, str(w["tex"]), "wall"])
+	else:  # a portal: the step face below the opening where the floor beyond is higher (a void's cliff), the lip above it where the ceiling beyond is lower
 		var o: Dictionary = map.sector(str(w["portal"]))
 		if float(o["floor"]) > floor_y + 1.0e-4:
-			parts.append([floor_y, float(o["floor"]), str(w["lower_tex"])])
+			parts.append([floor_y, float(o["floor"]), str(w["lower_tex"]), "cliff" if bool(s.get("void", false)) else "step"])
 		if float(o["ceiling"]) < ceil_y - 1.0e-4:
-			parts.append([float(o["ceiling"]), ceil_y, str(w["upper_tex"])])
+			parts.append([float(o["ceiling"]), ceil_y, str(w["upper_tex"]), "lip"])
 	var along := (b - a).length()
 	var dir := (b - a) / along
 	var shade := WALL_SHADE_X if absf(dir.y) > absf(dir.x) else 1.0  # a wall running along z faces along x
@@ -207,6 +208,7 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 		var tex := str(part[2])
 		if tex == "" or tex == "sky":
 			continue
+		faces.append({"sector": str(w["sector"]), "portal": str(w["portal"]), "kind": str(part[3]), "y0": float(part[0]), "y1": float(part[1]), "tex": tex, "a": a, "b": b})
 		var m: float = _metres.get(tex, 2.0)
 		var d := _group(g, tex)
 		var base: int = d["v"].size()

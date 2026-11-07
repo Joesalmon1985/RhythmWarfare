@@ -42,6 +42,18 @@ var rooms: Dictionary = {}  # room id -> {palette: the chapter palette the room'
 var palette_weight := 0.25  # how much the stage palette (one colour per bar) overrides the tint of a dance floor or stage sector: 1 in Night One (the club), a little elsewhere so a ward stays blue and a lab stays green
 var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (a hospital is light, the pit is red)
 var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
+## Heights (docs/story/HEIGHTS_AND_PATHS.md): a floor change across a portal of at most `max_step` metres is a step a walker takes (stairs are runs of them); a taller one,
+## or any change into or out of a sector marked "drop", is a drop nobody walks (a "climb" move may take up to `max_climb`). A sector marked "void", or one whose floor lies
+## `void_drop` metres or more below every neighbour and that holds no waypoint, home or spot, is a void: drawn far below, hazed by depth, never stood in.
+var max_step := 0.5
+var max_climb := 2.0
+var void_drop := 3.0
+## Which sectors are drawn (visible_sectors): "flood" (the hand-made maps: every sector whose portal opening is in the view cone, up to a depth) or "clip" (each portal
+## narrows the view window, for maps of hundreds of pieces); the default is "clip" from CLIP_FROM sectors up. Map key {"visibility": {"mode", "depth", "far"}}.
+const CLIP_FROM := 64
+var vis_mode := "flood"
+var vis_depth := 48
+var vis_far := 0.0  # metres: portals farther than this are not looked through (0: no limit)
 var errors: Array = []
 
 var _sector_index: Dictionary = {}
@@ -98,7 +110,16 @@ func build(d: Dictionary, check_files: bool) -> void:
 	for an in animated:
 		if typeof(an) != TYPE_DICTIONARY or not textures.has(str(an.get("tex", ""))) or str(an.get("mode", "")) not in ANIM_MODES:
 			errors.append("animated surface %s: needs a map texture and a mode of %s" % [an, ANIM_MODES])
+	max_step = float(d.get("max_step", 0.5))
+	max_climb = maxf(float(d.get("max_climb", 2.0)), max_step)
+	void_drop = float(d.get("void_drop", 3.0))
 	_build_sectors(d.get("sectors", []))
+	var vis: Dictionary = d.get("visibility", {}) if typeof(d.get("visibility", {})) == TYPE_DICTIONARY else {}
+	vis_mode = str(vis.get("mode", "clip" if sectors.size() >= CLIP_FROM else "flood"))
+	if vis_mode not in ["flood", "clip"]:
+		errors.append("visibility mode %s is not flood or clip" % vis_mode)
+	vis_depth = maxi(int(vis.get("depth", 48)), 1)
+	vis_far = maxf(float(vis.get("far", 0.0)), 0.0)
 	_build_walls(d.get("walls", []))
 	_build_things(d.get("things", []))
 	_build_waypoints(d.get("waypoints", []))
@@ -111,6 +132,7 @@ func build(d: Dictionary, check_files: bool) -> void:
 	_build_spots(d.get("spots", {}))
 	_build_silhouettes(d.get("silhouettes", []))
 	_build_occluders(d.get("occluders", []))
+	_find_voids()
 	_check_reachability()
 	if errors.is_empty():
 		_resolve_walls()
@@ -146,6 +168,12 @@ func _build_sectors(list: Array) -> void:
 		sec["activities"] = _build_activities(sid, s.get("activities", {}), sec["flags"])
 		sec["sky"] = str(s.get("sky", ""))  # a name of the map sky's `by_name`: the sky (and `fog`, {color, density}) this sector shows (a map holding a night room and a dawn one)
 		sec["fog"] = s.get("fog", {}) if typeof(s.get("fog", {})) == TYPE_DICTIONARY else {}
+		sec["step_tex"] = str(s.get("step_tex", ""))  # the riser of a step up onto this sector (Doom's lower texture), when the portal names none
+		sec["lip_tex"] = str(s.get("lip_tex", ""))  # the lip where this sector's ceiling is lower than its neighbour's (Doom's upper texture)
+		sec["drop"] = bool(s.get("drop", false))  # any floor change into or out of it is a drop, not a step
+		sec["void"] = bool(s.get("void", false))  # a pit: drawn far below, never stood in (see _find_voids for the depth rule)
+		for k in ["step_tex", "lip_tex"]:
+			_tex_ok(str(sec[k]), "sector " + sid)
 		if pts.size() < 3:
 			errors.append("sector %s: a polygon needs 3 points or more" % sid)
 		else:
@@ -589,6 +617,53 @@ func lights_reaching(sid: String) -> Array:
 	return out
 
 
+## Voids (docs/story/HEIGHTS_AND_PATHS.md): a sector marked "void", or one whose floor lies `void_drop` metres or more below every sector next to it through a portal
+## and that holds no waypoint, home or spot (a pit nobody stands in; the Mothership's reactor floor, 4 m down, has its waypoint and stays a room). Each void gets `void_top`:
+## the lowest floor around it, where its haze starts. The camera is never placed in a void: a waypoint, home or spot in a marked one is an error.
+func _find_voids() -> void:
+	var used := {}
+	for w in waypoints.values():
+		used[str(w["sector"])] = true
+	for h in homes.values():
+		used[str(h["sector"])] = true
+	for sp in spots.values():
+		used[str(sp["sector"])] = true
+	for s in sectors:
+		var sid := str(s["id"])
+		var top := INF
+		for p in portals():
+			if p["a"] == sid:
+				top = minf(top, float(sector(str(p["b"]))["floor"]))
+			elif p["b"] == sid:
+				top = minf(top, float(sector(str(p["a"]))["floor"]))
+		if top == INF:
+			top = float(s["floor"])
+		if not bool(s["void"]) and void_drop > 0.0 and not used.has(sid) and top - float(s["floor"]) >= void_drop - 1.0e-4:
+			s["void"] = true
+			s["void_auto"] = true
+		s["void_top"] = maxf(top, float(s["floor"]))
+		if bool(s["void"]) and used.has(sid):
+			errors.append("sector %s is a void: no waypoint, home or spot may stand in it (the camera is never placed in a void)" % sid)
+
+
+func is_void(sid: String) -> bool:
+	return bool(sector(sid).get("void", false))
+
+
+## The floor change of walking from sector a into sector b: {dh (metres, up positive), kind}: "level", "step" (at most max_step; a "climb" style takes up to max_climb),
+## "drop" (taller, or any change into or out of a sector marked "drop") or "void" (b is a void: nobody walks into one).
+func floor_change(a: String, b: String, style := "walk") -> Dictionary:
+	var dh := float(sector(b).get("floor", 0.0)) - float(sector(a).get("floor", 0.0))
+	if is_void(b):
+		return {"dh": dh, "kind": "void"}
+	if absf(dh) < 1.0e-3:
+		return {"dh": dh, "kind": "level"}
+	var lim := max_climb if style == "climb" else max_step
+	if bool(sector(a).get("drop", false)) or bool(sector(b).get("drop", false)) or absf(dh) > lim + 1.0e-4:
+		return {"dh": dh, "kind": "drop"}
+	return {"dh": dh, "kind": "step"}
+
+
 func neighbors(sid: String) -> Array:
 	var out: Array = []
 	for p in portals():
@@ -666,10 +741,18 @@ func _resolve_walls() -> void:
 		var sec: Dictionary = sectors[_sector_index[w["sector"]]]
 		if str(w["tex"]) == "":
 			w["tex"] = str(sec["wall_tex"])
-		if str(w["lower_tex"]) == "":
+		var o: Dictionary = sector(str(w["portal"])) if str(w["portal"]) != "" else {}
+		if str(w["lower_tex"]) == "":  # the riser: the higher sector's step_tex, a void's cliff the neighbour's wall going on down, else the wall's own texture (as always)
 			w["lower_tex"] = str(w["tex"])
-		if str(w["upper_tex"]) == "":
+			if not o.is_empty() and float(o["floor"]) > float(sec["floor"]):
+				if str(o.get("step_tex", "")) != "":
+					w["lower_tex"] = str(o["step_tex"])
+				elif bool(sec.get("void", false)) and str(o["wall_tex"]) != "" and str(o["wall_tex"]) != "sky":
+					w["lower_tex"] = str(o["wall_tex"])
+		if str(w["upper_tex"]) == "":  # the lip: the lower-ceilinged sector's lip_tex, else the wall's own texture
 			w["upper_tex"] = str(w["tex"])
+			if not o.is_empty() and float(o["ceiling"]) < float(sec["ceiling"]) and str(o.get("lip_tex", "")) != "":
+				w["upper_tex"] = str(o["lip_tex"])
 
 
 func _default_wall(s: Dictionary, a: Vector2, b: Vector2) -> Dictionary:
