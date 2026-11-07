@@ -23,6 +23,7 @@ var track_audio: Variant = null  # RunTrackAudio (lock_stems, unlock_stem_at)
 var apply_fn: Callable = Callable()  # (action: Dictionary {t0, action, args}) -> void: a stage action on the rave's stage
 var beat_s := 60.0 / 174.0
 var phase_t0_fn: Callable = Callable()  # () -> float: the song time of the current phase's start (the bar grid)
+var track := TRACK  # the track whose bass stem is locked (a test uses its fixture's)
 var in_rave := false
 var locked := false
 var unlock_t := -1.0  # the bar line the bass comes in on once the knob is freed (-1: not scheduled)
@@ -60,7 +61,7 @@ func enter(node_id: String, t: float) -> void:
 	else:
 		locked = true
 		if track_audio != null:
-			track_audio.lock_stems(TRACK, [STEM])
+			track_audio.lock_stems(track, [STEM])
 		unlock_t = -1.0
 		_stage(t, false)
 		log.append({"kind": "lock", "t": t, "node": node_id})
