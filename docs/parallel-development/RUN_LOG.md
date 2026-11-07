@@ -16,6 +16,9 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
 - Track: the Chase and Status remix of "Valley of the Shadows" (already imported).
 - Push policy unchanged. Owner's words: "start the run and don't finish until everything altogether and
   done as new playable thing. Make sure to do art polish."
+- 8 November: **ruling 38** (owner): every minigame is played in the same 2.5D world with the run's HUD, seamless
+  transitions, no separate screen; contract 10; engine package A8; the card table converted later (A8b). The three
+  activity agents were redirected to it.
 - Later the same day: ruling 35 (stationary camera moments; no red/green rings, the artwork carries the
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
@@ -57,6 +60,7 @@ same/different in replace mode, `src/minigames/cloakroom/`), `wip/play-bar` (`Mu
 | `MusicGame-env` | `feature/doom-layout-worlds` | integration, env |
 | `MusicGame-play` | `feature/bedsit-raves` | integration, gameplay |
 | `MusicGame-engine` | `wip/engine-choice` | A7 running (Opus) |
+| `MusicGame-props` | `wip/engine-props` | A8 running (Opus): dynamic things, people states, feedback, pad-slot morph (ruling 38, contract 10) |
 | `MusicGame-music` | `wip/narr-n2-4-hospital` | Hospital running |
 | `MusicGame-import` | `wip/narr-ward-fix` | Ward fix running |
 | `MusicGame-space` | `wip/play-space` | running |
