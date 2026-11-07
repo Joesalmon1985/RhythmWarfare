@@ -410,7 +410,8 @@ class RealData(unittest.TestCase):
 
     def test_proposed_object_colliding_with_hotspot_fails_rule7(self):
         ov = copy.deepcopy(self.ov)
-        ov["entrances"][4]["object"]["id"] = "warehouse.bar.ember"
+        e = next(e for e in ov["entrances"] if e["object"]["status"] == "proposed")  # (a built entrance's object is existing: no collision check)
+        e["object"]["id"] = "warehouse.bar.ember"
         _, r = self.build(ov)
         self.assertTrue(any("collides" in f for f in r[7].fail))
 
