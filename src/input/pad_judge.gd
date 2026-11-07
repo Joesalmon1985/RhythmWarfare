@@ -20,6 +20,8 @@ var great_s := MissionRules.window_s("great")
 var complete_s := MissionRules.hold_complete_s()
 
 var _state: Array[int] = []
+var _withdrawn: Dictionary = {}  # cue index -> true: taken out of play before it came due (a replace activity owns the strip, RunEngine.suspend_rhythm)
+var withdrawn := 0
 var credit: PackedFloat32Array = PackedFloat32Array()  # per cue, 0..1, final once resolved
 var delta_ms: PackedFloat32Array = PackedFloat32Array()  # onset error of accepted cues (NAN when missed)
 var resolved_at: PackedFloat64Array = PackedFloat64Array()  # song time the cue's result became final
@@ -64,6 +66,8 @@ func setup(cues: Array, p_sequences: Array = []) -> void:
 		_pad_notes[pad].append(i)
 	_active.clear()
 	_events.clear()
+	_withdrawn.clear()
+	withdrawn = 0
 	strays_by_seq.clear()
 	perfect = 0
 	great = 0
@@ -102,9 +106,30 @@ func is_resolved(i: int) -> bool:
 	return _state[i] == State.DONE
 
 
-## What the note display shows for cue `i`: "hit" (resolved with credit), "miss" (resolved with none), else "pending"
+## Takes every cue still pending whose time is at or after `t` out of play (CONTRACTS.md 5, hook H5.2): it is DONE with credit 0 and flagged, emits no event,
+## counts no miss and breaks no combo; the note lane does not draw it. A cue being held is left alone. Returns how many were withdrawn.
+func withdraw_from(t: float) -> int:
+	var n := 0
+	for i in notes.size():
+		if _state[i] == State.PENDING and float(notes[i]["time"]) >= t:
+			_state[i] = State.DONE
+			credit[i] = 0.0
+			resolved_at[i] = float(notes[i]["time"])
+			_withdrawn[i] = true
+			n += 1
+	withdrawn += n
+	return n
+
+
+func is_withdrawn(i: int) -> bool:
+	return _withdrawn.has(i)
+
+
+## What the note display shows for cue `i`: "hit" (resolved with credit), "miss" (resolved with none), "withdrawn" (taken out of play, not drawn), else "pending"
 ## (waiting or being held).
 func cue_state(i: int) -> String:
+	if _withdrawn.has(i):
+		return "withdrawn"
 	if _state[i] != State.DONE:
 		return "pending"
 	return "hit" if credit[i] > 0.0 else "miss"

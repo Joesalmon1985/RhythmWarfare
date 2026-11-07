@@ -206,6 +206,9 @@ func step(passed: bool, t: float, notes: Array, window_t := -1.0) -> Array:
 	var out: Array = []
 	var before := pos
 	var kind := ""
+	if _in_hold(t, 0.0):  # the camera stands still (a route's holds, a leg's hold_bars): the rail does not move until the hold is over (ruling 35a)
+		visited.append({"place": place(), "pos": pos, "from": before, "role": role, "kind": "hold", "t": t, "queasy": queasy})
+		return out
 	if passed:
 		holds = 0
 		if pos < 0:  # winning back: one place towards the floor

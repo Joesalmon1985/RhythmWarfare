@@ -48,7 +48,7 @@ const DUNGEON_ROUTE := "bassment"  # a run route "bassment" is a quest entrance 
 static var extra_rows: Dictionary = {}
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
 const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall); `activity`: a minigame the success sits the player into
-const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
+const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style", "hold_bars"]  # hold_bars: a route leg's still hold after the move (CONTRACTS.md 3)
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
 ## The acting contract. The faces and the directed acts are StoryCharacter's (the Stage 1a sheets bake exactly these); a story may also direct the older states (DIRECTABLE_OLD).

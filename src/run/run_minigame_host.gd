@@ -13,6 +13,11 @@ extends RefCounted
 ##   now_fn: Callable () -> song time, beat_s: float, screen_size: Vector2 (the stage area's size in SCREEN pixels), reduced: bool, high_contrast: bool,
 ##   state_fn: Callable () -> Dictionary (the activity's `state()`; {} once it is gone), hit(local_pos: Vector2) -> String (the target id under `local_pos`, the tap position relative to the
 ##   stage area's top-left in screen pixels; "" for nothing). The view is a full-rect Control on canvas layer 3 inside the stage's low-res viewport, mouse_filter ignore.
+##
+## Modes (CONTRACTS.md 4 and 5, hook H5.4): while a REPLACE activity owns the pad strip (MinigameController.owns_strip: from the seat to a lead-in before the resume
+## boundary) its `controls()` stand in the strip as a RunActivityInput "controls" layer (2 or 4 large buttons in the pads' rects), the pads and the note lane are hidden
+## and the lane input is cleared and off; all three come back when the strip is handed back. While an OVERLAY activity is seated a "regions" layer gives the four
+## screen regions of the stage area (top, bottom, left, right): a tap there reaches the activity as `tap("region:<name>")`. RunPlay's dispatcher asks `control_tap` / `region_tap`.
 
 const DOOR_STOP_M := 2.6  # how far short of a door the camera stops after getting up toward it: the door, its light and the far half of its floor ring stay in the picture (52 degree view, eye 1.6 m up)
 
@@ -25,6 +30,13 @@ var armed_exit := ""  # the pending exit once selected, until the selection chan
 var _exit_scene := ""  # the scene the pending exit belongs to
 var _viewed: MinigameActivity = null
 var _was_active := false
+var controls_layer: RunActivityInput = null  # replace mode: the activity's controls in the pad strip (null while the pads own it)
+var regions_layer: RunActivityInput = null  # overlay mode: the four screen regions
+var _strip_saved := {}  # the pads' and the note lane's visibility before the controls stood in
+var _result_applied := false
+var mode_log: Array = []  # [{kind: controls_on | controls_off | regions_on | regions_off | control | region, t, ...}]
+
+const DEFAULT_REGIONS := {"top": [0.25, 0.0, 0.5, 0.42], "bottom": [0.25, 0.72, 0.5, 0.28], "left": [0.0, 0.0, 0.22, 1.0], "right": [0.78, 0.0, 0.22, 1.0]}  # CONTRACTS.md 5 (fixture input_ownership.json)
 
 
 func _init(p_play: Control) -> void:
@@ -49,11 +61,111 @@ func step(t: float) -> void:
 				s["done"] = true
 				var ok := mg.tap(str(s["target"]), t)
 				play.hotspot_log.append({"kind": "minigame_tap", "t": t, "target": str(s["target"]), "ok": ok, "scripted": true})
+	_step_layers(t)
+	if mg.done_t >= 0.0 and not _result_applied:  # (read once, when the activity is done: the flags are saved then, not at the boundary)
+		_result_applied = true
+		apply_result(mg.last_result, str(mg.request_info.get("theme", "")))
+	elif mg.done_t < 0.0:
+		_result_applied = false
 	if _was_active and not mg.active():
 		_unmount()
-		_resume(t)
+		_resume(mg.finish_t if mg.finish_t >= 0.0 and mg.finish_t <= t else t)  # (a replace activity: the camera goes back on the resume boundary)
 	_was_active = mg.active()
 	_step_exit(t)
+
+
+## The controls layer while the activity owns the strip, the regions layer while an overlay activity is seated.
+func _step_layers(t: float) -> void:
+	var mg: MinigameController = play.minigames
+	var want_controls := mg.owns_strip(t)
+	if want_controls and controls_layer == null:
+		_show_controls(t)
+	elif not want_controls and controls_layer != null:
+		_hide_controls(t)
+	var want_regions := mg.mode == ActivityMode.Mode.OVERLAY and mg.state in ["active", "leaving"]
+	if want_regions and regions_layer == null:
+		regions_layer = RunActivityInput.new()
+		regions_layer.name = "ActivityRegions"
+		regions_layer.kind = "regions"
+		var regs: Dictionary = mg.activity.config.get("regions", {}) if mg.activity != null and typeof(mg.activity.config.get("regions", null)) == TYPE_DICTIONARY else {}
+		if not ContractShapes.regions(regs).is_empty():
+			regs = DEFAULT_REGIONS
+		regions_layer.ids = ContractShapes.REGIONS.duplicate()
+		regions_layer.show_regions = DevText.on()
+		regions_layer.rects_fn = func() -> Array: return RunActivityInput.region_rects(regs, Rect2(play._stage_host.global_position, play._stage_host.size))
+		_add_layer(regions_layer)
+		mode_log.append({"kind": "regions_on", "t": t})
+	elif not want_regions and regions_layer != null:
+		regions_layer.queue_free()
+		regions_layer = null
+		mode_log.append({"kind": "regions_off", "t": t})
+
+
+func _add_layer(l: Control) -> void:
+	play.add_child(l)
+	if play.hud != null and play.hud.get_parent() == play:  # under the HUD (the pause button stays on top)
+		play.move_child(l, play.hud.get_index())
+
+
+func _show_controls(t: float) -> void:
+	var mg: MinigameController = play.minigames
+	var specs: Array = mg.activity.controls() if mg.activity != null else []
+	controls_layer = RunActivityInput.new()
+	controls_layer.name = "ActivityControls"
+	controls_layer.kind = "controls"
+	for c: Variant in specs:
+		var d: Dictionary = c if typeof(c) == TYPE_DICTIONARY else {"id": str(c)}
+		controls_layer.ids.append(str(d.get("id", "")))
+		controls_layer.labels.append(str(d.get("label", d.get("id", ""))))
+	var n := controls_layer.ids.size()
+	var pv: Control = play.pad_view
+	controls_layer.rects_fn = func() -> Array: return RunActivityInput.control_rects(pv.call("button_rects"), n)
+	_add_layer(controls_layer)
+	_strip_saved = {"pads": play.pad_view.visible, "notes": play.note_lane.visible}
+	play.lane_input.clear()
+	play.lane_input.enabled = false
+	play.pad_view.visible = false
+	play.note_lane.visible = false
+	mode_log.append({"kind": "controls_on", "t": t, "ids": controls_layer.ids.duplicate()})
+
+
+func _hide_controls(t: float) -> void:
+	controls_layer.queue_free()
+	controls_layer = null
+	play.pad_view.visible = bool(_strip_saved.get("pads", true))
+	play.note_lane.visible = bool(_strip_saved.get("notes", true))
+	play.lane_input.enabled = true
+	mode_log.append({"kind": "controls_off", "t": t})
+
+
+## The activity's controls own the pad strip now (the pads are refused: RunPlay `_on_button_pressed`).
+func owns_strip() -> bool:
+	return controls_layer != null
+
+
+## A tap in the pad strip while the controls own it: the control under it is pressed (the activity's `tap(id)`). Returns the id ("" for a gap).
+func control_tap(pos: Vector2, t: float) -> String:
+	if controls_layer == null:
+		return ""
+	var id := controls_layer.hit(pos)
+	if id == "":
+		return ""
+	controls_layer.flash(id)
+	var ok: bool = play.minigames.tap(id, t)
+	mode_log.append({"kind": "control", "t": t, "id": id, "ok": ok})
+	return id
+
+
+## A tap in the stage area while an overlay activity is seated: the region under it reaches the activity as "region:<name>". Returns the region ("" for a gap).
+func region_tap(pos: Vector2, t: float) -> String:
+	if regions_layer == null:
+		return ""
+	var r := regions_layer.hit(pos)
+	if r == "":
+		return ""
+	var ok: bool = play.minigames.tap("region:" + r, t)
+	mode_log.append({"kind": "region", "t": t, "region": r, "ok": ok})
+	return r
 
 
 func _mount(a: MinigameActivity) -> void:
@@ -100,6 +212,56 @@ func _resume(t: float) -> void:
 	if mg.last_route != "" and not _run_ending() and _leave_by(mg.last_route, t):
 		return
 	play._back_to_rail(t)
+
+
+## The ActivityRequest for activity `id` in a rave (CONTRACTS.md 4, hook H4.3), from data: the registered config with the theme file's `theme_keys` merged in and
+## "{theme}" filled in `flags_on_complete`; `mode` from the config; `return_pose` the station's choice viewpoint of the theme (`stations[kind].waypoint`, the race's
+## `race.entrance`), else `home` (the scene's waypoint). {} outside a rave (`theme` ""): the activity keeps its registered config, as the blackjack table does.
+static func build_request(id: String, cfg: Dictionary, theme: String, theme_data: Dictionary, scene_id: String, home: String) -> Dictionary:
+	if theme == "" or cfg.is_empty():
+		return {}
+	var config: Dictionary = cfg.duplicate(true)
+	for k: Variant in cfg.get("theme_keys", []):
+		if theme_data.has(str(k)):
+			config[str(k)] = (theme_data[str(k)] as Variant)
+	var flags: Array = []
+	for f: Variant in cfg.get("flags_on_complete", []):
+		flags.append(str(f).replace("{theme}", theme))
+	config["flags_on_complete"] = flags
+	var kind := str(cfg.get("kind", id))
+	var pose := ""
+	var st: Variant = (theme_data.get("stations", {}) as Dictionary).get(kind, null)
+	if typeof(st) == TYPE_DICTIONARY:
+		pose = str((st as Dictionary).get("waypoint", ""))
+	if pose == "" and kind == "race":
+		pose = str((theme_data.get("race", {}) as Dictionary).get("entrance", ""))
+	return {"activity_id": id, "mode": str(cfg.get("mode", "rhythm")), "theme": theme, "scene_id": scene_id, "return_pose": pose if pose != "" else home, "config": config}
+
+
+## The theme file of rave `theme` (content/bedsit/themes.json names it; {} when there is none yet).
+static func theme_data_of(theme: String, themes_path := "res://content/bedsit/themes.json") -> Dictionary:
+	if theme == "" or not FileAccess.file_exists(themes_path):
+		return {}
+	var th: Variant = JSON.parse_string(FileAccess.get_file_as_string(themes_path))
+	var p := str(((th as Dictionary).get("themes", {}) as Dictionary).get(theme, "")) if typeof(th) == TYPE_DICTIONARY else ""
+	if p == "" or not FileAccess.file_exists(p):
+		return {}
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(p))
+	return d if typeof(d) == TYPE_DICTIONARY else {}
+
+
+## The activity's result once it is done (CONTRACTS.md 4): its flags go to the save (RunProgress.apply_activity_flag: "rave.<theme>.<puzzle>", else a run flag), a race
+## record too. Applied once per activity.
+func apply_result(res: Dictionary, theme: String) -> void:
+	var prog: RunProgress = Session.run_progress
+	if prog == null or res.is_empty():
+		return
+	for f: Variant in res.get("flags_to_set", []):
+		prog.apply_activity_flag(str(f))
+	var race: Variant = res.get("race", null)
+	if typeof(race) == TYPE_DICTIONARY and theme != "":
+		prog.record_race(theme, bool(race.get("won", false)), float(race.get("time_s", 0.0)))
+	mode_log.append({"kind": "result", "activity": str(res.get("activity_id", "")), "flags": res.get("flags_to_set", []), "race": race != null})
 
 
 ## The ways out of scene `node_id` for the activity (MinigameActivity "exits"): one per exit hotspot of the scene available now (kind "exit", the final window, a scene route), the default first.

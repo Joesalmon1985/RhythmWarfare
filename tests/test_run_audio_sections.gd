@@ -369,7 +369,7 @@ func test_the_run_seed_is_stored_migrates_and_can_be_overridden() -> void:
 	p.run_started()
 	assert_true(p.run_seed() != s0, "a run advances the seed for the next one")
 	assert_eq(int(RunProgress.load_data(path, "user://none.json").data["seed"]), p.run_seed(), "the seed is saved")
-	assert_eq(int(RunProgress.load_data(path, "user://none.json").data["version"]), 2, "the save version is unchanged")
+	assert_eq(int(RunProgress.load_data(path, "user://none.json").data["version"]), RunProgress.VERSION, "the save version is the current one (3 since the bedsit raves, ruling 37)")
 	OS.set_environment("RW_RUN_SEED", "4242")
 	assert_eq(RunData.run_seed(), 4242, "RW_RUN_SEED overrides the stored seed")
 	OS.set_environment("RW_RUN_SEED", "")
