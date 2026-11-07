@@ -6489,6 +6489,54 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "mothership.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mothership.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "mothership.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -6520,6 +6568,66 @@
    "status": "existing",
    "to": "main/mothership.gallery",
    "via": "mothership.dj"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_squadron"
   },
   {
    "condition": {
@@ -6612,6 +6720,37 @@
    "status": "existing",
    "to": "main/mothership.reactor",
    "via": "mothership.exit_reactor"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "mothership.enter_squadron"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.exit",
+   "via": "mothership.bridge.enter_squadron"
   },
   {
    "condition": {
@@ -6720,6 +6859,22 @@
    "status": "existing",
    "to": "main/mothership.exit",
    "via": "mothership.bridge.star_chart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "mothership.bridge.enter_squadron"
   },
   {
    "condition": {
@@ -6846,6 +7001,37 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "mothership.gallery.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.bridge",
+   "via": "mothership.gallery.enter_bassment"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6942,6 +7128,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "mothership.reactor.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -7011,6 +7213,21 @@
    "status": "existing",
    "to": "main/mothership.bridge",
    "via": "mothership.reactor.engineer"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.bridge",
+   "via": "mothership.reactor.enter_gospel"
   },
   {
    "condition": {
@@ -10636,14 +10853,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 702,
+   "edges": 716,
    "edges_by_kind": {
-    "quest_entry": 5,
+    "quest_entry": 12,
     "quest_return": 138,
-    "scene": 559
+    "scene": 566
    },
    "edges_by_status": {
-    "existing": 702
+    "existing": 716
    },
    "nodes": 146
   },

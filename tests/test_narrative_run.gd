@@ -32,12 +32,22 @@ static func _entrance_row(id: String, world: String, scene: String, anchor: Dict
 		"on_success": {"route": route}, "on_failure": {"energy": -4}, "repeatable": true}
 
 
+static func _real_row(d: RunData, id: String) -> bool:
+	for sc in d.hotspots:
+		for h in d.hotspots[sc]:
+			if str(h["id"]) == id:
+				return true
+	return false
+
+
 static func fixture_rows() -> Dictionary:
 	var main := RunData.load_default()
 	var rows := {"main": []}
 	for hub in ["hospital", "ward", "mothership", "underworld"]:
 		var w := str(main.nodes[hub]["world"])
 		for q in ["bassment", "gospel", "squadron", "ember"]:
+			if _real_row(main, "%s.enter_%s" % [hub, q]):
+				continue
 			rows["main"].append(_entrance_row("%s.enter_%s" % [hub, q], w, hub, _anchor_of(main, hub), "bassment" if q == "bassment" else "path:" + q))
 	rows["main"].append(_entrance_row("warehouse.enter_bassment", "warehouse", "warehouse", _anchor_of(main, "warehouse.bar"), "bassment"))
 	rows["main"].back()["anchor"] = _anchor_of(main, "warehouse")
