@@ -21,11 +21,11 @@ The render shows (Doom units, 32 = 1 m, x east, y north): an outer terrace +96 (
 | Reference element | Trace piece | Where |
 | --- | --- | --- |
 | Walkway round the floor (steel, wet) | `stone_ring`, 0 | the band round the courtyard; the viewer stands in its **south-west corner** |
-| Fenced dance floor | `courtyard`, +32 (the render's guess): its 1 m ledge is the **railing wall** all round (impassable lines, trim texture), with two gates (south x -400..-320, west y -120..-40), each a 0.5 m step island (`gate_step_s/w`) | centre |
-| Four speaker plinths | `plat_n/e/w/s` (210 square, +80: 1.5 m over the floor) | one per quadrant |
+| Fenced dance floor | `courtyard`, +32 (the render's guess): its 1 m ledge carries the renderer's **`railing` wall kind** all round (a see-through lattice strip, tile `wh_railing`, 1 m: the floor is seen through the fence; closed to walkers), with two gates (south x -400..-320, west y -120..-40), each a 0.5 m step island (`gate_step_s/w`) | centre |
+| Four speaker plinths | `plat_n/e/w/s` (210 square, lowered to +48: 0.5 m over the floor, a step a walker can take) | one per quadrant |
 | Lit cube | `pedestal` (+64), two stair strips on its south side (`ped_step_a/b`, 40 and 52) | centre |
-| Stage (guide: ahead) | `stage` island in the courtyard, +68, two steps (`stage_step_a/b`) on its east side | south-west part of the floor, 16 m from the reference viewpoint on the diagonal ahead |
-| Bar (guide: left) | `bar`: a room cut out of the ring's west band, three solid walls, 5 m opening to the south (towards the viewer), floor +24, 4 m ceiling | west band, y -400..-200 |
+| Stage (guide: ahead) | `stage` island in the courtyard, +68, two steps (`stage_step_a/b`, 0.375 m risers) on its WEST side | south-west part of the floor, 16 m from the reference viewpoint on the diagonal ahead |
+| Bar (guide: left) | `bar`: a room cut out of the ring's west band, three solid walls, 5 m opening to the south (towards the viewer), floor +16 (a 0.5 m step), 4 m ceiling | west band, y -400..-200 |
 | Lounge (guide: right) | `lounge`: a room cut out of the ring's south band, three solid walls, opening to the west, floor +12, 4 m ceiling | south band, x -540..-400 |
 | Arrival | `wh_arrive`: the ring's south-west corner facing the floor (a cut, then a 3 bar walk to the reference viewpoint) | |
 
@@ -36,9 +36,16 @@ The render shows (Doom units, 32 = 1 m, x east, y north): an outer terrace +96 (
 
 ## What the render and the pilot still lack
 
-* The railing is the 1 m ledge with the `trim` lattice tile, a solid wall, not a railing with a gap under the rail: the renderer's railing kind replaces it later.
+* The railing is one strip per portal edge (no posts, no thickness; the lattice tile has its own posts every metre); the pits' rims in the ring (four -3 m slots) carry the same railing, each pit keeping one open rim on its far side (the map loader wants every piece reachable).
 * The bar counter, taps, curtains and sofa are not modelled (one sofa billboard, pendants, truss towers, lights); the rooms are plain boxes.
 * The stage is on the dance floor, not against a far wall as in the painting (the render's courtyard is 32 m across, the painting's room about a third of that); no window with the moon, banners, hanging speaker cage or light shafts.
 * The terrace (+96) and the nub: no stairs; the render draws ramps (untraced).
 
 Regenerate: see `docs/doom/LAUNCH.md`. Trace result: 22 Doom sectors, 72 convex pieces, 141 portals (6 blocked: the ledge), 0 unreachable; 9 pieces not on foot (the platforms and the terrace, on purpose).
+
+## Heights, rail and the camera path (7 November)
+
+* `max_step` 0.5 and `visibility` clip (72 pieces) are set in the map. Every portal whose floors differ by more than 0.5 m is shut to walkers (`blocked`) when the map stays reachable without it (the sides of the stage and pedestal stairs, the pits, the terrace); `tools/doom/author_warehouse.py` does this after every convert (`barriers`).
+* Rail data (`tools/run/make_doom.py`): the stay loop is four places, each a `via` polyline move: the west band north of the bar (hold 2 bars), the pedestal (hold 2), against the south railing on the floor (hold 2), and back to `wh_ref`, a choice viewpoint (`"choice": true`, hold 8). `rail.routes` carries the other routes as moves: `up` (the walk to the stage: out past the lounge, through the south gate, up the west steps), `left`, `right`, `stumble`, `arrive`. Via points are the `wh_v_*` waypoints (corners only, never stood on).
+* `check_rail_paths.gd` (and `StoryRailCheck.check_rail`, which now also checks `rail.routes`) reports 0 problems on the five Doom scenes.
+* `python3 tools/doom/shoot_scene.py walk docs/shots/doom/warehouse` (or `RW_WALK=1` with shoot_scene.sh) writes `walk_ahead.jpg` and `walk_stay.jpg` (12 frames each along the move, the eye's real height; the pose tables and hold figures are in `walk_*.txt`).

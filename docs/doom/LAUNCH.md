@@ -23,5 +23,4 @@ are ALIASES of the same scene and map until the real ones exist; each leads on t
 
 ## Known limits (7 November)
 
-No state-driven guides beyond what the existing choice staging does (sprite per state, no loop playback, no brightening lamp); no polyline rail moves (one hop per route, the whole route is in the data);
-`hold_bars` is data only; no railings; the terrace and the north-west nub are not connected to the ring; the guides are placeholder art.
+No state-driven guides beyond what the existing choice staging does (sprite per state, no loop playback, no brightening lamp); the rail's moves are polylines with holds, but the exits' door walks (ahead, left, right) still go straight to the next scene's arrival (`rail.routes` is checked, not yet played); the terrace and the north-west nub are not connected to the ring; the guides are placeholder art.

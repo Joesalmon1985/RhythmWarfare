@@ -123,3 +123,135 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 		routes.append(str((h["on_success"] as Dictionary).get("route", "")))
 	routes.sort()
 	assert_eq(routes, ["doom_balcony", "doom_bar", "doom_lounge", "doom_warehouse"], "ahead, left, right, and stay on the floor")
+
+
+# --- the rail as polyline moves with holds, and the railing (docs/story/HEIGHTS_AND_PATHS.md) ---------------------------------------------------------------------------------
+
+const DOOM_NODES := ["doom_warehouse", "doom_balcony", "doom_bar", "doom_lounge", "doom_warehouse.return"]
+const REVEAL_HOLD := 2.0
+
+
+func _doom_run() -> RunData:
+	OS.set_environment("RW_DOOM_WORLDS", "1")
+	var on := RunData.load_default()
+	OS.set_environment("RW_DOOM_WORLDS", "")
+	return on
+
+
+func _moves_of(rail: Dictionary) -> Array:
+	var out: Array = []
+	for k in ["good", "bad"]:
+		for p in rail[k]:
+			out.append(p)
+	for k in rail["routes"]:
+		out.append(rail["routes"][k])
+	return out
+
+
+func test_the_rail_data_validates_and_every_route_is_a_via_polyline_with_holds() -> void:
+	var on := _doom_run()
+	for id in DOOM_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and typeof(routes[k]) == TYPE_DICTIONARY and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_true(typeof(routes[k].get("via")) == TYPE_ARRAY and not (routes[k]["via"] as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0 or k == "stumble", "%s: route %s holds at its end" % [id, k])
+		for p in rail["good"]:
+			assert_true(float(p.get("hold_bars", 0.0)) >= REVEAL_HOLD, "%s: good place %s holds at least %d bars" % [id, p["to"], int(REVEAL_HOLD)])
+	var good: Array = on.nodes["doom_warehouse"]["rail"]["good"]
+	assert_eq(good.size(), 4, "the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "wh_ref", "the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)), "wh_ref is a choice viewpoint")
+	assert_eq(float(good[3]["hold_bars"]), 8.0, "wh_ref holds 8 bars")
+	assert_true(float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "the choice viewpoint holds at least the whole choice window")
+	assert_true(on.nodes["doom_warehouse"]["rail"]["routes"]["up"]["via"].size() >= 3, "ahead is a polyline of several legs")
+
+
+func test_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:
+	var on := _doom_run()
+	var m := _map()
+	if m == null:
+		fail("map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	var seen := 0
+	for id in DOOM_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		for mv in _moves_of(rail):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var w := m.waypoint(str(wid))
+				var sid := str(w["sector"])
+				seen += 1
+				assert_true(m.inside(w["at"], sid, StoryMap.WAYPOINT_MARGIN), "%s: %s lies inside its piece %s with the margin" % [id, wid, sid])
+				assert_false(m.is_void(sid), "%s: %s is not in a void" % [id, wid])
+				assert_true(reach.has(sid), "%s: %s stands in a piece a walker reaches" % [id, wid])
+				assert_true(float(m.sector(sid)["ceiling"]) - float(m.sector(sid)["floor"]) >= m.eye_height + 0.1, "%s: %s has room for the eye" % [id, wid])
+	assert_true(seen > 40, "the loop looked at %d waypoint uses" % seen)
+
+
+func test_check_rail_paths_reports_no_problem_for_the_warehouse() -> void:
+	var on := _doom_run()
+	var m := _map()
+	if m == null:
+		fail("map did not load")
+		return
+	for id in DOOM_NODES:
+		var node: Dictionary = on.nodes[id]
+		var errs := StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"])
+		assert_eq(errs, [], "%s: check_rail_paths finds nothing" % id)
+	var moves := StoryRailCheck.rail_moves("doom_warehouse", "wh_ref", on.nodes["doom_warehouse"]["rail"])
+	var named := 0
+	for mv in moves:
+		if str(mv["where"]).contains(" route "):
+			named += 1
+	assert_eq(named, 5, "the five routes (up, left, right, stumble, arrive) are checked as moves")
+
+
+func test_the_railing_replaces_the_solid_ledge_and_the_map_keys_are_set() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % MAP_ID))
+	assert_eq(float(doc["max_step"]), 0.5, "max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "visibility mode clip")
+	assert_true((doc["textures"] as Dictionary).has("wh_railing"), "the railing tile is one of the map's textures")
+	var im := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/doom_warehouse/textures/wh_railing.png"))
+	assert_true(im != null and im.get_width() == 128 and im.detect_alpha() != Image.ALPHA_NONE, "the railing tile is 128 px and has an alpha channel")
+	var sec := {}
+	for s in doc["sectors"]:
+		sec[str(s["id"])] = s
+	var ledge := 0
+	var pit := 0
+	for w in doc["walls"]:
+		if str(w.get("kind", "")) != "railing":
+			continue
+		assert_eq(str(w["tex"]), "wh_railing", "a railing names the lattice tile")
+		assert_eq(float(w["height"]), 1.0, "a railing is 1 m")
+		var a: Dictionary = sec[str(w["sector"])]
+		var b: Dictionary = sec[str(w["portal"])]
+		var pair := [int(a["doom_sector"]), int(b["doom_sector"])]
+		pair.sort()
+		if pair == [9, 10]:
+			ledge += 1
+		elif minf(float(a["floor"]), float(b["floor"])) <= -2.0:
+			pit += 1
+	assert_eq(ledge, 6, "the ledge round the dance floor is six railing walls")
+	assert_true(pit > 0, "the pits' rims carry railings (%d)" % pit)
+	var m := _map()
+	var closed_ledge := 0
+	for p in m.portals():
+		var ends := [str(p["a"]).split("_")[0], str(p["b"]).split("_")[0]]
+		ends.sort()
+		if bool(p["blocked"]) and ends == ["10", "9"]:
+			closed_ledge += 1
+	assert_true(closed_ledge >= 6, "the ledge portals are closed to walkers")
