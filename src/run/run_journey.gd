@@ -221,13 +221,19 @@ func herald_looks(id: String, t0: float, engine: RunEngine) -> Array:
 	var heralds := staged_heralds(id, engine)
 	var beat := engine.beat_s
 	var bb := float(engine.timing("block_beats"))
-	var bars := (HERALD_LOOK_TO - HERALD_LOOK_FROM) * beat / rail.bar_s()
 	for i in mini(heralds.size(), HERALD_MAX_LOOKS):
 		var pts := StoryHeralds.look_points(heralds[i], m)
 		if pts.is_empty():
 			continue
 		_herald_blocks[i] = true
-		out.append({"t0": t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat, "action": "player_look", "args": {"face": pts, "bars": bars, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
+		var t_look := t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat
+		var t_end := t0 + (float(i) * bb + HERALD_LOOK_TO) * beat
+		if rail != null and rail.busy_until > t_look and rail.busy_until - t_look <= beat:  # never start in a door walk's last beat: the walk turns the body to its arrival yaw there (docs/art/CAMERA_CLEARANCE.md, "The herald look")
+			t_look = rail.busy_until
+		var b := (t_end - t_look) / rail.bar_s()
+		if b <= HERALD_TURN_BARS:
+			continue
+		out.append({"t0": t_look, "action": "player_look", "args": {"face": pts, "bars": b, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
 	return out
 
 
