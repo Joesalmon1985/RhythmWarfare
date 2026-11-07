@@ -17,6 +17,7 @@ const WINDOW_GLANCE_DEG := 8.0  # the glance of the hotspot window turns the hea
 const DENSE_PER_BAR := 4  # more notes than this in a bar (one per beat) is a dense bar
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered"]
 const STYLES := ["walk", "stagger", "run", "climb", "carried"]
+const ROUTE_KEYS := ["up", "left", "right", "stumble", "arrive"]  # rail.routes: one move per route direction (`down` is the stay: no move), the stumble and the arrival
 ## A choice viewpoint (a rail place with "choice": true, docs/story/HEIGHTS_AND_PATHS.md) holds at least this many bars: the whole choice window (RunJourney's beats 49 to 60.5).
 const CHOICE_HOLD_BARS := 3.0
 
@@ -72,6 +73,27 @@ static func validate(id: String, rail: Variant) -> Array:
 				errors.append("node %s: rail.%s place %s: hold_bars is not negative" % [id, key, p["to"]])
 			if bool(p.get("choice", false)) and float(p.get("hold_bars", 0.0)) < CHOICE_HOLD_BARS - 1.0e-6:
 				errors.append("node %s: rail.%s place %s is a choice viewpoint holding %.1f bars; a choice viewpoint holds at least %.1f (the whole choice window)" % [id, key, p["to"], float(p.get("hold_bars", 0.0)), CHOICE_HOLD_BARS])
+	if r.has("routes"):  # a scene's route moves (docs/engine/GEOGRAPHY_WORLDS.md): {up|left|right|stumble|arrive: {to, via?, bars > 0, hold_bars?, style?, role?, from?}}; a world exit's walk plays its key's move
+		if typeof(r["routes"]) != TYPE_DICTIONARY:
+			errors.append("node %s: rail.routes is an object {direction: move}" % id)
+		else:
+			for k in (r["routes"] as Dictionary):
+				var m: Variant = r["routes"][k]
+				if str(k) not in ROUTE_KEYS:
+					errors.append("node %s: rail.routes.%s is not a route key (%s)" % [id, k, ", ".join(PackedStringArray(ROUTE_KEYS))])
+				if typeof(m) != TYPE_DICTIONARY or str((m as Dictionary).get("to", "")) == "":
+					errors.append("node %s: rail.routes.%s needs `to`" % [id, k])
+					continue
+				if float(m.get("bars", 3.0)) <= 0.0:  # (any length is accepted: the threshold walk clamps it to MOVE_BARS_MIN..MAX, then to the boundary)
+					errors.append("node %s: rail.routes.%s lasts %.1f bars; a move lasts some bars" % [id, k, float(m.get("bars", 3.0))])
+				if m.has("via") and (typeof(m["via"]) != TYPE_ARRAY or (m["via"] as Array).any(func(v: Variant) -> bool: return str(v) == "")):
+					errors.append("node %s: rail.routes.%s: via is a list of waypoints" % [id, k])
+				if float(m.get("hold_bars", 0.0)) < 0.0:
+					errors.append("node %s: rail.routes.%s: hold_bars is not negative" % [id, k])
+				if str(m.get("style", "walk")) not in STYLES:
+					errors.append("node %s: rail.routes.%s has unknown style %s" % [id, k, m.get("style")])
+				if str(m.get("role", "dancer")) not in ROLES:
+					errors.append("node %s: rail.routes.%s has unknown role %s" % [id, k, m.get("role")])
 	if (r.get("glances", []) as Array).is_empty() or (r.get("strolls", []) as Array).is_empty():
 		errors.append("node %s: every block needs a glance and a stroll to draw from (rail.glances and rail.strolls)" % id)
 	return errors

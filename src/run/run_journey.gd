@@ -112,20 +112,64 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 ## A world exit's approach (CONTRACTS.md 1, H1.6): the player walks to the threshold spot `wp` from song time `t` and is there by the boundary `t_boundary`, where the
 ## world transition (the passage frame, the stage swap) takes over: walk first, then the transition. `bars` is the leg's length (2 to 4); a walk that would run past
 ## the boundary is shortened to end on it (the guard before a boundary is shorter than a bar: CONTRACTS.md 3, the leg-length disagreement).
-func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0) -> Array:
+## `move` (optional) is the route's move {to, via?, bars?, hold_bars?, style?} (threshold_move): the walk follows its `via` polyline over its bars, still ending by the boundary, and keeps
+## its hold at the threshold only when there is time for it before the boundary.
+func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0, move: Dictionary = {}) -> Array:
 	if rail == null or wp == "" or t_boundary <= t:
 		return []
-	var b := minf(clampf(bars, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), (t_boundary - t) / rail.bar_s())
-	rail.busy_until = t + b * rail.bar_s()
-	var tagged := _tag([{"t0": t, "action": "player_move", "args": {"to": wp, "style": door_style, "bars": b, "threshold": true}}], world)
+	var avail := (t_boundary - t) / rail.bar_s()
+	var want := float(move.get("bars", bars)) if not move.is_empty() else bars
+	var b := minf(clampf(want, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), avail)
+	var style := str(move.get("style", door_style)) if door_style == "walk" else door_style  # (an exit failure's stagger wins over the route's own style)
+	var args := {"to": wp, "style": style, "bars": b, "threshold": true}
+	if typeof(move.get("via")) == TYPE_ARRAY and not (move["via"] as Array).is_empty():
+		args["via"] = (move["via"] as Array).duplicate()
+	var hold := minf(maxf(float(move.get("hold_bars", 0.0)), 0.0), avail - b)
+	if hold > 1.0e-6:
+		args["hold_bars"] = hold
+	if hold > 1.0e-6:
+		rail.hold_from = t + b * rail.bar_s()
+	rail.busy_until = t + (b + maxf(hold, 0.0)) * rail.bar_s()
+	var tagged := _tag([{"t0": t, "action": "player_move", "args": args}], world)
 	door_style = "walk"
 	actions.append_array(tagged)
 	return tagged
 
 
-## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1; "" when it names none).
+## The walk out of scene `from` toward `to` in another world, started at `t` and ending by the boundary `t_boundary` (the lock handler, RunPlay._update_passage): the route's
+## move when the scene has one (its polyline), else a straight walk to the threshold spot; [] when the route has no threshold.
+func threshold_leave(t: float, t_boundary: float, from: String, to: String) -> Array:
+	var wp := threshold_of(from, to)
+	if wp == "":
+		return []
+	var move := threshold_move(from, to)
+	return threshold_walk(t, t_boundary, wp, 2.0, move if str(move.get("to", "")) == wp else {})
+
+
+## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1), else the route's own move
+## (threshold_move: its `to`); "" when there is neither.
 func threshold_of(from: String, to: String) -> String:
-	return str(((data.nodes.get(from, {}) as Dictionary).get("thresholds", {}) as Dictionary).get(to, ""))
+	var explicit := str(((data.nodes.get(from, {}) as Dictionary).get("thresholds", {}) as Dictionary).get(to, ""))
+	if explicit != "":
+		return explicit
+	return str(threshold_move(from, to).get("to", ""))
+
+
+## The route move of scene `from` toward `to` (docs/engine/GEOGRAPHY_WORLDS.md): the `next` entry leading to `to` gives the direction, the rail's `routes[dir]` is the move
+## {to (the threshold waypoint), via?, bars?, hold_bars?, style?}. {} when the route is the stay (`down`), is not a world exit, or the rail has no move for it.
+func threshold_move(from: String, to: String) -> Dictionary:
+	var n: Dictionary = data.nodes.get(from, {})
+	if n.is_empty() or not data.nodes.has(to) or str(data.nodes[to]["world"]) == str(n["world"]):
+		return {}
+	for e in n.get("next", []):
+		if str(e["to"]) != to:
+			continue
+		var dir := str(e["dir"])
+		if dir == "down":
+			return {}
+		var mv: Variant = ((n.get("rail", {}) as Dictionary).get("routes", {}) as Dictionary).get(dir)
+		return (mv as Dictionary) if typeof(mv) == TYPE_DICTIONARY and str((mv as Dictionary).get("to", "")) != "" else {}
+	return {}
 
 
 ## The rail actions of a hotspot outcome's cinematic ({steps: [{move, to, bars, role, style, look_at}]}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free

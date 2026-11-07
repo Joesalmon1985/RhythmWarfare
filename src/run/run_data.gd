@@ -457,7 +457,59 @@ func _validate_laps(id: String, n: Dictionary) -> void:
 			errors.append("scene %s: laps %d with an arrangement (sections are one lap long)" % [id, laps])
 
 
+## A geography world (`"geography": true` in its run.json `worlds` entry, docs/engine/GEOGRAPHY_WORLDS.md): a place in a map of places. Its scenes may lead to the entry scene of another
+## geography world in any direction and at any depth (cycles through worlds are the point); its entry scene may be its exit (a one-scene world is the normal case).
+func is_geography(world: String) -> bool:
+	return bool((worlds.get(world, {}) as Dictionary).get("geography", false))
+
+
+## True when scene `id` has a route out of its world (another world's scene).
+func leaves_world(id: String) -> bool:
+	for e in nodes[id]["next"]:
+		var to := str(e["to"])
+		if nodes.has(to) and str(nodes[to]["world"]) != str(nodes[id]["world"]):
+			return true
+	return false
+
+
+## A scene of a geography world: a stay (`down`, marked loop, inside the world) and a way on; a route out leads to the entry scene of another geography world (no depth rule);
+## inside the world the ordinary rules hold (a route back to the entry scene is a loop; the no-cycle check of _validate_worlds).
+func _validate_geography_routes(id: String, n: Dictionary) -> void:
+	var routes: Array = n["next"]
+	var dirs := {}
+	var stay := false
+	for e in routes:
+		var to := str(e["to"])
+		var dir := str(e["dir"])
+		if dirs.has(dir):
+			errors.append("scene %s: two routes use the direction %s" % [id, dir])
+		dirs[dir] = true
+		if not (n.get("rail", {}) as Dictionary).get("exits", {}).has(dir):
+			errors.append("scene %s: the route %s has no exit doorway in rail.exits" % [id, dir])
+		if not nodes.has(to):
+			errors.append("scene %s: route to unknown scene %s" % [id, to])
+			continue
+		var t: Dictionary = nodes[to]
+		if str(t["world"]) == str(n["world"]):
+			if dir == "down" and bool(e.get("loop", false)):
+				stay = true
+			elif bool(t["entry"]) and not bool(e.get("loop", false)):
+				errors.append("scene %s: the route back to the entry scene %s must be marked \"loop\": true" % [id, to])
+			continue
+		if not is_geography(str(t["world"])):
+			errors.append("geography scene %s: the route to %s leads out of the map of places (world %s is not a geography world)" % [id, to, t["world"]])
+		elif not bool(t["entry"]):
+			errors.append("geography scene %s: the route to %s must lead to the entry scene of world %s (%s)" % [id, to, t["world"], entry_of(str(t["world"]))])
+	if not stay:
+		errors.append("geography scene %s needs its stay: a route \"dir\": \"down\" inside its world marked \"loop\": true" % id)
+	if routes.size() < 2:
+		errors.append("geography scene %s needs at least 2 routes (the stay and a way on)" % id)
+
+
 func _validate_routes(id: String, n: Dictionary) -> void:
+	if is_geography(str(n["world"])) and not is_path():
+		_validate_geography_routes(id, n)
+		return
 	var routes: Array = n["next"]
 	var need := 2 if bool(n["exit_scene"]) and not is_path() else 1  # (a path's exit scene may lead to a single world)
 	if routes.size() < need:
@@ -516,7 +568,16 @@ func _validate_worlds() -> void:
 				entries.append(id)
 			if bool(nodes[id]["exit_scene"]):
 				exits.append(id)
-		if is_path():  # a path world: several entry scenes and exit scenes are allowed; its id stays an entry (the first) and it needs a way out (an exit scene or an ending)
+		var geo := is_geography(w)
+		if geo and is_path():
+			errors.append("world %s: \"geography\" is for the main run's worlds (a path has its own world rules)" % w)
+			geo = false
+		if geo:  # a place in a map of places: one entry scene (the world's id), any scene may leave the world (the entry may be the exit; exit_scene is optional)
+			if entries.size() != 1:
+				errors.append("world %s needs exactly one entry scene (has %d)" % [w, entries.size()])
+			elif str(entries[0]) != w:
+				errors.append("world %s: the entry scene's id must be the world's id (found %s)" % [w, entries[0]])
+		elif is_path():  # a path world: several entry scenes and exit scenes are allowed; its id stays an entry (the first) and it needs a way out (an exit scene or an ending)
 			if entries.is_empty() or not entries.has(w):
 				errors.append("world %s: the world's own id must be one of its entry scenes (entries: %s)" % [w, ", ".join(PackedStringArray(entries))])
 			var terminals := scenes.filter(func(i: String) -> bool: return _terminal(i))
@@ -535,14 +596,14 @@ func _validate_worlds() -> void:
 		var state := {}  # 1 = on the DFS stack, 2 = done
 		for id in scenes:
 			_dfs_cycle(str(id), state, w)
-		for id in scenes:  # every scene reaches the exit scene over routes that stay in the world
+		for id in scenes:  # every scene reaches the exit scene over routes that stay in the world (in a geography world: a scene with a route out)
 			if not _reaches_exit(str(id), {}):
-				errors.append("scene %s cannot reach the exit scene of world %s" % [id, w])
+				errors.append(("scene %s cannot reach a route out of geography world %s" if geo else "scene %s cannot reach the exit scene of world %s") % [id, w])
 
 
-## An exit scene (leaves the world) or an ending (leaves the path): where a world's scenes must all lead.
+## An exit scene (leaves the world) or an ending (leaves the path): where a world's scenes must all lead. In a geography world any scene with a route out of the world is one.
 func _terminal(id: String) -> bool:
-	return bool(nodes[id]["exit_scene"]) or str(nodes[id]["ending"]) != ""
+	return bool(nodes[id]["exit_scene"]) or str(nodes[id]["ending"]) != "" or (is_geography(str(nodes[id]["world"])) and leaves_world(id))
 
 
 ## A path as a whole: every scene reaches an ending over all its routes, an ending's route is the way back, the start scene is an entry.
@@ -599,7 +660,7 @@ func _dfs_cycle(id: String, state: Dictionary, w: String) -> void:
 
 
 func _reaches_exit(id: String, seen: Dictionary) -> bool:
-	if _terminal(id) if is_path() else bool(nodes[id]["exit_scene"]):
+	if _terminal(id) if is_path() else (leaves_world(id) if is_geography(str(nodes[id]["world"])) else bool(nodes[id]["exit_scene"])):
 		return true
 	seen[id] = true
 	for to in _in_world_routes(id):
@@ -636,6 +697,18 @@ func _validate_places() -> void:
 			want.append(str(r["arrive"]))
 		for dir in (r.get("exits", {}) as Dictionary):
 			want.append(str(r["exits"][dir]))
+		var rmoves: Variant = r.get("routes", {})
+		if typeof(rmoves) == TYPE_DICTIONARY:  # the route moves' targets and polylines (RunRail.validate checks their shape)
+			for k in (rmoves as Dictionary):
+				var mv: Variant = rmoves[k]
+				if typeof(mv) != TYPE_DICTIONARY:
+					continue
+				for wk in ["to", "from"]:
+					if str((mv as Dictionary).get(wk, "")) != "":
+						want.append(str(mv[wk]))
+				if typeof((mv as Dictionary).get("via")) == TYPE_ARRAY:
+					for v in mv["via"]:
+						want.append(str(v))
 		for wid in want:
 			if not ids2.has(wid):
 				errors.append("scene %s: waypoint '%s' is not in map %s" % [id, wid, mp])
