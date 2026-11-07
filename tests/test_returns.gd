@@ -119,7 +119,11 @@ func _scene(tap_policy := "") -> Dictionary:
 		if typeof(h.get("anchor", null)) == TYPE_DICTIONARY:
 			anchor = (h["anchor"] as Dictionary).duplicate(true)
 			break
-	HotspotContract.extra_rows = {"main": [{"id": "underworld.enter_gospel", "world": str(main.nodes["underworld"]["world"]), "scene": "underworld", "anchor": anchor, "kind": "secret",
+	var has_real := false
+	for h in main.hotspots_of("underworld"):
+		if str(h.get("id", "")) == "underworld.enter_gospel":
+			has_real = true  # (Hell's entrances are authored since N2.4: the fixture would duplicate the real row and RunData would refuse the data)
+	HotspotContract.extra_rows = {} if has_real else {"main": [{"id": "underworld.enter_gospel", "world": str(main.nodes["underworld"]["world"]), "scene": "underworld", "anchor": anchor, "kind": "secret",
 		"look": {"available": "pulse"}, "available": {"flags_all": [FX_FLAG]}, "on_success": {"route": "path:gospel"}, "on_failure": {"energy": -4}, "repeatable": true}]}
 	NarrativeGraph.clear_cache()
 	var env := {"RW_RUN_VIRTUAL": "1", "RW_RUN_BOT": "perfect", "RW_RUN_ROUTES": "", "RW_RUN_TAPS": "none", "RW_RUN_FLAGS": FX_FLAG}
