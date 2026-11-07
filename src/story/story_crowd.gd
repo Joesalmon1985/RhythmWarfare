@@ -891,6 +891,7 @@ const ACTIVITY_STATES := {
 	"impatient": [["impatient", ""], ["shake_head", "anger"], ["stamp", "anger"], ["look", ""], ["idle", "anger"]],
 	"frown": [["frown", ""], ["shake_head", "doubt"], ["sad", ""], ["idle", "sad"]],
 	"beckon": [["beckon", ""], ["wave", ""], ["point", ""], ["idle", ""]],
+	"deal": [["deal", ""], ["offer", ""], ["point", ""], ["idle", ""]],  # (the card table's dealer, package A8b: dealing, paying, sweeping the stake)
 	"raise_glass": [["raise_glass", ""], ["toast", ""], ["drink", ""], ["cheer", ""], ["idle", ""]],
 }
 ## The crowd states an activity also asks for, with fallbacks for a sheet baked without them (a directed actor's sheet has its acts, not always the crowd's moves).

@@ -49,7 +49,7 @@
   "wall_speaker": "textures/wall_speaker.png",
   "wall_window": "textures/wall_window.png",
   "thing_mural": "textures/thing_mural.png",
-  "cards_table": "res://assets/minigames/blackjack/world_table.png"
+  "cards_table": "res://assets/minigames/blackjack/world_table_empty.png"
  },
  "sectors": [
   {"id": "dayroom", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.5, "tint": "#86ad92", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "rock", "pace", "watch", "sit"], "dancing": ["dance", "dance", "dance", "dance", "dance", "sit", "chat"], "hype": ["dance", "dance", "dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "dance", "dance", "wave", "hug"]}, "ambient": 0.4},
@@ -392,7 +392,10 @@
   {"actor": "x11", "sector": "art_room", "at": [35.1, 9.1]},
   {"actor": "x12", "sector": "art_room", "at": [43.2, 9.7]},
   {"actor": "x13", "sector": "dorm", "at": [21.6, 10.3]},
-  {"actor": "x14", "sector": "dorm", "at": [30.4, 11.5]}
+  {"actor": "x14", "sector": "dorm", "at": [30.4, 11.5]},
+  {"actor": "cards_dealer", "sector": "dayroom", "at": [2.4, 2.5]},
+  {"actor": "cards_a", "sector": "dayroom", "at": [1.45, 2.7]},
+  {"actor": "cards_b", "sector": "dayroom", "at": [3.35, 2.7]}
  ],
  "waypoints": [
   {"id": "day_centre", "at": [0, 6.5], "yaw": 0, "sector": "dayroom"},

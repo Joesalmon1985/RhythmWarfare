@@ -1,9 +1,16 @@
 {
 	"id": "blackjack",
 	"script": "res://src/minigames/blackjack/blackjack_activity.gd",
+	"kind": "blackjack",
+	"mode": "replace",
+	"controls": 4,
+	"control_ids": ["bet", "deck", "hand", "exit"],
+	"lead_in_beats": 4.0,
+	"view_pitch": -14.0,
 	"stake_pence": 500,
-	"wobble_at": 2,
-	"fall_at": 3,
+	"bet_steps": 4,
+	"wobble_at": 0,
+	"fall_at": 0,
 	"timing_beats": {
 		"sit_pockets": 2.0,
 		"sit_lay": 2.0,

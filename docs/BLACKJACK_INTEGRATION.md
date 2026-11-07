@@ -3,6 +3,12 @@
 Branch `feature/blackjack-minigame`, based on `main` b51e08d2, built in its own worktree (`../MusicGame-blackjack`). It is not merged, rebased or pushed anywhere.
 Sections 0 to 8 are the design the feature was built to; section 9 is the integration guide (files, storage, how to move the table, how to add another minigame, merge risks, commands).
 
+> **Package A8b (7 November 2026, `wip/play-cardtable`): the close-up is gone.** Ruling 38 and contract 10: the table is played in the day room itself, through the stage,
+> with the run's own HUD and the table's controls in the pads' slots. Section 10 below says what changed, what went and where it lives now; it supersedes B1 and B6 of
+> section 0, the view and canvas parts of sections 5.5, 6, 8 and 9 (`make_view`, `view.hit`, layer 3, the drawing kit, the close-up shots, the profile), and the wobble
+> and fall of B6 (the table now runs in **replace** mode: judging is suspended while seated). The rules, the wallet, the director's timeline and the joining (section 5.2)
+> are unchanged.
+
 ## 0. Decisions made by the owner (do not re-ask)
 
 | # | Decision |
@@ -318,3 +324,77 @@ One frame of about 280 ms happens when the player sits (the view being mounted);
 * **The table is not an option of the choice.** `RunHotspots.staged()` skips a `window: "any"` hotspot. Without that the choice layer treated the table as one more option: its ring was red ("another way"), and touching it turned the day room's exits red and made the table the "current choice". The table keeps the world's warm light.
 * **The window camera and the table.** Look-pass turns the head to frame the final window's hotspots from the block-2 decision (`RunPlay._window_face`, `RunJourney.window_face`). `_window_face` only lists `final`-window hotspots, so the table never pulls that frame; the exits and the table are both in the picture in the ward (see the ward shots of HANDOVER A16). A touch of the table releases any held face look over two beats (`StoryPlayer.release_faces`) so the walk to `day_cards` and the tip down are the camera's; when the claim ends in a refusal, or the player gets up, `_back_to_rail` puts the window frame back if the window of the last block is still open.
 
+
+## 10. Staged in the room (package A8b, ruling 38, contract 10)
+
+Branch `wip/play-cardtable` (from `feature/bedsit-raves` e426ae1b). The owner's words in ruling 38: no close-up card or panel, the same HUD, the pads' slots carry the
+controls. The card table was the one exception named in contract 10; it no longer is.
+
+### 10.1 What the player sees
+
+The table is touched as before (`ward.cards`, `window: "any"`, `pass_credit` 0.25, section 5.2). The camera walks to the chair (`day_cards`) and, since A8b, the walk
+ends at a hold of four bars (`hold_bars: 4` on `ward.cards_approach` and `ward.cards_sit`, `tools/run/hotspot_tables/ward.py`, `content/run/run.json`). Seated, the camera
+stays there tipped down to the felt (`view_pitch: -14` in `content/minigames/blackjack.json`), the room keeps rendering with its crowd, light and music, the run's HUD
+stays (meter, pips, pause; text silent through `RunHud.silent`, unchanged). Nothing fades, nothing is laid over the room.
+
+On the table, as dynamic things of the day room drawn by the stage at their depth and in the room's light (`BlackjackActivity.things()`,
+`src/minigames/blackjack/blackjack_activity.gd:876`): the deck on the near felt, every dealt card (sliding from the deck to its seat's spot over the deal's flight, face or
+back as the game says, sliding back at the clear), a chip stack per player (frame = stack height; the player's own stack is the wallet's balance, `chip_frame` `:765`) and
+the bet pile (the held stake). Feedback is the only canvas drawing: a `tick` on each card of a winning hand, a `cross` on the card that busted, a `glow` on the player's
+stack at a payout or push (`_mark` `:753`, drawn by `RunMinigameHost.feedback`).
+
+The dealer and the two other players are crowd actors of the day room: `cards_dealer` (orderly b), `cards_a` (curly b), `cards_b` (punk b), activity `stand`, homes at the
+table (`content/story/mental_hospital.json`, `content/story/maps/mental_hospital.json`; `tools/run/make_scenes.py` CLEARINGS `keep` lets them stand in the table's
+clearing). Seated, the activity directs them with `world.people` into `idle`, `deal`, `look`, `happy`, `frown`, `clap` (`people_state_of` `:784`, `_sync_people` `:826`: a
+person is directed when their state changes, from the song time it changed, the same at any frame rate). Before and after a game `RunCardTable`
+(`src/run/run_card_table.gd`) directs them from the hotspot state: invite (beckon, beckon, look), pleased (happy, clap, happy), welcome (happy, clap, clap), refuse (frown,
+look, look), idle; `seated` while the game owns them. `deal` is a new per-activity state with fallbacks offer, point, idle (`src/story/story_crowd.gd:894`).
+
+The controls (`controls()` `:843`) are four pictograms in the pads' slots: **bet** (a chip; each further press in the betting window, before the first card leaves the deck,
+adds a step of 5 pounds, at most four steps and never more than the wallet, `_raise_bet` `:508`; the chip in the slot stacks with the steps), **twist** (a card drawn off the
+deck), **stick** (a flat hand), **get up** (a door: the default exit; the other door is touched in the room once up, as before). Each draws itself bright while it can be
+pressed and dim otherwise. The new shapes are in `ControlPictograms.SHAPES` (`src/run/control_pictograms.gd`).
+
+### 10.2 Mode: replace
+
+`content/minigames/blackjack.json` now says `mode: "replace"`, `controls: 4`, `control_ids: [bet, deck, hand, exit]`, `lead_in_beats: 4`, `wobble_at` and `fall_at` 0. So
+the controller's replace mode applies unchanged (contract 4/5, H5): from the seat no cue is charted and every seated block decides neutral (no energy, no wobble, no fall),
+the controls own the strip (the morph in over the beat before the seat), and when the player is up the strip goes back to the pads a lead-in before the resume boundary
+B1 and the hold is released at B1. Consequences (owner decisions B6 and B7 of section 0 are superseded): the pads no longer keep the player on the chair, and the run
+cannot end at the table (the energy stands still while seated); `interrupt("fall")` and the refund on `run_over` remain in the activity and are tested through the
+controller. Getting up now ends on B1 (at least 4 beats after the leaving, at most about two blocks), so the door taken and the walk back start there.
+
+### 10.3 What went
+
+* `src/minigames/blackjack/blackjack_view.gd`, `blackjack_draw.gd`, `blackjack_people.gd`, `blackjack_exits.gd` (the close-up, its drawing kit, its three people, its doors).
+  `make_view()` returns null (`:237`); `RunMinigameHost.hit` answers "" for the table.
+* `tests/test_blackjack_draw.gd`, `test_blackjack_exits.gd`, `test_blackjack_visual_state.gd` (replaced by `tests/test_blackjack_things.gd` and
+  `tests/test_blackjack_view.gd`).
+* `tools/minigames/blackjack_demo.*`, `capture_blackjack.sh`, `people_gallery.*`, `table_gallery.*`, `profile_blackjack.gd` (section 9.11's numbers are history).
+* `RunCardTable`'s sheet of painted players (`frame_of`, `region`, `closeup_of`, the occluder `drawer`): the map's occluder is now `world_table_empty.png` (the table, lamp
+  and chair, nobody at it, `tools/minigames/make_world_table.py --empty-only`). `world_table.png` and `world_table_sheet.*` are left in place, unused.
+* `MoneyBreakdown`, `MoneyDraw`, `PixelGlyphs` and the wallet stay (reusable); the money is shown as chips now.
+
+### 10.4 Lead-owned files touched (minimal)
+
+* `src/run/run_play.gd:1427`: one line, `RunCardTable.mood_of` without the close-up argument (the snapshot line above it removed).
+* `src/run/run_minigame_host.gd`: `step` calls `_step_view(t)` (`:80`); `_step_view` (`:481`, about 20 lines) puts down the activity's `view_pitch` as a steady look of
+  two bars every four beats while it is seated.
+* `src/story/world/story_player.gd`: a glance may be `steady` (`:106`); `pitch_at(t, steady_only)` (`:537`); a hold keeps the steady part of the pitch (`:713`).
+* `src/story/story_crowd.gd:894`: the `deal` state. `src/run/control_pictograms.gd`: four shapes.
+
+### 10.5 Tests and shots
+
+`tests/test_blackjack_things.gd` (pure: the things, the stacks against the wallet every frame over four hands, feedback, people states at frame-rate-free times, the
+controls), `tests/test_blackjack_view.gd` (the run scene at 1280x720 and 1600x720: a deal, a bust, a payout; every thing inside the stage strip, cards at least 48 px,
+stacks at least 32 px, no canvas view, the camera at the chair pitched down), `tests/test_blackjack_integration.gd` (as section 9.8, now checking the things on the stage
+every frame and replace mode: no cue charted while seated, no wobble or fall, the strip's controls). Shots: `bash tools/minigames/shoot_cardtable.sh` writes
+`docs/shots/bedsit/cardtable/contact.jpg` (walk-up, hold with a dealt hand, bust, payout at 16:9 and 20:9).
+
+### 10.6 Placeholders and open points
+
+* The card and chip sheets (`assets/minigames/blackjack/bj_cards.png`, `bj_chips.png`, `tools/minigames/make_card_things.py`) are flat procedural PLACEHOLDERS, below the art
+  standard of ruling 36. The three players use the live rig of existing archetypes (no baked sheet, no `deal`/`frown` rows: they show the fallbacks), PLACEHOLDERS too.
+* Cards and chips are larger than life (a card 0.23 x 0.33 m) so they read from the chair. A small chip stack's rect is 65 px tall but its visible chips are a few pixels
+  each: it reads as a stack, not as a count.
+* CONTRACTS.md 4 and 5 still list the table as `rhythm`; the lead should update them to `replace` (not edited here: lead-owned).

@@ -212,7 +212,7 @@ func test_bet_holds_and_deals() -> void:
 	assert_eq(s["pile"]["via"], "bet")
 	assert_eq(s["bet"]["pence"], 500)
 	assert_eq(s["bet"]["via"], "pile")
-	assert_eq(s["targets"], ["exit"])
+	assert_eq(s["targets"], ["bet", "exit"], "the betting window: another press adds a step until the first card leaves the deck")
 	assert_eq(s["seats"]["player"]["gesture"]["name"], "push_bet")
 	assert_eq(s["hand"], 1)
 	for seat in SEATS:
@@ -221,13 +221,38 @@ func test_bet_holds_and_deals() -> void:
 	assert_true(s["seats"]["npc_a"]["cards"][0]["t_deal"] > s["bet"]["t0"], "dealing starts after the bet moved")
 
 
-func test_double_bet_tap_is_refused() -> void:
-	var rig := _rig()
+func test_bet_presses_in_the_window_step_the_stake_up_to_four_and_the_window_closes_at_the_first_card() -> void:
+	var rig := _rig(_deal([10, 9], [10, 7]))
 	_sit(rig)
 	assert_true(_tap(rig, "bet"))
-	assert_false(_tap(rig, "bet"))
-	assert_eq(_held(rig), 500)
-	assert_eq(_bal(rig), 1500)
+	assert_true(_tap(rig, "bet"), "a second press in the window")
+	assert_eq(_held(rig), 1000)
+	assert_eq(_bal(rig), 1000)
+	assert_eq(_st(rig)["bet_steps"], 2)
+	assert_eq(_st(rig)["bet"]["pence"], 1000)
+	assert_true(_tap(rig, "bet"))
+	assert_true(_tap(rig, "bet"))
+	assert_eq(_held(rig), 2000, "four steps: all of it")
+	assert_false(_tap(rig, "bet"), "no fifth step")
+	assert_eq(_st(rig)["targets"], ["exit"])
+	_until(rig, "player_turn", 20.0)
+	_tap(rig, "hand")
+	_until(rig, "settling", 40.0)
+	_to_settled(rig)
+	assert_eq(_bal(rig), 4000, "a win pays twice the whole stake")
+	# a smaller purse: the steps stop where the money does, and the window shuts when the first card leaves the deck
+	var r2 := _rig(_deal([10, 9], [10, 7]), 1000)
+	_sit(r2)
+	assert_true(_tap(r2, "bet"))
+	assert_true(_tap(r2, "bet"))
+	assert_false(_tap(r2, "bet"), "nothing left to add")
+	assert_eq(_held(r2), 1000)
+	var r3 := _rig(_deal([10, 9], [10, 7]))
+	_sit(r3)
+	assert_true(_tap(r3, "bet"))
+	_adv(r3, 1.6 * BEAT)
+	assert_false(_tap(r3, "bet"), "the first card is out: the window is shut")
+	assert_eq(_held(r3), 500)
 
 
 func test_deal_order_and_times() -> void:
@@ -297,14 +322,14 @@ func test_tap_storm_changes_money_only_by_the_rules() -> void:
 	(rig["w"] as RunWallet).changed.connect(func(): changes[0] += 1)
 	_sit(rig)
 	var guard := 0
-	while guard < 4000 and changes[0] < 2:
+	while guard < 4000 and changes[0] < 8:
 		for target in ["bet", "deck", "hand", "bogus", "bet"]:
 			_tap(rig, target)
 		_upd(rig, float(rig["t"]) + 1.0 / 60.0)
 		guard += 1
-	assert_eq(changes[0], 2, "one hold and one settle")
+	assert_eq(changes[0], 8, "one hold, three steps up (a release and a hold each) and one settle")
 	assert_eq(_held(rig), 0)
-	assert_true(_bal(rig) in [1500, 2000, 2500, 2750], "balance %d is a rule outcome" % _bal(rig))
+	assert_true(_bal(rig) in [0, 2000, 4000, 5000], "balance %d is a rule outcome for the whole 20 pounds staked" % _bal(rig))
 	assert_eq(rig["bad"], [])
 
 
@@ -958,17 +983,19 @@ func test_config_file() -> void:
 	var d: Dictionary = parsed
 	assert_eq(d["id"], "blackjack")
 	assert_eq(int(d["stake_pence"]), 500)
-	assert_eq(int(d["wobble_at"]), 2)
-	assert_eq(int(d["fall_at"]), 3)
+	assert_eq(str(d["mode"]), "replace", "the card table is played in the pad slots (A8b): judging is suspended while seated")
+	assert_eq(int(d["controls"]), 4)
+	assert_eq(d["control_ids"], ["bet", "deck", "hand", "exit"])
+	assert_true(float(d["view_pitch"]) < 0.0, "the camera tips down to the felt")
+	assert_eq(int(d["wobble_at"]), 0)
+	assert_eq(int(d["fall_at"]), 0)
 	assert_true(d.has("timing_beats"))
 	for k in BlackjackActivity.DEFAULT_TIMING:
 		assert_true(d["timing_beats"].has(k), "timing_beats has " + str(k))
 	var script: Variant = load(str(d["script"]))
 	assert_true(script is GDScript)
 	assert_true((script as GDScript).new() is MinigameActivity)
-	var view: Control = BlackjackActivity.new().make_view()
-	assert_true(view is BlackjackView, "the activity makes its table view")
-	view.free()
+	assert_true(BlackjackActivity.new().make_view() == null, "no canvas view (ruling 38)")
 
 
 # exits while seated: the room's ways out as doors (MinigameActivity "exits")
@@ -1010,6 +1037,8 @@ func test_one_exit_target_per_door_in_every_phase_with_0_1_2_and_4_exits() -> vo
 		_sit(rig)
 		assert_eq(_st(rig)["targets"], ["bet"] + doors, "await_bet with %d exits" % n)
 		_tap(rig, "bet")
+		assert_eq(_st(rig)["targets"], ["bet"] + doors, "dealing, the betting window open, with %d exits" % n)
+		_adv(rig, 1.6 * BEAT)
 		assert_eq(_st(rig)["targets"], doors, "dealing with %d exits" % n)
 		_until(rig, "player_turn", 20.0)
 		assert_eq(_st(rig)["targets"], ["deck", "hand"] + doors, "player_turn with %d exits" % n)

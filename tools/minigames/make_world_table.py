@@ -16,6 +16,7 @@ pulled further out), `welcome` (you sat: the dealer shows you the chair, the old
 and waves you away, the others shrug, then they go back to inviting). Deterministic: the same files on every run.
 
     python3 tools/minigames/make_world_table.py
+    python3 tools/minigames/make_world_table.py --empty-only   # just world_table_empty.png (the table with nobody at it: the map's occluder since package A8b)
 """
 from __future__ import annotations
 
@@ -29,9 +30,9 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "tools/story/art"))
-import people as P  # noqa: E402  the Story people's pixel rig (read only)
-import wardrobe as WR  # noqa: E402
+sys.path.insert(0, str(ROOT / "tools/story"))
+from art import people as P  # noqa: E402  the Story people's pixel rig (read only; a package since its half faces moved out)
+from art import wardrobe as WR  # noqa: E402
 
 OUT = ROOT / "assets/minigames/blackjack"
 PPM = P.H0 / 1.7  # sheet pixels per metre: a dancer's full-size frame (112 px for a 1.7 m adult)
@@ -247,7 +248,7 @@ def lamp_shade(ppm):
     return f
 
 
-def table_plate(ppm: float, chair_out: float) -> Image.Image:
+def table_plate(ppm: float, chair_out: float, game: bool = True) -> Image.Image:
     """The table (top, apron, legs, the game on it) and the empty chair on our side, pulled out by `chair_out` metres and turned to us."""
     pl = Plate(ppm)
     cv = pl.cv
@@ -263,6 +264,9 @@ def table_plate(ppm: float, chair_out: float) -> Image.Image:
     P.poly_fill(cv, [pl.p(x, y) for x, y in felt], 0.6, "top", lambda X, Y: sh(X, Y))
     P.poly_fill(cv, [pl.p(x, y) for x, y in [(-HALF, TOP_Y - 0.09), (HALF, TOP_Y - 0.09), (HALF, TOP_Y), (-HALF, TOP_Y)]], 0.7, "furn",
                 lambda X, Y: sh(X, Y) * 0.62)
+    if not game:  # the empty table (package A8b): the cards and the money are the activity's things now
+        chair(pl, chair_out)
+        return pl.image()
     # the game: the deck before the dealer, a card or two before each player, notes and coins
     def card(x, y, face=True, z=0.8):
         pl.poly([(x - 0.045, y), (x + 0.045, y), (x + 0.045, y + 0.05), (x - 0.045, y + 0.05)], z, "prop2" if face else "prop", 0.8)
@@ -391,7 +395,23 @@ def frame(loop: str, k: int, lod: int, specs: dict) -> Image.Image:
     return img
 
 
+def empty_table() -> Image.Image:
+    """The table with nobody at it and nothing on it, the chair pulled out, the lamp's glow over it (`world_table_empty.png`, the map's occluder since package A8b):
+    the three players are the day room's crowd actors and the cards and chips the blackjack activity's dynamic things (CONTRACTS.md 10)."""
+    img = shadow_plate(PPM)
+    img.alpha_composite(under_plate(PPM))
+    img.alpha_composite(table_plate(PPM, CHAIR_OUT["welcome"], game=False))
+    img.alpha_composite(glow_plate(PPM))
+    return img
+
+
 def main() -> None:
+    if "--empty-only" in sys.argv:
+        im = empty_table()
+        im.save(OUT / "world_table_empty.png", optimize=True)
+        print("wrote", (OUT / "world_table_empty.png").relative_to(ROOT), im.size)
+        return
+    empty_table().save(OUT / "world_table_empty.png", optimize=True)
     specs = {w: _spec(w) for w in ("gran", "dealer", "wild")}
     frames: list = []  # (lod, loop, k, image)
     for lod in (1, 2):

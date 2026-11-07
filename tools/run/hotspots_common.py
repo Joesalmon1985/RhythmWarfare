@@ -33,10 +33,12 @@ def P(x, y, z):
     return {"pos": [x, y, z]}
 
 
-def walk(to, role="dancer", style="walk", bars=2, look=None, move="walk"):
+def walk(to, role="dancer", style="walk", bars=2, look=None, move="walk", hold=None):
     s = {"move": move, "to": to, "bars": bars, "role": role, "style": style}
     if look:
         s["look_at"] = look
+    if hold:  # hold_bars: standing still at `to` after the move (CONTRACTS.md 3 and 10)
+        s["hold_bars"] = hold
     return s
 
 
