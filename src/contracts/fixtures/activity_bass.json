@@ -1,0 +1,13 @@
+{
+	"id": "bass_knob",
+	"kind": "bass",
+	"script": "res://src/minigames/bass/bass_knob_activity.gd",
+	"mode": "rhythm",
+	"controls": 0,
+	"wobble_at": 2,
+	"fall_at": 3,
+	"resist_turns": 3,
+	"knob_target": 0.85,
+	"theme_keys": [],
+	"flags_on_complete": ["rave.{theme}.bass_fixed"]
+}

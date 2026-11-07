@@ -1,0 +1,12 @@
+{
+	"id": "space.to_stage",
+	"map": "rave_space",
+	"from": "space_floor",
+	"legs": [
+		{"to": "ring_walk_w", "bars": 2, "hold_bars": 1, "style": "walk"},
+		{"to": "stage_steps", "bars": 2, "hold_bars": 1, "style": "walk", "look": "deck"},
+		{"to": "stage_deck_view", "bars": 2, "hold_bars": 4, "style": "climb", "look": "deck"}
+	],
+	"arrive": {"waypoint": "stage_deck_view", "choice_view": true, "hold": "window"},
+	"eye_m": 1.6
+}

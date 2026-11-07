@@ -1,0 +1,11 @@
+{
+	"rows": [
+		{"situation": "rave_explore", "mode": "", "regions_on": false, "pads": "active", "stage": "hotspots", "penalties": "existing"},
+		{"situation": "bedsit", "mode": "", "regions_on": true, "pads": "active", "stage": "world_regions", "penalties": "no_departure"},
+		{"situation": "cloakroom", "mode": "replace", "regions_on": false, "pads": "replaced", "stage": "activity_view", "penalties": "suspended"},
+		{"situation": "bar", "mode": "replace", "regions_on": false, "pads": "replaced", "stage": "activity_view", "penalties": "suspended"},
+		{"situation": "race", "mode": "overlay", "regions_on": false, "pads": "active", "stage": "world_regions", "penalties": "active_speed"},
+		{"situation": "blackjack", "mode": "rhythm", "regions_on": false, "pads": "active", "stage": "activity_view", "penalties": "existing"}
+	],
+	"regions": {"top": [0.25, 0.0, 0.5, 0.42], "bottom": [0.25, 0.72, 0.5, 0.28], "left": [0.0, 0.0, 0.22, 1.0], "right": [0.78, 0.0, 0.22, 1.0]}
+}
