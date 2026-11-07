@@ -104,15 +104,38 @@ func _onset_pulse(pad: int, now: float) -> float:
 	return pulse
 
 
+var slot_fn: Callable  # (pad, rect, now) -> {} or {mix 0..1, rect?, skip?, color?, lit?, down?, scale?, glyph?: Callable(ci, face, alpha, base, lit)}: an activity's control in the slot (RunActivityInput.slot)
+var _glyph_a := 1.0  # the pad's own glyph and words are drawn at this alpha (1 - the control's mix)
+
+
 func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
+	var ov: Dictionary = slot_fn.call(pad, r, now) if slot_fn.is_valid() else {}  # an activity's control standing in this slot (contract 10: the frame stays, the glyph cross-fades)
+	if bool(ov.get("skip", false)):
+		return
+	var mix := clampf(float(ov.get("mix", 0.0)), 0.0, 1.0)
+	if ov.has("rect"):
+		r = ov["rect"]
 	var fam := _family_at(pad, tick)
 	var base: Color = _palette().get(fam, Color(0.45, 0.47, 0.5))
 	var active := not fam.is_empty()
-	var s := r.size.x
+	var s := minf(r.size.x, r.size.y)
 	var radius := s * 0.13
 	var pulse := _onset_pulse(pad, now)
 	var hold := float(holding_fn.call(pad, now)) if holding_fn.is_valid() else -1.0
 	var down: bool = button_down.get(pad, false)
+	if mix > 0.0:  # the control's look takes over: its colour, its lit state and its press; the cues' pulse and hold fade out
+		var cc: Color = ov.get("color", base)
+		base = base.lerp(cc, mix) if active else cc
+		if mix >= 0.5:
+			active = bool(ov.get("lit", true))
+			down = bool(ov.get("down", false))
+			hold = -1.0
+		pulse *= 1.0 - mix
+		var sc := float(ov.get("scale", 1.0))
+		if sc != 1.0:
+			var c0 := r.get_center()
+			draw_set_transform(c0 - c0 * sc, 0.0, Vector2(sc, sc))
+	_glyph_a = 1.0 - mix
 	var bu: Dictionary = _bursts.get(pad, {})
 	var bage := wall - float(bu.get("t", -10.0))
 	var miss := 0.0
@@ -156,7 +179,7 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 		var a := 1.0 - (wall - flash_at) / 0.35
 		_box(face.grow(s * 0.04 * (1.0 - a)), Color(base.lightened(0.5), 0.55 * a), radius)
 	# a sheen along the top edge and the bevel
-	_box(Rect2(face.position + Vector2(s * 0.06, s * 0.035), Vector2(s * 0.88, s * 0.12)), Color(1, 1, 1, 0.05 if active else 0.03), radius * 0.6)
+	_box(Rect2(face.position + Vector2(s * 0.06, s * 0.035), Vector2(face.size.x - s * 0.12, s * 0.12)), Color(1, 1, 1, 0.05 if active else 0.03), radius * 0.6)
 	var rim := base.lightened(0.25 if down else 0.05) if active else _sk("pad_ring", Color(0.24, 0.2, 0.42))
 	if miss > 0.0:
 		rim = rim.lerp(Color(1.0, 0.35, 0.35), miss)
@@ -170,24 +193,34 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 		var bc: Color = Color.WHITE if bu["perfect"] else base.lightened(0.3)
 		_box(face.grow(s * (0.02 + 0.2 * e)), Color.TRANSPARENT, radius * (1.0 + e), maxf(1.0, 6.0 * (1.0 - u)), Color(bc, 0.85 * (1.0 - u)), false)
 	_draw_texts(pad, face, base, active, tick, wall)
+	_glyph_a = 1.0
+	if mix > 0.0:
+		var g: Callable = ov.get("glyph", Callable())
+		if g.is_valid():
+			g.call(self, face.grow(-s * 0.035), mix, base, active)
+		draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 func _draw_icon_skin(fam: String, r: Rect2, base: Color, active: bool, lit: float, holding: bool) -> void:
+	if _glyph_a <= 0.0:
+		return
 	var c := r.get_center() + Vector2(0, r.size.y * 0.06)
-	var s := r.size.x * 0.16
+	var s := minf(r.size.x, r.size.y) * 0.16
+	var ga := _glyph_a
 	if not active:  # an unlit pad: a dark ring and a small off LED
 		var off := _sk("pad_ring", Color(0.32, 0.27, 0.55)).lightened(0.12)
-		draw_arc(c, s * 0.75, 0.0, TAU, 32, Color(off, 0.55), 2.0, true)
-		draw_circle(c, s * 0.16, Color(off, 0.5))
+		draw_arc(c, s * 0.75, 0.0, TAU, 32, Color(off, 0.55 * ga), 2.0, true)
+		draw_circle(c, s * 0.16, Color(off, 0.5 * ga))
 		return
-	_glow_at(c, Vector2(s, s) * 2.2, Color(base, 0.25 + 0.5 * lit))
+	_glow_at(c, Vector2(s, s) * 2.2, Color(base, (0.25 + 0.5 * lit) * ga))
 	var ic := Color.WHITE if holding else base.lightened(0.35 + 0.4 * lit)
-	var sh := Color(0, 0, 0.05, 0.45)
+	ic.a *= ga
+	var sh := Color(0, 0, 0.05, 0.45 * ga)
 	match fam:
 		"kick":
 			draw_circle(c + Vector2(0, 2), s, sh)
 			draw_circle(c, s, ic)
-			draw_circle(c, s * 0.42, Color(base.darkened(0.3), 0.55))
+			draw_circle(c, s * 0.42, Color(base.darkened(0.3), 0.55 * ga))
 		"snare":
 			var pts := PackedVector2Array([c + Vector2(0, -s * 1.2), c + Vector2(s * 1.2, 0), c + Vector2(0, s * 1.2), c + Vector2(-s * 1.2, 0)])
 			var sp := pts.duplicate()
@@ -202,7 +235,7 @@ func _draw_icon_skin(fam: String, r: Rect2, base: Color, active: bool, lit: floa
 				draw_rect(Rect2(br.position + Vector2(0, 2), br.size), sh)
 				draw_rect(br, ic)
 		_:
-			draw_arc(c, s * 0.8, 0.0, TAU, 24, Color(ic, 0.5), 2.0)
+			draw_arc(c, s * 0.8, 0.0, TAU, 24, Color(ic, 0.5 * ga), 2.0)
 
 
 func _outlined(pos: Vector2, text: String, align: HorizontalAlignment, width: float, fs: int, col: Color, outline := 5) -> void:
@@ -211,18 +244,20 @@ func _outlined(pos: Vector2, text: String, align: HorizontalAlignment, width: fl
 
 
 func _draw_texts(pad: int, r: Rect2, base: Color, active: bool, tick: int, wall: float) -> void:
+	if _glyph_a <= 0.0:  # (a control's pictogram has the slot: no words)
+		return
 	var fs := int(clampf(r.size.x * 0.1, 12.0, 21.0))
 	var label := _label_at(pad, tick)
 	if not label.is_empty():
-		var la := 0.95 if active else 0.38
+		var la := (0.95 if active else 0.38) * _glyph_a
 		if active and muted_fn.is_valid() and bool(muted_fn.call(_family_at(pad, tick))):
 			la *= 0.5
 		_outlined(Vector2(r.position.x + 4.0, r.position.y + fs + 8.0), label, HORIZONTAL_ALIGNMENT_CENTER, r.size.x - 8.0, fs,
 			Color(1, 1, 1, la) if not active else Color(base.lightened(0.75), la), 4)
 	if show_keys and not OS.has_feature("mobile"):
 		var kc := Vector2(r.end.x - fs * 1.05, r.end.y - fs * 0.95)
-		_box(Rect2(kc - Vector2(fs * 0.7, fs * 0.62), Vector2(fs * 1.4, fs * 1.24)), Color(0, 0, 0.05, 0.4), fs * 0.3)
-		draw_string(_font, kc + Vector2(-fs * 0.7, fs * 0.36), key_name(pad), HORIZONTAL_ALIGNMENT_CENTER, fs * 1.4, int(fs * 0.9), Color(1, 1, 1, 0.55))
+		_box(Rect2(kc - Vector2(fs * 0.7, fs * 0.62), Vector2(fs * 1.4, fs * 1.24)), Color(0, 0, 0.05, 0.4 * _glyph_a), fs * 0.3)
+		draw_string(_font, kc + Vector2(-fs * 0.7, fs * 0.36), key_name(pad), HORIZONTAL_ALIGNMENT_CENTER, fs * 1.4, int(fs * 0.9), Color(1, 1, 1, 0.55 * _glyph_a))
 
 
 ## The judgement words: one row just above the strip (over the bottom of the picture), each word inside its own pad's width on a small
