@@ -1,0 +1,66 @@
+{
+ "warehouse": {
+  "map": "MAP07",
+  "title": "Dead Simple",
+  "output": "content/story/maps/doom_warehouse.json",
+  "plan": "docs/shots/doom/plan_warehouse.png",
+  "concept_image": "Cobalt Warehouse Dance Floor-1.png",
+  "concept_dir": "Concept art"
+ },
+ "bar": {
+  "map": "MAP02",
+  "title": "Underhalls",
+  "output": "content/story/maps/doom_bar.json",
+  "plan": "docs/shots/doom/plan_bar.png",
+  "concept_image": "Copper Basement Bar, Three Hidden Routes-3.png",
+  "concept_dir": "Concept art"
+ },
+ "balcony": {
+  "map": "MAP15",
+  "title": "Industrial Zone",
+  "output": "content/story/maps/doom_balcony.json",
+  "plan": "docs/shots/doom/plan_balcony.png",
+  "concept_image": "Rainy industrial rooftop, three musical paths-8.png",
+  "concept_dir": "Concept art"
+ },
+ "lounge": {
+  "map": "MAP08",
+  "title": "Tricks and Traps",
+  "output": "content/story/maps/doom_lounge.json",
+  "plan": "docs/shots/doom/plan_lounge.png",
+  "concept_image": "Mustard octagonal lounge of three routes-2.png",
+  "concept_dir": "Concept art"
+ },
+ "booth": {
+  "map": "MAP04",
+  "title": "The Focus",
+  "output": "content/story/maps/doom_booth.json",
+  "plan": "docs/shots/doom/plan_booth.png",
+  "concept_image": "Rhythm Booth, Three Hidden Routes-5.png",
+  "concept_dir": "Concept art"
+ },
+ "dock": {
+  "map": "MAP13",
+  "title": "Downtown",
+  "output": "content/story/maps/doom_dock.json",
+  "plan": "docs/shots/doom/plan_dock.png",
+  "concept_image": "Rainy Rhythm Club Loading Dock-6.png",
+  "concept_dir": "Concept art"
+ },
+ "mothership": {
+  "map": "MAP11",
+  "title": "Circle of Death",
+  "output": "content/story/maps/doom_mothership.json",
+  "plan": "docs/shots/doom/plan_mothership.png",
+  "concept_image": "Mothership Ringwalk Over the Void-7.png",
+  "concept_dir": "Concept art"
+ },
+ "underworld": {
+  "map": "MAP29",
+  "title": "The Living End",
+  "output": "content/story/maps/doom_underworld.json",
+  "plan": "docs/shots/doom/plan_underworld.png",
+  "concept_image": "Three Paths Across the Basalt Abyss-4.png",
+  "concept_dir": "Concept art"
+ }
+}
