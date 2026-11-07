@@ -323,6 +323,31 @@ An activity is played in the room it is found in, through the stage, with the ru
 - **The card table** (blackjack) is converted to this contract in package A8b; until then it is the one
   exception, named in every report that mentions it.
 
+**Built (package A8, wip/engine-props).** The real signatures; the activity side's guide is `docs/engine/WORLD_THINGS.md`.
+
+```
+WorldThings (src/contracts/world_things.gd, the recording stub; the run hands a RunWorldPort that extends it, src/run/run_world_port.gd) = ctx["world"] in setup
+  set_things(arr) | people(id, state, t0, dur = 0) | feedback(thing, kind, t) | piece_on(piece, t) | piece_off(piece, t) | piece_pulse(piece, t, bars = 2)
+MinigameController.world_port (minigame_controller.gd:40, passed at :133); the host sets it to its port on its first step
+thing = {id, sprite, at: [x, z], sector, size: [w_m, h_m], frame: int (row-major) | [row, col], y? (m above the floor), anchor?: "bottom" | "center", grid?: [cols, rows]}
+StoryWorld.set_dynamic_things(arr)            story_world.gd:912   (StoryDynamicThings, src/story/world/story_dynamic_things.gd: 2D figures of the crowd's overlay)
+StoryWorld.thing_screen_point(id) -> Vector2|null   story_world.gd:919  low-res px; a dynamic thing, a map thing or a piece (posed by thing_pose included)
+StoryWorld.thing_screen_rect(id)  -> Rect2|null     story_world.gd:926
+StoryStage.set_things(arr)                    story_stage.gd:837
+StoryStage.people(id, state, t0, dur) -> {state, face, fallback, sheet_state} | {} (unknown id: a warning, a no-op)   story_stage.gd:845
+StoryStage.thing_screen_point / thing_screen_rect (stage px)   story_stage.gd:861, :867
+StoryCrowd.ACTIVITY_STATES, CROWD_FALLBACKS, resolve_state(id, state), person(id, state, t0, dur)   story_crowd.gd:876, :885, :896, :924
+RunMinigameHost.feedback(thing, kind, t)      run_minigame_host.gd:489 (RunActivityFeedback, src/run/run_activity_feedback.gd: tick 1 beat, cross 1 beat, glow 1.5 beats)
+RunMinigameHost.people / set_things / stage_action   run_minigame_host.gd:481, :476, :527; things pushed every frame from things() or the port, [] at the end (_step_things :458)
+controls' morph: RunActivityInput.mix_at / slot (run_activity_input.gd:98, :132) through StoryPadView.slot_fn (story_pad_view.gd:107, _draw_pad :111);
+  the layer stands from seat - 1 beat to hand-back + 1 beat (RunMinigameHost.wants_controls_layer :137), owns taps only from the seat to the hand-back (owns_strip :207)
+control = {id, label: "", pictogram? | shape? + color? | icon?: res:// png | draw?: Callable(ci, rect[, alpha]), lit?: bool}   ControlPictograms (src/run/control_pictograms.gd)
+```
+- People states as baked today (the Warehouse barman b01's sheet): waiting -> idle, happy -> nod@happy, impatient -> look, frown -> idle@sad, beckon -> beckon,
+  raise_glass -> cheer, clap -> cheer, hands_up -> cheer (fallbacks; the re-baked rave people should carry the six states as rows).
+- `layers` on a thing (the bar's glass) is ignored: the frames carry the colour.
+- The pads are never hidden now: they draw the controls in their own slots (the note lane is hidden and the lane input off while the controls own the strip).
+
 ## Engine hooks (lead-owned files; file:line, what changes)
 
 Built on this branch (minimal, tested):
@@ -345,7 +370,7 @@ Needed, not built:
 - H6.1 `run_progress.gd:9` `VERSION := 3`; `:37` accept 2 and 3; `:64` `_fresh` via `RaveSave.migrate`; `:138` `run_started` calls `RaveSave.new_run`.
 - H7.1 `run_track_audio.gd:345` `_make_group`: apply the scene's stem locks (`stem_locks: {track id: [keys]}` set by the host) before the group starts.
 - H7.2 `run_track_audio.gd:317`/`:238`: `unlock_stem_at(key, t, ramp_s)` as a scheduled item run on song time.
-- H8.1 `story_world.gd:624` (and `:354` `thing_pose`): dynamic billboards `set_dynamic_things([{id, sprite, at, sector, size, frame}])`, culled by their current sector. Package A8 (contract 10): plus `thing_screen_point(id)` for feedback, and the controls' morph in `RunActivityInput`.
+- H8.1 `story_world.gd:624` (and `:354` `thing_pose`): dynamic billboards `set_dynamic_things([{id, sprite, at, sector, size, frame}])`, culled by their current sector. Package A8 (contract 10): plus `thing_screen_point(id)` for feedback, and the controls' morph in `RunActivityInput`. **BUILT** (A8, wip/engine-props): see contract 10, "Built".
 - H8.2 `story_stage.gd:347`: `pose_fn: Callable` overriding `player.pose_at(t)` (race camera); fov from the pose.
 - H8.3 the cockpit as a low-res overlay layer (`StoryLowRes.add_overlay`) under the activity view.
 - H8.4 `run_play.gd:420` `_show_world`: an activity may ask for another map's stage at `t_seat` and back at exit (race), prebuilt in a guard.

@@ -1,21 +1,29 @@
 class_name WorldThings
 extends RefCounted
-## The interface an activity drives the room through (CONTRACTS.md 10, ruling 38), until the engine's StoryWorld.set_dynamic_things (package A8) lands. The host gives an activity
-## an object with these three methods (`ctx["world"]`); this class is the recording stand-in the tests use, and the shape the real adapter must answer:
-##   set_things(arr)               the activity's dynamic things now: [{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, y?, anchor?}] (replaces the last list)
-##   people(id, state, t0, dur)    direct the crowd actor `id` (customer, customer_<k>, attendant) into `state` (waiting | happy | impatient | clap | hands_up | idle) from song time t0 for dur seconds (0: until changed)
-##   piece_on/off(piece, t), piece_pulse(piece, t, bars)   switch a map piece's lit state (StoryStage piece_on/piece_off/piece_pulse) at song time t
-##   feedback(thing, kind, t)      a short in-world cue attached to a thing or piece: kind tick | cross | glow; the host draws it at the thing's screen point
-## Everything is recorded in arrays so a test reads what the activity asked for.
+## The port an activity stages itself through (CONTRACTS.md 10, ruling 38): its things, its people, its feedback, its set pieces. The host hands one to the activity in
+## `setup` as ctx["world"] (MinigameController.world_port: the run's RunWorldPort, which extends this class and forwards every call to the stage); this class itself is the
+## RECORDING STUB the tests and tools use, and it fixes the signatures:
+##   set_things(arr)              the activity's dynamic things now: [{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, y?, anchor?, grid?}] (replaces the last list;
+##                                StoryWorld.set_dynamic_things / StoryDynamicThings say what each key means). An activity may instead implement `things() -> Array`: the host
+##                                then reads it every frame while it is seated.
+##   people(id, state, t0, dur)   direct crowd actor `id` into `state` (waiting | happy | impatient | frown | beckon | raise_glass, or any crowd state: idle, look, cheer, clap,
+##                                hands_up) from song time t0 for dur seconds (0: until changed); StoryCrowd.ACTIVITY_STATES gives the sheet fallbacks
+##   feedback(thing, kind, t)     a short in-world cue at a thing's screen point, kind tick | cross | glow, drawn by the host (RunActivityFeedback); `thing` is a dynamic thing,
+##                                a map thing or a piece
+##   piece_on / piece_off / piece_pulse(piece, t[, bars])   a map piece of the scene switched (StoryStage.apply piece_on / piece_off / piece_pulse)
+## Everything is recorded so a test reads what the activity asked for. (Engine package A8 wrote this file; the cloakroom and bar branches wrote copies from the same
+## signatures: this one is their union.)
 
 var things: Array = []  # the current list
-var things_log: Array = []  # every set_things call (a copy of the list), in order
+var things_log: Array = []  # every set_things call that changed the list (a copy), in order
 var people_log: Array = []  # [{id, state, t0, dur}]
 var feedback_log: Array = []  # [{thing, kind, t}]
-var piece_log: Array = []  # [{piece, op: on | off | pulse, t, bars?}] (the bar's shelf glasses: piece_on per served drink, piece_pulse at the payoff)
+var piece_log: Array = []  # [{piece, op: on | off | pulse, t, bars?}]
 
 
 func set_things(arr: Array) -> void:
+	if arr == things:
+		return
 	things = arr.duplicate(true)
 	things_log.append(things)
 
