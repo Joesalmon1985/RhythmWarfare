@@ -6,6 +6,7 @@ extends TestCase
 const BEAT := 60.0 / 174.0
 const CFG_PATH := "res://content/minigames/cloakroom.json"
 const TMP_SAVE := "user://test_cloakroom_save.json"
+const FIX := "res://tests/fixtures/cloakroom_scene/"
 const THEMES := ["space", "magic", "dinos", "transport"]
 
 var _saved: RunProgress
@@ -378,14 +379,9 @@ func test_exit_targets_leave_by_a_door() -> void:
 	CloakroomSession.reset()
 
 
-func test_the_view_answers_taps_with_the_door_only_and_the_registry_knows_the_activity() -> void:
-	var v := CloakroomView.new()
-	v.size = Vector2(640, 230)
-	v.screen_size = Vector2(640, 230)
-	assert_eq(v.hit(Vector2(20, 20)), "exit", "the door sign")
-	assert_eq(v.hit(Vector2(320, 100)), "", "the tag is not a target")
-	assert_eq(v.hit(Vector2(500, 200)), "")
-	v.free()
+func test_the_registry_knows_the_activity_and_it_draws_nothing_itself() -> void:
+	assert_true(CloakroomActivity.new().make_view() == null, "no canvas view: the stage draws the room")
+	assert_false(FileAccess.file_exists("res://src/minigames/cloakroom/cloakroom_view.gd"), "the close-up layer is gone (ruling 38)")
 	var c := MinigameController.new(null)
 	c.load_registry()
 	assert_true(c.is_registered("cloakroom"), "content/minigames/cloakroom.json is in the registry")
@@ -598,3 +594,125 @@ func test_in_the_scene_strip_taps_reach_the_controls_not_the_pads_and_judging_re
 	assert_eq(e.judge.misses, misses0, "still no miss")
 	_free(d)
 	CloakroomSession.reset()
+
+
+# --- the staging (ruling 38): things, crowd actors and feedback as data ----------------------------------------------------------------------
+
+func _staged(theme := "space", extra := {}) -> Array:
+	CloakroomSession.reset()
+	var w := WorldThings.new()
+	var a := CloakroomActivity.new()
+	a.setup({"seed": 7, "beat_s": BEAT, "config": _cfg(extra), "request": {"theme": theme}, "world": w})
+	a.begin(0.0)
+	a.update(11.0 * BEAT)
+	return [a, 11.0 * BEAT, w]
+
+
+func _frames(w: WorldThings, prefix: String) -> Array:
+	return w.things.filter(func(t: Dictionary) -> bool: return str(t["id"]).begins_with(prefix))
+
+
+func test_the_things_show_one_coat_per_coat_still_to_come_and_the_symbols() -> void:
+	var r := _staged()
+	var a: CloakroomActivity = r[0]
+	var t: float = r[1]
+	var w: WorldThings = r[2]
+	var coats := _frames(w, "cloak_coat_")
+	assert_eq(coats.size(), 8, "eight coats in the room")
+	assert_eq(coats.filter(func(c: Dictionary) -> bool: return int(c["frame"]) < 4).size(), 7, "seven on the rail, one carried by the customer")
+	assert_true(int(w.thing("cloak_coat_0")["frame"]) >= 4 and int(w.thing("cloak_coat_0")["frame"]) < 8, "the customer's coat is the carried row")
+	var cur := w.thing("cloak_symbol_current")
+	assert_eq(int(cur["frame"]), a.symbol_ids.find(a.state()["current"]), "the tag's frame is the current symbol")
+	assert_eq(cur["sprite"], "cloak_symbols_space")
+	var prev := w.thing("cloak_symbol_previous")
+	assert_eq(int(prev["frame"]), 4 + a.symbol_ids.find(a.state()["previous"]), "the previous symbol, the faded row")
+	# trials 0 to 2 show the previous symbol, trial 3 on do not
+	for i in 4:
+		assert_eq(not w.thing("cloak_symbol_previous").is_empty(), i < 3, "previous symbol at trial %d" % i)
+		a.tap(_right(a), t)
+		t += 1.0
+		a.update(t)
+	# a handover moves the coat across the counter and then it is gone
+	a.tap(_right(a), t)
+	a.update(t + 0.3)
+	var c4: Dictionary = w.thing("cloak_coat_4")
+	assert_true(int(c4["frame"]) >= 8, "handed over: the third row")
+	var at1: Array = c4["at"]
+	a.update(t + 0.7)
+	assert_true((w.thing("cloak_coat_4")["at"] as Array) != at1, "it moves in song time")
+	a.update(t + 1.0)
+	assert_true(w.thing("cloak_coat_4").is_empty(), "handled: gone")
+	assert_eq(_frames(w, "cloak_coat_").size(), 3, "three coats left")
+	# at the end the rail is empty
+	for i in 3:
+		t += 1.0
+		a.update(t)
+		a.tap(_right(a), t)
+	a.update(t + 1.0)
+	assert_eq(a.state()["phase"], "payoff")
+	assert_eq(_frames(w, "cloak_coat_").size(), 0, "the rail of coats is empty")
+
+
+func test_the_crowd_is_directed_by_state_and_feedback_is_asked_for() -> void:
+	var r := _staged()
+	var a: CloakroomActivity = r[0]
+	var t: float = r[1]
+	var w: WorldThings = r[2]
+	assert_eq(w.state_of("customer_0"), "waiting")
+	assert_eq(w.state_of("attendant"), "idle")
+	a.tap(_right(a), t)
+	assert_eq(w.state_of("customer_0"), "happy")
+	assert_eq(w.state_of("attendant"), "happy")
+	assert_eq(w.feedback_log[-1], {"thing": "cloak_symbol_current", "kind": "tick", "t": t})
+	t += 1.0
+	a.update(t)
+	assert_eq(w.state_of("customer_1"), "waiting", "the next customer steps up")
+	a.tap(_wrong(a), t)
+	assert_eq(w.state_of("customer_1"), "impatient")
+	var imp: Dictionary = w.people_log.filter(func(p: Dictionary) -> bool: return p["state"] == "impatient")[0]
+	assert_near(float(imp["dur"]), 3.0, 1e-9, "for the slow processing time")
+	assert_eq(w.feedback_log[-1]["kind"], "cross")
+	assert_eq(w.feedback_log.size(), 2, "one cue per answer")
+	a.tap("same", t + 0.5)
+	assert_eq(w.feedback_log.size(), 2, "an ignored tap asks for nothing")
+	# the payoff
+	CloakroomSession.reset()
+	var r2 := _staged("magic", {"coats": 1})
+	var b: CloakroomActivity = r2[0]
+	var w2: WorldThings = r2[2]
+	b.tap(_right(b), r2[1])
+	b.update(float(r2[1]) + 1.0)
+	assert_eq(w2.state_of("attendant"), "clap")
+	assert_eq(w2.state_of("customer_0"), "hands_up")
+	assert_eq(w2.feedback_log[-1]["thing"], "cloak_counter")
+	assert_eq(w2.feedback_log[-1]["kind"], "glow")
+	for e: Dictionary in w2.people_log:
+		assert_true(e["state"] in ["idle", "waiting", "happy", "impatient", "clap", "hands_up"], "only the states the crowd knows")
+
+
+func test_the_test_scene_map_and_sprite_sheets_carry_the_things() -> void:
+	var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FIX + "map.json"))
+	var ids := (m["things"] as Array).map(func(x: Dictionary) -> String: return str(x["id"]))
+	for need in ["cloak_counter", "cloak_rail", "cloak_tag_board"]:
+		assert_true(need in ids, "map piece %s" % need)
+	assert_true(ids.all(func(i: String) -> bool: return i.begins_with("cloak_")), "the activity's prefix")
+	var poly: PackedVector2Array = PackedVector2Array((m["sectors"][0]["polygon"] as Array).map(func(p: Array) -> Vector2: return Vector2(p[0], p[1])))
+	var dir := FIX + "assets/story/cloak_test/sprites/"
+	for p: Dictionary in m["things"]:
+		assert_true(FileAccess.file_exists(dir + str(p["sprite"]) + ".png"), "sprite for %s" % p["id"])
+	var r := _staged("dinos")
+	var w: WorldThings = r[2]
+	assert_true(w.things.size() >= 9)
+	for t: Dictionary in w.things:
+		var at: Array = t["at"]
+		assert_true(Geometry2D.is_point_in_polygon(Vector2(at[0], at[1]), poly), "%s stands inside the room" % t["id"])
+		assert_eq(t["sector"], "cloak")
+		assert_true(float((t["size"] as Array)[0]) > 0.0 and float((t["size"] as Array)[1]) >= 0.5, "%s is big enough to read (>= 0.5 m tall)" % t["id"])
+		var sheet := str(t["sprite"])
+		assert_true(FileAccess.file_exists(dir + sheet + ".png"), "sheet %s" % sheet)
+		var img := Image.load_from_file(ProjectSettings.globalize_path(dir + sheet + ".png"))
+		var cols := 4
+		var rows := img.get_height() / 64 if sheet.begins_with("cloak_symbols") else 3
+		assert_true(int(t["frame"]) >= 0 and int(t["frame"]) < cols * rows, "%s frame %d is in its sheet" % [t["id"], int(t["frame"])])
+	for th: String in THEMES:
+		assert_true(FileAccess.file_exists(dir + "cloak_symbols_%s.png" % th), "a symbol sheet for %s" % th)

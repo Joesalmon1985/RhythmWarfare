@@ -11,10 +11,23 @@ extends MinigameActivity
 ## Leave and return: the progress (sequence, answers, whether the demonstration was seen) is saved in CloakroomSession (process-static, keyed "<theme>/cloakroom"; it stands in for
 ## RaveSession) on every change, so a new activity object for a re-request resumes the queue where it was. Done or run over clears it.
 ##
+## STAGING (CONTRACTS.md 10, ruling 38): nothing is drawn by the activity. It declares `things()` (the coats, the current and the previous symbol as dynamic props of the room, sheets
+## `cloak_coat` and `cloak_symbols_<theme>`, frame set from the state machine in song time), directs the crowd actors (`customer_<k>`, `attendant`) with `world.people(id, state, t0, dur)`
+## and asks for in-world feedback with `world.feedback(thing, kind, t)`; `world` is the WorldThings interface the host gives in `setup(ctx["world"])` (a recording stub in tests). The
+## counter, the rail and the tag board are map pieces (`cloak_counter`, `cloak_rail`, `cloak_tag_board`) authored in the scene's map. The two controls are `controls()`, pictograms only.
+##
 ## Config (the registered content/minigames/cloakroom.json merged with the theme's keys): coats 8, correct_s / fast_s 1.0, wrong_s / slow_s 3.0, symbols 4, match_share 0.5,
 ## demo_trials 2, demo_step_beats 3, ref_beats 2, payoff_beats 4, cloakroom_symbols [{id, ...}] (four ids the art knows), flags_on_complete.
 
 const SHOW_PREVIOUS_TRIALS := 3
+const SECTOR := "cloak"
+const COAT_COLS := 4  # sheet cloak_coat: 4 colours across, one row per state: 0 on the rail, 1 carried, 2 handed over; frame = row * 4 + colour
+const SYMBOL_COLS := 4  # sheet cloak_symbols_<theme>: the four symbols across, row 0 the tag's, row 1 the faded previous one; frame = row * 4 + symbol
+const CUSTOMER_AT := Vector2(1.8, -1.7)
+const QUEUE_AT := Vector2(2.7, -1.5)  # the first waiting customer; the rest follow 0.6 m further along x
+const ATTENDANT_AT := Vector2(-0.8, -2.7)
+const RAIL_X0 := -3.7  # coat j hangs at RAIL_X0 + 0.3 * j
+const RAIL_Z := -2.55
 
 var theme := ""
 var symbol_ids: Array = []  # four symbol ids of the theme (CloakroomArt)
@@ -38,6 +51,8 @@ var _demo_step_beats := 3.0
 var _ref_beats := 2.0
 var _payoff_beats := 4.0
 var _restored := false
+var world: Object = null  # the room (WorldThings interface), null in a pure test
+var _pushed := ""
 
 
 func setup(ctx: Dictionary) -> void:
@@ -52,6 +67,7 @@ func setup(ctx: Dictionary) -> void:
 	_payoff_beats = float(config.get("payoff_beats", 4.0))
 	symbol_ids = CloakroomArt.symbols_for(theme, config.get("cloakroom_symbols", []))
 	_key = "%s/cloakroom" % theme
+	world = ctx.get("world", null)
 	_sig = "%d|%s" % [coats, ",".join(PackedStringArray(symbol_ids))]
 	var saved := CloakroomSession.load_state(_key)
 	if not saved.is_empty() and str(saved.get("sig", "")) == _sig:
@@ -98,16 +114,19 @@ func begin(t: float) -> void:
 		_demo_i = 0
 		_enter("demo", t, t + float((_demo[0] as Dictionary)["beats"]) * beat_s)
 	_save()
+	_push()
 
 
 func _enter(phase: String, t0: float, t_end: float) -> void:
 	_phase = phase
 	_phase_t0 = t0
 	_phase_end = t_end
+	_direct(phase, t0, t_end)
 
 
 func update(t: float) -> void:
 	_advance(t)
+	_push()
 
 
 ## Moves the state machine to song time `t`, taking every transition whose time has passed (each starts where the last one ended).
@@ -165,7 +184,10 @@ func tap(target: String, t: float) -> bool:
 	answers.append({"trial": i, "answer": target, "expected": right, "correct": ok, "t": t})
 	_enter("process", t, t + (fast_s if ok else slow_s))
 	_save()
+	if world != null:
+		world.feedback("cloak_symbol_current", "tick" if ok else "cross", t)
 	_advance(t)  # (a zero-length process moves on at once)
+	_push()
 	return true
 
 
@@ -223,8 +245,96 @@ func result() -> Dictionary:
 	return r
 
 
+## No canvas view: the room is drawn by the stage (things, pieces, crowd actors), the strip by the host's controls layer.
 func make_view() -> Control:
-	return CloakroomView.new()
+	return null
+
+
+# --- the staging ------------------------------------------------------------------------------------------------------------------
+
+func _customer_id(j: int) -> String:
+	return "customer_%d" % j
+
+
+func _handled() -> int:
+	return answers.size() - (1 if _phase == "process" else 0)
+
+
+## The crowd directions for entering `phase` at t0 (the people actors are the host's; the activity only names a state).
+func _direct(phase: String, t0: float, t_end: float) -> void:
+	if world == null:
+		return
+	var j := clampi(_handled(), 0, coats - 1)
+	var dur := t_end - t0 if t_end < INF else 0.0
+	match phase:
+		"demo", "reference", "await":
+			world.people(_customer_id(j), "waiting", t0, 0.0)
+			world.people("attendant", "idle", t0, 0.0)
+		"process":
+			var ok := bool(answers[-1]["correct"])
+			world.people(_customer_id(j), "happy" if ok else "impatient", t0, dur)
+			world.people("attendant", "happy" if ok else "waiting", t0, dur)
+		"payoff":
+			world.people("attendant", "clap", t0, dur)
+			world.people(_customer_id(clampi(coats - 1, 0, coats - 1)), "hands_up", t0, dur)
+			world.feedback("cloak_counter", "glow", t0)
+
+
+func _push() -> void:
+	if world == null:
+		return
+	var arr := things()
+	var key := JSON.stringify(arr)
+	if key != _pushed:
+		_pushed = key
+		world.set_things(arr)
+
+
+## 0..1 progress of the handover across the process time: a quick answer is a quick swing, a slow one fumbles first.
+func handover() -> float:
+	if _phase != "process":
+		return 0.0
+	var span := maxf(_phase_end - _phase_t0, 0.1)
+	var age := _now - _phase_t0
+	if span > 1.5:
+		return clampf((age - 1.0) / (span - 1.0), 0.0, 1.0)
+	return clampf(age / (span * 0.8), 0.0, 1.0)
+
+
+func _thing(id: String, sprite: String, at: Vector2, size: Vector2, frame: int, y := 0.0) -> Dictionary:
+	return {"id": id, "sprite": sprite, "at": [at.x, at.y], "sector": SECTOR, "size": [size.x, size.y], "frame": frame, "y": y}
+
+
+## The dynamic things of the room at the last song time: [{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, y}], in a fixed order. One coat per coat still to come hangs on the
+## rail (`cloak_coat_<j>`, j the customer it belongs to); the customer's own coat is carried, then handed across to the attendant while it is processed, then gone. The current symbol sits
+## on the tag board; the previous one beside it, faded, for the first three trials only (and the demonstration).
+func things() -> Array:
+	var out: Array = []
+	var done := _phase in ["payoff", "done"]
+	var cur := _handled()
+	var coat_size := Vector2(0.5, 0.8)
+	for j in coats:
+		var col := j % COAT_COLS
+		if done or j < cur:
+			continue
+		if j > cur:
+			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", Vector2(RAIL_X0 + 0.3 * float(j), RAIL_Z), coat_size, col, 1.0))
+		elif _phase == "process":
+			var h := handover()
+			if h <= 0.0:
+				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", CUSTOMER_AT + Vector2(-0.3, 0), coat_size, COAT_COLS + col, 1.0))
+			else:
+				var p := (CUSTOMER_AT + Vector2(-0.3, 0)).lerp(ATTENDANT_AT + Vector2(0.3, 0), h)
+				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", p, coat_size, 2 * COAT_COLS + col, 1.0 + sin(h * PI) * 0.4))
+		else:
+			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", CUSTOMER_AT + Vector2(-0.3, 0), coat_size, COAT_COLS + col, 1.0))
+	var st := state()
+	var sheet := "cloak_symbols_%s" % (theme if theme != "" else "space")
+	if str(st["current"]) != "":
+		out.append(_thing("cloak_symbol_current", sheet, Vector2(0.0, -2.15), Vector2(0.8, 0.8), symbol_ids.find(st["current"]), 1.15))
+	if str(st["previous"]) != "" and bool(st["show_previous"]):
+		out.append(_thing("cloak_symbol_previous", sheet, Vector2(-0.9, -2.15), Vector2(0.5, 0.5), SYMBOL_COLS + symbol_ids.find(st["previous"]), 1.25))
+	return out
 
 
 ## The snapshot the view and the tests read. `trial` is the scored trial being shown (-1 in the demonstration and the reference), `current`/`previous` symbol ids ("" none).
