@@ -24,3 +24,16 @@ are ALIASES of the same scene and map until the real ones exist; each leads on t
 ## Known limits (7 November)
 
 No state-driven guides beyond what the existing choice staging does (sprite per state, no loop playback, no brightening lamp); the rail's moves are polylines with holds, but the exits' door walks (ahead, left, right) still go straight to the next scene's arrival (`rail.routes` is checked, not yet played); the terrace and the north-west nub are not connected to the ring; the guides are placeholder art.
+
+## The DJ Booth (scene `doom_booth`, env-booth block)
+
+| What | How |
+| --- | --- |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_booth` (world `doom_booth`; routes: stay in the booth (default), `doom_booth.mothership` ahead, `doom_booth.balcony` left, `doom_booth.dock` right: stand-ins that lead to `doom_booth.return`) |
+| Rebuild the geometry | `python -I tools/doom/trace/booth_scene.py && python -I tools/doom/convert.py --scene booth --trace tools/doom/trace/booth_pilot.json && python -I tools/doom/author_booth.py` |
+| Rebuild the art and guides | `python -I tools/doom/art/make_booth_art.py`, then `godot --headless --import` |
+| Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_booth.py`) |
+| Shots | `python3 tools/doom/shoot_booth.py` (`docs/shots/doom/booth/contact.jpg`, `walk_strip.jpg`) |
+| Tests | `--filter doom_views` (the booth block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_booth` |
+
+Details: `docs/doom/scenes/booth.md`.

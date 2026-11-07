@@ -124,8 +124,14 @@ def write(helpers: dict | None = None) -> None:
     cin: dict = {}
     hot = hotspots(cin)
     music = [{"id": sid, "arrangement": "warehouse_1", "slot": slot, "alternates": ["warehouse_2", "warehouse_3"], "treatment": "none", "temporary": False} for sid, *_r, slot in DOOM_SCENES]
+    worlds, extra_hot = [WORLD], {}
+    # --- the DJ Booth (env-booth): its world, nodes, music and hotspots, from tools/run/make_doom_booth.py (a separate block: other scenes add theirs the same way)
+    import make_doom_booth
+    make_doom_booth.add(P, worlds, nodes, cin, music, extra_hot)
     (OUT / "hotspots").mkdir(parents=True, exist_ok=True)
-    (OUT / "run.json").write_text(json.dumps({"worlds": [WORLD], "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    for wid, doc in extra_hot.items():
+        (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (OUT / "music.json").write_text(json.dumps({"nodes": music}, indent=1) + "\n", encoding="utf-8", newline="\n")
     (OUT / "hotspots" / "doom_warehouse.json").write_text(json.dumps(hot, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print("doom overlay: %d scenes, %d hotspots, %d cinematics -> %s" % (len(nodes), len(hot["hotspots"]), len(cin), OUT))
