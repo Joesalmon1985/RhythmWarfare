@@ -26,7 +26,7 @@ MAX_STEP = 0.5
 RAIL_HEIGHTS = {"dais|aisle": 1.0, "dais|terrace": 1.75, "dstep_a|terrace": 2.375, "dstep_b|terrace": 2.0}  # metres above the higher floor (the window tops out at the 2.75 m ceiling)
 RAIL_TEX = {"dais|aisle": "bt_rail"}  # every other railing is the window mesh
 WINDOW_TEX = "bt_window"
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.6, 0.66, 0.6, 2.2  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.52, 0.35, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
 
 
 def M(x, y):
@@ -99,14 +99,15 @@ GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
 }
 # billboards: id, sprite, point (m), size (height m); y is the centre (half the size) unless a fifth value is given (height of the centre above the floor)
 THINGS = [
-    ("bt_deck_a", "bt_turntable", (-3.2, 1.2), 0.5), ("bt_mixer", "bt_mixer", (-3.2, 2.6), 0.55), ("bt_deck_b", "bt_turntable", (-3.2, 4.0), 0.5),
-    ("bt_desk_lamp", "bt_lamp", (-3.6, 5.2), 0.9), ("bt_stool", "bt_stool", (-2.55, 3.2), 0.75), ("bt_records", "bt_records", (-3.55, 0.55), 0.5),
-    ("bt_dais_cables", "bt_cables", (-2.4, 0.7), 0.4), ("bt_deck_c", "bt_turntable", (-3.2, 6.4), 0.5),
+    ("bt_deck_a", "bt_turntable", (-2.45, 1.5), 0.7), ("bt_mixer", "bt_mixer", (-2.5, 3.1), 0.8), ("bt_deck_b", "bt_turntable", (-2.45, 4.8), 0.6),
+    ("bt_desk_lamp", "bt_lamp", (-3.2, 3.6), 1.1), ("bt_stool", "bt_stool", (-1.2, 4.0), 0.75), ("bt_records", "bt_records", (-2.6, 0.55), 0.55),
+    ("bt_dais_cables", "bt_cables", (-2.1, 6.4), 0.45), ("bt_deck_c", "bt_turntable", (-2.6, 6.5), 0.5),
     ("bt_rack_a", "bt_rack", (1.35, 7.4), 1.5), ("bt_rack_b", "bt_rack", (1.35, 8.7), 1.5), ("bt_case_a", "bt_case", (1.3, 9.9), 0.7), ("bt_case_b", "bt_case", (1.3, 1.0), 0.6),
-    ("bt_floor_cables", "bt_cables", (0.7, 6.4), 0.35), ("bt_rack_c", "bt_rack_short", (-1.35, 10.3), 1.0),
+("bt_rack_c", "bt_rack_short", (-1.35, 10.3), 1.0),
     ("bt_case_t", "bt_case", (-8.9, 2.6), 0.7),
     ("bt_dock_case_a", "bt_case", (4.6, 1.3), 0.9), ("bt_dock_case_b", "bt_case", (5.6, 1.1), 0.7), ("bt_dock_case_c", "bt_case", (8.2, 2.2), 1.0), ("bt_dock_case_d", "bt_case", (8.4, 7.6), 0.9),
     ("bt_dock_pend_a", "thing_pendant", (4.6, 4.6), 1.0, 3.3), ("bt_dock_pend_b", "thing_pendant", (6.9, 2.6), 1.0, 3.3),
+    ("bt_cage_a", "bt_cage_lamp", (0.0, 2.6), 0.4, 2.55), ("bt_cage_b", "bt_cage_lamp", (0.0, 6.6), 0.4, 2.55), ("bt_cage_c", "bt_cage_lamp", (0.0, 9.8), 0.4, 2.55),
     ("bt_crystal_a", "bt_crystal", (1.9, 15.9), 2.2), ("bt_crystal_b", "bt_crystal", (-2.0, 16.0), 1.8), ("bt_moth_console", "bt_moth_console", (0.0, 16.9), 0.9),
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y, emissive (the wall's own yaw: StoryMap places it)
@@ -114,7 +115,7 @@ DECALS = [
     ("bt_dc_vent_door", "bt_vent_door", (1.6, 6.15), 2.2, 0.0, False), ("bt_dc_pipes", "bt_pipes", (1.65, 7.55), 2.6, 0.0, False), ("bt_dc_shelf", "bt_cable_shelf", (1.6, 9.0), 1.3, 0.55, False),
     ("bt_dc_led_a", "bt_led", (1.6, 1.5), 0.22, 2.1, True), ("bt_dc_led_b", "bt_led", (1.6, 9.9), 0.22, 2.1, True), ("bt_dc_led_c", "bt_led", (-1.6, 10.8), 0.2, 2.15, True),
     ("bt_dc_screen_a", "bt_screen", (-3.3, 10.8), 0.55, 1.5, True), ("bt_dc_screen_b", "bt_screen_wave", (-2.5, 10.8), 0.55, 1.5, True), ("bt_dc_screen_c", "bt_screen", (1.5, 10.85), 0.5, 1.5, True),
-    ("bt_dc_skyline", "bt_skyline", (-9.6, 4.25), 3.0, 0.3, True), ("bt_dc_shutter", "bt_shutter", (8.85, 4.5), 2.2, 0.0, False),
+    ("bt_dc_skyline", "bt_skyline", (-9.6, 4.25), 3.0, 0.3, True), ("bt_dc_shutter", "bt_shutter", (8.85, 4.5), 2.0, 0.0, False),
     ("bt_dc_led_d", "bt_led", (0.0, 0.2), 0.3, 2.2, True),
 ]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (amber task light over the desk, red LED glow at the racks, the caged lamps in the aisle, moonlight on the balcony, violet ahead, sodium on the dock)
@@ -158,6 +159,12 @@ def sector_of(d, x, z):
         if inside(s["polygon"], x, z):
             return s
     return None
+
+
+def dist_to_segment(p, a, b):
+    dx, dz = b[0] - a[0], b[1] - a[1]
+    t = max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / (dx * dx + dz * dz or 1)))
+    return math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dz))
 
 
 def barriers(d, names):
@@ -312,12 +319,14 @@ def main():
     open(os.path.join(ROOT, "content", "run", "doom", "story_doom_booth.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(ch, indent=1) + "\n")
     terrace = next(s for s in d["sectors"] if names[int(s["doom_sector"])] == CROWD_POINTS_SECTOR)
     guide_pts = [M(*g[0]) for g in GUIDES.values()]
+    cam = M(*WAYPOINTS[1][1])  # the reference viewpoint: nobody dances on the line of sight to the balcony guide
+    bal = M(*GUIDES["balcony"][0])
     pts = []
     gx = -9.4
     while gx <= -4.4:
         gz = 0.5
         while gz <= 8.2:
-            if inside(terrace["polygon"], gx, -gz) and dist_to_edges(terrace["polygon"], gx, -gz) >= 0.33 and all(math.hypot(gx - p[0], -gz - p[1]) > 1.3 for p in guide_pts):
+            if inside(terrace["polygon"], gx, -gz) and dist_to_edges(terrace["polygon"], gx, -gz) >= 0.33 and all(math.hypot(gx - p[0], -gz - p[1]) > 1.3 for p in guide_pts) and dist_to_segment((gx, -gz), cam, bal) > 1.1:
                 pts.append((round(gx, 2), round(-gz, 2), terrace["id"]))
             gz += 0.75
         gx += 0.75

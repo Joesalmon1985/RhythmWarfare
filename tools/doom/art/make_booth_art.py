@@ -85,14 +85,14 @@ def wall_steel():
 
 
 def wall_dock():
-    im = Image.new("RGB", (S, S), hexc("#4a3a30"))
+    im = Image.new("RGB", (S, S), hexc("#33261f"))
     d = ImageDraw.Draw(im)
     for row, y in enumerate(range(0, S, 16)):  # brick courses
         off = 0 if row % 2 == 0 else 16
         d.line([(0, y), (S, y)], fill=hexc("#1c140f"))
         for x in range(-off, S, 32):
             d.line([(x, y), (x, y + 16)], fill=hexc("#1c140f"))
-    return rust(speckle(im, 0.35, 31), 32, 0.2, (120, 96, 40))
+    return rust(speckle(im, 0.35, 31), 32, 0.07, (110, 84, 40))
 
 
 def wall_moth():
@@ -146,7 +146,7 @@ def floor_moth():
 
 
 def ceil_tile():
-    im = Image.new("RGB", (S, S), hexc("#3c2a22"))
+    im = Image.new("RGB", (S, S), hexc("#2a1c16"))
     d = ImageDraw.Draw(im)
     for k in (0, 64):
         d.rectangle([k, 0, k + 1, S], fill=hexc("#1c1210"))
@@ -154,7 +154,7 @@ def ceil_tile():
     for y in range(8, S, 16):
         for x in range(8, S, 16):
             d.point((x, y), fill=hexc("#1c1210"))
-    return rust(speckle(im, 0.25, 91), 92, 0.3, (110, 70, 40))
+    return rust(speckle(im, 0.25, 91), 92, 0.12, (90, 56, 32))
 
 
 def trim():
@@ -169,7 +169,7 @@ def rail_tile():
     """The desk edge: a handrail on posts every metre with two bars and a kick plate; the rest alpha 0."""
     im = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    steel, light, dark = hexc("#a07858"), hexc("#e0b890"), hexc("#503828")
+    steel, light, dark = hexc("#6a4a34"), hexc("#9a7050"), hexc("#2a1a10")
     d.rectangle([0, 6, S, 13], fill=(*steel, 255))
     d.rectangle([0, 6, S, 7], fill=(*light, 255))
     d.rectangle([0, 12, S, 13], fill=(*dark, 255))
@@ -186,13 +186,13 @@ def window_tile():
     """The window onto the balcony: a fine wire mesh (the painting's chain-link) in a steel frame; alpha 0 elsewhere (the rain and the balcony show through)."""
     im = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    wire, light = hexc("#2a2420"), hexc("#7a6a60")
+    wire, light = hexc("#1c1612"), hexc("#4a3e36")
     for k in range(-S, S * 2, 8):
         d.line([(k, 0), (k + S, S)], fill=(*wire, 255))
         d.line([(k + S, 0), (k, S)], fill=(*wire, 255))
     for k in range(-S, S * 2, 32):  # a light thread now and then
         d.line([(k, 0), (k + S, S)], fill=(*light, 255))
-    steel = hexc("#7a5a48")
+    steel = hexc("#4a3428")
     d.rectangle([0, 0, S, 5], fill=(*steel, 255))
     d.rectangle([0, S - 6, S, S], fill=(*steel, 255))
     d.rectangle([0, 0, 5, S], fill=(*steel, 255))
@@ -296,11 +296,29 @@ def rack(tall=True):
 
 
 def cables():
+    """A tangled heap of red and black cable on the floor (filled, lumpy: not a ring)."""
     im, d = canvas(72, 56)
-    for k, col in enumerate(["#b02028", "#161616", "#b02028", "#161616", "#c83038"]):
-        r0 = 24 - k * 3
-        d.ellipse([8 + k * 3, 6 + k * 2, 8 + k * 3 + 2 * r0, 6 + k * 2 + 2 * r0], outline=hexc(col), width=4)
-    d.arc([20, 20, 60, 50], 0, 200, fill=hexc("#101010"), width=3)
+    rnd = random.Random(14)
+    d.ellipse([4, 22, 68, 54], fill=hexc("#181212"))
+    for k in range(26):
+        col = "#b02028" if k % 3 == 0 else "#241a1a"
+        x, y = rnd.randint(8, 52), rnd.randint(14, 40)
+        d.ellipse([x, y, x + rnd.randint(10, 18), y + rnd.randint(8, 14)], fill=hexc(col), outline=hexc("#0c0808"))
+    d.line([(6, 50), (30, 40), (66, 52)], fill=hexc("#b02028"), width=3)
+    return outline(im)
+
+
+def cage_lamp():
+    """The painting's caged ceiling lamp: an amber bulb in a steel cage; emissive in effect (a bright sprite)."""
+    im, d = canvas(40, 48)
+    d.rectangle([14, 0, 26, 6], fill=hexc("#3a3028"))
+    d.rounded_rectangle([6, 6, 34, 40], radius=8, fill=hexc("#ffc060"))
+    d.ellipse([12, 14, 28, 34], fill=hexc("#fff0b8"))
+    for x in (10, 18, 26, 32):
+        d.line([(x, 6), (x, 40)], fill=hexc("#4a3a2c"), width=2)
+    for y in (16, 28):
+        d.line([(6, y), (34, y)], fill=hexc("#4a3a2c"), width=2)
+    d.rectangle([4, 38, 36, 44], fill=hexc("#3a3028"))
     return outline(im)
 
 
@@ -409,9 +427,9 @@ def pipe_run():
 
 def shutter():
     im, d = canvas(192, 128)
-    d.rectangle([0, 0, 191, 127], fill=hexc("#5a4e44"))
+    d.rectangle([0, 0, 191, 127], fill=hexc("#2e2822"))
     for y in range(0, 128, 8):
-        d.rectangle([0, y, 191, y + 6], fill=hexc("#6a5c50"))
+        d.rectangle([0, y, 191, y + 6], fill=hexc("#3e362e"))
         d.rectangle([0, y + 7, 191, y + 7], fill=hexc("#1c1612"))
     return speckle(im, 0.3, 33)
 
@@ -443,7 +461,7 @@ def skyline():
 TEXTURES = {"bt_wall_foam": wall_foam, "bt_wall_steel": wall_steel, "bt_wall_dock": wall_dock, "bt_wall_moth": wall_moth, "bt_floor_plate": floor_plate, "bt_floor_grate": floor_grate,
             "bt_floor_conc": floor_conc, "bt_floor_moth": floor_moth, "bt_ceil": ceil_tile, "bt_trim": trim, "bt_rail": rail_tile, "bt_window": window_tile}
 PROPS = {"bt_turntable": turntable, "bt_mixer": mixer, "bt_lamp": lamp, "bt_stool": stool, "bt_rack": rack, "bt_cables": cables, "bt_case": case, "bt_records": records,
-         "bt_crystal": crystal, "bt_moth_console": moth_console, "bt_rack_short": lambda: rack(False)}
+         "bt_crystal": crystal, "bt_cage_lamp": cage_lamp, "bt_moth_console": moth_console, "bt_rack_short": lambda: rack(False)}
 DECALS = {"bt_screen": screen_decal, "bt_screen_wave": screen_wave, "bt_led": led_strip, "bt_vent_door": vent_door, "bt_cable_shelf": cable_shelf, "bt_pipes": pipe_run,
           "bt_shutter": shutter, "bt_skyline": skyline}
 

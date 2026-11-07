@@ -27,6 +27,7 @@
   "bt_rack": "textures/bt_rack.png",
   "bt_case": "textures/bt_case.png",
   "bt_rack_short": "textures/bt_rack_short.png",
+  "bt_cage_lamp": "textures/bt_cage_lamp.png",
   "bt_crystal": "textures/bt_crystal.png",
   "bt_moth_console": "textures/bt_moth_console.png",
   "bt_vent_door": "textures/bt_vent_door.png",
@@ -124,7 +125,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_foam",
    "light": 1.0,
-   "tint": "#ffe9d2",
+   "tint": "#ffdbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
@@ -157,7 +158,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_foam",
    "light": 1.0,
-   "tint": "#ffe5cc",
+   "tint": "#ffd6ac",
    "room": "main",
    "flags": [],
    "doom_sector": 1,
@@ -190,7 +191,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_steel",
    "light": 1.0,
-   "tint": "#ffe5cc",
+   "tint": "#ffd6ac",
    "room": "main",
    "flags": [],
    "doom_sector": 2,
@@ -223,7 +224,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_steel",
    "light": 1.0,
-   "tint": "#ffe5cc",
+   "tint": "#ffd6ac",
    "room": "main",
    "flags": [],
    "doom_sector": 3,
@@ -256,7 +257,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_foam",
    "light": 1.0,
-   "tint": "#ffe9d2",
+   "tint": "#ffdbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 4,
@@ -289,7 +290,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_steel",
    "light": 1.0,
-   "tint": "#ffe9d2",
+   "tint": "#ffdbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 5,
@@ -322,7 +323,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#d6dff9",
+   "tint": "#bdcbf5",
    "room": "main",
    "flags": [],
    "doom_sector": 6,
@@ -379,7 +380,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#d0d9f5",
+   "tint": "#b2c1f0",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
@@ -412,7 +413,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#d6dff9",
+   "tint": "#bdcbf5",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
@@ -445,7 +446,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#d6dff9",
+   "tint": "#bdcbf5",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
@@ -478,7 +479,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#d6dff9",
+   "tint": "#bdcbf5",
    "room": "main",
    "flags": [],
    "doom_sector": 10,
@@ -511,7 +512,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_steel",
    "light": 1.0,
-   "tint": "#ecdfff",
+   "tint": "#e0cbff",
    "room": "main",
    "flags": [],
    "doom_sector": 11,
@@ -552,7 +553,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_moth",
    "light": 1.0,
-   "tint": "#e9dcff",
+   "tint": "#dbc6ff",
    "room": "main",
    "flags": [],
    "doom_sector": 12,
@@ -585,7 +586,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_steel",
    "light": 1.0,
-   "tint": "#ffe5cc",
+   "tint": "#ffd6ac",
    "room": "main",
    "flags": [],
    "doom_sector": 13,
@@ -626,7 +627,7 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#ffe2c5",
+   "tint": "#ffd0a2",
    "room": "main",
    "flags": [],
    "doom_sector": 14,
@@ -1033,11 +1034,11 @@
    "kind": "billboard",
    "sprite": "bt_turntable",
    "at": [
-    -3.2,
-    -1.2
+    -2.45,
+    -1.5
    ],
-   "y": 0.25,
-   "size": 0.5,
+   "y": 0.35,
+   "size": 0.7,
    "anim": "none"
   },
   {
@@ -1045,11 +1046,11 @@
    "kind": "billboard",
    "sprite": "bt_mixer",
    "at": [
-    -3.2,
-    -2.6
+    -2.5,
+    -3.1
    ],
-   "y": 0.275,
-   "size": 0.55,
+   "y": 0.4,
+   "size": 0.8,
    "anim": "none"
   },
   {
@@ -1057,11 +1058,11 @@
    "kind": "billboard",
    "sprite": "bt_turntable",
    "at": [
-    -3.2,
-    -4.0
+    -2.45,
+    -4.8
    ],
-   "y": 0.25,
-   "size": 0.5,
+   "y": 0.3,
+   "size": 0.6,
    "anim": "none"
   },
   {
@@ -1069,11 +1070,11 @@
    "kind": "billboard",
    "sprite": "bt_lamp",
    "at": [
-    -3.6,
-    -5.2
+    -3.2,
+    -3.6
    ],
-   "y": 0.45,
-   "size": 0.9,
+   "y": 0.55,
+   "size": 1.1,
    "anim": "none"
   },
   {
@@ -1081,8 +1082,8 @@
    "kind": "billboard",
    "sprite": "bt_stool",
    "at": [
-    -2.55,
-    -3.2
+    -1.2,
+    -4.0
    ],
    "y": 0.375,
    "size": 0.75,
@@ -1093,11 +1094,11 @@
    "kind": "billboard",
    "sprite": "bt_records",
    "at": [
-    -3.55,
+    -2.6,
     -0.55
    ],
-   "y": 0.25,
-   "size": 0.5,
+   "y": 0.275,
+   "size": 0.55,
    "anim": "none"
   },
   {
@@ -1105,11 +1106,11 @@
    "kind": "billboard",
    "sprite": "bt_cables",
    "at": [
-    -2.4,
-    -0.7
+    -2.1,
+    -6.4
    ],
-   "y": 0.2,
-   "size": 0.4,
+   "y": 0.225,
+   "size": 0.45,
    "anim": "none"
   },
   {
@@ -1117,8 +1118,8 @@
    "kind": "billboard",
    "sprite": "bt_turntable",
    "at": [
-    -3.2,
-    -6.4
+    -2.6,
+    -6.5
    ],
    "y": 0.25,
    "size": 0.5,
@@ -1170,18 +1171,6 @@
    ],
    "y": 0.3,
    "size": 0.6,
-   "anim": "none"
-  },
-  {
-   "id": "bt_floor_cables",
-   "kind": "billboard",
-   "sprite": "bt_cables",
-   "at": [
-    0.7,
-    -6.4
-   ],
-   "y": 0.175,
-   "size": 0.35,
    "anim": "none"
   },
   {
@@ -1278,6 +1267,42 @@
    ],
    "y": 3.3,
    "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "bt_cage_a",
+   "kind": "billboard",
+   "sprite": "bt_cage_lamp",
+   "at": [
+    0.0,
+    -2.6
+   ],
+   "y": 2.55,
+   "size": 0.4,
+   "anim": "none"
+  },
+  {
+   "id": "bt_cage_b",
+   "kind": "billboard",
+   "sprite": "bt_cage_lamp",
+   "at": [
+    0.0,
+    -6.6
+   ],
+   "y": 2.55,
+   "size": 0.4,
+   "anim": "none"
+  },
+  {
+   "id": "bt_cage_c",
+   "kind": "billboard",
+   "sprite": "bt_cage_lamp",
+   "at": [
+    0.0,
+    -9.8
+   ],
+   "y": 2.55,
+   "size": 0.4,
    "anim": "none"
   },
   {
@@ -1442,7 +1467,7 @@
     -4.5
    ],
    "y": 0.0,
-   "size": 2.2
+   "size": 2.0
   },
   {
    "id": "bt_dc_led_d",
@@ -1538,7 +1563,7 @@
    "y": 2.3,
    "radius": 5.2,
    "color": "#ff6a30",
-   "strength": 2.42
+   "strength": 2.5
   },
   {
    "id": "bt_lt_balcony",
@@ -1942,20 +1967,12 @@
    "actor": "b04",
    "sector": "7_0",
    "at": [
-    -4.9,
-    -5.75
-   ]
-  },
-  {
-   "actor": "s01",
-   "sector": "7_0",
-   "at": [
     -7.15,
     -6.5
    ]
   },
   {
-   "actor": "s02",
+   "actor": "s01",
    "sector": "7_0",
    "at": [
     -9.4,
@@ -1963,7 +1980,7 @@
    ]
   },
   {
-   "actor": "s03",
+   "actor": "s02",
    "sector": "7_0",
    "at": [
     -6.4,
@@ -1971,23 +1988,7 @@
    ]
   },
   {
-   "actor": "s04",
-   "sector": "7_0",
-   "at": [
-    -5.65,
-    -6.5
-   ]
-  },
-  {
-   "actor": "v01",
-   "sector": "7_0",
-   "at": [
-    -4.9,
-    -6.5
-   ]
-  },
-  {
-   "actor": "v02",
+   "actor": "s03",
    "sector": "7_0",
    "at": [
     -4.9,
@@ -1995,7 +1996,7 @@
    ]
   },
   {
-   "actor": "v03",
+   "actor": "s04",
    "sector": "7_0",
    "at": [
     -7.9,
@@ -2003,7 +2004,7 @@
    ]
   },
   {
-   "actor": "w01",
+   "actor": "v01",
    "sector": "7_0",
    "at": [
     -7.15,
@@ -2011,11 +2012,35 @@
    ]
   },
   {
-   "actor": "d01",
+   "actor": "v02",
    "sector": "7_0",
    "at": [
     -9.4,
     -0.5
+   ]
+  },
+  {
+   "actor": "v03",
+   "sector": "7_0",
+   "at": [
+    -8.65,
+    -0.5
+   ]
+  },
+  {
+   "actor": "w01",
+   "sector": "7_0",
+   "at": [
+    -5.65,
+    -2.0
+   ]
+  },
+  {
+   "actor": "d01",
+   "sector": "7_0",
+   "at": [
+    -8.65,
+    -8.0
    ]
   }
  ],
@@ -2046,99 +2071,99 @@
   {
    "id": "s01",
    "at": [
-    -8.65,
+    -7.9,
     -0.5
    ]
   },
   {
    "id": "s02",
    "at": [
-    -5.65,
+    -4.9,
     -2.0
    ]
   },
   {
    "id": "s03",
    "at": [
-    -8.65,
+    -7.9,
     -8.0
    ]
   },
   {
    "id": "s04",
    "at": [
-    -7.9,
-    -0.5
-   ]
-  },
-  {
-   "id": "s05",
-   "at": [
-    -4.9,
-    -2.0
-   ]
-  },
-  {
-   "id": "s06",
-   "at": [
-    -7.9,
-    -8.0
-   ]
-  },
-  {
-   "id": "s07",
-   "at": [
     -7.15,
     -8.0
    ]
   },
   {
-   "id": "s08",
+   "id": "s05",
    "at": [
     -9.4,
     -1.25
    ]
   },
   {
-   "id": "s09",
+   "id": "s06",
    "at": [
     -6.4,
     -2.75
    ]
   },
   {
-   "id": "s10",
+   "id": "s07",
    "at": [
     -8.65,
     -1.25
    ]
   },
   {
-   "id": "s11",
+   "id": "s08",
    "at": [
     -5.65,
     -2.75
    ]
   },
   {
-   "id": "s12",
+   "id": "s09",
    "at": [
     -4.9,
     -2.75
    ]
   },
   {
-   "id": "s13",
+   "id": "s10",
    "at": [
     -7.15,
     -3.5
    ]
   },
   {
-   "id": "s14",
+   "id": "s11",
    "at": [
     -9.4,
     -2.0
+   ]
+  },
+  {
+   "id": "s12",
+   "at": [
+    -6.4,
+    -3.5
+   ]
+  },
+  {
+   "id": "s13",
+   "at": [
+    -5.65,
+    -3.5
+   ]
+  },
+  {
+   "id": "s14",
+   "at": [
+    -4.9,
+    -3.5
    ]
   }
  ],
