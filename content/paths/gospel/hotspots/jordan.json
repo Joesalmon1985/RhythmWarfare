@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "jordan.shepherd",
@@ -101,6 +104,9 @@
      "face": "doubt",
      "beats": 6
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -146,72 +152,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   },
   {
@@ -246,7 +192,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "jordan.baptism.dove",
@@ -311,6 +260,9 @@
      "face": "doubt",
      "beats": 6
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -356,72 +308,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   },
   {
@@ -489,6 +381,9 @@
      "face": "laugh",
      "beats": 8
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -556,6 +451,9 @@
      "face": "laugh",
      "beats": 8
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -601,72 +499,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   },
   {
@@ -701,7 +539,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "jordan.nazareth.neighbour",
@@ -768,6 +609,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -802,7 +646,10 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "gospel.return",
@@ -847,72 +694,12 @@
      "w": 2.2,
      "h": 3.4
     },
-    "states": {
-     "current": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "other": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "committed": [
-      {
-       "prop": "warehouse/door_3",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ],
-     "declined": [
-      {
-       "prop": "warehouse/door_1",
-       "size": 3.0,
-       "motion": "pulse"
-      },
-      {
-       "prop": "warehouse/lamp_go",
-       "at": [
-        0.0,
-        3.4,
-        0.0
-       ],
-       "size": 0.6
-      }
-     ]
-    }
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door",
+    "set": "warehouse"
    }
   }
  ]

@@ -9,8 +9,8 @@ regenerate the Gospel's hotspots before that drift is settled.
 
 THE OBJECT. One definition per quest (DEFS), the same object in every scene of the quest: the Warehouse's own steel fire door with the green running-man plate
 (assets/run/choice/warehouse/door_*.png), standing in the scene like a door that does not belong to that world. Shut-but-ajar (door_1: a sliver of the club's violet light) while it is
-not the pick, wide open on the lit corridor (door_3) when it is; it pulses on the beat (staging motion `pulse`: the bass thump). It is staged by the choice layer's `prop` steps with
-the art's path under the shared folder (`warehouse/door_N`), so a world's own door set (galilee, airfield, ash ...) never replaces it. It is a hotspot of kind `object`, not an exit
+not the pick, swinging open (door_2) with its lamp brighter when it is, wide on the lit corridor (door_3) with light spilling when it is taken (package A7: its `show` block, a door of
+the set `warehouse`), so a world's own door set (galilee, airfield, ash ...) never replaces it. It is a hotspot of kind `object`, not an exit
 (an exit is one per route and may be the default; the return is neither). Its staging archetype is `custom`: a `door` would count as a second open door when the ending's own exit leads the same way (test_choice_clarity).
 
 NEVER GATED. Success routes `run:warehouse` (the router lands it on the checkpoint, N2.2) and so does failure, with a small energy cost: the miss is not a refusal and does not change where
@@ -91,12 +91,19 @@ SPOTS: dict = {
 
 
 def staging(q: str) -> dict:
+    """The return's staging: `custom` (no door of the choice layer's route doors, see THE OBJECT above) with the door's size. Package A7 (lead ruling 35b): the door itself, its
+    lamp and its floor light are the `show` block's (show_of): ajar with its lamp lit while it is not the pick, swinging open with the lamp brighter when it is, wide with light
+    spilling when it is taken; the round green chevron lamp it used to hang under is gone."""
     h = DEFS[q]["height_m"]
-    beacon = {"prop": ART_LAMP, "at": [0.0, h + 0.4, 0.0], "size": 0.6}  # the Warehouse's green round lamp over the door: a lit beacon that a dark steel door needs in a snow storm or a night harbour
-    shut = [{"prop": ART_SHUT, "size": h, "motion": "pulse"}, beacon]
-    wide = [{"prop": ART_OPEN, "size": h, "motion": "pulse"}, beacon]
-    return {"archetype": "custom", "lamp": False, "touch": {"w": 2.2, "h": 3.4},
-            "states": {"current": wide, "other": shut, "committed": wide, "declined": shut}}
+    return {"archetype": "custom", "lamp": False, "touch": {"w": 2.2, "h": 3.4}, "height_m": h, "width_m": round(h * 0.5, 3)}
+
+
+def show_of(hotspot_id: str):
+    """The `show` block of a return row (tools/run/apply_staging.py writes it): the Warehouse's own door (its art set, whatever the world), shown as a door."""
+    for q, d in DEFS.items():
+        if hotspot_id == d["id"]:
+            return {"archetype": "door", "set": "warehouse"}
+    return None
 
 
 def staging_of(hotspot_id: str):
@@ -138,7 +145,7 @@ def row(q: str, node: dict, world: dict, xz: list) -> dict:
             "available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False},
             "look": {"available": "glow", "selected": "ring", "committed": "flash"}, "challenge": None,
             "on_success": {"route": "run:warehouse"}, "on_failure": {"route": "run:warehouse", "energy": ENERGY_MISS},
-            "default": False, "repeatable": True, "staging": staging(q)}
+            "default": False, "repeatable": True, "staging": staging(q), "show": show_of(DEFS[q]["id"])}
 
 
 def return_rows(q: str, run: dict) -> list:

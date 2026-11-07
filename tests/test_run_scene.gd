@@ -65,7 +65,12 @@ func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
 	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
 	var st: StoryStage = scene.stages[scene.active_world]["stage"]
 	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)
-	assert_eq(lay.size(), items.size(), "every hotspot has a place on the screen")
+	if HotspotView.RINGS:
+		assert_eq(lay.size(), items.size(), "every hotspot has a place on the screen")
+	else:  # (package A7, ruling 35b: a choice out of the picture has no beacon and no target; the ones in it keep theirs)
+		assert_true(lay.size() >= 1 and lay.size() <= items.size(), "the hotspots in the picture have a place on the screen (%d of %d)" % [lay.size(), items.size()])
+		for e in lay:
+			assert_false(bool(e["edge"]), "%s: in the picture, no edge beacon" % e["id"])
 	var pad_rects: Dictionary = scene.pad_view.button_rects()
 	var ids: Array = []
 	for e in lay:
@@ -82,8 +87,9 @@ func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
 	var second: Dictionary = lay[lay.size() - 1]
 	assert_eq(scene.hotspot_tap((first["centre"] as Vector2) + stage.position), str(first["id"]), "tapping a hotspot selects it")
 	assert_eq(scene.hotspots.selected, str(first["id"]))
-	assert_eq(scene.hotspot_tap((second["centre"] as Vector2) + stage.position), str(second["id"]), "and it can be changed")
-	assert_eq(scene.hotspots.selected, str(second["id"]))
+	if lay.size() >= 2:
+		assert_eq(scene.hotspot_tap((second["centre"] as Vector2) + stage.position), str(second["id"]), "and it can be changed")
+		assert_eq(scene.hotspots.selected, str(second["id"]))
 	var pad: Rect2 = pad_rects[1]
 	assert_eq(scene.hotspot_tap(pad.get_center()), "", "a touch on a pad is never a hotspot")
 	assert_eq(scene.hotspots.selected, str(second["id"]), "and changes nothing")

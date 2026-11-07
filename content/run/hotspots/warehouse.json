@@ -39,6 +39,9 @@
      6.85,
      2.0
     ]
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -79,6 +82,9 @@
      -6.85,
      1.75
     ]
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -152,6 +158,9 @@
      "w": 1.4,
      "h": 2.0
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -236,6 +245,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -277,7 +289,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.bar.exit_chill",
@@ -311,7 +326,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.bar.exit_booth",
@@ -345,7 +363,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.bar.bartender",
@@ -429,6 +450,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -505,6 +529,9 @@
       "face": "neutral"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -539,7 +566,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.balcony.exit_booth",
@@ -573,7 +603,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.balcony.rail",
@@ -625,7 +658,10 @@
     "look_at": "floor_centre"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.balcony.promoter",
@@ -708,6 +744,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -742,7 +781,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.chill.sofas",
@@ -782,7 +824,10 @@
     "energy": -10
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.chill.wizard",
@@ -850,6 +895,9 @@
      "w": 1.4,
      "h": 2.0
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -887,7 +935,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.booth.exit_exit",
@@ -921,7 +972,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.booth.decks",
@@ -974,7 +1028,10 @@
     "style": "walk"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.booth.headphones",
@@ -1019,7 +1076,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "warehouse.exit.exit_mothership",
@@ -1053,7 +1113,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.exit.exit_underworld",
@@ -1087,7 +1150,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "warehouse.exit.bouncer",
@@ -1166,6 +1232,9 @@
       "beats": 12
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -1243,6 +1312,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -1302,6 +1374,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1357,6 +1432,9 @@
      -6.6
     ],
     "mark_y": 1.65
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1415,6 +1493,9 @@
      3.75
     ],
     "mark_y": 2.1
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

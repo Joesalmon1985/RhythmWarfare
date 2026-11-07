@@ -18,7 +18,15 @@ extends Control
 ## The choice layer (docs/CHOICE_CLARITY.md) plays on top: an option of a staged choice is lit green when it is the current choice and red when it is not (the same shapes, the colour only), and the
 ## thing itself shows its state (a person beckons or pleads, a door stands open or shut), so a staged option keeps its pool, ring and ripple on the floor but no shaft, glow or slit over the person or
 ## the door. An actor anchor acts from the moment it is on show (its `acting` block, else the crowd's own `wave`). A finished path's portal is the crown (a ring of light with three motes circling it).
+##
+## ALL OF THE ABOVE IS THE OLD LOOK, kept behind RINGS for the transition (package A7, lead ruling 35b: the red and green rings go). With RINGS off (the default) nothing is drawn over the
+## world: every choice on show has a ChoiceState (idle, available, selected, committed, declined, cost) and shows it with its own artwork (ChoiceShow: a door that is ajar with its lamp
+## lit, swings open and its lamp brightens, stands wide with light spilling on the floor, shuts, or flickers red and shuts for a cost; a figure that beckons, steps toward you, gestures,
+## steps back or recoils; an object whose own light pulses, brightens, holds or flickers), played by `_show_choice` through the choice props, the billboards' poses and the heralds'
+## gates and pools. The state changes at the tap (the next frame), the commit stays at the boundary. The touch targets are the art's bounds plus at most 24 px, at least 88 px
+## (layout with `rects`), as before. docs/art/CHOICE_STATES.md.
 
+const RINGS := false  # the old look: rings, pools, shafts, glows, corner beacons, the card table's rings and the go/stop lamps (lead ruling 35b: off; kept for the transition)
 const SEGMENTS := 24
 const EDGE_MARGIN := 0.07  # of the view's short side
 const LIFT_M := 0.28
@@ -59,6 +67,11 @@ var props: ChoiceProps = null
 var heralds: StoryHeralds = null  # the quest entrances' heralds (lead ruling 25): scenery of a staged entrance, never a hotspot
 var touch_rects := false  # a generous touch area on the thing itself (ChoiceStaging `touch`), besides the ring's radius
 var last_snapshot: Dictionary = {}
+var choice_states := ChoiceState.new()  # every staged option's state (contract 9), stamped with the song time of its event
+var cues: Array = []  # every state cue played: {t, hotspot, state, sound} (the run has no sfx player of its own yet: `cue` is the hook)
+signal cue(sound: String, hotspot: String, state: String, t: float)
+var _cued: Dictionary = {}  # hotspot id -> "<state>@<t_state>" of its last cue
+var drawn_kinds: Dictionary = {}  # what the canvas drew last frame by kind (ring, edge, claim, reaction): empty with RINGS off
 var _mem: Dictionary = {}  # hotspot id -> {role, t_role, open, t_open, key_act, key_steps}
 var _light: Control  # the additive pass (pools, shafts, glows, edge leaks), drawn behind the rings
 var _lay: Array = []  # this frame's layout, shared by both passes
@@ -109,13 +122,13 @@ func _process(_d: float) -> void:
 		if not pose.is_empty():
 			_t = float(now_fn.call()) if now_fn.is_valid() else 0.0
 			var items: Array = items_fn.call()
-			var snap := choice_snapshot(_t)  # (the choice layer plays every frame the view is up, with hotspots on show or not: it also lets go of the world when the choice ends)
+			var snap := choice_snapshot(_t, items)  # (the choice layer plays every frame the view is up, with hotspots on show or not: it also lets go of the world when the choice ends)
 			_stage_choice(snap, _t)
 			_manage_acting(items, _t, snap)
 			var reacting: Array = _reactions(_t)
 			if not reacting.is_empty():
 				items = items + reacting
-			if not items.is_empty():
+			if RINGS and not items.is_empty():
 				_set_camera(pose)
 				_lay = layout(items, stage.map, stage.crowds, pose, size)
 				_lay.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["depth"]) > float(b["depth"]))  # far first
@@ -132,7 +145,7 @@ func _process(_d: float) -> void:
 						shown_again[str(e["id"])] = true
 				if not shown_again.is_empty():
 					_lay = _lay.filter(func(e: Dictionary) -> bool: return not (str(e["state"]) == "available" and shown_again.has(str(e["id"]))))
-	if had or not _lay.is_empty():  # nothing on show: nothing to redraw
+	if had or not _lay.is_empty() or not drawn_kinds.is_empty():  # nothing on show: nothing to redraw
 		queue_redraw()
 		_light.queue_redraw()
 
@@ -149,7 +162,7 @@ func _reactions(t: float) -> Array:
 			var h: Dictionary = e["hotspot"]
 			var an: Dictionary = h["anchor"]
 			var reaction := str(h.get("reaction", "flare"))
-			if an.has("thing") and reaction in ["shake", "squash"] and stage != null and stage.world != null:
+			if an.has("thing") and (reaction in ["shake", "squash"] or not RINGS) and stage != null and stage.world != null:
 				var k := clampf((t - float(e["t_state"])) / REACT_S, 0.0, 1.0)
 				stage.world.thing_pose[str(an["thing"])] = reaction_pose(reaction, k, reduced)
 				posed[str(h["id"])] = str(an["thing"])
@@ -173,6 +186,12 @@ static func reaction_pose(reaction: String, k: float, still := false) -> Diction
 			var s := sin(k * PI) * fade
 			m["sy"] = 1.0 - 0.18 * s
 			m["sx"] = 1.0 + 0.12 * s
+		"flare":  # (RINGS off: the thing itself flares, its own light up and fading, no ring)
+			m["light"] = Color(1.0, 1.0, 1.0) * (1.0 + 0.6 * fade)
+		"pulse":  # (RINGS off: the thing thumps twice)
+			var pk := absf(sin(k * TAU)) * fade
+			m["sx"] = 1.0 + 0.1 * pk
+			m["sy"] = m["sx"]
 	return m
 
 
@@ -217,8 +236,9 @@ static func resolve(anchor: Dictionary, map: StoryMap, crowds: Dictionary) -> Di
 	return {"ok": false}
 
 
-## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. A hotspot whose
-## anchor is out of sight is placed at the edge of the picture on the side it lies (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
+## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. With RINGS off
+## a hotspot whose anchor is out of sight is left out (no target: what is not in the picture cannot be touched); with RINGS on it is placed at the edge of the picture on the side it lies
+## (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
 ## With `rects` (the run's taps, N2.1; INTERACTION_DESIGN.md 3.2, 3.6) the touch region of a hotspot in view is built ON SCREEN from its object's visual bounds (`visual_rect`: the drawn door, the
 ## person, the thing of the map): those bounds grown by TOUCH_MARGIN_PX (24 px) on each side, widened to min_px (88 px) in a direction where they fall short, kept inside the view (so never over the
 ## pads below it): `touch_rect`, with `hit_centre` its middle and no circle (radius_px 0). A hotspot with nothing drawn on it keeps the ring's circle only (the ring is what shows it). The card
@@ -266,6 +286,8 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 				var ty: float = top["screen"].y if bool(top["visible"]) else gy - float(tch.get("h", 2.0)) * sc
 				var rr := Rect2(Vector2(sp.x - hw, ty), Vector2(hw * 2.0, maxf(gy - ty, 1.0)))
 				entry["touch_rect"] = rr.intersection(Rect2(Vector2.ZERO, view))
+		elif not RINGS:  # out of sight (package A7, lead ruling 35b): no beacon, no touch target. The camera holds at a choice viewpoint where the choices are in the picture
+			continue  # (contract 3); a choice out of it is shown by the world itself (its door, its lamp, its light on the floor), not by a symbol stacked at the edge
 		else:  # out of sight: a beacon at the edge on the side it lies
 			var cam: Vector3 = pose["cam"]
 			var d := Vector2(p.x - cam.x, p.z - cam.z)
@@ -331,6 +353,14 @@ static func visual_rect(h: Dictionary, r: Dictionary, pose: Dictionary, view: Ve
 			return _stand_box(p.x, p.z, gy, gy + float(t.get("h", 1.0)), float(t.get("w", 1.0)), pose, view)
 		return Rect2()
 	var st := ChoiceStaging.of(h)
+	var hb: Dictionary = h.get("herald", {}) if typeof(h.get("herald", null)) == TYPE_DICTIONARY else {}
+	if not RINGS and bool(hb.get("gate", false)) and StoryHeralds.validate(hb, "").is_empty():  # a quest's gate: the lit doorway the herald stands beside
+		var g: Dictionary = ((StoryHeralds.doc().get("heralds", {}) as Dictionary).get(str(hb["quest"]), {}) as Dictionary).get("gate", {})
+		if not g.is_empty():
+			var mp := StoryHeralds.mark_point(hb)
+			return _stand_box(mp.x, mp.y, gy, gy + float(g.get("height_m", 2.2)), float(g.get("width_m", 1.2)), pose, view)
+	if not RINGS and str(st["archetype"]) not in ["door", "person", "figure"] and ChoiceShow.archetype_of(h) == "door" and hb.is_empty():  # a door the choice layer stands on a spot (a quest path's way home)
+		return _stand_box(p.x, p.z, gy, gy + float(st.get("height_m", 2.4)), float(st.get("width_m", 1.2)), pose, view)
 	if str(st["archetype"]) == "door":
 		var fx := p.x
 		var fz := p.z
@@ -575,8 +605,11 @@ func _mote(ci: CanvasItem, p: Vector2, s: float, col: Color) -> void:
 
 # The rings, motes and edges: the crisp half, drawn over the light.
 func _draw() -> void:
-	if _lay.is_empty():
+	drawn_kinds = {}
+	if not RINGS or _lay.is_empty():
 		return
+	for e in _lay:
+		drawn_kinds["claim" if _is_claim(e) else ("reaction" if HotspotContract.is_reactive(e["hotspot"]) else ("edge" if bool(e["edge"]) else "ring"))] = true
 	for e in _lay:
 		var cols := _colours_of(e)
 		if HotspotContract.is_reactive(e["hotspot"]):
@@ -589,7 +622,7 @@ func _draw() -> void:
 
 # The light: pools on the floor, shafts, glows, the door's slit and the edge leaks, added to the picture.
 func _draw_light() -> void:
-	if _lay.is_empty():
+	if not RINGS or _lay.is_empty():
 		return
 	for e in _lay:
 		var cols := _colours_of(e)
@@ -1076,19 +1109,27 @@ static func _smooth01(x: float) -> float:
 
 # --- the choice layer (docs/CHOICE_CLARITY.md) ----------------------------------------------------------------------------------
 
-## The staged options now: {current, default, committed, dest, options: {id: {role, archetype, open (target), open_k (0..1 now), lamp, since_role_s, since_touch_s}},
-## people: {actor id: hotspot id}, hotspots: {id: hotspot}}. The roles' change times are remembered here (song time), so a door swings and a touched person nods over the next
-## beat whatever the frame step. Empty when fewer than two options are staged (no choice to show).
-func choice_snapshot(t: float) -> Dictionary:
+## The staged options now: {current, default, committed, dest, options: {id: {role, archetype, open (target), open_k (0..1 now), lamp, since_role_s, since_touch_s,
+## state, t_state, prev, since_s, look}}, people: {actor id: hotspot id}, hotspots: {id: hotspot}}. The roles' change times are remembered here (song time), so a door swings and a
+## touched person nods over the next beat whatever the frame step. `state` is the option's ChoiceState and `look` what it shows (ChoiceShow.look): what is drawn with RINGS off;
+## role, open, open_k and lamp are the old choice layer's words, kept for its callers. `items`: this frame's hotspot items (a commit's success, a refused tap; items_fn when null).
+## Empty when no option is staged (with RINGS on: fewer than two, no choice to show).
+func choice_snapshot(t: float, items: Variant = null) -> Dictionary:
 	if not choice_fn.is_valid():
 		return {}
 	var c: Dictionary = choice_fn.call()
-	if c.is_empty() or (c.get("staged", []) as Array).size() < 2:
+	if c.is_empty() or (c.get("staged", []) as Array).size() < (2 if RINGS else 1):
 		if not _mem.is_empty():
 			clear_choice()
 		last_snapshot = {}
 		return {}
 	var staged: Array = c["staged"]
+	var its: Variant = items if typeof(items) == TYPE_ARRAY else (items_fn.call() if items_fn.is_valid() else null)
+	var states := choice_states.update(c, t, its)
+	var finished := {}
+	for e in (its if typeof(its) == TYPE_ARRAY else []):
+		if bool(e.get("finished", false)):
+			finished[str((e["hotspot"] as Dictionary).get("id", ""))] = true
 	var roles := ChoiceStaging.roles(staged, str(c.get("current", "")), str(c.get("committed", "")), str(c.get("dest", "")))
 	var out := {"current": str(c.get("current", "")), "default": str(c.get("default", "")), "committed": str(c.get("committed", "")), "dest": str(c.get("dest", "")), "options": {}, "people": {}, "hotspots": {}}
 	var touched: Dictionary = c.get("touched", {})
@@ -1111,6 +1152,16 @@ func choice_snapshot(t: float) -> Dictionary:
 		var o := {"role": str(r["role"]), "archetype": str(r["archetype"]), "open": bool(r["open"]), "open_k": open_k, "since_role_s": t - float(m["t_role"]),
 			"since_touch_s": t - float(touched[id]) if touched.has(id) else INF}
 		o["lamp"] = ChoiceStaging.lamp_of(st, str(r["role"]), bool(r["open"]))
+		var cs: Dictionary = states[id]
+		o["state"] = str(cs["state"])
+		o["t_state"] = float(cs["t_state"])
+		o["prev"] = str(cs["prev"])
+		o["since_s"] = t - float(cs["t_state"])
+		var lk := ChoiceShow.look(ChoiceShow.of(h), str(o["state"]), float(o["since_s"]), beat_s, str(o["prev"]), t, reduced, t - float(cs["refused_t"]))
+		if finished.has(id) and str(o["state"]) == "available":  # a finished path's portal: its light in the finished tint (plan D10)
+			lk["tint"] = Color.html(str(((h["look"] as Dictionary).get("finished", {}) as Dictionary).get("tint", HotspotContract.FINISHED_TINT)))
+		o["look"] = lk
+		_cue(id, o, t)
 		out["options"][id] = o
 		out["hotspots"][id] = h
 		if str(st["archetype"]) == "person" and str(st.get("actor", "")) != "":
@@ -1129,8 +1180,26 @@ func refresh_choice(t: float) -> Dictionary:
 	return snap
 
 
+## The cue of a state that has just begun (its `sound`), once per change: the `cue` signal and the `cues` log. A state the option was already in when first seen plays none.
+func _cue(id: String, o: Dictionary, t: float) -> void:
+	if RINGS:
+		return
+	var key := "%s@%s" % [o["state"], str(o["t_state"])]
+	if str(_cued.get(id, "")) == key:
+		return
+	_cued[id] = key
+	var snd := str((o["look"] as Dictionary).get("sound", ""))
+	if snd == "" or not is_finite(float(o["t_state"])) or t - float(o["t_state"]) > 0.25:
+		return
+	cues.append({"t": float(o["t_state"]), "hotspot": id, "state": str(o["state"]), "sound": snd})
+	cue.emit(snd, id, str(o["state"]), float(o["t_state"]))
+
+
 ## Plays a snapshot in the world: the people's acts and faces, the billboards' textures and motions, the set pieces, and the props (doors, boards, lamps, spills, `states` props).
 func _stage_choice(snap: Dictionary, t: float) -> void:
+	if not RINGS:
+		_show_choice(snap, t)
+		return
 	if stage == null or stage.world == null:
 		return
 	if props == null and not snap.is_empty():
@@ -1287,6 +1356,7 @@ func _piece(id: String, on_id: String, off_id: String, t: float) -> void:
 func _forget(id: String) -> void:
 	var m: Dictionary = _mem.get(id, {})
 	_mem.erase(id)
+	_cued.erase(id)
 	if stage == null:
 		return
 	var who: Array = (m.get("extra_actors", []) as Array).duplicate()
@@ -1297,6 +1367,8 @@ func _forget(id: String) -> void:
 			(stage.crowds[rid] as StoryCrowd).stand_down(str(aid), "choice")
 	if stage.world != null and str(m.get("thing", "")) != "":
 		stage.world.thing_pose.erase(str(m["thing"]))
+	if stage.world != null and str(m.get("light_thing", "")) != "":
+		stage.world.thing_pose.erase(str(m["light_thing"]))
 
 
 ## Clears the choice layer: every act of the layer stood down, every billboard pose dropped (a new scene, or no choice on show).
@@ -1304,5 +1376,199 @@ func clear_choice() -> void:
 	for id in _mem.keys():
 		_forget(str(id))
 	_mem = {}
+	choice_states.clear()
 	if stage != null and stage.world != null:
 		stage.world.thing_pose = {}
+
+
+# --- the choice shown by its own artwork (package A7, lead ruling 35b: RINGS off) ----------------------------------------------
+
+## The role words of the old staging (the `states` steps of a staging block, a person's act specs) for a ChoiceState.
+const ROLE_OF_STATE := {"idle": "other", "available": "other", "selected": "current", "committed": "committed", "declined": "declined", "cost": "declined"}
+const HAPPY_POSES := ["beckon", "step_toward", "gesture"]  # a billboard figure's poses drawn with its `current_tex`; the others with its `other_tex`
+
+
+## Plays a snapshot with the artwork alone: each option's door, figure or object in its state's frame and motion, its lamp and the light on the floor, the heralds of the quest
+## entrances, and the `states` steps of its staging (set pieces, other people) by the role the state stands for. Nothing is drawn over the world.
+func _show_choice(snap: Dictionary, t: float) -> void:
+	if stage == null or stage.world == null:
+		return
+	if props == null and not snap.is_empty():
+		props = ChoiceProps.new()
+		props.name = "ChoiceProps"
+		stage.world.add_child(props)
+	if props != null:
+		props.begin_frame()
+	if heralds == null:
+		heralds = StoryHeralds.new(stage)
+	heralds.stage = stage
+	heralds.beat_s = beat_s
+	heralds.reduced = reduced
+	heralds.begin_frame(t)
+	var opts: Dictionary = snap.get("options", {})
+	var u := (t / beat_s) if beat_s > 0.0 else 0.0
+	for id in opts:
+		var o: Dictionary = opts[id]
+		var h: Dictionary = snap["hotspots"][id]
+		var st := ChoiceStaging.of(h)
+		var sh := ChoiceShow.of(h)
+		var lk: Dictionary = o["look"]
+		var state := str(o["state"])
+		var r := resolve(h["anchor"], stage.map, stage.crowds)
+		var foot := Vector3.ZERO
+		var centre_y := 1.0
+		if bool(r.get("ok", false)):
+			var p: Vector3 = r["pos"]
+			foot = Vector3(p.x, float(r["ground"]), p.z)
+			centre_y = p.y - float(r["ground"])
+		if st.has("door_at"):
+			var da: Array = st["door_at"]
+			foot = Vector3(float(da[0]), foot.y, float(da[1]))
+		var lamp_y := centre_y + 0.5
+		match str(sh["archetype"]):
+			"door":
+				lamp_y = _show_door(id, h, st, sh, lk, foot, t)
+			"figure":
+				_show_figure(id, h, st, lk, state, float(o["since_s"]), t)
+				lamp_y = StoryCrowd.HERO_M + 0.35
+			"object":
+				_show_self(id, h, sh, lk)
+		_show_lights(id, sh, lk, foot, lamp_y)
+		var role := str(ROLE_OF_STATE.get(state, "other"))
+		var touched_now := state == "selected" and float(o["since_touch_s"]) < 1.5 * beat_s
+		_play_steps(id, st, role, touched_now, foot, u, t)
+		heralds.put(h, role, state, lk)
+	heralds.end_frame()
+	if props != null:
+		props.end_frame()
+
+
+## A door in its state's frame (door_0 shut .. door_3 wide) in the style its staging gives: the drawn door, boards across a doorway of the map (on while it stands shut or ajar),
+## a sign post (the board pointing on from ajar), or two set pieces of the map. A quest's gate is the heralds' to draw. Returns how high its lamp hangs over the floor.
+func _show_door(id: String, h: Dictionary, st: Dictionary, sh: Dictionary, lk: Dictionary, foot: Vector3, t: float) -> float:
+	var hgt := float(st.get("height_m", 2.4))
+	var frame := str(lk["frame"])
+	var open := ChoiceShow.open_of(frame)
+	var pose: Dictionary = lk["pose"]
+	var at := foot + Vector3(float(pose.get("dx", 0.0)), 0.0, 0.0)
+	var style := str(st.get("door", "drawn")) if str(st["archetype"]) == "door" else "drawn"
+	if typeof(h.get("herald", null)) == TYPE_DICTIONARY:
+		style = "none"
+	match style:
+		"drawn":
+			var name := (str(sh["set"]) + "/" + frame.get_file()) if str(sh["set"]) != "" else frame
+			props.put(id + "#door", name, at, hgt, 0.85)
+		"bars":
+			if open < 0.5:
+				props.put(id + "#bars", "bars", at + Vector3(0.0, hgt * 0.15, 0.0), hgt * 0.7, 0.9)
+		"sign":
+			props.put(id + "#door", "sign_go" if open >= 0.3 else "sign_stop", at, hgt, 0.85)
+		"pieces":
+			_piece(id, str(st["open_piece"]) if open >= 0.5 else str(st["shut_piece"]), str(st["shut_piece"]) if open >= 0.5 else str(st["open_piece"]), t)
+	return float(st.get("lamp_y", hgt + 0.15))
+
+
+## A figure in its state's pose: a person of the room directed with the acts the choice layer bakes for them (ChoiceStaging's specs: available beckons happy (`current`), selected
+## nods (`touched`), committed cheers, declined and cost plead and stand down; a person whose outcome has its own acting plays that), or a billboard of the map in its
+## `current_tex` or `other_tex` and the state's motion. A herald is posed by the heralds.
+func _show_figure(id: String, h: Dictionary, st: Dictionary, lk: Dictionary, state: String, since_s: float, t: float) -> void:
+	var m: Dictionary = _mem[id]
+	match str(st["archetype"]):
+		"person":
+			var aid := str(st.get("actor", ""))
+			m["actor"] = aid
+			if (state == "committed" or state == "cost") and RunActing.has_acting(h):
+				return  # (the outcome's own acts play: RunPlay._act_outcome)
+			var spec := {}
+			match state:
+				"available":
+					spec = st.get("current", {})
+				"selected":
+					spec = st.get("touched", {})
+				"committed":
+					var cm: Dictionary = st.get("committed", {})
+					spec = cm if since_s < float(cm.get("beats", 4.0)) * beat_s else {}
+				"declined", "cost":
+					var dc: Dictionary = st.get("declined", {})
+					spec = dc if since_s < float(dc.get("beats", 2.0)) * beat_s else {}
+			_direct(id, aid, state, spec, since_s, t)
+		"figure":
+			var th := str(st.get("thing", ""))
+			if th == "":
+				return
+			var mo: Dictionary = (lk["pose"] as Dictionary).duplicate()
+			var tx := str(st.get("current_tex" if str(lk["frame"]) in HAPPY_POSES else "other_tex", ""))
+			if tx != "":
+				mo["tex"] = ChoiceProps.tex(tx)
+			stage.world.thing_pose[th] = mo
+			m["thing"] = th
+
+
+## A person of the room told the act of their state once per change (a story beat in force keeps them until a fresh change).
+func _direct(id: String, aid: String, state: String, spec: Dictionary, since_s: float, t: float) -> void:
+	var m: Dictionary = _mem[id]
+	var key := "%s|%s|%s" % [state, str(spec.get("act", "")), str(spec.get("face", ""))]
+	for rid in stage.crowds:
+		var c := stage.crowds[rid] as StoryCrowd
+		if not c.actors.has(aid):
+			continue
+		var cur_src := c.directing(aid, t)
+		if str(m.get("key_act", "")) == key and (cur_src == "choice" or spec.is_empty()):
+			return
+		if spec.is_empty():
+			c.stand_down(aid, "choice")
+			m["key_act"] = key
+			return
+		if cur_src == "outcome" or (cur_src == "cast" and since_s >= beat_s):
+			return  # (an outcome's act or a story beat first; this tries again next frame)
+		c.ensure_present(aid)
+		if c.direct_actor(aid, str(spec.get("act", "")), str(spec.get("face", "")), t, t + RunActing.STATE_S, str(spec.get("look_at", "")), "choice"):
+			m["key_act"] = key
+		return
+
+
+## An object whose own light shows its state: its thing posed with the state's motion and its brightness (ChoiceShow.self_light) in the state's tint.
+func _show_self(id: String, h: Dictionary, sh: Dictionary, lk: Dictionary) -> void:
+	var an: Dictionary = h["anchor"]
+	if not an.has("thing"):
+		return
+	var mo: Dictionary = (lk["pose"] as Dictionary).duplicate()
+	if str(sh["light"]) == "self":
+		mo["light"] = _light_colour(ChoiceShow.self_light(float(lk["lamp"])), lk)
+	stage.world.thing_pose[str(an["thing"])] = mo
+	_mem[id]["thing"] = str(an["thing"])
+
+
+## A brightness `b` in the state's tint: a calm state keeps most of the thing's own colour, a cost or a refusal goes red.
+func _light_colour(b: float, lk: Dictionary) -> Color:
+	var tint: Color = lk["tint"]
+	var c := Color(1, 1, 1).lerp(tint, 0.85 if bool(lk.get("flicker", false)) else 0.3)
+	return Color(c.r * b, c.g * b, c.b * b, 1.0)
+
+
+## The option's lamp and the light on the floor under it, from its look: the practical lamp of the choice art (`lamp`, tinted by its state), a thing of the map lit (`light` /
+## `floor_light` naming it), and the spill of light on the floor (`spill`). A quest's gate and pool are the heralds' (gate, pool).
+func _show_lights(id: String, sh: Dictionary, lk: Dictionary, foot: Vector3, lamp_y: float) -> void:
+	var lamp := float(lk["lamp"])
+	var tint: Color = lk["tint"]
+	var li := str(sh["light"])
+	if li == "lamp" and props != null:
+		props.put(id + "#lamp", "lamp_lit", foot + Vector3(0.0, lamp_y, 0.0), 0.34, 1.0, 1.0, false, ChoiceShow.lamp_colour(lamp, tint))
+	elif li not in ChoiceShow.LIGHTS:
+		_light_thing(id, li, ChoiceShow.self_light(lamp), lk)
+	var fl := str(sh["floor_light"])
+	if fl == "spill" and props != null:
+		var fa := clampf(float(lk["floor"]), 0.0, 1.0)
+		if fa > 0.01:
+			props.put(id + "#spill", "spill", foot, 1.6, 1.0, fa * 0.85, true, Color(1, 1, 1).lerp(tint, 0.6))
+	elif fl not in ChoiceShow.FLOOR_LIGHTS:
+		_light_thing(id, fl, lerpf(ChoiceShow.OFF_LIGHT, ChoiceShow.OPEN_LIGHT, float(lk["floor"])), lk)
+
+
+func _light_thing(id: String, thing: String, b: float, lk: Dictionary) -> void:
+	var tp: Dictionary = stage.world.thing_pose.get(thing, {})
+	if tp.is_empty():
+		tp = {"dy": 0.0, "sx": 1.0, "sy": 1.0, "dx": 0.0}
+	tp["light"] = _light_colour(b, lk)
+	stage.world.thing_pose[thing] = tp
+	_mem[id]["light_thing"] = thing

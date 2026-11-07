@@ -1,0 +1,42 @@
+{
+  "doc": "How a choice shows its state with its own artwork (lead ruling 35b, contract 9, docs/art/CHOICE_STATES.md): the defaults of each show archetype. A hotspot's own `show` block is merged over these (a state key by key, its light key by key). Read by src/run/choice_show.gd. Frames: a door's are the choice art's door_0 (shut) .. door_3 (wide), a figure's are poses (beckon, step_toward, gesture, idle, step_back, recoil), an object's are `self` (its own sprite) or sprites of the map's art. `frame_beats` loops the frames, `over_s` plays them once and holds the last. light.lamp drives the `light` (off, dim, lit, open), light.floor_glow the `floor_light` (0..1), light.tint colours both. `sound` is the cue played when the state begins.",
+  "lamp_levels": {"off": 0.0, "dim": 0.3, "lit": 0.65, "open": 1.0},
+  "ease_s": 0.25,
+  "cost_beats": 2.0,
+  "door": {
+    "light": "lamp",
+    "floor_light": "spill",
+    "states": {
+      "idle": {"frames": ["door_0"], "motion": "still", "light": {"floor_glow": 0.0, "lamp": "off"}},
+      "available": {"frames": ["door_1"], "motion": "still", "light": {"floor_glow": 0.18, "lamp": "lit", "tint": "#ffc27a"}},
+      "selected": {"frames": ["door_2"], "motion": "still", "light": {"floor_glow": 0.55, "lamp": "open", "tint": "#ffe0a0"}, "sound": "choice_door_open"},
+      "committed": {"frames": ["door_3"], "motion": "still", "light": {"floor_glow": 1.0, "lamp": "open", "tint": "#fff2d6"}, "sound": "choice_commit"},
+      "declined": {"frames": ["door_1", "door_0"], "over_s": 0.25, "motion": "still", "light": {"floor_glow": 0.0, "lamp": "off"}, "sound": "choice_door_shut"},
+      "cost": {"frames": ["door_1", "door_0"], "over_s": 0.25, "motion": "shake", "light": {"floor_glow": 0.0, "lamp": "dim", "tint": "#ff4a30"}, "sound": "choice_cost"}
+    }
+  },
+  "figure": {
+    "light": "none",
+    "floor_light": "spill",
+    "states": {
+      "idle": {"frames": ["idle"], "motion": "still", "light": {"floor_glow": 0.0}},
+      "available": {"frames": ["beckon"], "motion": "beckon", "light": {"floor_glow": 0.15, "lamp": "lit", "tint": "#ffc27a"}},
+      "selected": {"frames": ["step_toward"], "motion": "lean", "light": {"floor_glow": 0.55, "lamp": "open", "tint": "#ffe0a0"}, "sound": "choice_select"},
+      "committed": {"frames": ["gesture"], "motion": "still", "light": {"floor_glow": 0.9, "lamp": "open", "tint": "#fff2d6"}, "sound": "choice_commit"},
+      "declined": {"frames": ["step_back"], "motion": "slump", "light": {"floor_glow": 0.0, "lamp": "off"}},
+      "cost": {"frames": ["recoil"], "motion": "shake", "light": {"floor_glow": 0.0, "lamp": "dim", "tint": "#ff4a30"}, "sound": "choice_cost"}
+    }
+  },
+  "object": {
+    "light": "self",
+    "floor_light": "spill",
+    "states": {
+      "idle": {"frames": ["self"], "motion": "still", "light": {"floor_glow": 0.0, "lamp": "off"}},
+      "available": {"frames": ["self"], "motion": "pulse", "light": {"floor_glow": 0.15, "lamp": "lit", "tint": "#ffc27a"}},
+      "selected": {"frames": ["self"], "motion": "bob", "light": {"floor_glow": 0.5, "lamp": "open", "tint": "#ffe0a0"}, "sound": "choice_select"},
+      "committed": {"frames": ["self"], "motion": "still", "light": {"floor_glow": 0.85, "lamp": "open", "tint": "#fff2d6"}, "sound": "choice_commit"},
+      "declined": {"frames": ["self"], "motion": "still", "light": {"floor_glow": 0.0, "lamp": "off"}},
+      "cost": {"frames": ["self"], "motion": "shake", "light": {"floor_glow": 0.0, "lamp": "dim", "tint": "#ff4a30"}, "sound": "choice_cost"}
+    }
+  }
+}
