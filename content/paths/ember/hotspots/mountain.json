@@ -212,6 +212,110 @@
    }
   },
   {
+   "id": "mountain.spring.restart",
+   "world": "mountain",
+   "scene": "mountain.spring",
+   "map": "ash_land",
+   "anchor": {
+    "pos": [
+     4.5,
+     1.5,
+     -109.8
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hollow",
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ]
+   },
+   "on_failure": {
+    "route": "hollow",
+    "energy": -4,
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ]
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "mountain.spring.back",
+   "world": "mountain",
+   "scene": "mountain.spring",
+   "map": "ash_land",
+   "anchor": {
+    "pos": [
+     4.5,
+     1.5,
+     -109.8
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain"
+   },
+   "on_failure": {
+    "route": "mountain",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "ember.return",
    "world": "mountain",
    "scene": "mountain.spring",
@@ -344,6 +448,110 @@
    "repeatable": false,
    "show": {
     "archetype": "object"
+   }
+  },
+  {
+   "id": "mountain.keeper.restart",
+   "world": "mountain",
+   "scene": "mountain.keeper",
+   "map": "ash_land",
+   "anchor": {
+    "pos": [
+     29.2,
+     1.5,
+     -108.5
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hollow",
+    "flags_set": [
+     "keep:path_ember_kept"
+    ]
+   },
+   "on_failure": {
+    "route": "hollow",
+    "energy": -4,
+    "flags_set": [
+     "keep:path_ember_kept"
+    ]
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "mountain.keeper.back",
+   "world": "mountain",
+   "scene": "mountain.keeper",
+   "map": "ash_land",
+   "anchor": {
+    "pos": [
+     29.2,
+     1.5,
+     -108.5
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain"
+   },
+   "on_failure": {
+    "route": "mountain",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {

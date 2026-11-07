@@ -158,8 +158,14 @@ func validate(run_data: RunData) -> void:
 				errors.append("passage %d: every choice needs a label" % n)
 		if kind in ["death", "victory"] and exits != cs.size():
 			errors.append("passage %d: a %s only offers the way back to the Warehouse" % [n, kind])
-		if kind == "normal" and exits > 0:
-			errors.append("passage %d: only deaths and the victory lead out of the dungeon" % n)
+		var returns := cs.filter(func(c1: Dictionary) -> bool: return bool(c1.get("return", false)))  # the Bassment's own way back (tools/trial/returns.py): one, never the default, leading out
+		for c2 in returns:
+			if c2.get("to", null) != null or bool(c2.get("default", false)) or str(c2.get("exit", "")) == "":
+				errors.append("passage %d: the return leads out (no 'to', an 'exit') and is never the default" % n)
+		if returns.size() > 1:
+			errors.append("passage %d: one return a passage" % n)
+		if kind == "normal" and exits > returns.size():
+			errors.append("passage %d: only deaths and the victory lead out of the dungeon (besides the return)" % n)
 	if victories != 1:
 		errors.append("the dungeon needs exactly one victory passage (found %d)" % victories)
 	for eid in encounters:

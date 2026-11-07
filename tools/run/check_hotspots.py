@@ -356,8 +356,11 @@ def check_scene(sid, hs, ctx, errs, warns):
             errs.append(f"{h['id']}: an exit is always available")
     if node.get("ending"):  # an ending's default exit marks the ending reached and leads back to the Warehouse
         flag = f"keep:path_{PATH_ID}_{node['ending']}"
-        if [r["to"] for r in node["next"]] != ["run:warehouse"]:
-            errs.append(f"{sid}: an ending has the one route run:warehouse")
+        if [r["to"] for r in node["next"] if not r.get("restart") and not r.get("back")] != ["run:warehouse"] or node["next"][0]["to"] != "run:warehouse":
+            errs.append(f"{sid}: an ending has the one route run:warehouse, first (besides a restart: tools/run/path_routes.py)")
+        for r in node["next"]:
+            if r.get("restart") and r["to"] != ctx.run.get("start_node"):
+                errs.append(f"{sid}: a restart leads to the path's first scene {ctx.run.get('start_node')}, not {r['to']}")
         for h in defaults:
             if flag not in h["on_success"].get("flags_set", []):
                 errs.append(f"{h['id']}: the default exit of an ending sets {flag}")

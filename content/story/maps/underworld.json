@@ -428,7 +428,12 @@
   {"id": "pit_door", "at": [18.25, 10.6], "yaw": 180, "sector": "pit_deck"},
   {"id": "pit_rim_e", "at": [24, 12.5], "yaw": 90, "sector": "pit_deck"},
   {"id": "throne_door_l", "at": [30.2, 1], "yaw": 90, "sector": "throne"},
-  {"id": "throne_door_r", "at": [30.2, 7], "yaw": 90, "sector": "throne"}
+  {"id": "throne_door_r", "at": [30.2, 7], "yaw": 90, "sector": "throne"},
+  {"id": "arena_beam", "at": [-2, 3.5], "yaw": 180, "sector": "arena"},
+  {"id": "back_underworld_court", "at": [21.75, 7.5], "yaw": -90, "sector": "court"},
+  {"id": "back_underworld_furnace", "at": [-14.35, 2.55], "yaw": 90, "sector": "furnace"},
+  {"id": "back_underworld_pit", "at": [14.4, 19.4], "yaw": 180, "sector": "pit_deck"},
+  {"id": "back_underworld_exit", "at": [20.4, 7.45], "yaw": 180, "sector": "court"}
  ],
  "spots": {
   "door": {"sector": "arena", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},

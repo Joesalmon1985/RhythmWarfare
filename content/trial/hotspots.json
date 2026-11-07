@@ -228,6 +228,40 @@
    }
   },
   {
+   "id": "trial.3.2",
+   "world": "bassment",
+   "scene": "3",
+   "map": "bassment_hatch",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "way_up_3"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.4.0",
    "world": "bassment",
    "scene": "4",
@@ -296,6 +330,40 @@
    },
    "on_success": {
     "route": "8"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.4.2",
+   "world": "bassment",
+   "scene": "4",
+   "map": "bassment_cables",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "edge_past"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
    },
    "default": false,
    "repeatable": false,
@@ -383,6 +451,40 @@
    }
   },
   {
+   "id": "trial.5.2",
+   "world": "bassment",
+   "scene": "5",
+   "map": "bassment_cables",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "gap"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.6.0",
    "world": "bassment",
    "scene": "6",
@@ -415,6 +517,40 @@
     "route": "7"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.6.1",
+   "world": "bassment",
+   "scene": "6",
+   "map": "bassment_cables",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "gap"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -554,6 +690,40 @@
    }
   },
   {
+   "id": "trial.8.2",
+   "world": "bassment",
+   "scene": "8",
+   "map": "bassment_cloakroom",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "lamp_stand"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.9.0",
    "world": "bassment",
    "scene": "9",
@@ -668,6 +838,40 @@
    }
   },
   {
+   "id": "trial.10.2",
+   "world": "bassment",
+   "scene": "10",
+   "map": "bassment_boiler",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "edge_in"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.11.0",
    "world": "bassment",
    "scene": "11",
@@ -700,6 +904,40 @@
     "route": "12"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.11.1",
+   "world": "bassment",
+   "scene": "11",
+   "map": "bassment_boiler",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "pipe_climb"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -801,6 +1039,40 @@
    },
    "show": {
     "archetype": "object"
+   }
+  },
+  {
+   "id": "trial.12.2",
+   "world": "bassment",
+   "scene": "12",
+   "map": "bassment_boiler",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "pipe_climb"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -952,6 +1224,40 @@
    }
   },
   {
+   "id": "trial.15.2",
+   "world": "bassment",
+   "scene": "15",
+   "map": "bassment_stacks",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "cellar_door"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.16.0",
    "world": "bassment",
    "scene": "16",
@@ -1028,6 +1334,40 @@
    }
   },
   {
+   "id": "trial.16.2",
+   "world": "bassment",
+   "scene": "16",
+   "map": "bassment_stacks",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "crack_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.17.0",
    "world": "bassment",
    "scene": "17",
@@ -1060,6 +1400,40 @@
     "route": "19"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.17.1",
+   "world": "bassment",
+   "scene": "17",
+   "map": "bassment_stacks",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "crack_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1142,6 +1516,40 @@
    }
   },
   {
+   "id": "trial.18.2",
+   "world": "bassment",
+   "scene": "18",
+   "map": "bassment_stacks",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "way_up_18"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.19.0",
    "world": "bassment",
    "scene": "19",
@@ -1174,6 +1582,40 @@
     "route": "20"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.19.1",
+   "world": "bassment",
+   "scene": "19",
+   "map": "bassment_cellar",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "hall_in"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1320,6 +1762,40 @@
    }
   },
   {
+   "id": "trial.20.3",
+   "world": "bassment",
+   "scene": "20",
+   "map": "bassment_cellar",
+   "choice": 3,
+   "anchor": {
+    "waypoint": "bar_turn"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.21.0",
    "world": "bassment",
    "scene": "21",
@@ -1352,6 +1828,40 @@
     "route": "20"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.21.1",
+   "world": "bassment",
+   "scene": "21",
+   "map": "bassment_cellar",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "barrel_row"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1470,6 +1980,40 @@
    }
   },
   {
+   "id": "trial.23.2",
+   "world": "bassment",
+   "scene": "23",
+   "map": "bassment_cellar",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "arch_far"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.24.0",
    "world": "bassment",
    "scene": "24",
@@ -1508,6 +2052,40 @@
    }
   },
   {
+   "id": "trial.24.1",
+   "world": "bassment",
+   "scene": "24",
+   "map": "bassment_cellar",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "trapdoor_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.25.0",
    "world": "bassment",
    "scene": "25",
@@ -1540,6 +2118,40 @@
     "route": "30"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.25.1",
+   "world": "bassment",
+   "scene": "25",
+   "map": "bassment_cellar",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "trapdoor_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1622,6 +2234,40 @@
    }
   },
   {
+   "id": "trial.26.2",
+   "world": "bassment",
+   "scene": "26",
+   "map": "bassment_fungus",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "pond_edge"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.27.0",
    "world": "bassment",
    "scene": "27",
@@ -1654,6 +2300,40 @@
     "route": "28"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.27.1",
+   "world": "bassment",
+   "scene": "27",
+   "map": "bassment_fungus",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "haze_bank"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1755,6 +2435,40 @@
    }
   },
   {
+   "id": "trial.28.2",
+   "world": "bassment",
+   "scene": "28",
+   "map": "bassment_fungus",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "pond_edge"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.29.0",
    "world": "bassment",
    "scene": "29",
@@ -1787,6 +2501,40 @@
     "route": "30"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.29.1",
+   "world": "bassment",
+   "scene": "29",
+   "map": "bassment_fungus",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "way_up_29"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -1869,6 +2617,40 @@
    }
   },
   {
+   "id": "trial.30.2",
+   "world": "bassment",
+   "scene": "30",
+   "map": "bassment_mirrors",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "twin_stand"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.31.0",
    "world": "bassment",
    "scene": "31",
@@ -1901,6 +2683,40 @@
     "route": "32"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.31.1",
+   "world": "bassment",
+   "scene": "31",
+   "map": "bassment_mirrors",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "wave_panel"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -2002,6 +2818,40 @@
    },
    "show": {
     "archetype": "object"
+   }
+  },
+  {
+   "id": "trial.32.2",
+   "world": "bassment",
+   "scene": "32",
+   "map": "bassment_mirrors",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "twin_stand"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -2153,6 +3003,40 @@
    }
   },
   {
+   "id": "trial.35.2",
+   "world": "bassment",
+   "scene": "35",
+   "map": "bassment_pit",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "way_up_35"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.36.0",
    "world": "bassment",
    "scene": "36",
@@ -2185,6 +3069,40 @@
     "route": "35"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.36.1",
+   "world": "bassment",
+   "scene": "36",
+   "map": "bassment_pit",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "ledge_door"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -2267,6 +3185,40 @@
    },
    "show": {
     "archetype": "object"
+   }
+  },
+  {
+   "id": "trial.37.2",
+   "world": "bassment",
+   "scene": "37",
+   "map": "bassment_pit",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "ledge_rope"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -2477,6 +3429,40 @@
    }
   },
   {
+   "id": "trial.40.3",
+   "world": "bassment",
+   "scene": "40",
+   "map": "bassment_vaults",
+   "choice": 3,
+   "anchor": {
+    "waypoint": "velvet_gap"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.41.0",
    "world": "bassment",
    "scene": "41",
@@ -2509,6 +3495,40 @@
     "route": "40"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.41.1",
+   "world": "bassment",
+   "scene": "41",
+   "map": "bassment_vaults",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "velvet_gap"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -2583,6 +3603,40 @@
    },
    "on_success": {
     "route": "48"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.42.2",
+   "world": "bassment",
+   "scene": "42",
+   "map": "bassment_vaults",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "vault_way_up"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
    },
    "default": false,
    "repeatable": false,
@@ -2667,6 +3721,40 @@
    }
   },
   {
+   "id": "trial.43.2",
+   "world": "bassment",
+   "scene": "43",
+   "map": "bassment_warren",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "throne_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.44.0",
    "world": "bassment",
    "scene": "44",
@@ -2699,6 +3787,40 @@
     "route": "45"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.44.1",
+   "world": "bassment",
+   "scene": "44",
+   "map": "bassment_warren",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "tunnel_bend"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -2800,6 +3922,40 @@
    }
   },
   {
+   "id": "trial.45.2",
+   "world": "bassment",
+   "scene": "45",
+   "map": "bassment_warren",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "throne_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.46.0",
    "world": "bassment",
    "scene": "46",
@@ -2838,6 +3994,40 @@
    }
   },
   {
+   "id": "trial.46.1",
+   "world": "bassment",
+   "scene": "46",
+   "map": "bassment_warren",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "tunnel_bend"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.47.0",
    "world": "bassment",
    "scene": "47",
@@ -2870,6 +4060,40 @@
     "route": "52"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.47.1",
+   "world": "bassment",
+   "scene": "47",
+   "map": "bassment_warren",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "tribute_pile"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3009,6 +4233,40 @@
    }
   },
   {
+   "id": "trial.48.3",
+   "world": "bassment",
+   "scene": "48",
+   "map": "bassment_kitchens",
+   "choice": 3,
+   "anchor": {
+    "waypoint": "counter_front"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.49.0",
    "world": "bassment",
    "scene": "49",
@@ -3041,6 +4299,40 @@
     "route": "48"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.49.1",
+   "world": "bassment",
+   "scene": "49",
+   "map": "bassment_kitchens",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "counter_front"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3113,6 +4405,40 @@
     "route": "52"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.51.1",
+   "world": "bassment",
+   "scene": "51",
+   "map": "bassment_kitchens",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "way_up_51"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3235,6 +4561,40 @@
    }
   },
   {
+   "id": "trial.52.3",
+   "world": "bassment",
+   "scene": "52",
+   "map": "bassment_hall",
+   "choice": 3,
+   "anchor": {
+    "waypoint": "hall_seam_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.53.0",
    "world": "bassment",
    "scene": "53",
@@ -3273,6 +4633,40 @@
    }
   },
   {
+   "id": "trial.53.1",
+   "world": "bassment",
+   "scene": "53",
+   "map": "bassment_hall",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "hall_statue_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.54.0",
    "world": "bassment",
    "scene": "54",
@@ -3305,6 +4699,40 @@
     "route": "57"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.54.1",
+   "world": "bassment",
+   "scene": "54",
+   "map": "bassment_hall",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "hall_way_up"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3409,6 +4837,40 @@
    }
   },
   {
+   "id": "trial.55.2",
+   "world": "bassment",
+   "scene": "55",
+   "map": "bassment_hall",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "hall_gargoyle_floor"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.56.0",
    "world": "bassment",
    "scene": "56",
@@ -3441,6 +4903,40 @@
     "route": "55"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.56.1",
+   "world": "bassment",
+   "scene": "56",
+   "map": "bassment_hall",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "hall_wall_creep"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3488,6 +4984,40 @@
    }
   },
   {
+   "id": "trial.57.1",
+   "world": "bassment",
+   "scene": "57",
+   "map": "bassment_door",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "door_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.58.0",
    "world": "bassment",
    "scene": "58",
@@ -3520,6 +5050,40 @@
     "route": "57"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.58.1",
+   "world": "bassment",
+   "scene": "58",
+   "map": "bassment_door",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "door_foot"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3621,6 +5185,40 @@
    }
   },
   {
+   "id": "trial.59.2",
+   "world": "bassment",
+   "scene": "59",
+   "map": "bassment_echo",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "echo_way_up"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "trial.60.0",
    "world": "bassment",
    "scene": "60",
@@ -3687,6 +5285,40 @@
     "route": "62"
    },
    "default": true,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.61.1",
+   "world": "bassment",
+   "scene": "61",
+   "map": "bassment_dawn",
+   "choice": 1,
+   "anchor": {
+    "waypoint": "dawn_landing_bench"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
+   },
+   "default": false,
    "repeatable": false,
    "show": {
     "archetype": "door"
@@ -3761,6 +5393,40 @@
    },
    "on_success": {
     "route": "63"
+   },
+   "default": false,
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "trial.62.2",
+   "world": "bassment",
+   "scene": "62",
+   "map": "bassment_dawn",
+   "choice": 2,
+   "anchor": {
+    "waypoint": "car_park_out"
+   },
+   "kind": "exit",
+   "trial_kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "exit"
    },
    "default": false,
    "repeatable": false,

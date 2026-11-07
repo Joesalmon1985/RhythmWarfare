@@ -132,6 +132,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/10",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.10.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -188,6 +204,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/11",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.11.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -228,6 +260,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/12",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.12.2"
   },
   {
    "condition": {
@@ -402,6 +450,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/15",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.15.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -455,6 +519,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/16",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.16.2"
   },
   {
    "condition": {
@@ -516,6 +596,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/17",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.17.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -556,6 +652,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/18",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.18.2"
   },
   {
    "condition": {
@@ -612,6 +724,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/19",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.19.1"
   },
   {
    "condition": {
@@ -698,6 +826,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/20",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.20.3"
   },
   {
    "condition": {
@@ -797,6 +941,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/21",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.21.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -885,6 +1045,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/23",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.23.2"
+  },
+  {
+   "condition": {
     "flags_all": [
      "item:lamp"
     ],
@@ -943,6 +1119,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/24",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.24.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -986,6 +1178,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/25",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.25.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1026,6 +1234,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/26",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.26.2"
   },
   {
    "condition": {
@@ -1085,6 +1309,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/27",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.27.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1125,6 +1365,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/28",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.28.2"
   },
   {
    "condition": {
@@ -1198,6 +1454,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/29",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.29.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1238,6 +1510,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/3",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.3.2"
   },
   {
    "condition": {
@@ -1297,6 +1585,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/30",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.30.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -1353,6 +1657,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/31",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.31.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1393,6 +1713,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/32",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.32.2"
   },
   {
    "condition": {
@@ -1567,6 +1903,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/35",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.35.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -1623,6 +1975,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/36",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.36.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1663,6 +2031,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/37",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.37.2"
   },
   {
    "condition": {
@@ -1825,6 +2209,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/4",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.4.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1878,6 +2278,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/40",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.40.3"
   },
   {
    "condition": {
@@ -1966,6 +2382,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/41",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.41.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2006,6 +2438,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/42",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.42.2"
   },
   {
    "condition": {
@@ -2065,6 +2513,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/43",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.43.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -2121,6 +2585,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/44",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.44.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2161,6 +2641,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/45",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.45.2"
   },
   {
    "condition": {
@@ -2234,6 +2730,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/46",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.46.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2277,6 +2789,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/47",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.47.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2317,6 +2845,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/48",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.48.3"
   },
   {
    "condition": {
@@ -2403,6 +2947,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/49",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.49.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2443,6 +3003,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/5",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.5.2"
   },
   {
    "condition": {
@@ -2560,6 +3136,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/51",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.51.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2600,6 +3192,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/52",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.52.3"
   },
   {
    "condition": {
@@ -2674,6 +3282,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/53",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.53.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2717,6 +3341,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/54",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.54.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2757,6 +3397,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/55",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.55.2"
   },
   {
    "condition": {
@@ -2843,6 +3499,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/56",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.56.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2883,6 +3555,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/57",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.57.1"
   },
   {
    "condition": {
@@ -2943,6 +3631,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/58",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.58.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2983,6 +3687,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/59",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.59.2"
   },
   {
    "condition": {
@@ -3053,6 +3773,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/6",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.6.1"
   },
   {
    "condition": {
@@ -3144,6 +3880,22 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/61",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.61.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -3184,6 +3936,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/62",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.62.2"
   },
   {
    "condition": {
@@ -3328,6 +4096,22 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/8",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "bassment",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "trial.8.2"
   },
   {
    "condition": {
@@ -3505,6 +4289,34 @@
    "status": "existing",
    "to": "ember/deeps.falls",
    "via": "deeps.lake"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/deeps",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/north",
+   "via": "deeps.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/north",
+   "via": "deeps.back"
   },
   {
    "condition": {
@@ -3864,15 +4676,61 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "ember/hollow",
    "kind": "scene",
    "link": "second_route",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow.inn",
-   "via": "ember.hollow.skip"
+   "via": "hollow.skip"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow",
+   "kind": "scene",
+   "link": "second_route",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "ember/hollow.inn",
+   "via": "hollow.skip"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/hollow",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/mountain.keeper",
+   "via": "ember.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/hollow",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/mountain.spring",
+   "via": "ember.back"
   },
   {
    "condition": {
@@ -4037,6 +4895,20 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/hollow.inn",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/hollow",
+   "via": "ember.back"
   },
   {
    "condition": {
@@ -4833,6 +5705,20 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/mountain",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/mountain.keeper",
+   "via": "ember.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "ember_listened"
     ],
@@ -4844,6 +5730,20 @@
    "status": "existing",
    "to": "ember/mountain.keeper",
    "via": "mountain.whisper"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/mountain",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/mountain.spring",
+   "via": "ember.back"
   },
   {
    "condition": {
@@ -4975,15 +5875,37 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "ember/mountain.keeper",
    "kind": "scene",
    "link": "restart",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
-   "via": "ember.restart"
+   "via": "mountain.keeper.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "link": "restart",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.keeper.restart"
   },
   {
    "condition": {
@@ -4998,6 +5920,34 @@
    "status": "proposed",
    "to": "ember/mountain",
    "via": "ember.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.keeper.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.keeper.back"
   },
   {
    "condition": {
@@ -5085,15 +6035,37 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "ember/mountain.spring",
    "kind": "scene",
    "link": "restart",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
-   "via": "ember.restart"
+   "via": "mountain.spring.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "link": "restart",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.spring.restart"
   },
   {
    "condition": {
@@ -5108,6 +6080,34 @@
    "status": "proposed",
    "to": "ember/mountain",
    "via": "ember.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.spring.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.spring.back"
   },
   {
    "condition": {
@@ -5316,6 +6316,20 @@
    "status": "changed",
    "to": "$checkpoint",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "ember/north",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "ember/deeps",
+   "via": "ember.back"
   },
   {
    "condition": {
@@ -6565,6 +7579,20 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jerusalem.tomb",
+   "via": "gospel.back"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6638,6 +7666,34 @@
    "status": "proposed",
    "to": "gospel/jerusalem.trial",
    "via": "gospel.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.golgotha.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.golgotha.back"
   },
   {
    "condition": {
@@ -6754,15 +7810,65 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.road.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.road.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_road"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "gospel/jerusalem.road",
    "kind": "scene",
    "link": "restart",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
-   "via": "gospel.restart"
+   "via": "jerusalem.road.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_road"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "link": "restart",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.road.restart"
   },
   {
    "condition": {
@@ -6864,15 +7970,65 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.golgotha",
+   "via": "jerusalem.tomb.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.golgotha",
+   "via": "jerusalem.tomb.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "gospel/jerusalem.tomb",
    "kind": "scene",
    "link": "restart",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
-   "via": "gospel.restart"
+   "via": "jerusalem.tomb.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "link": "restart",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.tomb.restart"
   },
   {
    "condition": {
@@ -6949,6 +8105,20 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jerusalem.trial",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jerusalem.golgotha",
+   "via": "gospel.back"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6976,6 +8146,20 @@
    "status": "existing",
    "to": "gospel/jerusalem.golgotha",
    "via": "jerusalem.trial.passage"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jerusalem.trial",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jerusalem.road",
+   "via": "gospel.back"
   },
   {
    "condition": {
@@ -7052,6 +8236,34 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jordan",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jerusalem.road",
+   "via": "gospel.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jordan",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jerusalem.tomb",
+   "via": "gospel.back"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7116,15 +8328,33 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "gospel/jordan",
    "kind": "scene",
    "link": "second_route",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan.nazareth",
-   "via": "gospel.jordan.skip"
+   "via": "jordan.skip"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan",
+   "kind": "scene",
+   "link": "second_route",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "gospel/jordan.nazareth",
+   "via": "jordan.skip"
   },
   {
    "condition": {
@@ -7375,6 +8605,20 @@
    "status": "existing",
    "to": "gospel/galilee.capernaum",
    "via": "jordan.nazareth.neighbour"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "gospel/jordan.nazareth",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "gospel/jordan",
+   "via": "gospel.back"
   },
   {
    "condition": {
@@ -8168,12 +9412,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital",
    "kind": "scene",
    "link": "hub_to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "hospital.to_ward"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "link": "hub_to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "hospital.to_ward"
   },
@@ -8213,12 +9474,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital.cafeteria",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.cafeteria.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital.cafeteria.to_hub"
   },
@@ -8328,12 +9606,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital.corridor",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.corridor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.corridor",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital.corridor.to_hub"
   },
@@ -8487,12 +9782,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital.dayroom",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.dayroom.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital.dayroom.to_hub"
   },
@@ -8594,12 +9906,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital.exit.to_hub"
   },
@@ -8697,12 +10026,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital.garden",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.garden.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.garden",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital.garden.to_hub"
   },
@@ -8820,12 +10166,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital_late",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital_late.to_hub"
   },
@@ -9011,12 +10374,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital_late.cafe",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.cafe.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital_late.cafe.to_hub"
   },
@@ -9156,12 +10536,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital_late.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital_late.exit.to_hub"
   },
@@ -9315,12 +10712,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/hospital_late.quiet",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.quiet.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "hospital_late.quiet.to_hub"
   },
@@ -9594,12 +11008,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/mothership",
    "kind": "scene",
    "link": "hub_to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "mothership.to_underworld"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "link": "hub_to_hub",
+   "status": "existing",
    "to": "main/underworld",
    "via": "mothership.to_underworld"
   },
@@ -9623,12 +11054,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/mothership.bridge",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.bridge.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/mothership",
    "via": "mothership.bridge.to_hub"
   },
@@ -9839,12 +11287,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/mothership.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/mothership",
    "via": "mothership.exit.to_hub"
   },
@@ -9912,12 +11377,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/mothership.gallery",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.gallery.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/mothership",
    "via": "mothership.gallery.to_hub"
   },
@@ -10037,12 +11519,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/mothership.reactor",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.reactor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/mothership",
    "via": "mothership.reactor.to_hub"
   },
@@ -10200,12 +11699,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/underworld",
    "kind": "scene",
    "link": "hub_to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "underworld.to_mothership"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "link": "hub_to_hub",
+   "status": "existing",
    "to": "main/mothership",
    "via": "underworld.to_mothership"
   },
@@ -10412,12 +11928,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/underworld.court",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.court.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.court",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/underworld",
    "via": "underworld.court.to_hub"
   },
@@ -10568,12 +12101,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/underworld.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/underworld",
    "via": "underworld.exit.to_hub"
   },
@@ -10641,12 +12191,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/underworld.furnace",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.furnace.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/underworld",
    "via": "underworld.furnace.to_hub"
   },
@@ -10748,12 +12315,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/underworld.pit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.pit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.pit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/underworld",
    "via": "underworld.pit.to_hub"
   },
@@ -10921,12 +12505,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward",
    "kind": "scene",
    "link": "hub_to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "ward.to_hospital"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "link": "hub_to_hub",
+   "status": "existing",
    "to": "main/hospital",
    "via": "ward.to_hospital"
   },
@@ -11120,12 +12721,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward.art",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.art.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.art",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward.art.to_hub"
   },
@@ -11229,12 +12847,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward.corridor",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.corridor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.corridor",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward.corridor.to_hub"
   },
@@ -11403,12 +13038,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward.courtyard",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.courtyard.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.courtyard",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward.courtyard.to_hub"
   },
@@ -11526,12 +13178,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward.dorm",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.dorm.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.dorm",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward.dorm.to_hub"
   },
@@ -11697,12 +13366,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward.exit.to_hub"
   },
@@ -11738,12 +13424,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward_late",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward_late.to_hub"
   },
@@ -11887,12 +13590,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward_late.dorm",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.dorm.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.dorm",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward_late.dorm.to_hub"
   },
@@ -12022,12 +13742,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward_late.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward_late.exit.to_hub"
   },
@@ -12113,12 +13850,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/ward_late.treat",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.treat.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.treat",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/ward",
    "via": "ward_late.treat.to_hub"
   },
@@ -12225,7 +13979,7 @@
    "kind": "quest_entry",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "warehouse.enter_bassment"
@@ -12261,10 +14015,9 @@
    "entrance": "warehouse_rave.ember",
    "from": "main/warehouse",
    "kind": "quest_entry",
-   "note": "a copy of warehouse.bar.ember on the hub",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "warehouse.enter_ember"
@@ -12278,10 +14031,9 @@
    "entrance": "warehouse_rave.gospel",
    "from": "main/warehouse",
    "kind": "quest_entry",
-   "note": "a copy of warehouse.balcony.star on the hub",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "warehouse.enter_gospel"
@@ -12448,10 +14200,9 @@
    "entrance": "warehouse_rave.squadron",
    "from": "main/warehouse",
    "kind": "quest_entry",
-   "note": "a copy of warehouse.booth.radio on the hub",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "warehouse.enter_squadron"
@@ -12476,12 +14227,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/warehouse.balcony",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.balcony.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.balcony",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/warehouse",
    "via": "warehouse.balcony.to_hub"
   },
@@ -12632,12 +14400,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/warehouse.bar",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.bar.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.bar",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/warehouse",
    "via": "warehouse.bar.to_hub"
   },
@@ -12777,12 +14562,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/warehouse.booth",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.booth.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.booth",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/warehouse",
    "via": "warehouse.booth.to_hub"
   },
@@ -12936,12 +14738,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/warehouse.chill",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.chill.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.chill",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/warehouse",
    "via": "warehouse.chill.to_hub"
   },
@@ -13194,12 +15013,29 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
    },
    "from": "main/warehouse.exit",
    "kind": "scene",
    "link": "to_hub",
-   "status": "proposed",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.exit",
+   "kind": "scene",
+   "link": "to_hub",
+   "status": "existing",
    "to": "main/warehouse",
    "via": "warehouse.exit.to_hub"
   },
@@ -13695,6 +15531,20 @@
    "status": "existing",
    "to": "squadron/base.c03",
    "via": "base.cot"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "squadron/base",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "squadron/escape.c13",
+   "via": "squadron.back"
   },
   {
    "condition": {
@@ -14784,6 +16634,20 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "previous_scene": true
+   },
+   "from": "squadron/escape.c12",
+   "kind": "scene",
+   "link": "back",
+   "status": "proposed",
+   "to": "squadron/escape.c13",
+   "via": "squadron.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "exit",
     "outcome": "on_miss"
    },
@@ -14924,15 +16788,65 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
-    "flags_set": []
+    "flags_set": [
+     "keep:path_squadron_free"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
    },
    "from": "squadron/escape.c13",
    "kind": "scene",
    "link": "restart",
    "owner_to_confirm": true,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
-   "via": "squadron.restart"
+   "via": "escape.c13.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_squadron_free"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "link": "restart",
+   "owner_to_confirm": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "escape.c13.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/escape.c12",
+   "via": "escape.c13.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/escape.c12",
+   "via": "escape.c13.back"
   },
   {
    "condition": {
@@ -15070,16 +16984,16 @@
  ],
  "meta": {
   "counts": {
-   "edges": 1003,
+   "edges": 1122,
    "edges_by_kind": {
     "quest_entry": 42,
-    "quest_return": 284,
-    "scene": 677
+    "quest_return": 333,
+    "scene": 747
    },
    "edges_by_status": {
-    "changed": 177,
-    "existing": 591,
-    "proposed": 235
+    "changed": 226,
+    "existing": 693,
+    "proposed": 203
    },
    "nodes": 146
   },

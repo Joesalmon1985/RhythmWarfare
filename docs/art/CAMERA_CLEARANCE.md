@@ -98,6 +98,24 @@ above). The audit's `gospel jordan.baptism -> next` frame is that walk.
 | --- | --- | --- | --- |
 | hospital_late.quiet | the window look's turn in (beats 46 to 48) and its hand-back (61.5 to 62.5) | the quiet room is 2.4 m wide and its default exit is behind the standpoint: the turn to the choices (the exit and the nightlights on the side walls) sweeps across a side wall whichever way it turns. Only the map (a wider room: W4) or the hotspots (the nightlights off the side walls) can change it; reported to the lead | `docs/shots/art/a5/exception_hospital_late_quiet.jpg` |
 
+## The herald look (engine rule, shared wiring, 7 November 2026)
+
+The heralds' opening look (`RunJourney.herald_looks`, a `player_look` with `face` points and `herald: true`) turns the head from wherever the rail faces to the
+quest entrance and its herald. Two rules keep it off the walls; no gate or herald was moved for them:
+
+1. **Never onto a near wall.** While a herald look owns the head, `StoryPlayer.pose_at` casts the centre ray (`StoryMap.sight`, a level ray through the map's
+   resolved walls and portals, the walls `tools/art/camera_clearance_check.gd` casts against) at the turned facing. When a wall that faces the ray within
+   60 degrees is nearer than `StoryPlayer.HERALD_CLEAR_M` (2.6 m: this check's 2.5 m and a margin for the idle drift), the turn stops short at the largest
+   share of it that keeps the centre clear (`StoryPlayer.herald_cap`, twelve steps); the entrance and its herald then sit at the side of the picture. When the
+   rail's own facing is already no clearer, the look is left as it is (it does not make the picture worse). Only herald looks are capped: the window look
+   frames the choices and keeps its exception above.
+2. **Never started in a door walk's last beat.** A herald look whose start falls in the last beat of the move under way (`RunRail.busy_until`) starts when the
+   move ends (the walk turns the body to its arrival yaw there); a look left with no more than its turn-in is dropped.
+
+These fixed the last three failing poses of the merged tree (`ward.corridor`, entered from `ward.art` and from `ward.dorm`, beats 13.0 to 13.5;
+`hospital_late.quiet` from `hospital_late`, beats 12.0 to 13.5); `tests/test_heralds_view.gd` stays green (the entrances are still in the picture for 80% of
+the opening and the route window).
+
 ## Shots
 
 `docs/shots/art/a5/before_after_<main|squadron|ember>.jpg`: every changed scene, `tools/art/audit_capture.sh` frames (the scene started on its own, the

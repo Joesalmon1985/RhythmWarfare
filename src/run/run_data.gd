@@ -468,8 +468,8 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 		if HotspotContract.is_run_route(to):  # an ending's way back to the main run
 			if not is_path() or str(n["ending"]) == "":
 				errors.append("scene %s: the route '%s' is only for an ending scene of a path" % [id, to])
-			if routes.size() != 1:
-				errors.append("scene %s: an ending scene has the one route '%s'" % [id, to])
+			if routes.filter(func(x: Dictionary) -> bool: return not bool(x.get("restart", false)) and not bool(x.get("back", false))).size() != 1 or routes.find(e) != 0:
+				errors.append("scene %s: an ending scene has the one route '%s', first (besides its restart and its way back)" % [id, to])
 			if dirs.has(str(e["dir"])):
 				errors.append("scene %s: two routes use the direction %s" % [id, e["dir"]])
 			dirs[str(e["dir"])] = true
@@ -481,6 +481,14 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 			continue
 		var t: Dictionary = nodes[to]
 		var same_world := str(t["world"]) == str(n["world"])
+		if not is_path() and (bool(e.get("hub_link", false)) or bool(e.get("to_hub", false))):  # the routes between hubs (docs/parallel-development/NARRATIVE_GRAPH.md 2.2, 2.4)
+			_validate_hub_route(id, n, e, t, same_world)
+			if dirs.has(str(e["dir"])):
+				errors.append("scene %s: two routes use the direction %s" % [id, e["dir"]])
+			dirs[str(e["dir"])] = true
+			if not (n.get("rail", {}) as Dictionary).get("exits", {}).has(str(e["dir"])):
+				errors.append("scene %s: the route %s has no exit doorway in rail.exits" % [id, e["dir"]])
+			continue
 		if bool(n["exit_scene"]):
 			if same_world and not bool(e.get("loop", false)) and not is_path():  # (a path's exit scene may also lead on inside its world)
 				errors.append("exit scene %s: the route to %s stays in the world; mark it \"loop\": true or lead to another world" % [id, to])
@@ -490,7 +498,10 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 			if not is_path() and not same_world and nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):  # (a path's worlds may be left towards any depth: a setback goes back)
 				errors.append("exit scene %s (depth %d): route to %s at depth %d (world exits go one level deeper, or stay at the last depth)" % [id, int(n["depth"]), to, nd])
 		else:
-			if not same_world:
+			if bool(e.get("restart", false)):  # an ending's way to the quest's first scene (tools/run/path_routes.py)
+				if not is_path() or str(n["ending"]) == "" or to != start_node():
+					errors.append("scene %s: a restart leads from an ending of a path to its first scene %s (not %s)" % [id, start_node(), to])
+			elif not same_world:
 				errors.append("scene %s: the route to %s leaves the world, only the exit scene may" % [id, to])
 			elif bool(t["entry"]) and not bool(e.get("loop", false)) and not is_path():  # (a path world may have several entries: a cycle is caught by the graph check)
 				errors.append("scene %s: the route back to the entry scene %s must be marked \"loop\": true" % [id, to])
@@ -499,6 +510,29 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 		dirs[str(e["dir"])] = true
 		if not (n.get("rail", {}) as Dictionary).get("exits", {}).has(str(e["dir"])):
 			errors.append("scene %s: the route %s has no exit doorway in rail.exits" % [id, e["dir"]])
+
+
+## A route of the main run between hubs (content/narrative/graph.json): `hub_link` leads from a hub (a world's entry scene) to the entry scene of another world at the same depth (the
+## partner hub: Mothership and Underworld, Hospital and Ward); `to_hub` leads from any other scene back to the entry scene of its own world (marked `loop`, so a world keeps no cycle
+## of its own) or of an earlier world (a late world's way back to its location's hub: lower depth). Neither is the default route, neither counts as the world's way on.
+func _validate_hub_route(id: String, n: Dictionary, e: Dictionary, t: Dictionary, same_world: bool) -> void:
+	var to := str(e["to"])
+	if (n["next"] as Array).find(e) == 0:
+		errors.append("scene %s: the route to %s between hubs cannot be the scene's first (default) route" % [id, to])
+	if not bool(t["entry"]):
+		errors.append("scene %s: the route to %s between hubs must lead to a hub (the entry scene of a world)" % [id, to])
+	if bool(e.get("hub_link", false)):
+		if not bool(n["entry"]) or same_world:
+			errors.append("scene %s: a hub link leads from a hub to another world's hub (to %s)" % [id, to])
+		if int(t["depth"]) != int(n["depth"]):
+			errors.append("scene %s (depth %d): the hub link to %s at depth %d (partner hubs are at the same depth)" % [id, int(n["depth"]), to, int(t["depth"])])
+	else:
+		if bool(n["entry"]) and same_world:
+			errors.append("scene %s: a hub has no way back to itself" % id)
+		if same_world and not bool(e.get("loop", false)):
+			errors.append("scene %s: the way back to the hub %s must be marked \"loop\": true" % [id, to])
+		if not same_world and int(t["depth"]) >= int(n["depth"]):
+			errors.append("scene %s (depth %d): the way back to %s at depth %d leaves for another world (only a late world goes back to its location's hub, at a lower depth)" % [id, int(n["depth"]), to, int(t["depth"])])
 
 
 ## One entry scene per world (its id is the world's id: the save's "reached" and the home cards), one exit scene, every scene reaches the exit, no cycle inside a world
@@ -559,8 +593,8 @@ func _validate_path_graph() -> void:
 			errors.append("path %s: ending '%s' of %s is not a unique identifier" % [path_id, nm, e])
 		names[nm] = true
 		var nx: Array = nodes[e]["next"]
-		if nx.size() != 1 or not HotspotContract.is_run_route(str(nx[0]["to"])):
-			errors.append("path %s: the ending scene %s must have the one route \"run:warehouse\"" % [path_id, e])
+		if nx.is_empty() or not HotspotContract.is_run_route(str(nx[0]["to"])) or nx.slice(1).any(func(x: Dictionary) -> bool: return not bool(x.get("restart", false)) and not bool(x.get("back", false))):
+			errors.append("path %s: the ending scene %s must have the one route \"run:warehouse\" (and may have a restart and a way back)" % [path_id, e])
 	for id in node_order:
 		if not _reaches_ending(str(id), {}):
 			errors.append("scene %s cannot reach an ending of path %s" % [id, path_id])

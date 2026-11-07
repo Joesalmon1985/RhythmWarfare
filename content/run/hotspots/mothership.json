@@ -76,6 +76,43 @@
    }
   },
   {
+   "id": "mothership.to_underworld",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "deck_rift"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "mothership.stagger_entry_link",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "mothership.grey",
    "world": "mothership",
    "scene": "mothership",
@@ -278,6 +315,43 @@
    }
   },
   {
+   "id": "mothership.gallery.to_hub",
+   "world": "mothership",
+   "scene": "mothership.gallery",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "back_mothership_gallery"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "mothership.stagger_gallery_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "mothership.gallery.window",
    "world": "mothership",
    "scene": "mothership.gallery",
@@ -393,6 +467,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "mothership.reactor.to_hub",
+   "world": "mothership",
+   "scene": "mothership.reactor",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "back_mothership_reactor"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "mothership.stagger_reactor_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -559,6 +670,43 @@
    }
   },
   {
+   "id": "mothership.bridge.to_hub",
+   "world": "mothership",
+   "scene": "mothership.bridge",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "back_mothership_bridge"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "mothership.stagger_bridge_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "mothership.bridge.helm",
    "world": "mothership",
    "scene": "mothership.bridge",
@@ -716,6 +864,43 @@
    "on_failure": {
     "route": "ward",
     "cinematic": "mothership.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "mothership.exit.to_hub",
+   "world": "mothership",
+   "scene": "mothership.exit",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "back_mothership_exit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "mothership.stagger_exit_hub",
     "energy": -5
    },
    "default": false,

@@ -740,6 +740,50 @@ func floor_change(a: String, b: String, style := "walk") -> Dictionary:
 var _walls_by_sector: Dictionary = {}  # sector id -> its resolved walls
 
 
+func _walls_of(sid: String) -> Array:
+	if _walls_by_sector.is_empty():
+		for w in _walls_out:
+			if not _walls_by_sector.has(str(w["sector"])):
+				_walls_by_sector[str(w["sector"])] = []
+			_walls_by_sector[str(w["sector"])].append(w)
+	return _walls_by_sector.get(sid, [])
+
+
+## A level sight line (the camera's centre ray, docs/art/CAMERA_CLEARANCE.md "The herald look"): from ground point `o` in sector `sec` at eye height `eye` along the unit direction `d`,
+## through every portal with room for the eye (above the next floor, under its ceiling unless it is sky), to the first solid surface. {m: metres along the ray (`far` when nothing
+## is met nearer), face: how square the wall is to the ray (1 face-on, 0 edge-on)}. The same walls tools/art/camera_clearance_check.gd casts against. Needs a map without errors.
+func sight(o: Vector2, sec: String, d: Vector2, eye: float, far := 60.0) -> Dictionary:
+	var s := 0.0
+	var cur := sec if _sector_index.has(sec) else sector_at(o)
+	for _hop in 64:
+		if cur == "":
+			return {"m": s, "face": 1.0}
+		var best := far
+		var bw: Dictionary = {}
+		for w in _walls_of(cur):
+			var a: Vector2 = w["a"]
+			var e: Vector2 = (w["b"] as Vector2) - a
+			var den := d.cross(e)
+			if absf(den) < 1.0e-9:
+				continue
+			var ao := a - o
+			var t := ao.cross(e) / den
+			var u := ao.cross(d) / den
+			if u < -1.0e-6 or u > 1.0 + 1.0e-6 or t <= s + 1.0e-4 or t >= best:
+				continue
+			best = t
+			bw = w
+		if bw.is_empty():
+			return {"m": far, "face": 0.0}
+		var face := absf(d.dot(((bw["b"] as Vector2) - (bw["a"] as Vector2)).orthogonal().normalized()))
+		var nb := sector(str(bw["portal"])) if str(bw["portal"]) != "" else {}
+		if nb.is_empty() or eye <= float(nb["floor"]) + 0.02 or (eye >= float(nb["ceiling"]) - 0.02 and str(nb.get("ceil_tex", "")) != "sky" and not ("sky" in (nb.get("flags", []) as Array))):
+			return {"m": best, "face": face}
+		s = best
+		cur = str(bw["portal"])
+	return {"m": s, "face": 0.0}
+
+
 ## Walks the straight segment a to b from sector `sa` through the map (docs/story/HEIGHTS_AND_PATHS.md): {sectors: [...], points: PackedVector2Array, errors: [...]}, the
 ## stretch ending at points[k] lying in sectors[k] (each portal crossing, then b). The segment may only leave a sector through a portal open to walkers (not a wall, not a
 ## railing or a `blocked` opening), into a sector that is not a void, over a floor change that is a step for `style`, through an opening with room for the eye

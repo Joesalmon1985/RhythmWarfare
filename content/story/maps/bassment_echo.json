@@ -203,6 +203,15 @@
    ],
    "yaw": 0,
    "sector": "e_door"
+  },
+  {
+   "id": "echo_way_up",
+   "at": [
+    3.4,
+    0.5
+   ],
+   "yaw": 23,
+   "sector": "e_round"
   }
  ],
  "fog": {
