@@ -128,11 +128,47 @@ def build_art() -> list:
         c.paint(c.ell(cx - 9, 28, cx + 9, 44), ramp("#101018", "#242434", "#3b3b55"), c.dome(cx, 36, 9, 8))
     out["sr_racer"] = c
 
+    # pc_glass_lit: a glowing cocktail glass on the bar's back shelf (a piece: shown while piece_on says so), 32 x 40. PLACEHOLDER.
+    c = Cv(32, 40)
+    c.flat(c.poly([(3, 4), (29, 4), (16, 24)]), "#ffe9a8", edge=True, edge_col="#31485a")
+    c.flat(c.poly([(6, 7), (26, 7), (16, 21)]), "#ff4fc8")
+    c.flat(c.rect(14, 24, 18, 34), "#9fb4c4", edge=True, edge_col="#31485a")
+    c.flat(c.ell(7, 33, 25, 39), "#9fb4c4", edge=True, edge_col="#31485a")
+    c.flat(c.ell(1, 0, 5, 4), "#ffffff")
+    out["pc_glass_lit"] = c
+
+    # pc_lamp_lit: the cloakroom counter's lamp, switched on when the work is done (a piece), 32 x 32. PLACEHOLDER.
+    c = Cv(32, 32)
+    c.flat(c.rect(11, 22, 21, 30), "#9fb4c4", edge=True, edge_col="#31485a")
+    c.paint(c.ell(4, 2, 28, 24), ramp("#7a5a10", "#d8b02a", "#ffe58a", "#ffffff"), c.dome(16, 12, 12, 11), edge=True)
+    c.flat(c.ell(12, 6, 18, 11), "#ffffff")
+    out["pc_lamp_lit"] = c
+
     names = []
     for n, c in out.items():
         c.save(os.path.join(TEX, n + ".png"))
         names.append((n, c))
     return names
+
+
+def place_activity_sheets() -> None:
+    """The activities' dynamic-thing sheets (PLACEHOLDERS) under assets/story/mothership/sprites/, each with its grid sidecar: copies of the cloakroom and bar packages' test sheets, and the bass knob's
+    frames (sr_knob.png). Rows are states, columns frames."""
+    import shutil
+    dst = os.path.join(ROOT, "assets", "story", "mothership", "sprites")
+    os.makedirs(dst, exist_ok=True)
+    src = {
+        "cloak_coat": (os.path.join(ROOT, "tests", "fixtures", "cloakroom_scene", "assets", "story", "cloak_test", "sprites", "cloak_coat.png"), [4, 3]),
+        "cloak_symbols_space": (os.path.join(ROOT, "tests", "fixtures", "cloakroom_scene", "assets", "story", "cloak_test", "sprites", "cloak_symbols_space.png"), [4, 2]),
+        "bar_glass_space": (os.path.join(ROOT, "assets", "story", "bar_test", "sprites", "bar_glass_space.png"), [6, 1]),
+        "bar_order_space": (os.path.join(ROOT, "assets", "story", "bar_test", "sprites", "bar_order_space.png"), [4, 1]),
+        "sr_knob": (os.path.join(TEX, "sr_knob.png"), [4, 1]),
+    }
+    for name, (path, grid) in src.items():
+        shutil.copyfile(path, os.path.join(dst, name + ".png"))
+        with open(os.path.join(dst, name + ".json"), "w", encoding="utf-8", newline=chr(10)) as fh:
+            json.dump({"grid": grid}, fh)
+            fh.write(chr(10))
 
 
 def sheet(path: str, names: list) -> None:
@@ -170,6 +206,13 @@ APSES = {
 }
 STAGE_W0, STAGE_W1, STAGE_D = 4.4, 7.2, 11.0
 STEP1_U, STEP2_U = 19.2, 21.4
+CLOAK_HOLD_U = BAR_HOLD_U = 16.4  # in the ring just outside the alcove's mouth: the whole alcove is in the picture
+CLOAK_CUSTOMER_SLOTS = [(19.6, -1.3), (19.6, -2.0), (19.6, -2.7), (19.6, -3.4), (20.4, -1.7), (20.4, -2.4), (20.4, -3.1), (20.4, -3.8)]  # (u, s) of customer_0..7: a queue to the camera's right
+CLOAK_ATTENDANT = (21.8, 0.8)
+CLOAK_RAIL = (22.7, 1.05, -0.3)  # (u, s of coat 0, s step per coat): eight coats along the back wall
+CLOAK_SYMBOL, CLOAK_PREV, CLOAK_LAMP = (20.5, 0.0), (20.5, 0.9), (20.5, -0.55)
+BAR_CUSTOMER, BAR_GLASS, BAR_CUSTOMER_GLASS, BAR_BUBBLE = (19.2, -1.6), (20.3, 0.5), (20.0, -1.0), (19.2, -1.6)
+BAR_BAYS = (-3.0, -1.0, 1.0, 3.0)
 
 
 def width_at(w0, w1, d, du):
@@ -227,8 +270,10 @@ def build_map() -> dict:
     wp("deck_view", loc(180, 22.6), yaw_out(180), "stage")
     wp("cloak_door", loc(210, 15.2), yaw_out(210), "r7")
     wp("cloak_view", loc(210, 20.0), yaw_out(210), "cloak")
+    wp("cloak_hold", loc(210, CLOAK_HOLD_U), yaw_out(210), "r7")   # where the cloakroom activity is played: at the alcove's mouth, facing the counter, the rail and the attendant
     wp("bar_door", loc(150, 15.2), yaw_out(150), "r5")
     wp("bar_view", loc(150, 20.0), yaw_out(150), "bar")
+    wp("bar_hold", loc(150, BAR_HOLD_U), yaw_out(150), "r5")         # where the bar activity is played: at the alcove's mouth, facing the counter and the shelf
     wp("hangar_door", loc(240, 15.2), yaw_out(240), "r8")
     wp("hangar_view", loc(240, 21.0), yaw_out(240), "hangar")
     wp("home_door", loc(0, 19.0), yaw_out(0), "airlock")
@@ -278,7 +323,7 @@ def build_map() -> dict:
         things.append(d)
 
     bb("deck", "sr_deck", 180, 25.2, 0.0, 1.05, y=0.525)                       # the DJ deck (placeholder art); its knob is the thing `bass_knob` at the deck's middle
-    bb("bass_knob", "sr_knob_0", 180, 25.12, 0.0, 0.2, y=0.84, anim="none")    # (a thing of its own so the host can swap its frame; the frames are sr_knob_0..3, split from the sheet)
+    # (the bass knob is the activity's dynamic thing now, `bass_knob` of sheet sprites/sr_knob.png, 0.35 m: contract 10, BassKnobActivity.things)
     bb("stage_ball", "disco_ball", 180, 24.0, 0.0, 1.4, y=5.6, anim="rotate")
     for i, s in enumerate((-4.2, 4.2)):
         bb("woofer_%d" % i, "woofer", 180, 23.0, s, 1.7, y=0.85, anim="pump")
@@ -292,10 +337,12 @@ def build_map() -> dict:
     bb("glow_bar", "glow", 150, 22.5, 0.0, 2.2, y=1.4, anim="pulse", blend="add")
     bb("glow_hangar", "glow", 240, 23.6, 0.0, 3.0, y=1.4, anim="pulse", blend="add")
     bb("bar_counter", "thing_bar", 150, 20.6, 0.0, 1.3, y=0.65)
-    for i, s_ in enumerate((-3.0, -1.0, 1.0, 3.0)):  # the bar's static set (contract 10): the shelf, four bays, glasses lit by piece_on later
-        bb("bar_shelf_%d" % (i + 1), "thing_cabinet", 150, 22.9, s_, 1.8, y=0.9)
-    bb("cloak_counter", "thing_bar", 210, 19.4, 0.0, 1.2, y=0.6)   # the cloakroom's counter (contract 10) and its coat rail
-    bb("cloak_rail", "thing_suit", 210, 21.6, 0.0, 1.8, y=0.9)
+    for i, s_ in enumerate(BAR_BAYS):  # the bar's static set (contract 10): the back shelf's four bays, and a glass piece in each, lit by piece_on as the drinks are served
+        bb("bar_cab_%d" % (i + 1), "thing_cabinet", 150, 22.9, s_, 1.8, y=0.9)
+        bb("bar_shelf_%d" % (i + 1), "pc_glass_lit", 150, 22.5, s_, 0.6, y=1.75, piece="bar_shelf_%d" % (i + 1), emissive=True)
+    bb("cloak_counter", "thing_bar", 210, 20.6, 0.0, 1.2, y=0.6)   # the cloakroom's counter (contract 10), its lamp (a piece, lit when the work is done) and its coat rail
+    bb("cloak_lamp", "pc_lamp_lit", *([210] + list(CLOAK_LAMP)), 0.5, y=1.5, piece="cloak_lamp", emissive=True)
+    bb("cloak_rail", "thing_suit", 210, 22.95, 0.0, 1.8, y=0.9)
     bb("coat_cabinet", "thing_cabinet", 210, 22.2, -3.0, 1.8, y=0.9)
     bb("hangar_racer", "sr_racer", 240, 23.8, 0.0, 1.5, y=0.75)
     bb("hangar_console", "thing_console", 240, 21.6, -3.2, 1.3, y=0.65)
@@ -335,18 +382,24 @@ def build_map() -> dict:
             n += 1
             actors.append({"id": aid, "archetype": arch, "variant": var, "group": "core", "thresh": (n * 7) % 13 - 6})
             homes.append({"actor": aid, "sector": "r%d" % k, "at": loc(30 * k, u, s)})
-    guides = [("dj", "tentacle", "a", "stage", loc(180, 26.2, 0.9)), ("attendant", "cyclops", "a", "cloak", loc(210, 20.9, 0.0)), ("bartender", "blob", "a", "bar", loc(150, 22.4, 0.0)),
+    guides = [("dj", "tentacle", "a", "stage", loc(180, 26.2, 0.9)), ("attendant", "cyclops", "a", "cloak", loc(210, *CLOAK_ATTENDANT)), ("bartender", "blob", "a", "bar", loc(150, 22.0, 0.0)),
               ("pilot", "insect", "b", "hangar", loc(240, 20.4, 2.2))]
     for gid, arch, var, sector, at in guides:
         actors.append({"id": gid, "archetype": arch, "variant": var, "group": "core", "role": "front", "thresh": -20, "glow": gid == "dj"})
         homes.append({"actor": gid, "sector": sector, "at": at})
     # a few at the bar, a coat queue, aliens on the dais
-    extra = [("q1", "grey", "a", "cloak", loc(210, 18.4, -1.3)), ("q2", "blob", "b", "cloak", loc(210, 18.9, -2.0)), ("q3", "antenna", "a", "cloak", loc(210, 18.2, 1.5)),
-             ("b1", "insect", "a", "bar", loc(150, 19.2, -1.8)), ("b2", "cyclops", "b", "bar", loc(150, 18.8, 1.9)), ("s1", "grey", "b", "ap6_a", loc(180, 18.0, -3.0)),
+    extra = [("b1", "insect", "a", "bar", loc(150, 20.0, 2.6)), ("b2", "cyclops", "b", "bar", loc(150, 19.2, 3.4)), ("s1", "grey", "b", "ap6_a", loc(180, 18.0, -3.0)),
              ("s2", "tentacle", "b", "stage", loc(180, 24.0, -4.6)), ("s3", "blob", "a", "stage", loc(180, 24.0, 4.8))]
     for aid, arch, var, sector, at in extra:
         actors.append({"id": aid, "archetype": arch, "variant": var, "group": "core", "thresh": (len(aid) * 5) % 11 - 5})
         homes.append({"actor": aid, "sector": sector, "at": at})
+    # the cloakroom's customers (customer_0..7, the activity's cast: the first four queue from the start, the rest are called in by the activity) and the bar's customer (PLACEHOLDER rigs: the aliens of the ring)
+    for k, (u, s_) in enumerate(CLOAK_CUSTOMER_SLOTS):
+        arch, var = kinds[(k + 3) % len(kinds)]
+        actors.append({"id": "customer_%d" % k, "archetype": arch, "variant": var, "group": "core", "role": "front", "thresh": -20 if k < 4 else 100})
+        homes.append({"actor": "customer_%d" % k, "sector": "cloak", "at": loc(210, u, s_)})
+    actors.append({"id": "customer", "archetype": "antenna", "variant": "a", "group": "core", "role": "front", "thresh": -20})
+    homes.append({"actor": "customer", "sector": "bar", "at": loc(150, *BAR_CUSTOMER)})
 
     m = {
         "units_per_m": 1, "eye_height": 1.6, "art": "mothership", "start": "space_arrive", "max_step": 0.5, "void_drop": 3.0,
@@ -354,7 +407,7 @@ def build_map() -> dict:
         "geography": {"source": "content/story/maps/doom_mothership.json", "note": "the Mothership's ring (MAP11), approximate: twelve ring pieces round a void"},
         "textures": {n: "textures/%s.png" % n for n in ["floor_hex", "floor_grate", "floor_airlock", "floor_bridge", "floor_dais", "floor_lounge", "ceil_hull", "wall_hull", "trim", "wall_planet", "wall_window",
                                                          "wall_arch", "wall_door", "wall_hatch", "wall_led", "wall_speaker", "thing_bar", "thing_cabinet", "thing_suit", "thing_console", "thing_plant",
-                                                         "thing_planet", "sr_rail", "sr_deck", "sr_racer", "sr_hatch", "sr_knob_0", "sr_knob_1", "sr_knob_2", "sr_knob_3"]},
+                                                         "thing_planet", "sr_rail", "sr_deck", "sr_racer", "sr_hatch", "sr_knob_0", "sr_knob_1", "sr_knob_2", "sr_knob_3", "pc_glass_lit", "pc_lamp_lit"]},
         "sky": {"tex": "textures/sky_space.png", "mode": "cylinder"},
         "fog": {"color": "#0a0620", "density": 0.012},
         "sectors": sectors, "walls": walls, "homes": homes, "spots": {}, "silhouettes": [], "occluders": [],
@@ -405,7 +458,7 @@ def theme_json() -> dict:
         "ingredients": [{"id": "stardust", "icon": "space/ing_stardust", "color": "#d8e8ff"}, {"id": "comet_ice", "icon": "space/ing_ice", "color": "#7fe3ff"},
                         {"id": "plasma", "icon": "space/ing_plasma", "color": "#ff5fd2"}, {"id": "moon_syrup", "icon": "space/ing_syrup", "color": "#ffd25f"}],
         "cloakroom_symbols": [{"id": "ringed_planet", "icon": "space/sym_planet"}, {"id": "rocket", "icon": "space/sym_rocket"}, {"id": "crescent", "icon": "space/sym_moon"}, {"id": "ufo", "icon": "space/sym_ufo"}],
-        "stations": {"stage": {"waypoint": "deck_view", "route": "space.to_stage"}, "cloakroom": {"waypoint": "cloak_view", "route": "space.to_cloak"}, "bar": {"waypoint": "bar_view", "route": "space.to_bar"}},
+        "stations": {"stage": {"waypoint": "deck_view", "route": "space.to_stage"}, "cloakroom": {"waypoint": "cloak_hold", "route": "space.to_cloak"}, "bar": {"waypoint": "bar_hold", "route": "space.to_bar"}},
         "race": {"entrance": "hangar_view", "course": "race_street_space", "activity": "race"},
         "home": {"threshold": "home_door", "route": "home"},
         "activities": {"stage": "bass_knob", "cloakroom": "cloakroom", "bar": "bar", "race": "race"},
@@ -419,18 +472,41 @@ def theme_json() -> dict:
             "space.to_cloak": {"id": "space.to_cloak", "map": "space_rave", "from": "hub_view", "legs": [
                 {"to": "rv9", "bars": 4, "hold_bars": 1, "style": "walk", "via": ["rv11", "rv10"]},
                 {"to": "cloak_door", "bars": 2, "hold_bars": 1, "style": "walk", "via": ["rv8"]},
-                {"to": "cloak_view", "bars": 2, "hold_bars": 4, "style": "walk", "look": "attendant"}],
-                "arrive": {"waypoint": "cloak_view", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
+                {"to": "cloak_hold", "bars": 2, "hold_bars": 4, "style": "walk", "look": "attendant"}],
+                "arrive": {"waypoint": "cloak_hold", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
             "space.to_bar": {"id": "space.to_bar", "map": "space_rave", "from": "hub_view", "legs": [
                 {"to": "rv3", "bars": 4, "hold_bars": 1, "style": "walk", "via": ["rv1", "rv2"]},
                 {"to": "bar_door", "bars": 2, "hold_bars": 1, "style": "walk", "via": ["rv4"]},
-                {"to": "bar_view", "bars": 2, "hold_bars": 4, "style": "walk", "look": "bartender"}],
-                "arrive": {"waypoint": "bar_view", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
+                {"to": "bar_hold", "bars": 2, "hold_bars": 4, "style": "walk", "look": "bartender"}],
+                "arrive": {"waypoint": "bar_hold", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
         },
         "hub": {"viewpoint": "hub_view", "choice_view": True, "hold_bars": 8,
                 "choices": {"stage": {"actor": "dj", "node": "space_stage"}, "cloakroom": {"actor": "attendant", "node": "space_cloakroom"},
                             "bar": {"actor": "bartender", "node": "space_bar"}, "race": {"actor": "pilot", "node": "space_race"}, "home": {"thing": "home_hatch", "node": "bedsit"}}},
     }
+
+
+def write_activity_layouts() -> None:
+    """Where the cloakroom's and the bar's things stand in THIS map: content/bedsit/themes.json cloakroom.space.layout and bar.space.layout (the activities read them: CloakroomActivity.layout, BarData.layout).
+    The blocks are merged into the file, nothing else in it changes (tools/run/make_bedsit.py keeps them too)."""
+    path = os.path.join(ROOT, "content", "bedsit", "themes.json")
+    d = json.loads(open(path, encoding="utf-8").read())
+    r2 = lambda v: [round(v[0], 3), round(v[1], 3)]
+    c = 210
+    d["cloakroom"]["space"]["layout"] = {
+        "sector": "cloak", "customer_slots": [r2(loc(c, u, s_)) for (u, s_) in CLOAK_CUSTOMER_SLOTS], "hand_off": r2(loc(c, -0.3, 0.0)), "attendant_at": r2(loc(c, *CLOAK_ATTENDANT)),
+        "rail_at": r2(loc(c, CLOAK_RAIL[0], CLOAK_RAIL[1])), "rail_step": r2(loc(c, 0.0, CLOAK_RAIL[2])), "rail_y": 0.8, "coat_size": [0.5, 0.8],
+        "symbol_at": r2(loc(c, *CLOAK_SYMBOL)), "symbol_y": 1.35, "symbol_size": [0.8, 0.8], "prev_at": r2(loc(c, *CLOAK_PREV)), "prev_y": 1.45, "prev_size": [0.5, 0.5],
+        "counter_piece": "cloak_counter", "lamp_piece": "cloak_lamp",
+    }
+    b = 150
+    d["bar"]["space"]["layout"] = {
+        "map": "mothership", "sector": "bar", "customer_at": r2(loc(b, *BAR_CUSTOMER)), "customer_glass_at": r2(loc(b, *BAR_CUSTOMER_GLASS)), "glass_at": r2(loc(b, *BAR_GLASS)), "glass_y": 1.55,
+        "glass_size": [0.3, 0.5], "bubble_at": r2(loc(b, *BAR_BUBBLE)), "bubble_y": 2.25, "bubble_size": [0.9, 0.9], "counter_piece": "bar_counter", "shelf_prefix": "bar_shelf_",
+    }
+    with open(path, "w", encoding="utf-8", newline=chr(10)) as fh:
+        json.dump(d, fh, indent=1)
+        fh.write(chr(10))
 
 
 def write(path: str, data: dict) -> None:
@@ -451,10 +527,12 @@ def split_knob_sheet() -> None:
 def main(argv: list) -> int:
     names = build_art()
     split_knob_sheet()
+    place_activity_sheets()
     m, actors = build_map()
     write(MAP, m)
     write(STORY, build_story(actors))
     write(THEME, theme_json())
+    write_activity_layouts()
     if "--sheet" in argv:
         sheet(argv[argv.index("--sheet") + 1], names)
     print("wrote %s (%d sectors, %d things, %d waypoints), %s, %s and %d placeholder sprites" % (MAP, len(m["sectors"]), len(m["things"]), len(m["waypoints"]), STORY, THEME, len(names)))

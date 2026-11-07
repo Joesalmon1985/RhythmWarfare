@@ -44,7 +44,9 @@
   "sr_knob_0": "textures/sr_knob_0.png",
   "sr_knob_1": "textures/sr_knob_1.png",
   "sr_knob_2": "textures/sr_knob_2.png",
-  "sr_knob_3": "textures/sr_knob_3.png"
+  "sr_knob_3": "textures/sr_knob_3.png",
+  "pc_glass_lit": "textures/pc_glass_lit.png",
+  "pc_lamp_lit": "textures/pc_lamp_lit.png"
  },
  "sky": {
   "tex": "textures/sky_space.png",
@@ -1856,16 +1858,16 @@
    "actor": "attendant",
    "sector": "cloak",
    "at": [
-    -10.45,
-    -18.1
+    -11.593,
+    -18.479
    ]
   },
   {
    "actor": "bartender",
    "sector": "bar",
    "at": [
-    11.2,
-    -19.399
+    11.0,
+    -19.053
    ]
   },
   {
@@ -1877,43 +1879,19 @@
    ]
   },
   {
-   "actor": "q1",
-   "sector": "cloak",
-   "at": [
-    -8.074,
-    -16.585
-   ]
-  },
-  {
-   "actor": "q2",
-   "sector": "cloak",
-   "at": [
-    -7.718,
-    -17.368
-   ]
-  },
-  {
-   "actor": "q3",
-   "sector": "cloak",
-   "at": [
-    -10.399,
-    -15.012
-   ]
-  },
-  {
    "actor": "b1",
    "sector": "bar",
    "at": [
-    11.159,
-    -15.728
+    7.748,
+    -18.621
    ]
   },
   {
    "actor": "b2",
    "sector": "bar",
    "at": [
-    7.755,
-    -17.231
+    6.656,
+    -18.328
    ]
   },
   {
@@ -1938,6 +1916,78 @@
    "at": [
     -4.8,
     -24.0
+   ]
+  },
+  {
+   "actor": "customer_0",
+   "sector": "cloak",
+   "at": [
+    -8.674,
+    -17.624
+   ]
+  },
+  {
+   "actor": "customer_1",
+   "sector": "cloak",
+   "at": [
+    -8.068,
+    -17.974
+   ]
+  },
+  {
+   "actor": "customer_2",
+   "sector": "cloak",
+   "at": [
+    -7.462,
+    -18.324
+   ]
+  },
+  {
+   "actor": "customer_3",
+   "sector": "cloak",
+   "at": [
+    -6.856,
+    -18.674
+   ]
+  },
+  {
+   "actor": "customer_4",
+   "sector": "cloak",
+   "at": [
+    -8.728,
+    -18.517
+   ]
+  },
+  {
+   "actor": "customer_5",
+   "sector": "cloak",
+   "at": [
+    -8.122,
+    -18.867
+   ]
+  },
+  {
+   "actor": "customer_6",
+   "sector": "cloak",
+   "at": [
+    -7.515,
+    -19.217
+   ]
+  },
+  {
+   "actor": "customer_7",
+   "sector": "cloak",
+   "at": [
+    -6.909,
+    -19.567
+   ]
+  },
+  {
+   "actor": "customer",
+   "sector": "bar",
+   "at": [
+    10.986,
+    -15.828
    ]
   }
  ],
@@ -2118,6 +2168,15 @@
    "sector": "cloak"
   },
   {
+   "id": "cloak_hold",
+   "at": [
+    -8.2,
+    -14.203
+   ],
+   "yaw": 30,
+   "sector": "r7"
+  },
+  {
    "id": "bar_door",
    "at": [
     7.6,
@@ -2134,6 +2193,15 @@
    ],
    "yaw": -30,
    "sector": "bar"
+  },
+  {
+   "id": "bar_hold",
+   "at": [
+    8.2,
+    -14.203
+   ],
+   "yaw": -30,
+   "sector": "r5"
   },
   {
    "id": "hangar_door",
@@ -2175,18 +2243,6 @@
    "size": 1.05,
    "anim": "none",
    "y": 0.525
-  },
-  {
-   "id": "bass_knob",
-   "kind": "billboard",
-   "sprite": "sr_knob_0",
-   "at": [
-    0.0,
-    -25.12
-   ],
-   "size": 0.2,
-   "anim": "none",
-   "y": 0.84
   },
   {
    "id": "stage_ball",
@@ -2387,7 +2443,7 @@
    "y": 0.65
   },
   {
-   "id": "bar_shelf_1",
+   "id": "bar_cab_1",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
@@ -2399,7 +2455,21 @@
    "y": 0.9
   },
   {
-   "id": "bar_shelf_2",
+   "id": "bar_shelf_1",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    13.848,
+    -17.986
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_1",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_2",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
@@ -2411,7 +2481,21 @@
    "y": 0.9
   },
   {
-   "id": "bar_shelf_3",
+   "id": "bar_shelf_2",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    12.116,
+    -18.986
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_2",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_3",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
@@ -2423,7 +2507,21 @@
    "y": 0.9
   },
   {
-   "id": "bar_shelf_4",
+   "id": "bar_shelf_3",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    10.384,
+    -19.986
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_3",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_4",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
@@ -2435,24 +2533,52 @@
    "y": 0.9
   },
   {
+   "id": "bar_shelf_4",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    8.652,
+    -20.986
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_4",
+   "emissive": true
+  },
+  {
    "id": "cloak_counter",
    "kind": "billboard",
    "sprite": "thing_bar",
    "at": [
-    -9.7,
-    -16.801
+    -10.3,
+    -17.84
    ],
    "size": 1.2,
    "anim": "none",
    "y": 0.6
   },
   {
+   "id": "cloak_lamp",
+   "kind": "billboard",
+   "sprite": "pc_lamp_lit",
+   "at": [
+    -9.774,
+    -18.029
+   ],
+   "size": 0.5,
+   "anim": "none",
+   "y": 1.5,
+   "piece": "cloak_lamp",
+   "emissive": true
+  },
+  {
    "id": "cloak_rail",
    "kind": "billboard",
    "sprite": "thing_suit",
    "at": [
-    -10.8,
-    -18.706
+    -11.475,
+    -19.875
    ],
    "size": 1.8,
    "anim": "none",

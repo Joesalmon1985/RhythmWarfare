@@ -4,7 +4,8 @@ extends MinigameActivity
 ## judging goes on): the player touches the knob; it resists twice (a visible wobble, a strained frame) and the third touch frees it (config `resist_turns`, 3). The knob frames are a sprite
 ## sheet of four: stuck, straining, free, up (assets/story/mothership/textures/sr_knob_0..3.png, placeholder art). The activity is a pure function of the touches so far and song time.
 ##
-## (No view: ruling 38. The touch is a world region over the knob's screen point, SpaceRaveHost.hit.)
+## (No view: ruling 38. The knob is a dynamic thing of the room, `things()`, drawn by the stage; the touch is a world region over its screen point, `thing_screen_rect`, SpaceRaveHost.hit_rect;
+## the DJ is a crowd actor directed through the world port: beckon on arrival, waiting while the knob is stuck, cheer when it is free.)
 ## The change the world shows (the stage lights, the crowd dancing) and the audio (the bass stem unlocked at the next bar line) are the host's: SpaceRaveHost reads `freed_t` from `state()`
 ## the frame the knob comes free and schedules both, so they land together on the bar. The result sets `rave.<theme>.bass_fixed` (and a run flag the deck's hotspot hides itself by).
 
@@ -15,6 +16,9 @@ const FRAME_UP := 3
 const STRAIN_BEATS := 0.6
 const FREE_BEATS := 1.0
 const RISE_BEATS := 2.0
+const BECKON_BEATS := 2.0  # the DJ beckons this long when the player arrives at the deck, then waits at the stuck knob
+const KNOB_SIZE_M := 0.35  # the knob reads at the deck hold (the deck is about 2.5 m away)
+const KNOB_Y := 0.84  # its centre above the dais
 const HOLD_BEATS := 3.0  # the knob stays up this long (a happy deck) before the activity is done
 
 var turns := 0
@@ -22,15 +26,34 @@ var last_tap_t := -100.0
 var freed_t := -1.0
 var _now := 0.0
 var _theme := "space"
+var world: Object = null  # the room (WorldThings interface), null in a pure test
+var _t_begin := 0.0
+var _waiting := false
+var _cheered := false
+
+
+func setup(ctx: Dictionary) -> void:
+	super.setup(ctx)
+	world = ctx.get("world", null)
 
 
 func begin(t: float) -> void:
 	super.begin(t)
 	_now = t
+	_t_begin = t
+	if world != null:
+		world.people("dj", "beckon", t, BECKON_BEATS * beat_s)
 
 
 func update(t: float) -> void:
 	_now = t
+	if world != null and began:
+		if freed_t >= 0.0 and not _cheered:
+			_cheered = true
+			world.people("dj", "cheer", freed_t, 0.0)
+		elif freed_t < 0.0 and not _waiting and t >= _t_begin + BECKON_BEATS * beat_s:
+			_waiting = true
+			world.people("dj", "waiting", _t_begin + BECKON_BEATS * beat_s, 0.0)
 	if freed_t >= 0.0 and not _done and t >= freed_t + HOLD_BEATS * beat_s:
 		_finish("done")
 
@@ -99,18 +122,22 @@ func result() -> Dictionary:
 	return r
 
 
-## Ruling 38 / contract 10: the activity draws nothing. Its things are dynamic props of the room (the knob: a sprite sheet of four frames, `frame` set from the state machine in song time);
-## the host/stage draws them in the room's light (StoryWorld.set_dynamic_things when it lands; until then SpaceRaveHost poses the map's own `bass_knob` thing by `thing_pose`).
+## Ruling 38 / contract 10: the activity draws nothing. Its one thing is a dynamic prop of the room: the knob, a sheet of four frames (stuck, straining, free, up; sheet `sr_knob`, grid sidecar
+## [4, 1], placeholder art) 0.35 m across, its `frame` set from the state machine in song time and its `at` shaken by the wobble.
 func things() -> Array:
-	var wob := wobble_at(_now) * 0.012
-	return [{"id": "bass_knob", "sprite": "sr_knob", "at": [KNOB_AT.x + wob, KNOB_AT.y], "sector": "stage", "size": [0.2, 0.2], "frame": frame_at(_now)}]
+	var wob := wobble_at(_now) * 0.02
+	return [{"id": "bass_knob", "sprite": "sr_knob", "at": [KNOB_AT.x + wob, KNOB_AT.y], "sector": "stage", "size": [KNOB_SIZE_M, KNOB_SIZE_M], "frame": frame_at(_now), "y": KNOB_Y, "anchor": "center"}]
 
 
-## The people of the activity, directed through the crowd (contract 10): the DJ waits at the stuck knob and cheers when it is free.
+## The people of the activity, directed through the crowd (contract 10): the DJ beckons on arrival, waits at the stuck knob and cheers when it is free. (The activity calls `world.people` itself.)
 func people() -> Array:
-	return [{"id": "dj", "state": "cheer" if freed_t >= 0.0 else "waiting", "t0": freed_t if freed_t >= 0.0 else 0.0}]
+	if freed_t >= 0.0:
+		return [{"id": "dj", "state": "cheer", "t0": freed_t}]
+	if _now >= _t_begin + BECKON_BEATS * beat_s:
+		return [{"id": "dj", "state": "waiting", "t0": _t_begin + BECKON_BEATS * beat_s}]
+	return [{"id": "dj", "state": "beckon", "t0": _t_begin}]
 
 
-## The knob's place on the map (the deck's middle, content/story/maps/space_rave.json thing `bass_knob`) and the radius of its tap region in metres.
+## The knob's place on the deck (the deck's middle: content/story/maps/space_rave.json, thing `deck` at z -25.2) and the radius of its tap region in metres (only the tests' projection uses it).
 const KNOB_AT := Vector2(0.0, -25.12)
 const KNOB_TAP_M := 0.45

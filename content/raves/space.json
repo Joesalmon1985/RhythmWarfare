@@ -144,11 +144,11 @@
    "route": "space.to_stage"
   },
   "cloakroom": {
-   "waypoint": "cloak_view",
+   "waypoint": "cloak_hold",
    "route": "space.to_cloak"
   },
   "bar": {
-   "waypoint": "bar_view",
+   "waypoint": "bar_hold",
    "route": "space.to_bar"
   }
  },
@@ -241,7 +241,7 @@
      ]
     },
     {
-     "to": "cloak_view",
+     "to": "cloak_hold",
      "bars": 2,
      "hold_bars": 4,
      "style": "walk",
@@ -249,7 +249,7 @@
     }
    ],
    "arrive": {
-    "waypoint": "cloak_view",
+    "waypoint": "cloak_hold",
     "choice_view": true,
     "hold": "window"
    },
@@ -280,7 +280,7 @@
      ]
     },
     {
-     "to": "bar_view",
+     "to": "bar_hold",
      "bars": 2,
      "hold_bars": 4,
      "style": "walk",
@@ -288,7 +288,7 @@
     }
    ],
    "arrive": {
-    "waypoint": "bar_view",
+    "waypoint": "bar_hold",
     "choice_view": true,
     "hold": "window"
    },

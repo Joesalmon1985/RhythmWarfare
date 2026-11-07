@@ -87,7 +87,85 @@
      "skin": "#f8b08a",
      "extra": "#ffffff"
     }
-   ]
+   ],
+   "layout": {
+    "sector": "cloak",
+    "customer_slots": [
+     [
+      -8.674,
+      -17.624
+     ],
+     [
+      -8.068,
+      -17.974
+     ],
+     [
+      -7.462,
+      -18.324
+     ],
+     [
+      -6.856,
+      -18.674
+     ],
+     [
+      -8.728,
+      -18.517
+     ],
+     [
+      -8.122,
+      -18.867
+     ],
+     [
+      -7.515,
+      -19.217
+     ],
+     [
+      -6.909,
+      -19.567
+     ]
+    ],
+    "hand_off": [
+     0.15,
+     0.26
+    ],
+    "attendant_at": [
+     -11.593,
+     -18.479
+    ],
+    "rail_at": [
+     -12.259,
+     -19.134
+    ],
+    "rail_step": [
+     0.26,
+     -0.15
+    ],
+    "rail_y": 0.8,
+    "coat_size": [
+     0.5,
+     0.8
+    ],
+    "symbol_at": [
+     -10.25,
+     -17.754
+    ],
+    "symbol_y": 1.35,
+    "symbol_size": [
+     0.8,
+     0.8
+    ],
+    "prev_at": [
+     -11.029,
+     -17.304
+    ],
+    "prev_y": 1.45,
+    "prev_size": [
+     0.5,
+     0.5
+    ],
+    "counter_piece": "cloak_counter",
+    "lamp_piece": "cloak_lamp"
+   }
   },
   "magic": {
    "symbols": [
@@ -270,7 +348,39 @@
      "body": "#e87fb8",
      "kind": "antenna"
     }
-   ]
+   ],
+   "layout": {
+    "map": "mothership",
+    "sector": "bar",
+    "customer_at": [
+     10.986,
+     -15.828
+    ],
+    "customer_glass_at": [
+     10.866,
+     -16.821
+    ],
+    "glass_at": [
+     9.717,
+     -17.83
+    ],
+    "glass_y": 1.55,
+    "glass_size": [
+     0.3,
+     0.5
+    ],
+    "bubble_at": [
+     10.986,
+     -15.828
+    ],
+    "bubble_y": 2.25,
+    "bubble_size": [
+     0.9,
+     0.9
+    ],
+    "counter_piece": "bar_counter",
+    "shelf_prefix": "bar_shelf_"
+   }
   },
   "magic": {
    "ingredients": [

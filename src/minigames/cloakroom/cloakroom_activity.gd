@@ -23,11 +23,14 @@ const SHOW_PREVIOUS_TRIALS := 3
 const SECTOR := "cloak"
 const COAT_COLS := 4  # sheet cloak_coat: 4 colours across, one row per state: 0 on the rail, 1 carried, 2 handed over; frame = row * 4 + colour
 const SYMBOL_COLS := 4  # sheet cloak_symbols_<theme>: the four symbols across, row 0 the tag's, row 1 the faded previous one; frame = row * 4 + symbol
-const CUSTOMER_AT := Vector2(1.8, -1.7)
-const QUEUE_AT := Vector2(2.7, -1.5)  # the first waiting customer; the rest follow 0.6 m further along x
-const ATTENDANT_AT := Vector2(-0.8, -2.7)
-const RAIL_X0 := -3.7  # coat j hangs at RAIL_X0 + 0.3 * j
-const RAIL_Z := -2.55
+## Where the things stand in the room's map: these are the test scene's (tests/fixtures/cloakroom_scene); a rave overrides any key in content/bedsit/themes.json "cloakroom.<theme>.layout"
+## (or the request config's "layout"). Metres: `at` is [x, z] on the ground plane, `y` the height of a thing's bottom edge above the floor. `customer_slots` is one standing place per
+## customer (the coat is carried from there); a layout with one slot uses it for every customer. The rail's coat j hangs at `rail_at + rail_step * j`.
+const LAYOUT := {
+	"sector": "cloak", "customer_slots": [[1.8, -1.7]], "hand_off": [-0.3, 0.0], "attendant_at": [-0.8, -2.7], "rail_at": [-3.7, -2.55], "rail_step": [0.3, 0.0], "rail_y": 1.0,
+	"coat_size": [0.5, 0.8], "symbol_at": [0.0, -2.15], "symbol_y": 1.15, "symbol_size": [0.8, 0.8], "prev_at": [-0.9, -2.15], "prev_y": 1.25, "prev_size": [0.5, 0.5],
+	"counter_piece": "cloak_counter", "lamp_piece": "",
+}
 
 var theme := ""
 var symbol_ids: Array = []  # four symbol ids of the theme (CloakroomArt)
@@ -53,6 +56,7 @@ var _payoff_beats := 4.0
 var _restored := false
 var world: Object = null  # the room (WorldThings interface), null in a pure test
 var _pushed := ""
+var _layout: Dictionary = {}
 
 
 func setup(ctx: Dictionary) -> void:
@@ -68,6 +72,7 @@ func setup(ctx: Dictionary) -> void:
 	symbol_ids = CloakroomArt.symbols_for(theme, config.get("cloakroom_symbols", []))
 	_key = "%s/cloakroom" % theme
 	world = ctx.get("world", null)
+	_layout = layout(config, theme)
 	_sig = "%d|%s" % [coats, ",".join(PackedStringArray(symbol_ids))]
 	var saved := CloakroomSession.load_state(_key)
 	if not saved.is_empty() and str(saved.get("sig", "")) == _sig:
@@ -81,6 +86,28 @@ func setup(ctx: Dictionary) -> void:
 		seq = g["seq"]
 		expected = g["expected"]
 	_build_demo()
+
+
+## The layout of theme `theme`: LAYOUT with the theme's (themes.json), then the config's, overrides.
+static func layout(cfg: Dictionary, th: String) -> Dictionary:
+	var out: Dictionary = LAYOUT.duplicate(true)
+	var l: Variant = CloakroomArt.theme_data(th).get("layout", {}) if th != "" else {}
+	if typeof(l) == TYPE_DICTIONARY:
+		out.merge(l, true)
+	if typeof(cfg.get("layout", null)) == TYPE_DICTIONARY:
+		out.merge(cfg["layout"], true)
+	return out
+
+
+func _slot(j: int) -> Vector2:
+	var slots: Array = _layout["customer_slots"]
+	var v: Array = slots[mini(j, slots.size() - 1)]
+	return Vector2(float(v[0]), float(v[1]))
+
+
+func _v2(key: String) -> Vector2:
+	var v: Array = _layout[key]
+	return Vector2(float(v[0]), float(v[1]))
 
 
 func _build_demo() -> void:
@@ -277,7 +304,9 @@ func _direct(phase: String, t0: float, t_end: float) -> void:
 		"payoff":
 			world.people("attendant", "clap", t0, dur)
 			world.people(_customer_id(clampi(coats - 1, 0, coats - 1)), "hands_up", t0, dur)
-			world.feedback("cloak_counter", "glow", t0)
+			world.feedback(str(_layout["counter_piece"]), "glow", t0)
+			if str(_layout["lamp_piece"]) != "":
+				world.piece_on(str(_layout["lamp_piece"]), t0)
 
 
 func _push() -> void:
@@ -302,7 +331,7 @@ func handover() -> float:
 
 
 func _thing(id: String, sprite: String, at: Vector2, size: Vector2, frame: int, y := 0.0) -> Dictionary:
-	return {"id": id, "sprite": sprite, "at": [at.x, at.y], "sector": SECTOR, "size": [size.x, size.y], "frame": frame, "y": y}
+	return {"id": id, "sprite": sprite, "at": [at.x, at.y], "sector": str(_layout["sector"]), "size": [size.x, size.y], "frame": frame, "y": y}
 
 
 ## The dynamic things of the room at the last song time: [{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, y}], in a fixed order. One coat per coat still to come hangs on the
@@ -312,28 +341,32 @@ func things() -> Array:
 	var out: Array = []
 	var done := _phase in ["payoff", "done"]
 	var cur := _handled()
-	var coat_size := Vector2(0.5, 0.8)
+	var coat_size := _v2("coat_size")
+	var rail0 := _v2("rail_at")
+	var step := _v2("rail_step")
+	var ry := float(_layout["rail_y"])
 	for j in coats:
 		var col := j % COAT_COLS
 		if done or j < cur:
 			continue
+		var hand := _slot(j) + _v2("hand_off")
 		if j > cur:
-			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", Vector2(RAIL_X0 + 0.3 * float(j), RAIL_Z), coat_size, col, 1.0))
+			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", rail0 + step * float(j), coat_size, col, ry))
 		elif _phase == "process":
 			var h := handover()
 			if h <= 0.0:
-				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", CUSTOMER_AT + Vector2(-0.3, 0), coat_size, COAT_COLS + col, 1.0))
+				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", hand, coat_size, COAT_COLS + col, ry))
 			else:
-				var p := (CUSTOMER_AT + Vector2(-0.3, 0)).lerp(ATTENDANT_AT + Vector2(0.3, 0), h)
-				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", p, coat_size, 2 * COAT_COLS + col, 1.0 + sin(h * PI) * 0.4))
+				var p := hand.lerp(_v2("attendant_at") - _v2("hand_off"), h)
+				out.append(_thing("cloak_coat_%d" % j, "cloak_coat", p, coat_size, 2 * COAT_COLS + col, ry + sin(h * PI) * 0.4))
 		else:
-			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", CUSTOMER_AT + Vector2(-0.3, 0), coat_size, COAT_COLS + col, 1.0))
+			out.append(_thing("cloak_coat_%d" % j, "cloak_coat", hand, coat_size, COAT_COLS + col, ry))
 	var st := state()
 	var sheet := "cloak_symbols_%s" % (theme if theme != "" else "space")
 	if str(st["current"]) != "":
-		out.append(_thing("cloak_symbol_current", sheet, Vector2(0.0, -2.15), Vector2(0.8, 0.8), symbol_ids.find(st["current"]), 1.15))
+		out.append(_thing("cloak_symbol_current", sheet, _v2("symbol_at"), _v2("symbol_size"), symbol_ids.find(st["current"]), float(_layout["symbol_y"])))
 	if str(st["previous"]) != "" and bool(st["show_previous"]):
-		out.append(_thing("cloak_symbol_previous", sheet, Vector2(-0.9, -2.15), Vector2(0.5, 0.5), SYMBOL_COLS + symbol_ids.find(st["previous"]), 1.25))
+		out.append(_thing("cloak_symbol_previous", sheet, _v2("prev_at"), _v2("prev_size"), SYMBOL_COLS + symbol_ids.find(st["previous"]), float(_layout["prev_y"])))
 	return out
 
 
