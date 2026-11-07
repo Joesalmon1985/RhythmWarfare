@@ -184,10 +184,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4
@@ -426,10 +424,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4
@@ -607,10 +603,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4
@@ -821,10 +815,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4
@@ -1044,10 +1036,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4
@@ -1264,10 +1254,8 @@
    "default": false,
    "repeatable": true,
    "staging": {
-    "archetype": "door",
-    "door": "none",
+    "archetype": "custom",
     "lamp": false,
-    "height_m": 3.0,
     "touch": {
      "w": 2.2,
      "h": 3.4

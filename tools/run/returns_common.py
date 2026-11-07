@@ -11,7 +11,7 @@ THE OBJECT. One definition per quest (DEFS), the same object in every scene of t
 (assets/run/choice/warehouse/door_*.png), standing in the scene like a door that does not belong to that world. Shut-but-ajar (door_1: a sliver of the club's violet light) while it is
 not the pick, wide open on the lit corridor (door_3) when it is; it pulses on the beat (staging motion `pulse`: the bass thump). It is staged by the choice layer's `prop` steps with
 the art's path under the shared folder (`warehouse/door_N`), so a world's own door set (galilee, airfield, ash ...) never replaces it. It is a hotspot of kind `object`, not an exit
-(an exit is one per route and may be the default; the return is neither).
+(an exit is one per route and may be the default; the return is neither). Its staging archetype is `custom`: a `door` would count as a second open door when the ending's own exit leads the same way (test_choice_clarity).
 
 NEVER GATED. Success routes `run:warehouse` (the router lands it on the checkpoint, N2.2) and so does failure, with a small energy cost: the miss is not a refusal and does not change where
 the object leads (docs/narrative/N2_2_ROUTER.md "No rhythm gate": a failure that leads the same way as the success stays as authored).
@@ -95,7 +95,7 @@ def staging(q: str) -> dict:
     beacon = {"prop": ART_LAMP, "at": [0.0, h + 0.4, 0.0], "size": 0.6}  # the Warehouse's green round lamp over the door: a lit beacon that a dark steel door needs in a snow storm or a night harbour
     shut = [{"prop": ART_SHUT, "size": h, "motion": "pulse"}, beacon]
     wide = [{"prop": ART_OPEN, "size": h, "motion": "pulse"}, beacon]
-    return {"archetype": "door", "door": "none", "lamp": False, "height_m": h, "touch": {"w": 2.2, "h": 3.4},
+    return {"archetype": "custom", "lamp": False, "touch": {"w": 2.2, "h": 3.4},
             "states": {"current": wide, "other": shut, "committed": wide, "declined": shut}}
 
 
