@@ -230,6 +230,20 @@ def themes_json() -> dict:
     }
 
 
+KEPT_THEME_BLOCKS = ("cloakroom", "bar")  # authored by the activity packages, not generated here: a regeneration keeps them (and any other top-level key it does not write)
+
+
+def merge_themes(fresh: dict, existing_path: Path) -> dict:
+    """The generated themes.json, with every block the generator does not own taken over from the file on disk (the `cloakroom` and `bar` blocks: per-theme looks, symbols, ingredients, layouts)."""
+    if not existing_path.exists():
+        return fresh
+    old = json.loads(existing_path.read_text(encoding="utf-8"))
+    for k, v in old.items():
+        if k in KEPT_THEME_BLOCKS or k not in fresh:
+            fresh[k] = v
+    return fresh
+
+
 def routes_json() -> dict:
     return {
         "version": 1,
@@ -299,7 +313,7 @@ def main(argv: list) -> int:
                 md["nodes"].append({"id": n["id"], "audio": "bedsit_room", "chart": "bedsit_room", "treatment": "none", "temporary": False})
         write(mp, md)
     write(ROOT / "content" / "story" / "bedsit.json", story_json())
-    write(BEDSIT_DIR / "themes.json", themes_json())
+    write(BEDSIT_DIR / "themes.json", merge_themes(themes_json(), BEDSIT_DIR / "themes.json"))
     write(BEDSIT_DIR / "routes.json", routes_json())
     track_scenes_entry()
     print("wrote content/paths/bedsit (run.json, hotspots/bedsit.json, music.json if new), content/bedsit/{themes,routes}.json and the track_scenes entry")

@@ -308,3 +308,20 @@ func test_a_scene_that_is_not_the_rave_is_left_alone() -> void:
 	host.enter("bedsit", 0.0)
 	assert_false(host.in_rave)
 	assert_eq(host.log, [])
+
+
+# --- the generator keeps the activity blocks of themes.json (integration step 1)
+
+func test_themes_json_keeps_the_cloakroom_and_bar_blocks_and_the_generator_merges_them() -> void:
+	var t: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/bedsit/themes.json"))
+	for block in ["cloakroom", "bar"]:
+		assert_true(t.has(block), "themes.json has the %s block" % block)
+		for th in ["space", "magic", "dinos", "transport"]:
+			assert_true((t[block] as Dictionary).has(th), "%s.%s" % [block, th])
+	var src := FileAccess.get_file_as_string("res://tools/run/make_bedsit.py")
+	assert_true(src.contains("merge_themes(themes_json()"), "the writer merges instead of overwriting")
+	var out: Array = []
+	var code := OS.execute("python3", ["-I", "-c", "import sys,json,pathlib;sys.path.insert(0,sys.argv[1]);import make_bedsit as m;print(sorted(m.merge_themes(m.themes_json(),pathlib.Path(sys.argv[2])).keys()))",
+			ProjectSettings.globalize_path("res://tools/run"), ProjectSettings.globalize_path("res://content/bedsit/themes.json")], out)
+	if code == 0:
+		assert_true(str(out[0]).contains("'bar'") and str(out[0]).contains("'cloakroom'"), "a regeneration keeps both blocks: %s" % str(out))
