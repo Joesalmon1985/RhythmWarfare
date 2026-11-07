@@ -43,7 +43,7 @@ crushed 0 %, blown 0.1 %.
 
 ## Hooks wanted (nothing in `src/` was touched)
 
-* A route out of a world only through the world's exit scene: the lounge is its own world and the Warehouse reaches it through `doom_warehouse.return` (route `right`), not straight from the chill-out stand-in. A direct Floor-to-lounge route needs either the run graph to allow cross-world routes from a doom scene or both scenes to share a world with a per-scene map.
+* The lounge is the geography world `doom_lounge` (one scene); the Warehouse's right guide leads straight here, and its guides lead straight to `doom_dock` (up), `doom_bar` (left), `doom_warehouse` (right).
 * The walks to the thresholds (`rail.routes`) are not played by the run yet.
 
 ## Shots (7 November, `docs/shots/doom/lounge/`)

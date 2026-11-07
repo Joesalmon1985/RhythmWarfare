@@ -12,97 +12,9 @@
    "temporary": false
   },
   {
-   "id": "doom_warehouse.balcony",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_warehouse.bar",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_warehouse.chill",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_warehouse.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
    "id": "doom_booth",
    "arrangement": "warehouse_1",
    "slot": 0,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_booth.mothership",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_booth.balcony",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_booth.dock",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_booth.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
    "alternates": [
     "warehouse_2",
     "warehouse_3"
@@ -122,97 +34,9 @@
    "temporary": true
   },
   {
-   "id": "doom_bar.booth",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": true
-  },
-  {
-   "id": "doom_bar.floor",
-   "arrangement": "warehouse_1",
-   "slot": 0,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": true
-  },
-  {
-   "id": "doom_bar.chill",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": true
-  },
-  {
-   "id": "doom_bar.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": true
-  },
-  {
    "id": "doom_lounge",
    "arrangement": "warehouse_1",
    "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_lounge.dock",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_lounge.bar",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_lounge.floor",
-   "arrangement": "warehouse_1",
-   "slot": 0,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_lounge.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
    "alternates": [
     "warehouse_2",
     "warehouse_3"
@@ -232,97 +56,9 @@
    "temporary": false
   },
   {
-   "id": "doom_dock.mothership",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_dock.floor",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_dock.underworld",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_dock.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
    "id": "doom_underworld",
    "arrangement": "warehouse_1",
    "slot": 0,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_underworld.mothership",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_underworld.floor",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_underworld.dock",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_underworld.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
    "alternates": [
     "warehouse_2",
     "warehouse_3"
@@ -342,97 +78,9 @@
    "temporary": false
   },
   {
-   "id": "doom_mothership.underworld",
-   "arrangement": "warehouse_1",
-   "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_mothership.booth",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_mothership.dock",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_mothership.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
    "id": "doom_balcony",
    "arrangement": "warehouse_1",
    "slot": 2,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_balcony.mothership",
-   "arrangement": "warehouse_1",
-   "slot": 1,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_balcony.floor",
-   "arrangement": "warehouse_1",
-   "slot": 0,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_balcony.booth",
-   "arrangement": "warehouse_1",
-   "slot": 3,
-   "alternates": [
-    "warehouse_2",
-    "warehouse_3"
-   ],
-   "treatment": "none",
-   "temporary": false
-  },
-  {
-   "id": "doom_balcony.return",
-   "arrangement": "warehouse_1",
-   "slot": 5,
    "alternates": [
     "warehouse_2",
     "warehouse_3"

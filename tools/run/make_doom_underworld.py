@@ -1,10 +1,9 @@
 """The Underworld's part of the Doom worlds overlay (docs/doom/scenes/underworld.md): the world `doom_underworld`, its scenes, its hotspots, its story. Called from tools/run/make_doom.py
 (`write`), which merges it into content/run/doom/run.json, music.json and hotspots/doom_underworld.json.
 
-Routing (docs/briefs/DOOM_WAVE2_BRIEF.md): from the Underworld ahead = Mothership, left = Floor, right = Dock. Those worlds are not joined up on this branch, so under the flag the three are
-STAND-INS of this world (doom_underworld.mothership, .floor, .dock: the same map and the Underworld's own rail), each leading on to `doom_underworld.return`, the world's exit scene, whose two
-routes loop back. The engine package for geography worlds (hook H1.6) will route the entry scene straight into the other worlds and a generator change will delete the stand-ins, so the DATA
-the real cut needs is already here: the threshold waypoint is the `to` of each route move (`EXITS`), the doorway is `rail.exits[dir]`, the route labels are the destination names.
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_mothership, left doom_warehouse (the Floor), right doom_dock. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
@@ -13,14 +12,14 @@ from pathlib import Path
 
 WORLD_ID = "doom_underworld"
 ROOT = Path(__file__).resolve().parent.parent.parent
-WORLD = {"id": WORLD_ID, "title": "The Underworld (Doom worlds)", "map": "doom_underworld", "depth": 2, "story": "res://content/run/doom/story_doom_underworld.json",
+WORLD = {"id": WORLD_ID, "title": "The Underworld (Doom worlds)", "map": "doom_underworld", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_underworld.json",
          "blurb": "A black basalt plateau over a lava abyss. The ledge ahead climbs to the Mothership, the cave on the left leads to the Dance Floor, the stair on the right to the Dock: follow the guide you like."}
 EXITS = {"up": "uw_gate", "left": "uw_cave_in", "right": "uw_shelf_end", "down": "uw_ref"}
 DIR_OF = {"mothership": "up", "floor": "left", "dock": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
-    "mothership": ("uw_guide_mothership", "doom_underworld.mothership", "mothership"),
-    "floor": ("uw_guide_floor", "doom_underworld.floor", "floor"),
-    "dock": ("uw_guide_dock", "doom_underworld.dock", "dock"),
+    "mothership": ("uw_guide_mothership", "doom_mothership", "mothership"),
+    "floor": ("uw_guide_floor", "doom_warehouse", "floor"),
+    "dock": ("uw_guide_dock", "doom_dock", "dock"),
 }
 
 
@@ -44,13 +43,9 @@ def _rail(P):
 
 # id, short name, title, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_underworld", "underworld", "The Underworld", False,
-     [("doom_underworld", "down", "Stay on the plateau", True), ("doom_underworld.mothership", "up", "Up the ledge to the Mothership", False),
-      ("doom_underworld.floor", "left", "Into the cave to the Dance Floor", False), ("doom_underworld.dock", "right", "Up the stair to the Dock", False)], 0),
-    ("doom_underworld.mothership", "underworld_mothership", "The Mothership (stand-in)", False, [("doom_underworld.return", "up", "On", False)], 2),
-    ("doom_underworld.floor", "underworld_floor", "The Dance Floor (stand-in)", False, [("doom_underworld.return", "up", "On", False)], 1),
-    ("doom_underworld.dock", "underworld_dock", "The Dock (stand-in)", False, [("doom_underworld.return", "up", "On", False)], 3),
-    ("doom_underworld.return", "underworld_return", "Back to the Underworld", True, [("doom_underworld", "up", "Round again", True), ("doom_underworld", "left", "Round again", True)], 5),
+    ("doom_underworld", "underworld", "The Underworld", True,
+     [("doom_underworld", "down", "Stay on the plateau", True), ("doom_mothership", "up", "Up the ledge to the Mothership", False),
+      ("doom_warehouse", "left", "Into the cave to the Dance Floor", False), ("doom_dock", "right", "Up the stair to the Dock", False)], 0),
 ]
 
 

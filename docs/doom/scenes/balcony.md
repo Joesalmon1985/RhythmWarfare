@@ -19,8 +19,8 @@ Reference viewpoint `bc_ref` (0.5, 1.9) looks north (choice viewpoint, 8 bars st
 (`tests/test_doom_views.gd`, balcony block: 60 px minimum, inside the picture, apart, clear of the HUD, sightline clear of solid walls).
 
 Rail (`tools/run/make_doom_balcony.py`, merged by `make_doom.py`): stay loop = bridge view, stair view, cabin view (each 2 bars still, via polylines), then `bc_ref` (choice, 8 bars). `rail.routes`: `up` (deck, three bridge steps, to the bridge end),
-`left` (deck, landing, down the five treads), `right` (deck, through the cabin door), `stumble`, `arrive`. World `doom_balcony` (depth 2): entry `doom_balcony`, stand-ins `doom_balcony.mothership/.floor/.booth`, exit scene
-`doom_balcony.return`. Data for the real cut: threshold = `to` of each route move, doorway = `rail.exits[dir]`, labels name the destinations.
+`left` (deck, landing, down the five treads), `right` (deck, through the cabin door), `stumble`, `arrive`. World `doom_balcony` (depth 2, geography): one scene `doom_balcony`, its routes straight to `doom_mothership` (up), `doom_warehouse` (left),
+`doom_booth` (right). The threshold is the `to` of each route move, the doorway `rail.exits[dir]`.
 
 ## Shots (docs/shots/doom/balcony/)
 
@@ -36,8 +36,7 @@ guide is small (73 px). All figures and art are procedural placeholders.
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_balcony_art.py`, `make_balcony_guides.py`; the Floor guide is the Lounge's sprite set, the Mothership guide the Booth's, the Booth guide a recolour); the stand-in destinations; the music
-(Warehouse arrangements). Two plain drops (`isle` to `vw2`, `isle` to `ve2`) stay open without a railing because the loader needs every void joined to the map by one open portal. The Warehouse's stand-in for this scene was renamed `doom_warehouse.balcony`
-(`doom_balcony` is now this world's entry); `doom_warehouse.return` offers no route to `doom_balcony` (its `up` is "Round again"): reach it with `--scene doom_balcony`. Hook needed (no `src/` change made): H1.6 to route the threshold waypoints into the other worlds.
+Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_balcony_art.py`, `make_balcony_guides.py`; the Floor guide is the Lounge's sprite set, the Mothership guide the Booth's, the Booth guide a recolour); the music
+(Warehouse arrangements). Two plain drops (`isle` to `vw2`, `isle` to `ve2`) stay open without a railing because the loader needs every void joined to the map by one open portal. The Warehouse's up guide leads straight to `doom_balcony` (geography worlds, H1.6, built).
 
 Regenerate: see `docs/doom/LAUNCH.md` (balcony block).

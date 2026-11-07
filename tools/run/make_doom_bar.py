@@ -1,17 +1,14 @@
-"""The Copper Bar's part of the Doom overlay (docs/doom/scenes/bar.md): the world `doom_bar` (map `doom_bar`, tools/doom/author_bar.py), its entry scene `doom_bar`, three in-world
-stand-ins for the guides' destinations and the world's exit scene. Imported by tools/run/make_doom.py, which writes it into content/run/doom/ with the Warehouse's.
+"""The Copper Bar's part of the Doom overlay (docs/doom/scenes/bar.md): the world `doom_bar` (map `doom_bar`, tools/doom/author_bar.py), its one scene `doom_bar`. Imported by tools/run/make_doom.py, which writes it into content/run/doom/ with the Warehouse's.
 
-Why a world of its own and stand-ins: a run node takes its map from its world, and only a world's exit scene may lead to another world (RunData._validate_routes), so the Bar scene is
-the entry of a world `doom_bar`, and what the three guides point at (the Booth ahead, the Floor left, the Chill-out right) are stand-in scenes of that world, as the Warehouse pilot's
-three are of its own, each leading on to `doom_bar.return`, the exit scene, which loops back. The real transition at the guides' thresholds (a walk to the threshold, then a cut to the
-other world's arrival) is engine hook H1.6 (docs/parallel-development/CONTRACTS.md); the rail already carries the walks to the thresholds as `rail.routes` (up, left, right).
-The Warehouse's own route to the Bar is the Warehouse's exit scene (`doom_warehouse.return`, route left): see make_doom.py.
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_booth, left doom_warehouse (the Floor), right doom_lounge (the Chill-out). The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
 import json
 
-WORLD = {"id": "doom_bar", "title": "The Copper Bar (Doom worlds)", "map": "doom_bar", "depth": 2, "story": "res://content/run/doom/story_doom_bar.json",
+WORLD = {"id": "doom_bar", "title": "The Copper Bar (Doom worlds)", "map": "doom_bar", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_bar.json",
          "blurb": "A brick passage under copper pipes, a drain channel crossed by grates. The booth up the stairs, the Floor to the left, the Chill-out across the water: follow the guide you like."}
 SCENE = "doom_bar"
 
@@ -54,18 +51,14 @@ def rail():
 
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_bar", "bar", "The Copper Bar", True, False,
-     [("doom_bar", "down", "Stay in the bar", True), ("doom_bar.booth", "up", "Up the stairs to the booth", False), ("doom_bar.floor", "left", "Back to the floor", False),
-      ("doom_bar.chill", "right", "Over the water to the chill-out", False)], 1),
-    ("doom_bar.booth", "booth", "The Booth (stand-in)", False, False, [("doom_bar.return", "up", "On", False)], 2),
-    ("doom_bar.floor", "floor", "The Floor (stand-in)", False, False, [("doom_bar.return", "up", "On", False)], 0),
-    ("doom_bar.chill", "chill", "The Chill-out (stand-in)", False, False, [("doom_bar.return", "up", "On", False)], 3),
-    ("doom_bar.return", "return", "Back to the Bar", False, True, [("doom_bar", "up", "Round again", True), ("doom_bar", "left", "Round again", True)], 5),
+    ("doom_bar", "bar", "The Copper Bar", True, True,
+     [("doom_bar", "down", "Stay in the bar", True), ("doom_booth", "up", "Up the stairs to the booth", False), ("doom_warehouse", "left", "Back to the floor", False),
+      ("doom_lounge", "right", "Over the water to the chill-out", False)], 1),
 ]
 GUIDE = {  # hotspot id suffix: (guide thing, route, sprite stem, direction, lamp thing)
-    "booth": ("wb_guide_booth", "doom_bar.booth", "booth", "up", "wb_lamp_booth"),
-    "floor": ("wb_guide_floor", "doom_bar.floor", "floor", "left", "wb_lamp_floor"),
-    "chill": ("wb_guide_chill", "doom_bar.chill", "chill", "right", "wb_lamp_chill"),
+    "booth": ("wb_guide_booth", "doom_booth", "booth", "up", "wb_lamp_booth"),
+    "floor": ("wb_guide_floor", "doom_warehouse", "floor", "left", "wb_lamp_floor"),
+    "chill": ("wb_guide_chill", "doom_lounge", "chill", "right", "wb_lamp_chill"),
 }
 
 

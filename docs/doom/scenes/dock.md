@@ -20,8 +20,8 @@ Reference viewpoint `dk_ref` (1.0, 1.5) looks north (choice viewpoint, 8 bars st
 at 16:9 and 20:9 alike (`tests/test_doom_views.gd`, dock block: 60 px minimum, inside the picture, apart, clear of the HUD, and a sightline test against the solid walls).
 
 Rail (`tools/run/make_doom_dock.py`, merged by `make_doom.py`): stay loop = street view, door view, yard view (each 2 bars still, via polylines), then `dk_ref` (choice, 8 bars). `rail.routes`: `up` (street to `dk_moth`), `left` (apron, sidewalk,
-door, passage to `dk_floor_door`), `right` (street, yard to `dk_under`), `stumble`, `arrive`; each route ends at its threshold with `hold_bars` 1, `rail.exits` names the three. World `doom_dock` is depth 2: entry scene `doom_dock`, stand-ins
-`doom_dock.mothership/.floor/.underworld`, exit scene `doom_dock.return`; three guide hotspots (figure staging, no rings) and the stay hotspot. The cast is empty (the painting has only its guides).
+door, passage to `dk_floor_door`), `right` (street, yard to `dk_under`), `stumble`, `arrive`; each route ends at its threshold with `hold_bars` 1, `rail.exits` names the three. World `doom_dock` is depth 2, geography: one scene `doom_dock`, its routes straight to
+`doom_mothership` (up), `doom_warehouse` (left), `doom_underworld` (right); three guide hotspots (figure staging, no rings) and the stay hotspot. The cast is empty (the painting has only its guides).
 
 ## Shots (docs/shots/doom/dock/)
 
@@ -37,5 +37,5 @@ Exposure (frame_check over the seven kept shots): p50 0.22, p95-p5 0.45, crushed
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_dock_art.py`, `make_dock_guides.py`, procedural); the stand-in destinations; the music (Warehouse arrangements). Hooks needed: a real sky (the map's `sky` is empty, the
-ceiling tile stands in), rain particles and wet-floor reflection, the engine's geography hook H1.6 (the thresholds `dk_moth`, `dk_floor_door`, `dk_under` and `rail.exits` are in the data; the stand-ins are then deleted in `make_doom_dock.py`). No `src/` change was made.
+Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_dock_art.py`, `make_dock_guides.py`, procedural); the music (Warehouse arrangements). Hooks needed: a real sky (the map's `sky` is empty, the
+ceiling tile stands in), rain particles and wet-floor reflection. No `src/` change was made.

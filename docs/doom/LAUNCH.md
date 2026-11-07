@@ -18,18 +18,31 @@ The Doom scenes are behind a flag and an overlay: nothing in `content/run/run.js
 
 ## What the flag adds
 
-`RW_DOOM_WORLDS=1` makes `RunData` merge `content/run/doom/` into the main run: the world `doom_warehouse` (its StoryData `story_doom_warehouse.json` is the Night One cast with the camera moves taken out),
-five scenes, their music entries (the Warehouse arrangements), the hotspots in `content/run/doom/hotspots/doom_warehouse.json` and three cinematics.
+`RW_DOOM_WORLDS=1` makes `RunData` merge `content/run/doom/` into the main run: eight GEOGRAPHY worlds (`docs/engine/GEOGRAPHY_WORLDS.md`, hook H1.6), each ONE scene whose id is the world id
+(`doom_warehouse` depth 1, the other seven depth 2), with its music entry (the Warehouse arrangements), its hotspots in `content/run/doom/hotspots/<world>.json` (three guides and the stay) and its
+StoryData `story_doom_<world>.json`. There are no stand-in and no return scenes.
 
-Scenes (placeholders, see `tools/run/make_doom.py`): `doom_warehouse` (entry; routes: stay on the floor (default), `doom_balcony` ahead, `doom_bar` left, `doom_warehouse.chill` right: the stand-in for the lounge world below). The three destinations
-are ALIASES of the same scene and map until the real ones exist; each leads on to `doom_warehouse.return`, the world's exit scene, whose two routes loop back to the floor.
+Each scene's `down` route is the stay loop; its three guides lead straight to the entry scenes of other worlds, per the brief's table (ahead = `up`, left, right):
+
+| Scene | up | left | right |
+| --- | --- | --- | --- |
+| `doom_warehouse` (the Floor) | `doom_balcony` | `doom_bar` | `doom_lounge` |
+| `doom_bar` | `doom_booth` | `doom_warehouse` | `doom_lounge` |
+| `doom_balcony` | `doom_mothership` | `doom_warehouse` | `doom_booth` |
+| `doom_lounge` (the Chill-out) | `doom_dock` | `doom_bar` | `doom_warehouse` |
+| `doom_booth` | `doom_mothership` | `doom_balcony` | `doom_dock` |
+| `doom_dock` | `doom_mothership` | `doom_warehouse` | `doom_underworld` |
+| `doom_mothership` | `doom_underworld` | `doom_booth` | `doom_dock` |
+| `doom_underworld` | `doom_mothership` | `doom_warehouse` | `doom_dock` |
+
+Picking a guide walks the route move (`rail.routes[dir]`, ending at its threshold `rail.exits[dir]`) by the boundary, the passage frame shuts, the stage swaps to the destination's map on the
+downbeat and the arrival walks home. `RW_RUN_START=doom_<scene>` still starts in any of the eight. Tests: `tests/test_doom_views.gd` (`test_the_overlay_is_one_geography_graph_per_the_brief_table`),
+`tests/test_doom_cuts.gd` (a real Warehouse to Bar to Floor cut on the run scene). Shot of that cut: `python3 tools/doom/shoot_cut.py` (`docs/shots/doom/cuts/warehouse_to_bar.jpg`).
 
 ## The Copper Bar (`doom_bar`, docs/doom/scenes/bar.md)
 
-A second world in the overlay: `doom_bar` (map `doom_bar`, depth 2), entry scene `doom_bar` (the Copper Bar: guides for the Booth ahead, the Floor left, the Chill-out right, and a stay hotspot), three in-world
-stand-ins `doom_bar.booth`, `doom_bar.floor`, `doom_bar.chill` and the exit scene `doom_bar.return` (loops back); its data is in `tools/run/make_doom_bar.py`. It is reached from the Warehouse through the Warehouse's
-exit scene (`doom_warehouse.return`, route left): a run node takes its map from its world and only an exit scene may leave a world, so the Warehouse's own "bar" stand-in is now `doom_warehouse.bar` (it leads to
-the return scene). `RW_RUN_START=doom_bar` plays the Bar directly. The guides' real thresholds (a walk to the threshold, then the other world's arrival) wait for engine hook H1.6.
+The world `doom_bar` (map `doom_bar`, depth 2), one scene `doom_bar` (the Copper Bar: guides for the Booth ahead, the Floor left, the Chill-out right, and a stay hotspot); its data is in
+`tools/run/make_doom_bar.py`. The Warehouse's left guide leads straight here. `RW_RUN_START=doom_bar` plays the Bar directly.
 
 ## The Chill-out Lounge (`doom_lounge`, MAP08; `docs/doom/scenes/lounge.md`)
 
@@ -43,19 +56,17 @@ the return scene). `RW_RUN_START=doom_bar` plays the Bar directly. The guides' r
 | Shots | `bash tools/doom/shoot_lounge.sh` (one contact sheet in `docs/shots/doom/lounge/`; `RW_KEEP=<dir>` keeps the per-frame jpgs for looking), then `python3 tools/doom/shoot_lounge.py walk docs/shots/doom/lounge` (the walk strip) |
 | Tests | `... -- --filter doom_views` (the `test_lounge_*` block), `check_rail_paths.gd -- res://content/run/doom/run.json` |
 
-The lounge is its own WORLD (`doom_lounge`, depth 2, map `doom_lounge`) because a scene's map is its world's map and only a world's exit scene may route to another world. Entry scene `doom_lounge`; stand-ins
-`doom_lounge.dock` (ahead), `.bar` (left), `.floor` (right), each leading on to the exit scene `doom_lounge.return`. The Warehouse floor reaches it through ITS exit scene (`doom_warehouse.return`, route `right`);
-the Warehouse's old `doom_lounge` alias is now the stand-in `doom_warehouse.chill`.
+The lounge is the geography world `doom_lounge` (depth 2, map `doom_lounge`), one scene: ahead the Dock, left the Bar, right the Floor. The Warehouse's right guide leads straight here.
 
 ## Known limits (7 November)
 
-No state-driven guides beyond what the existing choice staging does (sprite per state, no loop playback, no brightening lamp); the rail's moves are polylines with holds, but the exits' door walks (ahead, left, right) still go straight to the next scene's arrival (`rail.routes` is checked, not yet played); the terrace and the north-west nub are not connected to the ring; the guides are placeholder art.
+No state-driven guides beyond what the existing choice staging does (sprite per state, no loop playback, no brightening lamp); the rail's moves are polylines with holds, and the exits' door walks (ahead, left, right) are played to the threshold before the cut; the terrace and the north-west nub are not connected to the ring; the guides are placeholder art.
 
 ## The DJ Booth (scene `doom_booth`, env-booth block)
 
 | What | How |
 | --- | --- |
-| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_booth` (world `doom_booth`; routes: stay in the booth (default), `doom_booth.mothership` ahead, `doom_booth.balcony` left, `doom_booth.dock` right: stand-ins that lead to `doom_booth.return`) |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_booth` (world `doom_booth`; depth 2; routes: stay in the booth (default), `doom_mothership` ahead, `doom_balcony` left, `doom_dock` right) |
 | Rebuild the geometry | `python -I tools/doom/trace/booth_scene.py && python -I tools/doom/convert.py --scene booth --trace tools/doom/trace/booth_pilot.json && python -I tools/doom/author_booth.py` |
 | Rebuild the art and guides | `python -I tools/doom/art/make_booth_art.py`, then `godot --headless --import` |
 | Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_booth.py`) |
@@ -68,7 +79,7 @@ Details: `docs/doom/scenes/booth.md`.
 
 | What | How |
 | --- | --- |
-| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_dock` (world `doom_dock`, depth 2; routes: stay on the dock (default), `doom_dock.mothership` ahead, `doom_dock.floor` left, `doom_dock.underworld` right: stand-ins that lead to `doom_dock.return`) |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_dock` (world `doom_dock`, depth 2; routes: stay on the dock (default), `doom_mothership` ahead, `doom_warehouse` left, `doom_underworld` right) |
 | Rebuild the geometry | `python -I tools/doom/trace/dock_scene.py && python -I tools/doom/convert.py --scene dock --trace tools/doom/trace/dock_pilot.json && python -I tools/doom/author_dock.py` |
 | Rebuild the art and guides | `python -I tools/doom/art/make_dock_art.py` (calls `make_dock_guides.py`), then `godot --headless --import` |
 | Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_dock.py`) |
@@ -83,7 +94,7 @@ Details: `docs/doom/scenes/dock.md`.
 
 | What | How |
 | --- | --- |
-| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_underworld` (world `doom_underworld`, depth 2; routes: stay on the plateau (default), `doom_underworld.mothership` ahead, `doom_underworld.floor` left, `doom_underworld.dock` right: stand-ins that lead to `doom_underworld.return`) |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_underworld` (world `doom_underworld`, depth 2; routes: stay on the plateau (default), `doom_mothership` ahead, `doom_warehouse` left, `doom_dock` right) |
 | Rebuild the geometry | `python -I tools/doom/trace/underworld_scene.py && python -I tools/doom/convert.py --scene underworld --trace tools/doom/trace/underworld_pilot.json && python -I tools/doom/author_underworld.py` |
 | Rebuild the art and guides | `python -I tools/doom/art/make_underworld_art.py && python -I tools/doom/art/make_underworld_guides.py`, then `godot --headless --import` |
 | Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_underworld.py`, which also writes `content/run/doom/story_doom_underworld.json`) |
@@ -98,7 +109,7 @@ needs to keep the map connected. Details: `docs/doom/scenes/underworld.md`.
 
 | What | How |
 | --- | --- |
-| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_mothership` (world `doom_mothership`; routes: stay on the ring (default), `doom_mothership.underworld` ahead, `doom_mothership.booth` left, `doom_mothership.dock` right: stand-ins that lead to `doom_mothership.return`) |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_mothership` (world `doom_mothership`; routes: stay on the ring (default), `doom_underworld` ahead, `doom_booth` left, `doom_dock` right) |
 | Rebuild the geometry | `python -I tools/doom/trace/mothership_scene.py && python -I tools/doom/convert.py --scene mothership --trace tools/doom/trace/mothership_pilot.json && python -I tools/doom/author_mothership.py` |
 | Rebuild the art and guides | `python -I tools/doom/art/make_mothership_art.py && python -I tools/doom/art/make_mothership_guides.py`, then `godot --headless --import` |
 | Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_mothership.py`) |
@@ -112,7 +123,7 @@ Details: `docs/doom/scenes/mothership.md`.
 
 | What | How |
 | --- | --- |
-| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_balcony` (world `doom_balcony`; routes: stay on the roof (default), `doom_balcony.mothership` ahead, `doom_balcony.floor` left, `doom_balcony.booth` right: stand-ins that lead to `doom_balcony.return`). The Warehouse's own stand-in is now `doom_warehouse.balcony`. |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_balcony` (world `doom_balcony`; routes: stay on the roof (default), `doom_mothership` ahead, `doom_warehouse` left, `doom_booth` right). The Warehouse's up guide leads straight here. |
 | Rebuild the geometry | `python -I tools/doom/trace/balcony_scene.py && python -I tools/doom/convert.py --scene balcony --trace tools/doom/trace/balcony_pilot.json && python -I tools/doom/author_balcony.py` |
 | Rebuild the art and guides | `python -I tools/doom/art/make_balcony_art.py` (calls `make_balcony_guides.py`), then `godot --headless --import` |
 | Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_balcony.py`) |

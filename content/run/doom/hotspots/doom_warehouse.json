@@ -25,10 +25,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_warehouse.balcony"
+    "route": "doom_balcony"
    },
    "on_failure": {
-    "route": "doom_warehouse.balcony",
+    "route": "doom_balcony",
     "cinematic": "doom_warehouse.stagger_balcony",
     "energy": -5
    },
@@ -103,10 +103,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_warehouse.bar"
+    "route": "doom_bar"
    },
    "on_failure": {
-    "route": "doom_warehouse.bar",
+    "route": "doom_bar",
     "cinematic": "doom_warehouse.stagger_bar",
     "energy": -5
    },
@@ -181,10 +181,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_warehouse.chill"
+    "route": "doom_lounge"
    },
    "on_failure": {
-    "route": "doom_warehouse.chill",
+    "route": "doom_lounge",
     "cinematic": "doom_warehouse.stagger_lounge",
     "energy": -5
    },

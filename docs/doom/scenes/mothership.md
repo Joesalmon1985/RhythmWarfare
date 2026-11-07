@@ -21,7 +21,7 @@ it is a void crossing (`floor_change` kind void), so the rail and `check_rail_pa
 
 Rail (`tools/run/make_doom_mothership.py`): stay loop = hub view (ring south, platform across the railing), stair view, bridge view (each 2 bars still), then `ms_ref` (choice, 8 bars). Moves are capped at 4 bars, so the loop goes
 there and back along the south-east ring and over the bridge, never round the whole ring. `rail.routes`: `up` (ring to the stair, 7 bars), `left` (ring, bridge, platform), `right` (ring, dock hatch), `stumble`, `arrive`.
-Node `doom_mothership` plus stand-ins `.underworld/.booth/.dock` and exit scene `.return`; three figure guide hotspots and the stay hotspot.
+One scene `doom_mothership` (geography world, depth 2), its routes straight to `doom_underworld` (up), `doom_booth` (left), `doom_dock` (right); three figure guide hotspots and the stay hotspot.
 
 ## Shots (docs/shots/doom/mothership/)
 
@@ -32,5 +32,5 @@ Node `doom_mothership` plus stand-ins `.underworld/.booth/.dock` and exit scene 
 
 ## Placeholders and hooks
 
-Placeholders: every texture, prop, decal and the guides (Dock guide is the Lounge's character redrawn), the stand-in destinations, the music (Warehouse arrangements). Hooks: (1) the void depth haze needs `void_top` to be the highest neighbouring floor, or an authored value: a void split into
+Placeholders: every texture, prop, decal and the guides (Dock guide is the Lounge's character redrawn), the music (Warehouse arrangements). Hooks: (1) the void depth haze needs `void_top` to be the highest neighbouring floor, or an authored value: a void split into
 wedges has deep neighbours, so `void_top` equals its own floor and the haze is off; (2) a way to mark a sector as an unreachable void so the reachability check is not needed.

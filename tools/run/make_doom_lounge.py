@@ -4,9 +4,9 @@
 make_doom.write() calls `contribute()` and merges what it returns into content/run/doom/ (worlds, nodes, cinematics, music) and writes the hotspot files and the story file this module
 returns. Nothing here touches the Warehouse's data. Run alone, it prints what it would add.
 
-Why a world of its own: a scene's map is its world's map (RunData), and a route may leave a world only through the world's exit scene. So the lounge is the world `doom_lounge` (depth 2): its
-entry scene `doom_lounge` (id = world id, the scene the player stands in), three stand-in scenes for the places its guides lead to (`doom_lounge.dock`, `.bar`, `.floor`; they stand in the lounge until
-the real scenes are joined up), and the exit scene `doom_lounge.return`. The Warehouse floor reaches the lounge through ITS exit scene (`doom_warehouse.return`, route `right`).
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_dock, left doom_bar, right doom_warehouse (the Floor). The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 
 The camera: the stay loop is four places as via polylines with holds round the ring of walkway that circles the sunken pit (west, north, east reveals, then the choice viewpoint `lg_ref`, 8 bars
 still); `rail.routes` carries up (ahead, to the Dock), left (the Bar), right (the Floor), stumble, arrive. Waypoints are `lg_*` in content/story/maps/doom_lounge.json (tools/doom/author_lounge.py).
@@ -21,23 +21,19 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 WORLD_ID = "doom_lounge"
-WORLD = {"id": WORLD_ID, "title": "The Chill-out Lounge (Doom worlds)", "map": "doom_lounge", "depth": 2, "story": "res://content/run/doom/story_doom_lounge.json",
+WORLD = {"id": WORLD_ID, "title": "The Chill-out Lounge (Doom worlds)", "map": "doom_lounge", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_lounge.json",
          "blurb": "A mustard octagon round a sunken conversation pit. Ahead the rain street to the Dock, on the left the bar, on the right the blue passage back to the dance floor: follow the guide you like."}
 EXITS = {"up": "lg_ahead_door", "left": "lg_bar_door", "right": "lg_floor_door", "down": "lg_ref"}
 GUIDE = {  # hotspot id suffix: (guide thing, route scene, sprite stem, direction)
-    "dock": ("lg_guide_dock", "doom_lounge.dock", "dock", "up"),
-    "bar": ("lg_guide_bar", "doom_lounge.bar", "bar", "left"),
-    "floor": ("lg_guide_floor", "doom_lounge.floor", "floor", "right"),
+    "dock": ("lg_guide_dock", "doom_dock", "dock", "up"),
+    "bar": ("lg_guide_bar", "doom_bar", "bar", "left"),
+    "floor": ("lg_guide_floor", "doom_warehouse", "floor", "right"),
 }
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_lounge", "lounge", "The Chill-out Lounge", True, False,
-     [("doom_lounge", "down", "Stay in the lounge", True), ("doom_lounge.dock", "up", "Ahead: the rain street to the Dock", False), ("doom_lounge.bar", "left", "Left: into the bar", False),
-      ("doom_lounge.floor", "right", "Right: back to the dance floor", False)], 3),
-    ("doom_lounge.dock", "dock", "The Dock (stand-in)", False, False, [("doom_lounge.return", "up", "On", False)], 2),
-    ("doom_lounge.bar", "bar", "The Bar (stand-in)", False, False, [("doom_lounge.return", "up", "On", False)], 1),
-    ("doom_lounge.floor", "floor", "The Dance Floor (stand-in)", False, False, [("doom_lounge.return", "up", "On", False)], 0),
-    ("doom_lounge.return", "return", "Back to the Lounge", False, True, [("doom_lounge", "up", "Round again", True), ("doom_lounge", "left", "Round again", True)], 5),
+    ("doom_lounge", "lounge", "The Chill-out Lounge", True, True,
+     [("doom_lounge", "down", "Stay in the lounge", True), ("doom_dock", "up", "Ahead: the rain street to the Dock", False), ("doom_bar", "left", "Left: into the bar", False),
+      ("doom_warehouse", "right", "Right: back to the dance floor", False)], 3),
 ]
 
 

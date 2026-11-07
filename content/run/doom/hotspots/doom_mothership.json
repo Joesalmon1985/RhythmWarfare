@@ -25,10 +25,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_mothership.underworld"
+    "route": "doom_underworld"
    },
    "on_failure": {
-    "route": "doom_mothership.underworld",
+    "route": "doom_underworld",
     "cinematic": "doom_mothership.stagger_underworld",
     "energy": -5
    },
@@ -106,10 +106,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_mothership.booth"
+    "route": "doom_booth"
    },
    "on_failure": {
-    "route": "doom_mothership.booth",
+    "route": "doom_booth",
     "cinematic": "doom_mothership.stagger_booth",
     "energy": -5
    },
@@ -187,10 +187,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_mothership.dock"
+    "route": "doom_dock"
    },
    "on_failure": {
-    "route": "doom_mothership.dock",
+    "route": "doom_dock",
     "cinematic": "doom_mothership.stagger_dock",
     "energy": -5
    },

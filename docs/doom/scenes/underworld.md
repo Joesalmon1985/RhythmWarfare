@@ -23,8 +23,7 @@ Reference viewpoint `uw_ref` looks north (choice viewpoint, 8 bars still). The p
 Guides at the reference viewpoint, 460 px stage strip (16:9 and 20:9 alike in height): Mothership 84 px (13.9 m), Floor 184 px, Dock 121 px (`tests/test_doom_views.gd`, underworld block: requires 60 px, inside the picture, apart, clear of the HUD, a sightline free of solid walls).
 
 Rail (`tools/run/make_doom_underworld.py`, merged by `make_doom.py`): stay loop = ledge view, cave view, stair view (each 2 bars still, via polylines), then `uw_ref` (choice, 8 bars). `rail.routes`: `up` (plateau, ledge, past the Mothership guide, causeway), `left`, `right`, `stumble`, `arrive`.
-Node `doom_underworld` (world depth 2) plus stand-ins `doom_underworld.mothership/.floor/.dock` and the exit scene `doom_underworld.return`; three guide hotspots (figure staging, no rings) and the stay hotspot. The thresholds are the `to` of each route move and `rail.exits`; the
-route labels are the destination names, so the real cut (hook H1.6) only has to delete the stand-ins.
+One scene `doom_underworld` (geography world, depth 2), its routes straight to `doom_mothership` (up), `doom_warehouse` (left), `doom_dock` (right); three guide hotspots (figure staging, no rings) and the stay hotspot. The thresholds are the `to` of each route move and `rail.exits`.
 
 ## Shots (docs/shots/doom/underworld/)
 
@@ -36,6 +35,6 @@ route labels are the destination names, so the real cut (hook H1.6) only has to 
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_underworld_art.py`, `make_underworld_guides.py`; floor and dock are the Lounge's drawings, the Mothership guide the Booth's violet variant recoloured); the stand-in destinations; the music (Warehouse arrangements). Not done: the exits' walks are checked (`rail.routes`) but the real next scenes do not exist; no state-driven guide animation beyond the sprite per state; no `src/` hook was needed. Hooks the real cut will need: H1.6 only (route the thresholds into other worlds); a camera pitch on a waypoint or place would let the choice viewpoint look down into the abyss as the painting does.
+Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_underworld_art.py`, `make_underworld_guides.py`; floor and dock are the Lounge's drawings, the Mothership guide the Booth's violet variant recoloured); the music (Warehouse arrangements). Not done: no state-driven guide animation beyond the sprite per state; no `src/` hook was needed. A camera pitch on a waypoint or place would let the choice viewpoint look down into the abyss as the painting does.
 
 Regenerate: see `docs/doom/LAUNCH.md` (underworld block).
