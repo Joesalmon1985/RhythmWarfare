@@ -814,6 +814,7 @@ func test_a_touch_near_the_tables_edge_hits_it_and_every_other_day_room_hotspot_
 			assert_eq(HotspotView.hit(lay, pr["screen"]), "ward.cards", "a touch %s from the table's middle hits it" % str(off))
 	for e in lay:
 		assert_eq(HotspotView.hit(lay, e["centre"]), str(e["id"]), "a touch on %s's centre selects it, not the table" % str(e["id"]))
+		assert_false(bool(e["edge"]) and not HotspotView.RINGS, "%s: a choice out of the picture has no target (package A7: no edge beacons stacked at the side)" % str(e["id"]))
 	_free(d)
 
 

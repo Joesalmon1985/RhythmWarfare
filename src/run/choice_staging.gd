@@ -29,7 +29,7 @@ const STATE_KEYS := ["current", "other", "touched", "committed", "declined"]
 const KEYS := ["archetype", "actor", "current", "other", "touched", "committed", "declined", "door", "open_piece", "shut_piece", "door_at", "width_m", "height_m", "lamp",
 	"lamp_y", "current_tex", "other_tex", "thing", "current_motion", "other_motion", "touch", "states"]
 const DOOR_STYLES := ["drawn", "bars", "sign", "pieces", "none"]
-const MOTIONS := ["still", "bob", "beckon", "slump", "pulse", "sway_left", "sway_right", "lean"]
+const MOTIONS := ["still", "bob", "beckon", "slump", "pulse", "sway_left", "sway_right", "lean", "step_aside", "shake"]  # (contract 9 ChoiceThing motions; shake is timed by ChoiceShow)
 const LAMPS := ["go", "stop", "none"]
 const ART_DIR := "res://assets/run/choice/"
 const SWAP_BEATS := 1.0  # a door swings, a lamp swaps, within one beat of the touch
@@ -170,6 +170,8 @@ static func motion(name: String, u: float) -> Dictionary:
 		"lean":
 			m["sx"] = 1.06
 			m["dy"] = 0.03 * sin(u * PI * 0.5)
+		"step_aside":  # stood a little aside, out of the way
+			m["dx"] = 0.25
 	return m
 
 

@@ -383,6 +383,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		validate_acting(h, hw, idx, ctx, errors)
 	if h.has("staging"):  # how the option shows it is the current choice or not (docs/CHOICE_CLARITY.md): ChoiceStaging
 		ChoiceStaging.validate(h, hw, idx, errors)
+	if h.has("show"):  # how the option shows its state with its own artwork (lead ruling 35b, contract 9): ChoiceShow
+		ChoiceShow.validate(h, hw, idx, errors)
 
 
 static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array, ctx_activities: Variant = null) -> void:

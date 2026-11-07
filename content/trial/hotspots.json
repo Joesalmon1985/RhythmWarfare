@@ -32,7 +32,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.1.0",
@@ -67,7 +70,10 @@
     "route": "3"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.1.1",
@@ -102,7 +108,10 @@
     "route": "2"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.2.0",
@@ -137,7 +146,10 @@
     "route": "3"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.3.0",
@@ -172,7 +184,10 @@
     "route": "4"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.3.1",
@@ -207,7 +222,10 @@
     "route": "10"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.4.0",
@@ -242,7 +260,10 @@
     "route": "5"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.4.1",
@@ -277,7 +298,10 @@
     "route": "8"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.5.0",
@@ -312,7 +336,10 @@
     "route": "7"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.5.1",
@@ -350,6 +377,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "6"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -385,7 +415,10 @@
     "route": "7"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.7.0",
@@ -420,7 +453,10 @@
     "route": "15"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.8.0",
@@ -474,6 +510,9 @@
      "act": "laugh",
      "face": "laugh"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -509,7 +548,10 @@
     "route": "4"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.9.0",
@@ -544,7 +586,10 @@
     "route": "4"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.10.0",
@@ -579,7 +624,10 @@
     "route": "12"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.10.1",
@@ -614,7 +662,10 @@
     "route": "11"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.11.0",
@@ -649,7 +700,10 @@
     "route": "12"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.12.0",
@@ -703,6 +757,9 @@
      "act": "stamp",
      "face": "anger"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -741,6 +798,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "13"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -772,7 +832,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.14.0",
@@ -807,7 +870,10 @@
     "route": "15"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.15.0",
@@ -842,7 +908,10 @@
     "route": "16"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.15.1",
@@ -877,7 +946,10 @@
     "route": "18"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.16.0",
@@ -912,7 +984,10 @@
     "route": "19"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.16.1",
@@ -947,7 +1022,10 @@
     "route": "17"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "trial.17.0",
@@ -982,7 +1060,10 @@
     "route": "19"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.18.0",
@@ -1017,7 +1098,10 @@
     "route": "19"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.18.1",
@@ -1052,7 +1136,10 @@
     "route": "16"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.19.0",
@@ -1087,7 +1174,10 @@
     "route": "20"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.20.0",
@@ -1145,6 +1235,9 @@
       "face": "laugh"
      }
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -1183,6 +1276,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "22"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -1218,7 +1314,10 @@
     "route": "21"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.21.0",
@@ -1253,7 +1352,10 @@
     "route": "20"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.22.0",
@@ -1284,7 +1386,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.23.0",
@@ -1319,7 +1424,10 @@
     "route": "26"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.23.1",
@@ -1356,7 +1464,10 @@
     "route": "24"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "trial.24.0",
@@ -1391,7 +1502,10 @@
     "route": "25"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.25.0",
@@ -1426,7 +1540,10 @@
     "route": "30"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.26.0",
@@ -1461,7 +1578,10 @@
     "route": "28"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.26.1",
@@ -1496,7 +1616,10 @@
     "route": "27"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.27.0",
@@ -1531,7 +1654,10 @@
     "route": "28"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.28.0",
@@ -1585,6 +1711,9 @@
      "act": "laugh",
      "face": "laugh"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -1620,7 +1749,10 @@
     "route": "27"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.29.0",
@@ -1655,7 +1787,10 @@
     "route": "30"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.30.0",
@@ -1690,7 +1825,10 @@
     "route": "32"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.30.1",
@@ -1725,7 +1863,10 @@
     "route": "31"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.31.0",
@@ -1760,7 +1901,10 @@
     "route": "32"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.32.0",
@@ -1814,6 +1958,9 @@
      "act": "laugh",
      "face": "laugh"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -1852,6 +1999,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "33"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -1883,7 +2033,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.34.0",
@@ -1918,7 +2071,10 @@
     "route": "35"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.35.0",
@@ -1953,7 +2109,10 @@
     "route": "37"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.35.1",
@@ -1988,7 +2147,10 @@
     "route": "36"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.36.0",
@@ -2023,7 +2185,10 @@
     "route": "35"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.37.0",
@@ -2058,7 +2223,10 @@
     "route": "40"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.37.1",
@@ -2096,6 +2264,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "39"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -2131,7 +2302,10 @@
     "route": "37"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.39.0",
@@ -2162,7 +2336,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.40.0",
@@ -2216,6 +2393,9 @@
      "act": "stamp",
      "face": "anger"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -2253,7 +2433,10 @@
     "route": "42"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "trial.40.2",
@@ -2288,7 +2471,10 @@
     "route": "41"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.41.0",
@@ -2323,7 +2509,10 @@
     "route": "40"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.42.0",
@@ -2358,7 +2547,10 @@
     "route": "43"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.42.1",
@@ -2393,7 +2585,10 @@
     "route": "48"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.43.0",
@@ -2428,7 +2623,10 @@
     "route": "45"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.43.1",
@@ -2463,7 +2661,10 @@
     "route": "44"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.44.0",
@@ -2498,7 +2699,10 @@
     "route": "45"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.45.0",
@@ -2552,6 +2756,9 @@
      "act": "laugh",
      "face": "laugh"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -2587,7 +2794,10 @@
     "route": "46"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.46.0",
@@ -2622,7 +2832,10 @@
     "route": "45"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.47.0",
@@ -2657,7 +2870,10 @@
     "route": "52"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.48.0",
@@ -2711,6 +2927,9 @@
      "act": "laugh",
      "face": "laugh"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -2746,7 +2965,10 @@
     "route": "49"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.48.2",
@@ -2781,7 +3003,10 @@
     "route": "50"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.49.0",
@@ -2816,7 +3041,10 @@
     "route": "48"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.50.0",
@@ -2847,7 +3075,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.51.0",
@@ -2882,7 +3113,10 @@
     "route": "52"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.52.0",
@@ -2917,7 +3151,10 @@
     "route": "55"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.52.1",
@@ -2952,7 +3189,10 @@
     "route": "53"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.52.2",
@@ -2989,7 +3229,10 @@
     "route": "54"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "trial.53.0",
@@ -3024,7 +3267,10 @@
     "route": "52"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.54.0",
@@ -3059,7 +3305,10 @@
     "route": "57"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.55.0",
@@ -3113,6 +3362,9 @@
      "act": "stamp",
      "face": "anger"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -3151,6 +3403,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "56"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -3186,7 +3441,10 @@
     "route": "55"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.57.0",
@@ -3224,6 +3482,9 @@
    "repeatable": false,
    "on_failure": {
     "route": "58"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -3259,7 +3520,10 @@
     "route": "57"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.59.0",
@@ -3313,6 +3577,9 @@
      "act": "shake_head",
      "face": "doubt"
     }
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -3348,7 +3615,10 @@
     "route": "60"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.60.0",
@@ -3379,7 +3649,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.61.0",
@@ -3414,7 +3687,10 @@
     "route": "62"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.62.0",
@@ -3449,7 +3725,10 @@
     "route": "63"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.62.1",
@@ -3484,7 +3763,10 @@
     "route": "63"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "trial.63.0",
@@ -3515,7 +3797,10 @@
     "route": "exit"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "show": {
+    "archetype": "door"
+   }
   }
  ]
 }

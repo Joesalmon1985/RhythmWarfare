@@ -12,6 +12,10 @@ extends RefCounted
 ## (in place of the choice layer's sad slump: from the scene's first beat he points the way down); once touched he is the current choice and beckons happy as the choice
 ## layer says, and once another option has been taken (declined) its look is left alone.
 ## Everything is a pure function of song time and the camera: the same frame at the same time.
+##
+## With HotspotView.RINGS off (package A7, lead ruling 35b) the entrance shows its ChoiceState with this art alone and no mark is drawn: the herald beckons (the gesture loop) while
+## the entrance is available, steps toward you holding the point when it is selected, holds the point when it is committed, steps back into the dark when it is declined and
+## recoils for a cost; the gate's light is the entrance's lamp (dark, lit, brighter, open; a red flicker for a cost) and the pool on the floor its floor light (ChoiceShow.look).
 
 const DOC := "res://assets/story/heralds/heralds.json"
 const GAIN := 1.3  # the people's light, as their shader takes it (story_people.gdshader: gain, min_light, the 1.12 ceiling)
@@ -38,6 +42,10 @@ var now := 0.0
 var _recs: Dictionary = {}  # hotspot id -> {herald: prop, mark: prop, block, on}
 var _seen: Dictionary = {}
 var _flip: Dictionary = {}  # hotspot id -> bool (last facing)
+var drawn: Dictionary = {}  # what was drawn for each entrance in its last frame: hotspot id -> {herald, gate, pool, mark} (the tests read it: no mark with RINGS off)
+const STEP_TOWARD := 1.06  # a selected herald's step toward the camera (its scale)
+const STEP_BACK := 0.93  # a declined herald's step back (its scale) ..
+const BACK_LIGHT := 0.7  # .. into the room's dark
 
 
 static func doc() -> Dictionary:
@@ -152,8 +160,9 @@ func begin_frame(t: float) -> void:
 	_seen = {}
 
 
-## The entrance `h` (a staged option in `role`) is on offer this frame: its herald stands and gestures.
-func put(h: Dictionary, role: String) -> void:
+## The entrance `h` (a staged option in `role`) is on offer this frame: its herald stands and gestures. `state` and `look`: its ChoiceState and what it shows (ChoiceShow.look), with
+## RINGS off; empty: the old look (the gesture loop and the mark, whatever the state).
+func put(h: Dictionary, role: String, state := "", look: Dictionary = {}) -> void:
 	var b: Dictionary = h.get("herald", {})
 	if b.is_empty() or stage == null or stage.map == null or not validate(b, "").is_empty():
 		return
@@ -162,7 +171,7 @@ func put(h: Dictionary, role: String) -> void:
 	var tw: Array = b["toward"]
 	var toward := Vector2(float(tw[0]), float(tw[1]))
 	if b.has("self"):
-		_pose_self(id, b, toward, role)
+		_pose_self(id, b, toward, role, state)
 	var rec: Dictionary = _recs.get(id, {})
 	var key_prop: Variant = rec.get("mark" if b.has("self") else "herald", null)
 	if rec.is_empty() or key_prop == null or not is_instance_valid(key_prop) or not is_instance_valid(rec["crowd"]) or not (rec["crowd"] as StoryCrowd).props.has(key_prop):
@@ -171,6 +180,8 @@ func put(h: Dictionary, role: String) -> void:
 			return
 		_recs[id] = rec
 	rec["on"] = true
+	rec["state"] = state
+	rec["look"] = look
 
 
 func end_frame() -> void:
@@ -209,9 +220,18 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	var at := Vector2(float(a[0]), float(a[1]))
 	var sec := stage.map.sector_at(at)
 	var room := stage.map.room_of(sec) if sec != "" else ""
-	var crowd: StoryCrowd = stage.crowds.get(room, stage.crowds.get("main", null))
+	var crowd: StoryCrowd = stage.crowds.get(room, null)
+	if crowd == null:  # a room with no crowd of its own: the crowd that already counts the sector (its people stand there), else the main crowd
+		for cid in stage.crowds:
+			if (stage.crowds[cid] as StoryCrowd).owns_sector(sec):
+				crowd = stage.crowds[cid]
+				break
+	if crowd == null:
+		crowd = stage.crowds.get("main", null)
 	if crowd == null or sec == "":
 		return {}
+	crowd.own_sector(sec)  # (else a crowd whose own room is out of sight projects nothing, and the herald and its gate vanish when the camera stands in their room: ward_late.treat)
+	crowd.own_sector(stage.map.sector_at(mark_point(b)))
 	var rec := {"herald": null, "crowd": crowd, "block": b, "on": true, "at": at, "toward": toward, "quest": str(b["quest"])}
 	if not b.has("self"):
 		rec["herald"] = _herald_prop(id, m, sec, at, crowd)
@@ -220,7 +240,7 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	if msec != "" and (m.get("mark", {}) as Dictionary).size() > 0:
 		var mp := StoryCrowdProp.new()
 		mp.kind = "occluder"
-		mp.name = "HeraldMark_" + id.replace(".", "_")
+		mp.name = ("HeraldMark_" if HotspotView.RINGS else "HeraldGate_") + id.replace(".", "_")  # (RINGS off: it carries the gate and the pool, no mark)
 		mp.set_meta("def", {"id": "herald_mark:" + id, "sector": msec, "at": mpt, "width": 0.4, "height": float(b.get("mark_y", 1.5)) + 0.25})
 		mp.set_meta("tex", sheet())
 		mp.set_meta("herald", id)
@@ -263,17 +283,20 @@ func _draw_herald(prop: StoryCrowdProp) -> void:
 	var rect: Rect2 = prop.items[0][1]
 	var spm := rect.size.y / float(m.get("height_m", 1.7))  # screen pixels per metre
 	var lod := "1" if spm / float(m["px_per_m"]["1"]) >= LOD2_BELOW or not (m["lods"] as Dictionary).has("2") else "2"
-	var i := frame_of(now, beat_s, reduced)
+	var pz := pose_of(str(rec.get("state", "")), rec.get("look", {}), now, beat_s, reduced)
+	var i := int(pz["frame"])
 	var fr: Array = m["lods"][lod]["frames"][i]
-	var k := spm / float(m["px_per_m"][lod])  # screen pixels per sheet pixel
+	var k := spm / float(m["px_per_m"][lod]) * float(pz["scale"])  # screen pixels per sheet pixel
 	var id := str(prop.get_meta("herald"))
 	var fl := flip_of(rec["at"], rec["toward"], _yaw_of(rec["crowd"]), bool(_flip.get(id, false)))
 	_flip[id] = fl
 	var sx := -1.0 if fl else 1.0
-	prop.draw_set_transform(Vector2.ZERO, 0.0, Vector2(sx * k, k))
+	prop.draw_set_transform(Vector2(float(pz["dx"]) * spm, 0.0), 0.0, Vector2(sx * k, k))
 	var src := Rect2(float(fr[0]), float(fr[1]), float(fr[2]), float(fr[3]))
 	var dst := Rect2(-float(fr[4]), -float(fr[5]), float(fr[2]), float(fr[3]))
-	prop.draw_texture_rect_region(sheet(), dst, src, _light(prop, rec))
+	var lc := _light(prop, rec) * float(pz["light"])
+	prop.draw_texture_rect_region(sheet(), dst, src, Color(lc.r, lc.g, lc.b, 1.0))
+	_mark_drawn(id, "herald")
 	var g: Array = m["lods"][lod]["glow"][i]
 	if g.size() == 4:
 		var pulse := 0.8 + 0.2 * absf(cos(PI * now / beat_s))
@@ -281,12 +304,47 @@ func _draw_herald(prop: StoryCrowdProp) -> void:
 	prop.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
+## The pose of a herald in its entrance's state: {frame (of the gesture loop), scale, dx (metres), light (a multiplier)}. Available, or no state (the old look): the gesture loop;
+## selected: a step toward the camera holding the point; committed: the point held; declined: a step back into the dark; cost: recoiling from the point (the loop's first
+## frame, a shake). Pure.
+static func pose_of(state: String, look: Dictionary, t: float, p_beat_s: float, p_reduced := false) -> Dictionary:
+	var out := {"frame": frame_of(t, p_beat_s, p_reduced), "scale": 1.0, "dx": 0.0, "light": 1.0}
+	match state:
+		"selected":
+			out["frame"] = POINT_FRAME
+			out["scale"] = STEP_TOWARD
+		"committed":
+			out["frame"] = POINT_FRAME
+			out["scale"] = STEP_TOWARD
+		"declined":
+			out["frame"] = 0
+			out["scale"] = STEP_BACK
+			out["light"] = BACK_LIGHT
+		"cost":
+			out["frame"] = 0
+			out["scale"] = STEP_BACK
+			out["dx"] = float((look.get("pose", {}) as Dictionary).get("dx", 0.0))
+	return out
+
+
+func _mark_drawn(id: String, what: String) -> void:
+	var d: Dictionary = drawn.get(id, {})
+	if float(d.get("_t", -INF)) != now:
+		d = {"_t": now}
+	d[what] = true
+	drawn[id] = d
+
+
 ## The quest's mark over the entrance, and under it the entrance's light: a pool of the quest's colour on the floor and, for an entrance with no thing of its own
 ## (`gate`), a lit doorway. The mark and the gate's light are their own light (unlit by the room), the gate's frame takes the room's light like a person; all of it swells a
-## little on every beat and fades into the room's depth fog as the people do.
+## little on every beat and fades into the room's depth fog as the people do. With RINGS off there is no mark: the gate's light is the entrance's lamp and the pool its floor
+## light, from its state's look (_draw_gate).
 func _draw_mark(prop: StoryCrowdProp) -> void:
 	var rec := _rec_of(prop)
 	if rec.is_empty() or not bool(rec["on"]) or prop.items.is_empty():
+		return
+	if not HotspotView.RINGS:
+		_draw_gate(prop, rec)
 		return
 	var hm: Dictionary = doc()["heralds"][rec["quest"]]
 	var mk: Dictionary = hm.get("mark", {})
@@ -325,6 +383,7 @@ func _draw_mark(prop: StoryCrowdProp) -> void:
 	var half := Vector2(float(r[2]), float(r[3])) * 0.5 * k2
 	prop.draw_circle(c, half.x * 1.8, Color(col.r, col.g, col.b, (0.14 + 0.1 * hit) * keep))  # a soft halo of its light on the wall behind
 	prop.draw_texture_rect_region(sheet(), Rect2(c - half, half * 2.0), Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3])), Color(keep, keep, keep, 1.0))
+	_mark_drawn(str(prop.get_meta("herald", "")), "mark")
 
 
 ## The depth fog where the prop stands, 0 to 1, as the crowd fades its people (StoryCrowd.fog_m).
@@ -359,8 +418,8 @@ func _light(prop: StoryCrowdProp, rec: Dictionary) -> Color:
 
 ## A `self` herald: the entrance's own billboard plays the gesture while the entrance is on offer and not current (in place of the sad frame; the red light on the floor still
 ## says it is not the current choice); current, committed or declined, the choice layer's own look plays.
-func _pose_self(id: String, b: Dictionary, toward: Vector2, role: String) -> void:
-	if stage.world == null or role != "other":
+func _pose_self(id: String, b: Dictionary, toward: Vector2, role: String, state := "") -> void:
+	if stage.world == null or (role != "other" if state == "" else state != "available"):  # (RINGS off: the gesture is the available state's beckon)
 		return
 	var th := str(b["self"])
 	var at := Vector2.ZERO
@@ -381,3 +440,44 @@ func _pose_self(id: String, b: Dictionary, toward: Vector2, role: String) -> voi
 		tp = {"dy": 0.0, "sx": 1.0, "sy": 1.0, "dx": 0.0}
 	tp["tex"] = tx
 	stage.world.thing_pose[th] = tp
+
+
+## The entrance's gate and pool in its state (RINGS off): the pool of the quest's colour on the floor as bright as the look's floor light (taking the state's tint when it
+## flickers), the gate lit from inside as bright as its lamp; no mark, nothing that swells on the beat by itself.
+func _draw_gate(prop: StoryCrowdProp, rec: Dictionary) -> void:
+	var hm: Dictionary = doc()["heralds"][rec["quest"]]
+	var mk: Dictionary = hm.get("mark", {})
+	var b: Dictionary = rec["block"]
+	var lk: Dictionary = rec.get("look", {})
+	var id := str(prop.get_meta("herald", ""))
+	var rect: Rect2 = prop.items[0][1]
+	var spm := rect.size.y / (float(b.get("mark_y", 1.5)) + 0.25)
+	var fog := _fog_of(prop, rec)
+	var keep := 1.0 - 0.6 * fog
+	var col := Color.html(str(mk.get("colour", "#ffd27a")))
+	var tint: Color = lk.get("tint", col)
+	if bool(lk.get("flicker", false)):
+		col = col.lerp(tint, 0.8)
+	var floor_k := float(lk.get("floor", 0.18))
+	if floor_k > 0.01:
+		var flat := clampf(_eye_over_floor(prop, rec) / maxf(prop.depth, 0.5), 0.12, 0.65)
+		var pr := POOL_M * spm * (0.85 + 0.35 * floor_k)  # (the spill reaches further as it brightens)
+		for k in 4:
+			var f := 1.0 - 0.22 * float(k)
+			prop.draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, flat))
+			prop.draw_circle(Vector2.ZERO, pr * f, Color(col.r, col.g, col.b, (0.03 + 0.12 * floor_k) * keep))
+		prop.draw_set_transform_matrix(Transform2D.IDENTITY)
+		_mark_drawn(id, "pool")
+	var gt: Dictionary = hm.get("gate", {})
+	if typeof(b.get("gate", false)) == TYPE_BOOL and b.get("gate", false) and not gt.is_empty():
+		var gk := spm / float(gt["px_per_m"])
+		var gr: Array = gt["rect"]
+		var gg: Array = gt["glow"]
+		var pv: Array = gt["pivot"]
+		var dst := Rect2(-float(pv[0]) * gk, -float(pv[1]) * gk, float(gr[2]) * gk, float(gr[3]) * gk)
+		var lamp := float(lk.get("lamp", 0.65))
+		var g := (0.2 + 0.85 * lamp) * keep  # (dark at "off", the old lit doorway at "lit", brighter "open")
+		var gc := Color(1, 1, 1).lerp(tint, 0.7 if bool(lk.get("flicker", false)) else 0.15)
+		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gg[0]), float(gg[1]), float(gg[2]), float(gg[3])), Color(g * gc.r, g * gc.g, g * gc.b, 1.0))
+		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gr[0]), float(gr[1]), float(gr[2]), float(gr[3])), _light(prop, rec))
+		_mark_drawn(id, "gate")

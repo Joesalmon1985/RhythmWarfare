@@ -251,7 +251,7 @@ func test_no_touch_region_meets_a_pad_or_leaves_the_picture_and_the_pause_button
 	for beat in [2.0, 20.0, 50.0]:
 		_to_beat(scene, beat)
 		var lay := _lay(scene, scene.hotspot_items())
-		assert_true(lay.size() >= 2, "choices on show at beat %.0f" % beat)
+		assert_true(lay.size() >= (2 if HotspotView.RINGS else (1 if beat >= 48.0 else 0)), "choices on show at beat %.0f (%s)" % [beat, str(lay.map(func(e: Dictionary) -> String: return str(e["id"])))])  # (package A7: a choice out of the picture has no target any more; mid-scene the rail's drift may hold none of them, the window holds at least one)
 		for e in lay:
 			var regions: Array = []
 			if e.has("touch_rect"):
