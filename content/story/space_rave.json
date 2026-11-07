@@ -123,14 +123,20 @@
    "attendant",
    "bartender",
    "pilot",
-   "q1",
-   "q2",
-   "q3",
    "b1",
    "b2",
    "s1",
    "s2",
-   "s3"
+   "s3",
+   "customer_0",
+   "customer_1",
+   "customer_2",
+   "customer_3",
+   "customer_4",
+   "customer_5",
+   "customer_6",
+   "customer_7",
+   "customer"
   ],
   "all": [
    "a00",
@@ -156,14 +162,20 @@
    "attendant",
    "bartender",
    "pilot",
-   "q1",
-   "q2",
-   "q3",
    "b1",
    "b2",
    "s1",
    "s2",
-   "s3"
+   "s3",
+   "customer_0",
+   "customer_1",
+   "customer_2",
+   "customer_3",
+   "customer_4",
+   "customer_5",
+   "customer_6",
+   "customer_7",
+   "customer"
   ],
   "early": []
  },
@@ -338,27 +350,6 @@
    "glow": false
   },
   {
-   "id": "q1",
-   "archetype": "grey",
-   "variant": "a",
-   "group": "core",
-   "thresh": 5
-  },
-  {
-   "id": "q2",
-   "archetype": "blob",
-   "variant": "b",
-   "group": "core",
-   "thresh": 5
-  },
-  {
-   "id": "q3",
-   "archetype": "antenna",
-   "variant": "a",
-   "group": "core",
-   "thresh": 5
-  },
-  {
    "id": "b1",
    "archetype": "insect",
    "variant": "a",
@@ -392,6 +383,78 @@
    "variant": "a",
    "group": "core",
    "thresh": 5
+  },
+  {
+   "id": "customer_0",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -20
+  },
+  {
+   "id": "customer_1",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -20
+  },
+  {
+   "id": "customer_2",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -20
+  },
+  {
+   "id": "customer_3",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -20
+  },
+  {
+   "id": "customer_4",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": 100
+  },
+  {
+   "id": "customer_5",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": 100
+  },
+  {
+   "id": "customer_6",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": 100
+  },
+  {
+   "id": "customer_7",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": 100
+  },
+  {
+   "id": "customer",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -20
   }
  ],
  "silhouettes": [],
