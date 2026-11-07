@@ -97,6 +97,8 @@ var _regridded := false  # a track scene has re-gridded this engine: every later
 var _lap_track_t0 := 0.0  # a track scene: the track time at the current lap's downbeat
 var _next_lap_track_t0 := 0.0  # ... and at the next lap's (decided at the lap's last decision; a wrap goes back to the entry bar)
 var _track_e: Dictionary = {}  # the energy numbers of a track scene's blocks (run.json energy, with energy.track over it)
+var _susp_from := INF  # rhythm suspended (a replace activity, CONTRACTS.md 4/5, hook H5.1): blocks starting in [_susp_from, _susp_to) chart no cue and decide neutral
+var _susp_to := INF
 
 
 func _init(p_data: RunData = null) -> void:
@@ -147,6 +149,8 @@ func begin(start_id: String) -> void:
 		_regridded = false
 	_blocks_total = 0
 	_note_id = 0
+	_susp_from = INF
+	_susp_to = INF
 	phase_n = 0
 	lap_extra = 0
 	phase_t0 = 0.0
@@ -182,6 +186,8 @@ func resume(start_id: String, t0: float) -> void:
 	_depleted_t = -1.0
 	_over_t = -1.0
 	_next_phase_charted = false
+	_susp_from = INF
+	_susp_to = INF
 	phase_n = n
 	_gate_latch.clear()  # (back from the Bassment, or a hand-off: the scene asks the audio again)
 	_enter(start_id, t0, true)
@@ -382,6 +388,9 @@ func selected_route() -> String:
 		return node_id
 	if choice != "":
 		return choice
+	if relaxed():  # (the bedsit, H1.7: nothing chosen is "stay"; the rhythm never forces a departure)
+		var sel := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", "")) if hotspots != null and hotspots.selected != "" else ""
+		return sel if sel != "" and not HotspotContract.is_special_route(sel) else node_id
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
 		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
 		if r != "" and not HotspotContract.is_special_route(r):  # (the Bassment, a portal or the way back are known only at the commit)
@@ -414,6 +423,32 @@ func press(pad: int, t: float, touch: int = 0) -> Dictionary:
 
 func release(pad: int, t: float, touch: int = 0) -> Dictionary:
 	return judge.release(pad, t, touch)
+
+
+## A replace activity owns the pad strip from the block starting at `t_from` (its seat, a block start): no block starting at or after it is charted, the cues already
+## charted for it are withdrawn (no event, no miss, no mute, not drawn), and its blocks decide as neutral (no energy, no stage step, block_result.suspended) until
+## `resume_rhythm` names the block judging starts again on (CONTRACTS.md 4 and 5, hook H5.1). Returns the cues withdrawn. Music never pauses: only the judging does.
+func suspend_rhythm(t_from: float) -> int:
+	_susp_from = t_from
+	_susp_to = INF
+	# cues sit on beats 0..12 of a block: from 2 beats before the seat this takes the seat block's (one an audio part offset moved early included) and none of the block before
+	return judge.withdraw_from(t_from - 2.0 * beat_s)
+
+
+## Judging comes back on the block starting at `t_boundary` (ContractShapes.resume_boundary: a block not charted yet, at least a lead-in after the activity ended).
+## The blocks between are still suspended.
+func resume_rhythm(t_boundary: float) -> void:
+	_susp_to = t_boundary
+
+
+## True when the block starting at song time `t_block` is in the suspended span.
+func rhythm_suspended_at(t_block: float) -> bool:
+	return t_block >= _susp_from - 1e-6 and t_block < _susp_to - 1e-6
+
+
+## The suspended span [from, to) (INF, INF when the rhythm was never suspended; to is INF until the resume boundary is known).
+func suspended_span() -> Array:
+	return [_susp_from, _susp_to]
 
 
 ## The family cued in block `b` of the current phase.
@@ -572,7 +607,8 @@ func _decide(b: int, t_dec: float) -> void:
 	judge.update(t_dec)
 	var credit := block_credit_of(b)
 	var passed := credit >= float(cfg["judgement"]["pass_credit"])
-	var neutral := not track.is_empty() and _block_cue_count(b) == 0  # a track scene's block without cues (the focus rests): it passes, no energy, no stage step
+	var suspended := rhythm_suspended_at(t_of(float(b * int(timing("block_beats")))))  # a replace activity owns the strip (H5.1): the block is neutral whatever it holds
+	var neutral := suspended or (not track.is_empty() and _block_cue_count(b) == 0)  # a track scene's block without cues (the focus rests): it passes, no energy, no stage step
 	block_credit.append(credit)
 	var e: Dictionary = cfg["energy"] if track.is_empty() else _track_energy()
 	var pc := float(cfg["judgement"]["pass_credit"])
@@ -581,7 +617,7 @@ func _decide(b: int, t_dec: float) -> void:
 	elif passed:
 		energy += float(e["pass_gain"]) + float(e["pass_bonus"]) * (credit - pc) / maxf(1.0 - pc, 0.001)
 	else:
-		energy -= float(e["fail_loss"]) * (pc - credit) / pc + (3.0 if track.is_empty() else float(e["fail_flat"]))
+		energy -= 0.0 if relaxed() else float(e["fail_loss"]) * (pc - credit) / pc + (3.0 if track.is_empty() else float(e["fail_flat"]))  # (a relaxed node never drains the crowd: H1.7)
 	energy = clampf(energy, 0.0, float(e["max"]))
 	var boundary_beat := float((b + 1) * int(timing("block_beats")))
 	var next_stage := stage
@@ -592,6 +628,9 @@ func _decide(b: int, t_dec: float) -> void:
 	if not track.is_empty():
 		br["neutral"] = neutral
 		br["track"] = str(track["track"])
+	if suspended:
+		br["neutral"] = true
+		br["suspended"] = true
 	_emit(br)
 	block = b + 1
 	if hotspots != null and energy > 0.0 and not hold:
@@ -686,6 +725,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 		out = hotspots.on_block(b, passed, credit)
 	elif lap < laps and not (_doors_open() and _exit_touched()):
 		return  # (no window, no commit before the last lap; on a track scene's open lap, none unless an exit was touched)
+	elif relaxed() and hotspots.selected == "":
+		return  # (a relaxed node, H1.7: nothing touched commits nothing, the scene stays)
 	else:
 		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
@@ -746,13 +787,19 @@ func _chart_next_phase() -> void:
 	_locked_chart = _chart_key(to)
 
 
+## The current scene is relaxed (its node's `"relaxed": true`, the bedsit; CONTRACTS.md 1, H1.7): a failed block costs no energy (the run cannot end there) and
+## the scene is left only by a choice, never by its default route.
+func relaxed() -> bool:
+	return data != null and data.nodes.has(node_id) and bool((data.nodes[node_id] as Dictionary).get("relaxed", false))
+
+
 ## Credit of block `b` of the current phase: the mean credit of its cues (1 when it has none).
 func block_credit_of(b: int) -> float:
 	var sum := 0.0
 	var n := 0
 	for i in level.notes.size():
 		var note: Dictionary = level.notes[i]
-		if int(note["phase"]) == phase_n and int(note["block"]) == b:
+		if int(note["phase"]) == phase_n and int(note["block"]) == b and not judge.is_withdrawn(i):  # (a withdrawn cue was never the player's to play: H5.1)
 			n += 1
 			sum += judge.credit[i] if judge.is_resolved(i) else 0.0
 	return 1.0 if n == 0 else sum / float(n)
@@ -761,6 +808,10 @@ func block_credit_of(b: int) -> float:
 ## Appends the cues of block `b` (stage `stage_i` of the phase) to the level and the judge.
 func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = "", next_phase := false, lap_stage := -1) -> void:
 	var nid := node_for_chart if node_for_chart != "" else node_id
+	var t_block := (t_of(timing("phase_beats")) if next_phase else phase_t0) + float(b * int(timing("block_beats"))) * beat_s
+	if rhythm_suspended_at(t_block):  # a replace activity owns the strip for this block (H5.1): nothing to play, nothing to judge
+		_emit({"kind": "cues", "phase": phase_n + 1 if next_phase else phase_n, "block": b, "family": "suspended", "count": 0, "first": level.notes.size(), "suspended": true})
+		return
 	var new_scene := next_phase and lap_stage < 0  # (lap_stage >= 0: the first block of the next lap of this scene, in that stage, with the bass phrase going on)
 	if (new_scene and not track_plan_of(nid).is_empty()) or (not new_scene and not track.is_empty()):
 		_chart_track_block(b, next_phase, new_scene, nid)
@@ -910,7 +961,7 @@ func progress_at(_t: float) -> Dictionary:
 		var note: Dictionary = level.notes[i]
 		if int(note["phase"]) < phase_n:
 			break
-		if int(note["phase"]) == phase_n and int(note["block"]) == block:
+		if int(note["phase"]) == phase_n and int(note["block"]) == block and not judge.is_withdrawn(i):
 			n += 1
 			if judge.is_resolved(i):
 				done += 1

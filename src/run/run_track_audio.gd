@@ -61,9 +61,31 @@ var _groups: Array = []  # {transport: TrackTransport, node, track, dir, t0, tra
 var _cache: Dictionary = {}  # pack folder -> {state: loading | ready | failed, track, pack, job, task, keep}
 var _tasks: Array = []  # worker tasks not yet waited for (decodes and warms)
 var _pinned: Dictionary = {}  # pack folder -> true: kept by _retain (request_scene with pin, the director's destinations)
+## Stem locks (CONTRACTS.md 7, hooks H7.1 and H7.2): track id -> [stem keys] locked on every group made for that track (a rave whose bass is not fixed yet). Set by the
+## host before the scene starts (`lock_stems`); `unlock_stem_at` frees one on song time with a ramp, the stream never stops.
+var stem_locks: Dictionary = {}
 
 
 # --- the interface ------------------------------------------------------------------------------------------------------------
+
+## Locks `keys` of `track` on every group made for it from now (the group already playing too). The lock is availability, apart from the mix: StemTransport.set_stem_locked.
+func lock_stems(track: String, keys: Array) -> void:
+	var list: Array = stem_locks.get(track, [])
+	for k: Variant in keys:
+		if not list.has(str(k)):
+			list.append(str(k))
+	stem_locks[track] = list
+	for g in _groups:
+		if str(g["track"]) == track:
+			for k: Variant in keys:
+				(g["transport"] as TrackTransport).set_stem_locked(str(k), true)
+
+
+## Unlocks stem `key` at song time `t` (ContractShapes.unlock_time: a bar line), rising over `ramp_s` (H7.2): scheduled on the song-time schedule like every other
+## item, so a pause holds it; the playing group's stem comes in where the stream is (no restart), and later groups of the track are made unlocked.
+func unlock_stem_at(key: String, t: float, ramp_s: float) -> void:
+	_add({"t": t, "kind": "unlock", "key": key, "ramp_s": ramp_s})
+
 
 ## The run's mix settings (fade, ramp, dip) from its run.json `mix`.
 func configure(cfg: Dictionary) -> void:
@@ -244,6 +266,17 @@ func run_item(item: Dictionary, now: float, ttnm: float, chunk_t: float = NAN) -
 				_start(item["ev"], t, late)
 		"scene":
 			_drop_orphans(t, str(item.get("track", "")))
+		"unlock":
+			var key := str(item["key"])
+			for tk in stem_locks:
+				(stem_locks[tk] as Array).erase(key)
+			var n := 0
+			for x in _groups:
+				var trx: TrackTransport = x["transport"]
+				if trx.is_stem_locked(key):
+					trx.set_stem_locked(key, false, float(item["ramp_s"]))
+					n += 1
+			log.append({"kind": "unlock", "t": t, "key": key, "ramp_s": float(item["ramp_s"]), "groups": n, "lateness_ms": late * 1000.0})
 		"seek":
 			var g := _live()
 			if not g.is_empty():
@@ -353,6 +386,8 @@ func _make_group(node: String, track: String, dir: String, beat_s: float, track_
 	var tr := TrackTransport.new()
 	tr.name = "Track_" + track
 	add_child(tr)
+	for k: Variant in stem_locks.get(track, []):  # (H7.1: before the load, so a locked stem is silent from the first sample; load_pack_streams applies it)
+		tr.set_stem_locked(str(k), true)
 	var slot := _free_slot()
 	tr.player.bus = str(SLOT_BUSES[slot])
 	pack.streams = (e["job"] as Dictionary)["streams"]

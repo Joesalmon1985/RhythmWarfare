@@ -3,10 +3,16 @@ extends RefCounted
 ## The continuous run's save: user://story_run.json (versioned, atomic, an unreadable file is set aside as .corrupt). A level (a route-map node)
 ## is saved as reached when the player enters it. The old chapter-by-chapter save (user://story_campaign.json) is never modified or deleted; on the
 ## first load of the new save it is read once and its chapters become reached levels, so nobody loses a place they had opened.
+##
+## Version 3 (CONTRACTS.md 6, hook H6.1): version 2's keys plus the bedsit raves' (`bedsit_facing`, `rave_theme` and `raves`: per theme the three puzzle flags and the
+## race record; RaveSave). A version 2 or 3 file loads (RaveSave.migrate fills what is missing; the file is rewritten as version 3 at the next save); any other
+## version is set aside as .corrupt, as ever. A new run (`run_started`) resets the per-run keys and keeps the race records (RaveSave.new_run). Note: a build from
+## before version 3 sets a version 3 file aside as corrupt.
 
 const SAVE_PATH := "user://story_run.json"
 const OLD_PATH := "user://story_campaign.json"
-const VERSION := 2
+const VERSION := 3
+const LOADS := [2, 3]  # the versions a file may have to be loaded (2: before the bedsit raves, migrated on load)
 const CHAPTER_TO_NODE := {"night_one": "warehouse", "mothership": "mothership", "underworld": "underworld", "hospital": "hospital", "mental_hospital": "ward"}
 
 var path := SAVE_PATH
@@ -14,6 +20,8 @@ var old_path := OLD_PATH
 var data: Dictionary = {}
 var recovered_from_corrupt := false
 var migrated: Array = []  # level ids carried over from the old chapter save on this load
+var loaded_version := 0  # the version of the file this was loaded from (0: no file)
+var rave_fixed: Array = []  # the keys RaveSave.migrate added or repaired on this load
 ## World state (hotspot outcomes, docs/CONTINUOUS_RUN.md "Hotspots"): `run_flags` lasts one run (cleared by run_started, never saved); `flags` (the "keep:" names: discoveries) persists in the save.
 var run_flags: Dictionary = {}
 var flags: Dictionary:
@@ -34,8 +42,9 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 	p.data = _fresh()
 	if FileAccess.file_exists(p_path):
 		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(p_path))
-		if typeof(parsed) == TYPE_DICTIONARY and int(parsed.get("version", 0)) == VERSION and typeof(parsed.get("reached", null)) == TYPE_DICTIONARY:
+		if typeof(parsed) == TYPE_DICTIONARY and int(parsed.get("version", 0)) in LOADS and typeof(parsed.get("reached", null)) == TYPE_DICTIONARY:
 			p.data = parsed
+			p.loaded_version = int(parsed["version"])
 			if typeof(p.data.get("flags", null)) != TYPE_DICTIONARY:  # a save from before the hotspots has no flags
 				p.data["flags"] = {}
 		else:
@@ -49,6 +58,7 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 		var rng := RandomNumberGenerator.new()
 		rng.randomize()
 		p.data["seed"] = rng.randi() & 0x7fffffff
+	p.rave_fixed = RaveSave.migrate(p.data)  # (version 3: the bedsit raves' keys; a version 2 save gets their defaults, the version becomes 3 at the next save)
 	p.wallet.load_dict(p.data.get("wallet", null))  # a save from before the wallet has none: a fresh 20 pounds; held stakes fold back into the balance
 	p.data["wallet"] = p.wallet.to_dict()
 	p.wallet.changed.connect(p._on_wallet_changed)
@@ -61,7 +71,9 @@ func run_seed() -> int:
 
 
 static func _fresh() -> Dictionary:
-	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": "", "flags": {}, "paths": {}, "wallet": {"pence": RunWallet.START_PENCE, "held": {}}}  # "seed" is added by load_data
+	var d := {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": "", "flags": {}, "paths": {}, "wallet": {"pence": RunWallet.START_PENCE, "held": {}}}  # "seed" is added by load_data
+	RaveSave.migrate(d)
+	return d
 
 
 ## Reads the old chapter save (never writes it) and marks the matching levels reached. Night One is always reached.
@@ -139,6 +151,7 @@ func run_started() -> void:
 	data["runs"] = int(data["runs"]) + 1
 	data["seed"] = (int(data.get("seed", 0)) * 1103515245 + 12345 + int(data["runs"])) & 0x7fffffff  # the next run's seed: this run already loaded its data
 	run_flags.clear()
+	RaveSave.new_run(data)  # facing north in the bedsit, in no rave, every puzzle unsolved; the race records stay
 	wallet.changed.disconnect(_on_wallet_changed)  # the save below covers the reset: one write
 	wallet.reset()
 	wallet.changed.connect(_on_wallet_changed)
@@ -165,6 +178,55 @@ func set_flag(name: String) -> bool:
 	else:
 		run_flags[name] = true
 	return true
+
+
+# --- the bedsit raves (version 3; CONTRACTS.md 2, 4 and 6) -------------------------------------------------------------------
+
+func bedsit_facing() -> String:
+	return str(data.get("bedsit_facing", "N"))
+
+
+func set_bedsit_facing(facing: String) -> bool:
+	if facing not in RaveSave.FACINGS or facing == bedsit_facing():
+		return false
+	data["bedsit_facing"] = facing
+	save()
+	return true
+
+
+func rave_theme() -> String:
+	return str(data.get("rave_theme", ""))
+
+
+func set_rave_theme(theme: String) -> bool:
+	if (theme != "" and theme not in RaveSave.THEMES) or theme == rave_theme():
+		return false
+	data["rave_theme"] = theme
+	save()
+	return true
+
+
+func puzzle_done(theme: String, puzzle: String) -> bool:
+	return RaveSave.puzzle_done(data, theme, puzzle)
+
+
+## One `flags_to_set` entry of an activity result (CONTRACTS.md 4): "rave.<theme>.<puzzle>" sets that puzzle (saved at once), any other name is an ordinary flag
+## (`set_flag`). True when it changed.
+func apply_activity_flag(flag: String) -> bool:
+	if flag.begins_with(RaveSave.FLAG_PREFIX):
+		if not RaveSave.apply_flag(data, flag):
+			return false
+		save()
+		return true
+	return set_flag(flag)
+
+
+## A finished race of `theme` (kept across runs).
+func record_race(theme: String, won: bool, time_s: float) -> void:
+	if theme not in RaveSave.THEMES:
+		return
+	RaveSave.record_race(data, theme, won, time_s)
+	save()
 
 
 func _on_wallet_changed() -> void:

@@ -245,6 +245,8 @@ static func route_as_cinematic(r: Dictionary) -> Dictionary:
 	var steps: Array = []
 	for l in r["legs"]:
 		var s := {"move": "walk", "to": str(l["to"]), "bars": float(l.get("bars", 3.0)), "style": str(l.get("style", "walk"))}
+		if float(l.get("hold_bars", 0.0)) > 0.0:  # (RunJourney.hotspot_actions holds the camera still for it: the next step starts after the hold, as route_actions)
+			s["hold_bars"] = float(l["hold_bars"])
 		if l.has("look"):
 			s["look_at"] = str(l["look"])
 		steps.append(s)

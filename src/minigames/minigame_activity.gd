@@ -152,6 +152,32 @@ func state() -> Dictionary:
 	return {"began": began, "wobble": wobble, "done": _done, "reason": _reason}
 
 
+## The outcome, read once by the host when the activity is done (CONTRACTS.md 4, ActivityResult; hook H4.1): {activity_id, completed, score, flags_to_set, reason,
+## race?}. The host applies `flags_to_set` and a race record and saves. The default: nothing completed, nothing to set, the reason the activity ended by.
+func result() -> Dictionary:
+	return {"activity_id": str(config.get("id", "")), "completed": _reason == "done", "score": 0, "flags_to_set": [],
+		"reason": _reason if _reason in ["done", "left", "fall", "run_over", "host"] else "host"}
+
+
+## The controls a replace activity puts where the pads were (2 or 4, left to right): [{id, label}]. A press on one reaches `tap(id, t)`. The default reads the
+## config's `control_ids` (none for an activity that keeps the pads: the blackjack table).
+func controls() -> Array:
+	var out: Array = []
+	for id: Variant in config.get("control_ids", []):
+		out.append({"id": str(id), "label": str(id).capitalize()})
+	return out
+
+
+## Overlay mode (the race): every judge event of the pads (PadJudge's {kind, pad, time, ...}) at song time `t`. Inert by default.
+func on_judge(_ev: Dictionary, _t: float) -> void:
+	pass
+
+
+## Overlay mode: every block result (the engine's block_result event: {block, credit, passed, energy, t, ...}). Inert by default.
+func on_block(_result: Dictionary) -> void:
+	pass
+
+
 ## The presentation node (null in pure tests); the host mounts it in the low-res viewport (see RunPlay `_mount_minigame_view` for the properties it sets).
 func make_view() -> Control:
 	return null
