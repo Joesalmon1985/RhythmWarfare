@@ -86,6 +86,10 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | hospital | hospital.exit | exit.exit_hospital_late (default) | exit | route hospital_late | same door, staggering (-5 energy) | always | verified |
 | hospital | hospital.exit | exit.exit_ward_late | exit | route ward_late | same door, staggering (-5 energy) | always | verified |
 | hospital | hospital.exit | exit.mic | object | sing at the bandstand mic (flag hp_sang, +10, music variation) | feedback (-8, music dips) | always | verified |
+| hospital | hospital | enter_ember | secret | an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
+| hospital | hospital | enter_bassment | secret | a violet gate, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
+| hospital | hospital | enter_gospel | secret | a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel) | the star gate flickers out (-4) | always | verified |
+| hospital | hospital | enter_squadron | secret | a green gate, the Gunner pointing: the Mission Count path (route path:squadron) | the radio gate gutters out (-4) | always | verified |
 | ward | ward | exit_art (default) | exit | route ward.art | same door, staggering (-5 energy) | always | verified |
 | ward | ward | exit_dorm | exit | route ward.dorm | same door, staggering (-5 energy) | always | verified |
 | ward | ward | orderly | character | the orderly lets it pass (+4) | taken to the treatment room (-9) | always | verified |

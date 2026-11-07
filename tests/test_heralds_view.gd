@@ -17,7 +17,14 @@ const IN_FRAME := 0.75  # this much of a rectangle's area inside the visible pic
 const FLAGS := {"wh_saw_floor": true, "wh_vip_pass": true}
 ## scene -> the scenes the run passes through to get there from the Warehouse's first scene
 const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "warehouse.booth": ["warehouse.balcony", "warehouse.booth"], "warehouse.bar": ["warehouse.bar"],
-	"warehouse.chill": ["warehouse.bar", "warehouse.chill"]}
+	"warehouse.chill": ["warehouse.bar", "warehouse.chill"],
+	# N2.4 Hospital Ward (hospital, hospital_late): by the Mothership's airlock, then the ward and its side scenes
+	"hospital": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital"],
+	"hospital.dayroom": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom"],
+	"hospital.cafeteria": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.cafeteria"],
+	"hospital.garden": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden"],
+	"hospital_late.cafe": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "hospital_late", "hospital_late.cafe"],
+	"hospital_late.quiet": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "hospital_late", "hospital_late.quiet"]}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.
