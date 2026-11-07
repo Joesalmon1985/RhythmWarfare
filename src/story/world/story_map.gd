@@ -44,7 +44,8 @@ var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (
 var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
 ## Heights (docs/story/HEIGHTS_AND_PATHS.md): a floor change across a portal of at most `max_step` metres is a step a walker takes (stairs are runs of them); a taller one,
 ## or any change into or out of a sector marked "drop", is a drop nobody walks (a "climb" move may take up to `max_climb`). A sector marked "void", or one whose floor lies
-## `void_drop` metres or more below every neighbour and that holds no waypoint, home or spot, is a void: drawn far below, hazed by depth, never stood in.
+## `void_drop` metres or more below every neighbour and that holds no waypoint, home or spot, is a void: drawn far below, hazed by depth, never stood in (the depth rule is
+## on, at 3 m, for maps of CLIP_FROM pieces or more, the converted ones; a hand-made map opts in with "void_drop").
 var max_step := 0.5
 var max_climb := 2.0
 var void_drop := 3.0
@@ -112,7 +113,8 @@ func build(d: Dictionary, check_files: bool) -> void:
 			errors.append("animated surface %s: needs a map texture and a mode of %s" % [an, ANIM_MODES])
 	max_step = float(d.get("max_step", 0.5))
 	max_climb = maxf(float(d.get("max_climb", 2.0)), max_step)
-	void_drop = float(d.get("void_drop", 3.0))
+	var many: bool = typeof(d.get("sectors")) == TYPE_ARRAY and (d["sectors"] as Array).size() >= CLIP_FROM
+	void_drop = float(d.get("void_drop", 3.0 if many else 0.0))  # the depth rule is on by default for converted maps only (a hand-made pit keeps its look)
 	_build_sectors(d.get("sectors", []))
 	var vis: Dictionary = d.get("visibility", {}) if typeof(d.get("visibility", {})) == TYPE_DICTIONARY else {}
 	vis_mode = str(vis.get("mode", "clip" if sectors.size() >= CLIP_FROM else "flood"))
@@ -350,7 +352,17 @@ func _build_walls(list: Array) -> void:
 		var tex := str(w.get("tex", ""))
 		for k in ["tex", "lower_tex", "upper_tex"]:
 			_tex_ok(str(w.get(k, "")), where)
-		_walls_in.append({"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", "")), "blocked": bool(w.get("blocked", false)) and portal != ""})
+		var rec := {"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", "")), "blocked": bool(w.get("blocked", false)) and portal != ""}
+		if str(w.get("kind", "")) == "railing":  # a see-through strip on a portal edge: open to the eye, closed to walkers (other kinds are not this renderer's)
+			if portal == "" or tex == "":
+				errors.append("%s: a railing stands on a portal edge and names its tile (tex)" % where)
+				continue
+			rec["kind"] = "railing"
+			rec["rail_tex"] = tex
+			rec["rail_h"] = clampf(float(w.get("height", 1.0)), 0.2, 3.0)
+			rec["tex"] = ""  # (the portal's step and lip faces keep the sector's wall_tex)
+			rec["blocked"] = true
+		_walls_in.append(rec)
 	# a portal is declared once (the other sector sees it implicitly)
 	for k in seen_portals:
 		var segs: Array = seen_portals[k]
@@ -710,7 +722,11 @@ func _resolve_walls() -> void:
 	for w in _walls_in:
 		all.append(w)
 		if str(w["portal"]) != "":
-			all.append({"a": w["b"], "b": w["a"], "sector": w["portal"], "portal": w["sector"], "tex": w["tex"], "lower_tex": w["lower_tex"], "upper_tex": w["upper_tex"], "implicit": true})
+			var mirror := {"a": w["b"], "b": w["a"], "sector": w["portal"], "portal": w["sector"], "tex": w["tex"], "lower_tex": w["lower_tex"], "upper_tex": w["upper_tex"], "implicit": true}
+			for k in ["blocked", "kind", "rail_tex", "rail_h"]:
+				if w.has(k):
+					mirror[k] = w[k]
+			all.append(mirror)
 	for s in sectors:
 		var poly: PackedVector2Array = s["poly"]
 		for i in poly.size():
