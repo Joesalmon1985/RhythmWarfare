@@ -115,9 +115,9 @@
    "map": "airfield",
    "anchor": {
     "pos": [
-     -6.92,
+     -8.87,
      1.5,
-     -1.29
+     7.72
     ]
    },
    "kind": "object",
@@ -367,9 +367,9 @@
    "map": "airfield",
    "anchor": {
     "pos": [
-     11.33,
+     12.28,
      1.5,
-     9.13
+     0.38
     ]
    },
    "kind": "object",
@@ -620,9 +620,9 @@
    "map": "airfield",
    "anchor": {
     "pos": [
-     8.16,
+     0.42,
      1.5,
-     -9.4
+     -8.35
     ]
    },
    "kind": "object",

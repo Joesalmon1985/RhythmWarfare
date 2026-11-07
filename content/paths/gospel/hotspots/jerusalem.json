@@ -396,9 +396,9 @@
    "map": "jerusalem",
    "anchor": {
     "pos": [
-     15.2,
+     13.0,
      1.5,
-     -6.1
+     -7.6
     ]
    },
    "kind": "object",
@@ -577,9 +577,9 @@
    "map": "jerusalem",
    "anchor": {
     "pos": [
-     34.54,
+     29.03,
      1.5,
-     -2.92
+     -8.41
     ]
    },
    "kind": "object",
@@ -791,9 +791,9 @@
    "map": "jerusalem",
    "anchor": {
     "pos": [
-     46.78,
+     46.79,
      1.5,
-     -7.91
+     -4.41
     ]
    },
    "kind": "object",
@@ -1014,9 +1014,9 @@
    "map": "jerusalem",
    "anchor": {
     "pos": [
-     69.2,
+     67.0,
      1.5,
-     -6.1
+     -7.6
     ]
    },
    "kind": "object",
@@ -1234,9 +1234,9 @@
    "map": "jerusalem",
    "anchor": {
     "pos": [
-     89.54,
+     86.04,
      1.5,
-     -2.92
+     -6.41
     ]
    },
    "kind": "object",

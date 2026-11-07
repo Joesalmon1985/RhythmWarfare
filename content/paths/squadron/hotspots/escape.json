@@ -110,9 +110,9 @@
    "map": "harbour",
    "anchor": {
     "pos": [
-     -8.62,
+     -11.63,
      1.5,
-     5.34
+     7.59
     ]
    },
    "kind": "object",
@@ -355,9 +355,9 @@
    "map": "harbour",
    "anchor": {
     "pos": [
-     11.77,
+     13.29,
      1.5,
-     6.64
+     1.39
     ]
    },
    "kind": "object",
@@ -572,9 +572,9 @@
    "map": "harbour",
    "anchor": {
     "pos": [
-     33.32,
+     35.29,
      1.5,
-     6.88
+     1.12
     ]
    },
    "kind": "object",
@@ -817,9 +817,9 @@
    "map": "harbour",
    "anchor": {
     "pos": [
-     6.68,
+     0.68,
      1.5,
-     -6.98
+     -5.94
     ]
    },
    "kind": "object",

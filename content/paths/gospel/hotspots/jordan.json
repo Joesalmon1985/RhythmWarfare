@@ -110,9 +110,9 @@
    "map": "galilee_shore",
    "anchor": {
     "pos": [
-     -7.11,
+     -4.35,
      1.5,
-     -7.79
+     -4.29
     ]
    },
    "kind": "object",
@@ -322,9 +322,9 @@
    "map": "galilee_shore",
    "anchor": {
     "pos": [
-     15.2,
+     13.0,
      1.5,
-     -6.1
+     -7.6
     ]
    },
    "kind": "object",
@@ -569,9 +569,9 @@
    "map": "galilee_shore",
    "anchor": {
     "pos": [
-     33.2,
+     29.65,
      1.5,
-     -6.1
+     -4.4
     ]
    },
    "kind": "object",
@@ -817,9 +817,9 @@
    "map": "galilee_shore",
    "anchor": {
     "pos": [
-     51.2,
+     49.0,
      1.5,
-     -6.1
+     -7.6
     ]
    },
    "kind": "object",

@@ -73,6 +73,8 @@ SPOTS: dict = {
     "gospel/road": [-5.64, -7.4],
     "gospel/road.entry": [29.4, -3.9],
     "gospel/road.loaves": [12.64, -7.9],
+    "squadron/air": [10.3, 19.78],  # (no spot passes the strict survey: the airfield's rail walks far; judged by eye in the shots)
+    "squadron/city": [10.87, -5.18],  # (as the airfield)
     "squadron/air.c05": [37.36, 0.38],
     "squadron/air.c06": [-7.36, 0.33],
     "squadron/base": [-8.87, 7.72],
