@@ -70,6 +70,119 @@
    "repeatable": true
   },
   {
+   "id": "ember.return",
+   "world": "hollow",
+   "scene": "hollow",
+   "map": "orchard",
+   "anchor": {
+    "pos": [
+     -1.61,
+     1.5,
+     4.96
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "hollow.ford.crossing",
    "world": "hollow",
    "scene": "hollow.ford",
@@ -175,6 +288,119 @@
    }
   },
   {
+   "id": "ember.return",
+   "world": "hollow",
+   "scene": "hollow.ford",
+   "map": "orchard",
+   "anchor": {
+    "pos": [
+     -5.4,
+     1.5,
+     -31.29
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "hollow.inn.back_door",
    "world": "hollow",
    "scene": "hollow.inn",
@@ -274,6 +500,119 @@
       "face": "resolve",
       "look_at": "camera"
      }
+    }
+   }
+  },
+  {
+   "id": "ember.return",
+   "world": "hollow",
+   "scene": "hollow.inn",
+   "map": "orchard",
+   "anchor": {
+    "pos": [
+     23.57,
+     1.5,
+     -24.03
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
     }
    }
   }

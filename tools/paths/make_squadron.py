@@ -31,6 +31,7 @@ import squadron_story as st  # noqa: E402
 
 sys.path.insert(0, str(ROOT / "tools" / "run"))
 import laps as laps_mod  # noqa: E402
+import returns_common  # noqa: E402  (the return objects, N2.5)
 
 # Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): every scene of the Mission Count plays the 4-bar loop for two phases (the ending C13 too: the quay is where the player most wants to sit in the song).
 LAPS = 2
@@ -167,6 +168,9 @@ def build_hotspots() -> dict:
             order = ["id", "world", "scene", "map", "anchor", "kind", "radius_m", "min_px", "available", "look", "challenge", "on_success", "on_failure", "default", "repeatable"]
             h = {**{k: h[k] for k in order}, **{k: v for k, v in h.items() if k not in order}}
             by_world[s["world"]].append(h)
+    run = json.loads((PATHDIR / "run.json").read_text(encoding="utf-8"))  # (written just before: main() dumps run.json first)
+    flat = returns_common.add_rows("squadron", [h for lst in by_world.values() for h in lst], run)  # the return objects, one `squadron.return` row per scene (N2.5)
+    by_world = {w: [h for h in flat if h["world"] == w] for w in by_world}
     return {w: {"world": w, "hotspots": hs} for w, hs in by_world.items()}
 
 

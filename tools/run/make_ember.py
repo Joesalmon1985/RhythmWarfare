@@ -17,6 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 import laps as laps_mod  # noqa: E402
+import returns_common  # noqa: E402  (the return objects: one `ember.return` row per scene, N2.5)
 
 # Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): E00 is the prologue (the orchard, one way on) and stays at one lap; the endings E13 (the Spring) and E12 (the Keeper) take two.
 LAPS = 2
@@ -354,7 +355,7 @@ def main() -> int:
         print(f"ember: {len(SCENES)} scenes, run.json only")
         return 0
     by_world: dict = {}
-    for h in HOTSPOTS:
+    for h in returns_common.add_rows("ember", HOTSPOTS, run):
         by_world.setdefault(h["world"], []).append(h)
     for w, hs_ in by_world.items():
         write(os.path.join(OUT, "hotspots", f"{w}.json"), {"world": w, "hotspots": hs_})

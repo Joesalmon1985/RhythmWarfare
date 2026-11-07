@@ -104,6 +104,119 @@
    }
   },
   {
+   "id": "squadron.return",
+   "world": "escape",
+   "scene": "escape",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     -8.62,
+     1.5,
+     5.34
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "escape.c12.searchlights",
    "world": "escape",
    "scene": "escape.c12",
@@ -236,6 +349,119 @@
    }
   },
   {
+   "id": "squadron.return",
+   "world": "escape",
+   "scene": "escape.c12",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     11.77,
+     1.5,
+     6.64
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "escape.c13.shore",
    "world": "escape",
    "scene": "escape.c13",
@@ -336,6 +562,119 @@
      "face": "happy",
      "look_at": "camera",
      "beats": 6
+    }
+   }
+  },
+  {
+   "id": "squadron.return",
+   "world": "escape",
+   "scene": "escape.c13",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     33.32,
+     1.5,
+     6.88
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
     }
    }
   },
@@ -468,6 +807,119 @@
      "face": "doubt",
      "look_at": "camera",
      "beats": 8
+    }
+   }
+  },
+  {
+   "id": "squadron.return",
+   "world": "escape",
+   "scene": "escape.c14",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     6.68,
+     1.5,
+     -6.98
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
     }
    }
   }

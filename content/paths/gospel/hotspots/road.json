@@ -135,6 +135,119 @@
    "repeatable": true
   },
   {
+   "id": "gospel.return",
+   "world": "road",
+   "scene": "road",
+   "map": "bethany",
+   "anchor": {
+    "pos": [
+     -0.38,
+     1.5,
+     -2.91
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "road.loaves.entry",
    "world": "road",
    "scene": "road.loaves",
@@ -279,6 +392,119 @@
    }
   },
   {
+   "id": "gospel.return",
+   "world": "road",
+   "scene": "road.loaves",
+   "map": "bethany",
+   "anchor": {
+    "pos": [
+     15.2,
+     1.5,
+     -6.1
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "road.entry.steps",
    "world": "road",
    "scene": "road.entry",
@@ -345,6 +571,119 @@
    },
    "default": false,
    "repeatable": true
+  },
+  {
+   "id": "gospel.return",
+   "world": "road",
+   "scene": "road.entry",
+   "map": "bethany",
+   "anchor": {
+    "pos": [
+     34.4,
+     1.5,
+     -3.91
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "door": "none",
+    "lamp": false,
+    "height_m": 3.0,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
   }
  ]
 }
