@@ -1,22 +1,20 @@
 """The Balcony's part of the Doom worlds overlay (docs/doom/scenes/balcony.md): the world `doom_balcony`, its scenes, its hotspots. Called from tools/run/make_doom.py (`write`), which merges it
 into content/run/doom/run.json, music.json and hotspots/doom_balcony.json.
 
-Routing (docs/briefs/DOOM_WAVE2_BRIEF.md): from the Balcony ahead = Mothership (the bridge), left = Floor (the brick stair), right = Booth (the cabin door). Those scenes are not reached from
-here yet, so under the flag the three are STAND-INS of this world (doom_balcony.mothership, .floor, .booth: the same map and the balcony's own rail), each leading on to `doom_balcony.return`,
-the world's exit scene, whose two routes loop back. The engine package (geography worlds, hook H1.6) will route the entry scene straight into the other worlds: the threshold waypoint is the
-`to` of each route move, the doorway is `rail.exits[dir]`, the route labels are the destination names, and the stand-ins are then deleted by a change to SCENES below.
-The Warehouse's own stand-in for this scene is `doom_warehouse.balcony` (tools/run/make_doom.py).
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_mothership, left doom_warehouse (the Floor), right doom_booth. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
-WORLD = {"id": "doom_balcony", "title": "The Balcony (Doom worlds)", "map": "doom_balcony", "depth": 2, "story": "res://content/run/doom/story_doom_balcony.json",
+WORLD = {"id": "doom_balcony", "title": "The Balcony (Doom worlds)", "map": "doom_balcony", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_balcony.json",
          "blurb": "A rainy industrial rooftop at night. The bridge to the mothership ahead, the brick stair down to the floor on the left, the lit booth door on the right: follow the guide you like."}
 EXITS = {"up": "bc_bridge_end", "left": "bc_stair_foot", "right": "bc_cabin_in", "down": "bc_ref"}
 DIR_OF = {"mothership": "up", "floor": "left", "booth": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
-    "mothership": ("bc_guide_mothership", "doom_balcony.mothership", "mothership"),
-    "floor": ("bc_guide_floor", "doom_balcony.floor", "floor"),
-    "booth": ("bc_guide_booth", "doom_balcony.booth", "booth"),
+    "mothership": ("bc_guide_mothership", "doom_mothership", "mothership"),
+    "floor": ("bc_guide_floor", "doom_warehouse", "floor"),
+    "booth": ("bc_guide_booth", "doom_booth", "booth"),
 }
 
 
@@ -40,13 +38,9 @@ def _rail(P):
 
 # id, short name, title, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_balcony", "balcony", "The Balcony", False,
-     [("doom_balcony", "down", "Stay on the roof", True), ("doom_balcony.mothership", "up", "Over the bridge to the mothership", False),
-      ("doom_balcony.floor", "left", "Down the brick stair to the floor", False), ("doom_balcony.booth", "right", "Through the lit door to the booth", False)], 2),
-    ("doom_balcony.mothership", "balcony_mothership", "The Mothership (stand-in)", False, [("doom_balcony.return", "up", "On", False)], 1),
-    ("doom_balcony.floor", "balcony_floor", "The Floor (stand-in)", False, [("doom_balcony.return", "up", "On", False)], 0),
-    ("doom_balcony.booth", "balcony_booth", "The Booth (stand-in)", False, [("doom_balcony.return", "up", "On", False)], 3),
-    ("doom_balcony.return", "balcony_return", "Back to the Balcony", True, [("doom_balcony", "up", "Round again", True), ("doom_balcony", "left", "Round again", True)], 5),
+    ("doom_balcony", "balcony", "The Balcony", True,
+     [("doom_balcony", "down", "Stay on the roof", True), ("doom_mothership", "up", "Over the bridge to the mothership", False),
+      ("doom_warehouse", "left", "Down the brick stair to the floor", False), ("doom_booth", "right", "Through the lit door to the booth", False)], 2),
 ]
 
 

@@ -25,10 +25,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_booth.mothership"
+    "route": "doom_mothership"
    },
    "on_failure": {
-    "route": "doom_booth.mothership",
+    "route": "doom_mothership",
     "cinematic": "doom_booth.stagger_mothership",
     "energy": -5
    },
@@ -106,10 +106,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_booth.balcony"
+    "route": "doom_balcony"
    },
    "on_failure": {
-    "route": "doom_booth.balcony",
+    "route": "doom_balcony",
     "cinematic": "doom_booth.stagger_balcony",
     "energy": -5
    },
@@ -187,10 +187,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_booth.dock"
+    "route": "doom_dock"
    },
    "on_failure": {
-    "route": "doom_booth.dock",
+    "route": "doom_dock",
     "cinematic": "doom_booth.stagger_dock",
     "energy": -5
    },

@@ -1,21 +1,20 @@
 """The Loading Dock's part of the Doom worlds overlay (docs/doom/scenes/dock.md): the world `doom_dock`, its scenes, its hotspots. Called from tools/run/make_doom.py (`write`), which merges it
 into content/run/doom/run.json, music.json and hotspots/doom_dock.json.
 
-Routing (docs/briefs/DOOM_WAVE2_BRIEF.md): from the Dock ahead = Mothership, left = Floor (the club door), right = Underworld (the furnace). Those scenes are not built on this branch, so under the flag the three
-are STAND-INS of this world (doom_dock.mothership, .floor, .underworld: the same map and the dock's own rail), each leading on to `doom_dock.return`, the world's exit scene, whose two routes loop back to
-the dock. The data the real cut needs is already here: the threshold waypoint is the `to` of each route move (`dk_moth`, `dk_floor_door`, `dk_under`), the doorway is `rail.exits[dir]`, the route labels
-are the destination names. When the engine's geography hook (H1.6) lands, the stand-ins are deleted by a change here (SCENES) and the guides' `on_success.route` names the real worlds.
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_mothership, left doom_warehouse (the Floor), right doom_underworld. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
-WORLD = {"id": "doom_dock", "title": "The Loading Dock (Doom worlds)", "map": "doom_dock", "depth": 2, "story": "res://content/run/doom/story_doom_dock.json",
+WORLD = {"id": "doom_dock", "title": "The Loading Dock (Doom worlds)", "map": "doom_dock", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_dock.json",
          "blurb": "The club's loading dock in the rain. The street to the Mothership ahead, the club door and the dance floor on the left, the furnace and the Underworld on the right: follow the guide you like."}
 EXITS = {"up": "dk_moth", "left": "dk_floor_door", "right": "dk_under", "down": "dk_ref"}
 DIR_OF = {"mothership": "up", "floor": "left", "underworld": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
-    "mothership": ("dk_guide_mothership", "doom_dock.mothership", "mothership"),
-    "floor": ("dk_guide_floor", "doom_dock.floor", "floor"),
-    "underworld": ("dk_guide_underworld", "doom_dock.underworld", "underworld"),
+    "mothership": ("dk_guide_mothership", "doom_mothership", "mothership"),
+    "floor": ("dk_guide_floor", "doom_warehouse", "floor"),
+    "underworld": ("dk_guide_underworld", "doom_underworld", "underworld"),
 }
 
 
@@ -39,13 +38,9 @@ def _rail(P):
 
 # id, short name, title, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_dock", "dock", "The Loading Dock", False,
-     [("doom_dock", "down", "Stay on the dock", True), ("doom_dock.mothership", "up", "Up the street to the Mothership", False),
-      ("doom_dock.floor", "left", "Through the club door to the Floor", False), ("doom_dock.underworld", "right", "Across the yard to the Underworld", False)], 0),
-    ("doom_dock.mothership", "dock_mothership", "The Mothership (stand-in)", False, [("doom_dock.return", "up", "On", False)], 2),
-    ("doom_dock.floor", "dock_floor", "The Floor (stand-in)", False, [("doom_dock.return", "up", "On", False)], 1),
-    ("doom_dock.underworld", "dock_underworld", "The Underworld (stand-in)", False, [("doom_dock.return", "up", "On", False)], 3),
-    ("doom_dock.return", "dock_return", "Back to the Dock", True, [("doom_dock", "up", "Round again", True), ("doom_dock", "left", "Round again", True)], 5),
+    ("doom_dock", "dock", "The Loading Dock", True,
+     [("doom_dock", "down", "Stay on the dock", True), ("doom_mothership", "up", "Up the street to the Mothership", False),
+      ("doom_warehouse", "left", "Through the club door to the Floor", False), ("doom_underworld", "right", "Across the yard to the Underworld", False)], 0),
 ]
 
 

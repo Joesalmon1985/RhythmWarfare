@@ -1,21 +1,20 @@
 """The Mothership's part of the Doom worlds overlay (docs/doom/scenes/mothership.md): the world `doom_mothership`, its scenes, its hotspots. Called from tools/run/make_doom.py (`write`), which merges it
 into content/run/doom/run.json, music.json and hotspots/doom_mothership.json.
 
-Routing (docs/briefs/DOOM_WAVE2_BRIEF.md): from the Mothership ahead = Underworld, left = Booth, right = Dock. Those scenes are not built on this branch, so under the flag the three are
-STAND-INS of this world (doom_mothership.underworld, .booth, .dock: the same map and the mothership's own rail), each leading on to `doom_mothership.return`, the world's exit scene, whose two routes loop
-back to the atrium. When a real scene lands its node replaces the stand-in as the `next` target (change SCENES below). The threshold waypoint of each route (ms_uw_hatch, ms_booth_hatch,
-ms_dock_in) is the `to` of the route's move and `rail.exits[dir]`; the route labels are the destination names.
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_underworld, left doom_booth, right doom_dock. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
-WORLD = {"id": "doom_mothership", "title": "The Mothership (Doom worlds)", "map": "doom_mothership", "depth": 2, "story": "res://content/run/doom/story_doom_mothership.json",
+WORLD = {"id": "doom_mothership", "title": "The Mothership (Doom worlds)", "map": "doom_mothership", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_mothership.json",
          "blurb": "A violet atrium, a ring walk over a glowing void. The stair to the Underworld ahead, the platform hatch of the Booth on the left, the dock hatch on the right: follow the guide you like."}
 EXITS = {"up": "ms_uw_hatch", "left": "ms_booth_hatch", "right": "ms_dock_in", "down": "ms_ref"}
 DIR_OF = {"underworld": "up", "booth": "left", "dock": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
-    "underworld": ("ms_guide_underworld", "doom_mothership.underworld", "underworld"),
-    "booth": ("ms_guide_booth", "doom_mothership.booth", "booth"),
-    "dock": ("ms_guide_dock", "doom_mothership.dock", "dock"),
+    "underworld": ("ms_guide_underworld", "doom_underworld", "underworld"),
+    "booth": ("ms_guide_booth", "doom_booth", "booth"),
+    "dock": ("ms_guide_dock", "doom_dock", "dock"),
 }
 STAY_AT = (-1.3, 0.4, -6.6)  # on the ring just ahead of the reference viewpoint (map x, height, z)
 
@@ -41,13 +40,9 @@ def _rail(P):
 
 # id, short name, title, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_mothership", "mothership", "The Mothership", False,
-     [("doom_mothership", "down", "Stay on the ring", True), ("doom_mothership.underworld", "up", "Up the stair to the Underworld", False),
-      ("doom_mothership.booth", "left", "Across the bridge to the Booth", False), ("doom_mothership.dock", "right", "Through the hatch to the Dock", False)], 0),
-    ("doom_mothership.underworld", "mothership_underworld", "The Underworld (stand-in)", False, [("doom_mothership.return", "up", "On", False)], 2),
-    ("doom_mothership.booth", "mothership_booth", "The Booth (stand-in)", False, [("doom_mothership.return", "up", "On", False)], 1),
-    ("doom_mothership.dock", "mothership_dock", "The Dock (stand-in)", False, [("doom_mothership.return", "up", "On", False)], 3),
-    ("doom_mothership.return", "mothership_return", "Back to the Mothership", True, [("doom_mothership", "up", "Round again", True), ("doom_mothership", "left", "Round again", True)], 5),
+    ("doom_mothership", "mothership", "The Mothership", True,
+     [("doom_mothership", "down", "Stay on the ring", True), ("doom_underworld", "up", "Up the stair to the Underworld", False),
+      ("doom_booth", "left", "Across the bridge to the Booth", False), ("doom_dock", "right", "Through the hatch to the Dock", False)], 0),
 ]
 
 

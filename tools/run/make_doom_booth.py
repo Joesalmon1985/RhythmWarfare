@@ -1,20 +1,20 @@
 """The DJ Booth's part of the Doom worlds overlay (docs/doom/scenes/booth.md): the world `doom_booth`, its scenes, its hotspots. Called from tools/run/make_doom.py (`write`), which merges it
 into content/run/doom/run.json, music.json and hotspots/doom_booth.json.
 
-Routing (docs/briefs/DOOM_WORLDS_BRIEF.md): from the Booth ahead = Mothership, left = Balcony, right = Dock. Those scenes are not built on this branch, so under the flag the three are
-STAND-INS of this world (doom_booth.mothership, .balcony, .dock: the same map and the booth's own rail), each leading on to `doom_booth.return`, the world's exit scene, whose two routes loop
-back to the booth. When a real scene lands its node replaces the stand-in as the `next` target (change SCENES below).
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_mothership, left doom_balcony, right doom_dock. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
-WORLD = {"id": "doom_booth", "title": "The DJ Booth (Doom worlds)", "map": "doom_booth", "depth": 1, "story": "res://content/run/doom/story_doom_booth.json",
+WORLD = {"id": "doom_booth", "title": "The DJ Booth (Doom worlds)", "map": "doom_booth", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_booth.json",
          "blurb": "A windowed control room over the rain. The Mothership's hatch ahead, the balcony stair on the left, the dock door on the right: follow the guide you like."}
 EXITS = {"up": "bt_hatch", "left": "bt_bal_top", "right": "bt_dock_in", "down": "bt_ref"}
 DIR_OF = {"mothership": "up", "balcony": "left", "dock": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
-    "mothership": ("bt_guide_mothership", "doom_booth.mothership", "mothership"),
-    "balcony": ("bt_guide_balcony", "doom_booth.balcony", "balcony"),
-    "dock": ("bt_guide_dock", "doom_booth.dock", "dock"),
+    "mothership": ("bt_guide_mothership", "doom_mothership", "mothership"),
+    "balcony": ("bt_guide_balcony", "doom_balcony", "balcony"),
+    "dock": ("bt_guide_dock", "doom_dock", "dock"),
 }
 
 
@@ -38,13 +38,9 @@ def _rail(P):
 
 # id, short name, title, exit_scene, next [(to, dir, label, loop)], music slot
 SCENES = [
-    ("doom_booth", "booth", "The DJ Booth", False,
-     [("doom_booth", "down", "Stay in the booth", True), ("doom_booth.mothership", "up", "Through the hatch to the mothership", False),
-      ("doom_booth.balcony", "left", "Out to the balcony", False), ("doom_booth.dock", "right", "Through the steel door to the dock", False)], 0),
-    ("doom_booth.mothership", "booth_mothership", "The Mothership (stand-in)", False, [("doom_booth.return", "up", "On", False)], 2),
-    ("doom_booth.balcony", "booth_balcony", "The Balcony (stand-in)", False, [("doom_booth.return", "up", "On", False)], 1),
-    ("doom_booth.dock", "booth_dock", "The Dock (stand-in)", False, [("doom_booth.return", "up", "On", False)], 3),
-    ("doom_booth.return", "booth_return", "Back to the Booth", True, [("doom_booth", "up", "Round again", True), ("doom_booth", "left", "Round again", True)], 5),
+    ("doom_booth", "booth", "The DJ Booth", True,
+     [("doom_booth", "down", "Stay in the booth", True), ("doom_mothership", "up", "Through the hatch to the mothership", False),
+      ("doom_balcony", "left", "Out to the balcony", False), ("doom_dock", "right", "Through the steel door to the dock", False)], 0),
 ]
 
 

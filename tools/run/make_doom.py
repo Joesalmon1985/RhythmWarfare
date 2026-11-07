@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The Doom worlds' scenes (docs/briefs/DOOM_WORLDS_BRIEF.md, docs/doom/LAUNCH.md): the pilot scene `doom_warehouse` and its placeholder destinations, written as an OVERLAY on the run.
+"""The Doom worlds' scenes (docs/briefs/DOOM_WORLDS_BRIEF.md, docs/doom/LAUNCH.md): the eight one-scene geography worlds, written as an OVERLAY on the run.
 
     python3 tools/run/make_scenes.py --doom        (or RW_DOOM_WORLDS=1)  writes the overlay after the normal generation
     python3 tools/run/make_doom.py                 the overlay alone
@@ -7,9 +7,9 @@
 Writes content/run/doom/run.json (worlds, nodes, cinematics), content/run/doom/music.json (the nodes' music) and content/run/doom/hotspots/doom_warehouse.json. content/run/run.json is NOT
 touched: RunData merges the overlay only when the environment variable RW_DOOM_WORLDS=1 is set, so the legacy campaign (and every test that does not set it) is exactly as before.
 
-Placeholders: the brief routes the Warehouse floor to doom_balcony (ahead), doom_bar (left) and doom_lounge (right). Those scenes do not exist yet, so under the flag they are three
-alias scenes of the same world and map (doom_balcony, doom_bar, doom_lounge), each standing on the warehouse floor and leading on to `doom_warehouse.return` (the world's exit scene,
-whose two routes loop back to the floor). When a real scene lands it replaces its alias in DOOM_SCENES.
+Geography world (docs/engine/GEOGRAPHY_WORLDS.md, hook H1.6): ONE scene, the world's entry (id = world id, `"geography": true`), its `down` route the stay loop and its three
+routes straight to the entry scenes of other geography worlds: ahead doom_balcony, left doom_bar, right doom_lounge. The guides' `on_success.route` names those worlds; each route move (`rail.routes[dir]`) ends at the
+threshold (`rail.exits[dir]`), where the run walks before the boundary, shuts the frame and swaps the stage.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "content/run/doom"
 MAPS = ROOT / "content/story/maps"
-WORLD = {"id": "doom_warehouse", "title": "The Warehouse (Doom worlds pilot)", "map": "doom_warehouse", "depth": 1, "story": "res://content/run/doom/story_doom_warehouse.json",
+WORLD = {"id": "doom_warehouse", "title": "The Warehouse (Doom worlds pilot)", "map": "doom_warehouse", "depth": 1, "geography": True, "story": "res://content/run/doom/story_doom_warehouse.json",
          "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like."}
 
 
@@ -64,19 +64,14 @@ def rail(arrive="wh_arrive"):
 
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot
 DOOM_SCENES = [
-    ("doom_warehouse", "floor", "The Dance Floor", True, False,
-     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_warehouse.balcony", "up", "Up the stage steps to the balcony", False), ("doom_warehouse.bar", "left", "Into the bar", False),
-      ("doom_warehouse.chill", "right", "Into the chill-out", False)], 0),
-    ("doom_warehouse.balcony", "balcony", "The Balcony (stand-in; the real scene is the world doom_balcony)", False, False, [("doom_warehouse.return", "up", "On", False)], 2),
-    ("doom_warehouse.bar", "bar", "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 1),
-    ("doom_warehouse.chill", "chill", "The Chill-out (stand-in; the real scene is the world doom_lounge, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 3),
-    ("doom_warehouse.return", "return", "Back to the Floor", False, True,
-     [("doom_warehouse", "up", "Round again", True), ("doom_bar", "left", "On to the Copper Bar", False), ("doom_lounge", "right", "On to the Chill-out lounge", False)], 5),
+    ("doom_warehouse", "floor", "The Dance Floor", True, True,
+     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_balcony", "up", "Up the stage steps to the balcony", False), ("doom_bar", "left", "Into the bar", False),
+      ("doom_lounge", "right", "Into the chill-out", False)], 0),
 ]
 GUIDE = {  # hotspot id suffix: (guide thing, route, sprite stem)
-    "balcony": ("wh_guide_stage", "doom_warehouse.balcony", "stage"),
-    "bar": ("wh_guide_bar", "doom_warehouse.bar", "bar"),
-    "lounge": ("wh_guide_lounge", "doom_warehouse.chill", "lounge"),
+    "balcony": ("wh_guide_stage", "doom_balcony", "stage"),
+    "bar": ("wh_guide_bar", "doom_bar", "bar"),
+    "lounge": ("wh_guide_lounge", "doom_lounge", "lounge"),
 }
 
 
