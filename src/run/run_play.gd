@@ -890,6 +890,9 @@ func _update_passage(t: float, audio_t: float) -> void:
 		if data.nodes.has(to0) and _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
 			for a in journey.leave_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), to0, engine):
 				_journey_apply(a)
+		elif data.nodes.has(to0) and to0 != engine.node_id and journey.threshold_of(engine.node_id, to0) != "":  # another world by a threshold (H1.6): walk there, then the frame and the swap
+			for a in journey.threshold_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), engine.t_of(64.0), journey.threshold_of(engine.node_id, to0)):
+				_journey_apply(a)
 	if engine.exit_pending() and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
 		if not data.nodes.has(to) or _run_world_of(to) != _run_world_of(engine.node_id):  # another world, or out of this run (a portal, an ending's way back): the frame closes

@@ -36,6 +36,9 @@ var sick_played := false
 var busy_until := -1.0  # song time until which a journey move is under way
 var visited: Array = []  # [{place, pos, role, kind}] one entry per block decision (tests and playtests read it)
 var places_seen: Dictionary = {}  # place waypoint -> times stood there
+var choice_views: Dictionary = {}  # waypoint -> true: a choice viewpoint (CONTRACTS.md 3, ruling 35a): standing there the window block has no glance and no stroll (H3.1)
+var hold_from := -1.0  # song time the current hold (a route: its moves, then its holds) began
+var hold_until := -1.0  # song time until which the camera holds still (a route leg's hold_bars): no glance, no stroll, no rail move (H3)
 
 
 func bar_s() -> float:
@@ -78,6 +81,9 @@ func setup(p_node_id: String, node: Dictionary, p_bpm: float) -> void:
 	strolls = (r.get("strolls", []) as Array).duplicate(true)
 	arrive = str(r.get("arrive", ""))
 	exits = (r.get("exits", {}) as Dictionary).duplicate()
+	choice_views = {}
+	for wp: Variant in r.get("choice_views", []):
+		choice_views[str(wp)] = true
 	bpm = p_bpm
 	reset()
 
@@ -89,6 +95,17 @@ func reset() -> void:
 	queasy = 0.0
 	sick_played = false
 	busy_until = -1.0
+	hold_from = -1.0
+	hold_until = -1.0
+
+
+func is_choice_view(wp: String) -> bool:
+	return choice_views.has(wp)
+
+
+## The camera holds still at song time `t` (a leg's hold).
+func holding_at(t: float) -> bool:
+	return t >= hold_from - 1e-6 and t < hold_until - 1e-6
 
 
 ## The waypoint of rail position `p` (home for 0).
@@ -170,6 +187,9 @@ func step(passed: bool, t: float, notes: Array) -> Array:
 	var out: Array = []
 	var before := pos
 	var kind := ""
+	if holding_at(t):  # a route leg holds the camera still (ruling 35a): the rail does not move until the hold is over
+		visited.append({"place": place(), "pos": pos, "from": before, "role": role, "kind": "hold", "t": t, "queasy": queasy})
+		return out
 	if passed:
 		holds = 0
 		if pos < 0:  # winning back: one place towards the floor
@@ -235,7 +255,9 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 	var beat := 60.0 / bpm
 	var idx := phase_n * 4 + block + node_id.length()
 	var window := block >= 3  # the last block is the hotspot window: the head stays on the room (no look at the ceiling, no turn away from the hotspots; visual polish)
-	if not glances.is_empty():
+	if window and is_choice_view(place()):  # a choice viewpoint holds still through the window (CONTRACTS.md 3, H3.1): no glance, no stroll
+		return out
+	if not glances.is_empty() and not holding_at(t_block + 5.0 * beat):
 		var g: Dictionary = glances[idx % glances.size()]
 		var by := float(g.get("by", 0.0))
 		var pitch := float(g.get("pitch", 0.0))
@@ -248,6 +270,8 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 		if window:
 			s.erase("turn")
 		var t_s := maxf(t_block + 6.0 * beat, busy_until + 0.25 * beat)
+		if holding_at(t_s):  # (not inside a leg's hold: after it, if the block still has room)
+			t_s = hold_until
 		if t_s <= t_block + 9.0 * beat:
 			var bars := pick_bars(float(s.get("bars", 3.0)), notes, t_s, bpm)
 			var args := {"bars": bars}

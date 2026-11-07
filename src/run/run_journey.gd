@@ -109,6 +109,25 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 	return tagged
 
 
+## A world exit's approach (CONTRACTS.md 1, H1.6): the player walks to the threshold spot `wp` from song time `t` and is there by the boundary `t_boundary`, where the
+## world transition (the passage frame, the stage swap) takes over: walk first, then the transition. `bars` is the leg's length (2 to 4); a walk that would run past
+## the boundary is shortened to end on it (the guard before a boundary is shorter than a bar: CONTRACTS.md 3, the leg-length disagreement).
+func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0) -> Array:
+	if rail == null or wp == "" or t_boundary <= t:
+		return []
+	var b := minf(clampf(bars, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), (t_boundary - t) / rail.bar_s())
+	rail.busy_until = t + b * rail.bar_s()
+	var tagged := _tag([{"t0": t, "action": "player_move", "args": {"to": wp, "style": door_style, "bars": b, "threshold": true}}], world)
+	door_style = "walk"
+	actions.append_array(tagged)
+	return tagged
+
+
+## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1; "" when it names none).
+func threshold_of(from: String, to: String) -> String:
+	return str(((data.nodes.get(from, {}) as Dictionary).get("thresholds", {}) as Dictionary).get(to, ""))
+
+
 ## The rail actions of a hotspot outcome's cinematic ({steps: [{move, to, bars, role, style, look_at}]}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free
 ## guard). The steps run one after another: a `walk` is a rail move (style, 2 to 4 bars, shortened where the chart is dense: RunRail.pick_bars), a `place` a cut, `role` a role change and `look_at` a
 ## glance at the target (`look_fn(id) -> degrees`, NAN when it cannot be placed). With `move_ok` false (the outcome names a route: the door walk toward it is the camera's move) only the roles and
@@ -137,6 +156,11 @@ func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_fn: Cal
 			var style := str(st.get("style", st["move"] if str(st["move"]) in RunRail.STYLES else "walk"))
 			var bars := rail._move_to(out, cur, str(st["to"]), style, float(st.get("bars", 3.0)), engine.level.notes)
 			cur += bars * rail.bar_s()
+			if float(st.get("hold_bars", 0.0)) > 0.0:  # a route leg: move, then hold still (CONTRACTS.md 3, ruling 35a): nothing moves the camera until the hold is over
+				cur += float(st["hold_bars"]) * rail.bar_s()
+				if rail.hold_until < t:  # (a new hold: from the route's start)
+					rail.hold_from = t
+				rail.hold_until = maxf(rail.hold_until, cur)
 	if move_ok:
 		cine_until = maxf(cine_until, cur)
 	var tagged := _tag(out, world)
@@ -152,7 +176,12 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": last["place"], "kind": last["kind"], "role": last["role"], "pos": last["pos"]})
 	if b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
 		var face: Array = face_fn.call(str(ev["node"]), rail.place()) if b == 2 and face_fn.is_valid() else []
-		if not face.is_empty():
+		var still := b == 2 and rail.is_choice_view(rail.place())  # a choice viewpoint (H3.1): the head turns only while the rail walks there, then holds still through the window
+		if still and not face.is_empty() and rail.busy_until > float(ev["t"]):
+			out.append(window_face(face, float(ev["t"]), engine, rail.busy_until))
+		elif still:
+			pass  # (standing there already: the viewpoint frames the choices, nothing turns)
+		elif not face.is_empty():
 			out.append(window_face(face, float(ev["t"]), engine))
 		else:
 			out.append_array(_without_glance(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
@@ -211,10 +240,11 @@ func _without_glance(list: Array, block: int) -> Array:
 
 ## The last block's look: from the block-2 decision (in its cue-free guard) the head turns to frame `pts` ([[x, z, keep, height], ...], the window's hotspots) by beat 49, holds them from wherever the
 ## rail walks underneath, and hands back to the rail from the lock beat to the phase's end (where a door walk takes over). A look, never a move: the route is untouched.
-func window_face(pts: Array, t: float, engine: RunEngine) -> Dictionary:
+## `turn_by` (a choice viewpoint, H3.1): the turn is over by then (the rail's arrival there), never later than beat 49.
+func window_face(pts: Array, t: float, engine: RunEngine, turn_by := INF) -> Dictionary:
 	var bar := rail.bar_s()
 	var t_end := engine.t_of(4.0 * engine.timing("block_beats"))
-	var turn := maxf(engine.t_of(FACE_TURN_BEAT) - t, 0.5 * bar)
+	var turn := maxf(minf(engine.t_of(FACE_TURN_BEAT), turn_by) - t, 0.5 * bar)
 	var release := maxf(t_end - engine.t_of(FACE_RELEASE_BEAT), 0.25 * bar)
 	return {"t0": t, "action": "player_look", "args": {"face": with_heralds(pts, engine), "bars": (t_end - t) / bar, "turn_bars": turn / bar, "release_bars": release / bar}}
 
