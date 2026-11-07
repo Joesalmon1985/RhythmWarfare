@@ -23,31 +23,36 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
 
-## Now (8 November, midday)
+## Now (8 November, evening)
 
-`feature/one-pc` `b74aa327` (pushed): Ward, Hospital, both fix passes and `feature/shared-contracts` (A7: no rings) merged.
-Filters green (choice, hotspot, heralds_view, herald, blackjack, returns, interaction, narrative, story, run_, playtest);
-the only red is `camera` 3 (ward.corridor x2, hospital_late.quiet: a herald look swinging onto a wall during a door walk /
-in a 2.4 m room), an engine rule in the wiring step. **Wiring step running** on `wip/wiring` (`MusicGame-wiring`, Opus):
-hub-to-hub links and ways back, back/restart routes and the Bassment return, the herald-look clearance rule, the window
-look including returns, the wall test in heralds_view, the Floor's four entrances, then the full suite. After it: stage A's
-pause point (the owner plays `tools\dev\play_tracks.cmd --run` from `MusicGame-onepc`).
+`feature/one-pc` `15dba656` (pushed): Ward, Hospital, both fix passes, A7 merged; filters green except `camera` 3 (herald
+looks during door walks / a 2.4 m room: the wiring step's engine rule). **Wiring step running** on `wip/wiring`
+(`MusicGame-wiring`, Opus). After it: the full suite, push, stage A's pause point (the owner plays
+`tools\dev\play_tracks.cmd --run` from `MusicGame-onepc`); `main` only on the owner's word.
 
-`feature/shared-contracts` `6b7fdf48` (pushed): A7 merged, all filters green. A8 running (`wip/engine-props`,
-`MusicGame-props`, Opus): dynamic things, people states, feedback, the pad-slot morph (ruling 38, contract 10), aligned to
-what the three activities used (`WorldThings` with piece_on/off/pulse; `pictogram`/`shape`+`color` controls; frown,
-raise_glass states; `thing_screen_point` for map things too).
+`feature/shared-contracts` `8db13e8f` (pushed): A7 and A8 merged (dynamic things, people states, feedback, the pad-slot
+morph: ruling 38, contract 10), all filters green. **Geography worlds (H1.6) running** on `wip/engine-geography`
+(`MusicGame-geo`, Opus): a world flagged `geography` is one scene that routes straight to other worlds' entry scenes, the
+threshold defaults to the route move's end, the threshold walk plays the route polyline, then the frame, the swap and the
+arrival. When it lands: merge into shared-contracts, then into env, and a generator change deletes the Doom stand-ins.
 
-`feature/doom-layout-worlds` `bb1b7ccb` (pushed): Warehouse pilot on the new rail + A7; filters green. **Stage C wave 1
-running**: `wip/env-bar` (MAP02), `wip/env-booth` (MAP04), `wip/env-chill` (MAP08 lounge), worktrees `MusicGame-env-bar/
--booth/-chill`, Sonnet, each on the pilot's pipeline. Wave 2 after: Balcony, Dock, Mothership, Underworld.
+`feature/doom-layout-worlds` `b6be9af6` (pushed): Warehouse, Booth (`doom_booth`), Copper Bar (`doom_bar`) and Chill-out
+Lounge (`doom_lounge`) as four worlds, 20 scenes, 0 rail problems; doom 3631, rail_paths 652, run_ 16029, playtest 2993,
+story 48770, all green. **Wave 2 running** (Sonnet, brief `docs/briefs/DOOM_WAVE2_BRIEF.md`): `wip/env-balcony` (MAP15,
+renames the Warehouse's `doom_balcony` stand-in to `doom_warehouse.balcony`), `wip/env-dock` (MAP13), `wip/env-mothership`
+(MAP11), `wip/env-underworld` (MAP29). Merge order at the end: each adds a two-line block to `make_doom.py`, a block at
+the end of `test_doom_views.gd` and a LAUNCH.md section; regenerate the overlay after every merge (never hand-merge
+`content/run/doom/*`). Lesson from the Bar and Lounge merges: resolve `make_doom.py` and `test_doom_views.gd` by
+rebuilding from the two sides' files (the Warehouse part + each block in order), not by regex over conflict markers.
 
-`feature/bedsit-raves` `3d1d4c01` (pushed): the bedsit, the Space rave (hub hold, bass knob), the cloakroom, the bar, the
-bedsit fix (placeholder raves end the path; the run matrix accepts a relaxed node) + A7; all filters green incl.
-run_matrix. The activities are staged as data (things, people, feedback, pad-slot controls) and draw nothing until A8 lands;
-`tools/run/make_bedsit.py --bedsit` rewrites themes.json WITHOUT the cloakroom and bar blocks (restore from Git after a
-regenerate, or teach the generator to keep them: a hook for the rave wave). Next on this stream after A8: the race, the
-Magic/Dinos/Transport raves, the activities placed in the Space rave, A8b (the card table converted to ruling 38).
+`feature/bedsit-raves` `e426ae1b` (pushed): the bedsit, the Space rave, the cloakroom, the bar, the bedsit fix, A7, A8;
+all filters green incl. run_matrix (the activity tests assert the pad-slot morph). **Running**: `wip/play-spacewire`
+(`MusicGame-spacewire`: generator keeps the themes.json blocks, the three activities placed in the Space rave through A8,
+real shots) and `wip/play-cardtable` (`MusicGame-cardtable`, Opus, A8b: the card table as in-room staging). Next: the
+race (Opus), the Magic/Dinos/Transport raves, progression.
+
+Known gaps carried: H3.1 choice viewpoint framing, H9.2/H9.3, no sfx files for cues, all Doom/rave/activity art placeholder
+(stage D), no phone runs, Gospel p5, A7's door-readability finding (lamp, spill, closer choice viewpoint).
 
 ## Worktrees and agents
 
@@ -57,30 +62,24 @@ Magic/Dinos/Transport raves, the activities placed in the Space rave, A8b (the c
 | `MusicGame-contracts` | `feature/shared-contracts` | integration, engine |
 | `MusicGame-env` | `feature/doom-layout-worlds` | integration, env |
 | `MusicGame-play` | `feature/bedsit-raves` | integration, gameplay |
-| `MusicGame-engine` | `wip/engine-choice` | A7 merged |
-| `MusicGame-props` | `wip/engine-props` | A8 running (Opus): dynamic things, people states, feedback, pad-slot morph (ruling 38, contract 10) |
-| `MusicGame-music` | `wip/narr-hospital-fix` | merged |
-| `MusicGame-import` | `wip/narr-ward-fix` | merged |
 | `MusicGame-wiring` | `wip/wiring` | wiring running (Opus) |
-| `MusicGame-env-bar`, `-booth`, `-chill` | `wip/env-bar`, `-booth`, `-chill` | wave 1 running |
-| `MusicGame-space` | `wip/play-space` | merged |
-| `MusicGame-cloakroom` | `wip/play-cloakroom` | merged |
-| `MusicGame-bar` | `wip/play-bar` | merged |
-| `MusicGame-bedsit` | `wip/play-bedsit-fix` | merged |
-| `MusicGame-envwh` | `wip/env-warehouse-rail` | merged |
-| `MusicGame-envtools` | `wip/env-tools` | merged |
-| `MusicGame-graph`, `-herald`, `-narr`, `-art`, `-docs` | stage A wip branches | merged, to remove |
+| `MusicGame-geo` | `wip/engine-geography` | geography worlds / H1.6 running (Opus) |
+| `MusicGame-env-balcony`, `-dock`, `-mothership`, `-underworld` | `wip/env-*` | wave 2 running (Sonnet) |
+| `MusicGame-spacewire` | `wip/play-spacewire` | running |
+| `MusicGame-cardtable` | `wip/play-cardtable` | A8b running (Opus) |
+| `MusicGame-engine`, `-props` | `wip/engine-choice`, `wip/engine-props` | A7, A8 merged |
+| `MusicGame-env-bar`, `-booth`, `-chill`, `-envwh`, `-envtools` | `wip/env-*` | merged |
+| `MusicGame-space`, `-cloakroom`, `-bar`, `-bedsit` | `wip/play-*` | merged |
+| `MusicGame-music`, `-import`, `-graph`, `-herald`, `-narr`, `-art`, `-docs` | stage A wip branches | merged, to remove |
 
 ## Next action for the lead
 
-1. Merge the Ward fix into `feature/one-pc`; merge Hospital when it reports; merge A7 into
-   `feature/shared-contracts` and then into the three streams.
-2. The shared wiring step on one-pc (hub-to-hub links, `to_hub` routes, `max_hotspots`, back/restart routes,
-   the Bassment return, the window look including returns, the wall test in `heralds_view`); the Floor's
-   entrances; the full suite; stage A pause point (the owner plays).
-3. Stage C waves: the seven remaining Doom scenes (Bar, Booth, Lounge; Balcony, Dock, Mothership,
-   Underworld), the race and the other three raves; then stage D (Opus polish to ruling 36, review,
-   verification, draft PRs) and stage E (APK).
+1. Merge the wiring step into `feature/one-pc`; full suite; push; stage A pause point (the owner plays).
+2. Merge geography (H1.6) into `feature/shared-contracts`, then into env and play; merge wave 2 into env (regenerate the
+   overlay each time); then an env agent rewires the eight Doom worlds as geography worlds (stand-ins deleted) and the
+   routing table of the brief becomes the real cuts.
+3. Merge spacewire and A8b into `feature/bedsit-raves`; then the race, the other three raves, progression.
+4. Stage D (Opus polish to ruling 36 on every scene, review, verification, draft PRs), stage E (APK with the 61 tracks).
 
 ## Checkpoint history
 
@@ -91,3 +90,7 @@ Magic/Dinos/Transport raves, the activities placed in the Space rave, A8b (the c
   checks, 1 failure (fixed since).
 - 7 Nov night: one-pc `b35c2f56` (W6, Ward; red: 4 heralds_view, 2 blackjack, see above);
   shared-contracts `7cfa6cc4`; doom-layout-worlds `f89d96f5`; bedsit-raves `9de607c6`.
+- 8 Nov midday: one-pc `15dba656`; shared-contracts `8db13e8f` (A7, A8); doom-layout-worlds `a3ae9a16` (Booth);
+  bedsit-raves `e426ae1b` (cloakroom, bar, Space rave, bedsit fix, A8).
+- 8 Nov evening: doom-layout-worlds `b6be9af6` (Bar, Lounge: four worlds, all filters green); eight agents running
+  (wiring, geography, four wave-2 scenes, spacewire, card table).
