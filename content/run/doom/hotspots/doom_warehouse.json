@@ -103,10 +103,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_bar"
+    "route": "doom_warehouse.bar"
    },
    "on_failure": {
-    "route": "doom_bar",
+    "route": "doom_warehouse.bar",
     "cinematic": "doom_warehouse.stagger_bar",
     "energy": -5
    },

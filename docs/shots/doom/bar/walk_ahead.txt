@@ -1,0 +1,14 @@
+MOVE wb_booth_door via=1 length=9.8
+WALK ahead 0 t=0.00 @0.100:0.500:0.0:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK ahead 1 t=0.50 @0.100:0.272:0.0:0.0:1.599 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK ahead 2 t=1.00 @0.100:-0.354:0.0:0.0:1.586 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK ahead 3 t=1.50 @0.100:-1.289:0.0:0.0:1.592 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK ahead 4 t=2.01 @0.100:-2.445:0.0:0.0:1.579 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK ahead 5 t=2.51 @0.100:-3.734:0.0:0.0:1.582 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK ahead 6 t=3.01 @0.100:-5.066:0.0:0.0:1.582 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK ahead 7 t=3.51 @0.100:-6.355:0.0:0.0:1.890 sector=2_0 ground=0.311 above=1.59 still=0.00
+WALK ahead 8 t=4.01 @0.100:-7.511:-0.1:0.0:2.746 sector=5_0 ground=1.154 above=1.62 still=0.00
+WALK ahead 9 t=4.51 @0.100:-8.446:-0.9:0.0:3.086 sector=6_0 ground=1.500 above=1.59 still=0.00
+WALK ahead 10 t=5.02 @0.100:-9.072:-2.1:0.0:3.099 sector=6_0 ground=1.500 above=1.60 still=0.00
+WALK ahead 11 t=5.52 @0.100:-9.300:-2.7:0.0:3.100 sector=6_0 ground=1.500 above=1.60 still=0.00
+HOLD wb_booth_door 1.0 moved=0.0028 turned=0.000

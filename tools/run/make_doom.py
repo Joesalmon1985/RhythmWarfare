@@ -65,17 +65,17 @@ def rail(arrive="wh_arrive"):
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot
 DOOM_SCENES = [
     ("doom_warehouse", "floor", "The Dance Floor", True, False,
-     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_balcony", "up", "Up the stage steps to the balcony", False), ("doom_bar", "left", "Into the bar", False),
+     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_balcony", "up", "Up the stage steps to the balcony", False), ("doom_warehouse.bar", "left", "Into the bar", False),
       ("doom_lounge", "right", "Into the chill-out", False)], 0),
     ("doom_balcony", "balcony", "The Balcony (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 2),
-    ("doom_bar", "bar", "The Bar (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 1),
+    ("doom_warehouse.bar", "bar", "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 1),
     ("doom_lounge", "lounge", "The Chill-out (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 3),
     ("doom_warehouse.return", "return", "Back to the Floor", False, True,
-     [("doom_warehouse", "up", "Round again", True), ("doom_warehouse", "left", "Round again", True)], 5),
+     [("doom_warehouse", "up", "Round again", True), ("doom_bar", "left", "On to the Copper Bar", False)], 5),
 ]
 GUIDE = {  # hotspot id suffix: (guide thing, route, sprite stem)
     "balcony": ("wh_guide_stage", "doom_balcony", "stage"),
-    "bar": ("wh_guide_bar", "doom_bar", "bar"),
+    "bar": ("wh_guide_bar", "doom_warehouse.bar", "bar"),
     "lounge": ("wh_guide_lounge", "doom_lounge", "lounge"),
 }
 
@@ -107,8 +107,8 @@ def hotspots(cinematics: dict) -> dict:
 
 
 def write(helpers: dict | None = None) -> None:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     if helpers is None:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
         import make_scenes as ms
         helpers = {"GL": ms.GL}
     nodes = []
@@ -129,9 +129,19 @@ def write(helpers: dict | None = None) -> None:
     import make_doom_booth
     make_doom_booth.add(P, worlds, nodes, cin, music, extra_hot)
     (OUT / "hotspots").mkdir(parents=True, exist_ok=True)
+    # --- the Copper Bar (env-bar): its world, nodes, music and hotspots, from tools/run/make_doom_bar.py (docs/doom/scenes/bar.md)
+    import make_doom_bar as bar
+    worlds.append(bar.WORLD)
+    nodes += bar.nodes()
+    music += bar.music()
+    extra_hot["doom_bar"] = bar.hotspots(cin)
     for wid, doc in extra_hot.items():
-        (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "
+", encoding="utf-8", newline="
+")
+    (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "
+", encoding="utf-8", newline="
+")
     (OUT / "music.json").write_text(json.dumps({"nodes": music}, indent=1) + "\n", encoding="utf-8", newline="\n")
     (OUT / "hotspots" / "doom_warehouse.json").write_text(json.dumps(hot, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print("doom overlay: %d scenes, %d hotspots, %d cinematics -> %s" % (len(nodes), len(hot["hotspots"]), len(cin), OUT))
