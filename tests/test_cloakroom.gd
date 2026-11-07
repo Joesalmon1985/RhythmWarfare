@@ -534,8 +534,8 @@ func _run_to(scene: Node, t_end: float) -> void:
 
 func test_in_the_scene_strip_taps_reach_the_controls_not_the_pads_and_judging_resumes() -> void:
 	CloakroomSession.reset()
-	# the bot plays phase 1 and, in the three blocks of phase 2 that the activity covers, nothing (the controls own the strip), then everything
-	var d := _scene("blocks:1111" + "000" + "11111111111111111")
+	# the bot plays phase 1 and, in the two blocks of phase 2 that the activity covers, nothing (the controls own the strip), then everything
+	var d := _scene("blocks:1111" + "00" + "11111111111111111")
 	var scene: Node = d["scene"]
 	scene.minigames.register("cloakroom", CloakroomActivity, _cfg({"coats": 2}))
 	for h in scene.data.hotspots["warehouse"]:
