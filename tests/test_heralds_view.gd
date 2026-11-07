@@ -23,6 +23,12 @@ const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "w
 	"underworld.court": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court"],
 	"underworld.furnace": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.furnace"],
 	"underworld.pit": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court", "underworld.pit"]}
+	# N2.4 Alien Spaceship (the mothership): from the Warehouse's exit, then the hub's own side scenes
+	"mothership": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership"],
+	"mothership.gallery": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery"],
+	"mothership.reactor": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.reactor"],
+	"mothership.bridge": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge"],
+	}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.
