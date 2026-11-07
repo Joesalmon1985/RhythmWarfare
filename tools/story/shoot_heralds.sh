@@ -57,6 +57,8 @@ gospel_star    warehouse.balcony  wh_saw_floor   -7.5:1.4:90:6     up
 squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
+# The Floor's own four (the shared wiring step): the hatch and the three copies, one run from the first beat shows them all; the close camera stands at the stage's front
+floor_gates    warehouse          -              0.0:-2.6:180:4    -
 # N2.4 Hell (underworld): the arena's four gates, then one per side scene (close camera x:z:yaw:pitch)
 uw_bassment    underworld         -              3.2:-1.2:-90:2    right,left,up,right
 uw_gospel      underworld         -              1.6:-0.2:-90:2    right,left,up,right

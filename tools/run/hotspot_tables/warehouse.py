@@ -7,6 +7,23 @@ from hotspots_common import T, W, A, P, walk, place, cin, out, avail, exits, ch,
 
 w = "warehouse"
 exits("warehouse")
+# ---- the Floor's own quest entrances (the shared wiring step; lead ruling 15, content/narrative/graph.json `warehouse_rave.*`): the hub shows all four, like the other hubs. An ungated
+# hatch into the Bassment (the wizard stays an extra, rhythm-gated way in) and the three copies of the Balcony's star, the Booth's radio and the Bar's ember, each a lit gate in its
+# quest's colour with its herald beside it, taken at the lap's end through the port; a failure flickers out (-4) and the default exit takes over. They stand in an arc on the Floor's left
+# side between the stairs to the balcony and the wizard, so one look from the middle of the Floor holds the four and the wizard, and the route window's look from the booth frames them.
+# (name, herald quest, gate (x, z), herald (x, z), route, text on success, text on failure). They come before the wizard: the heralds' opening looks (three, one a block) go to
+# the gates first, the wizard after them; each look also frames the other entrances on offer where they fit (RunJourney.herald_looks).
+GATES = [
+    ("bassment", "dungeon", (-5.0, 3.25), (-3.7, 3.3), "bassment", "a violet hatch, the wizard pointing down: the Bassment (route bassment)", "the hatch sinks out of sight (-4)"),
+    ("squadron", "squadron", (-4.5, 4.75), (-3.2, 4.9), "path:squadron", "a green gate, the Gunner pointing: the Mission Count path (route path:squadron)", "the radio gate gutters out (-4)"),
+    ("ember", "ember", (-3.75, 6.25), (-2.45, 6.0), "path:ember", "an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember)", "the ember gutters out (-4)"),
+    ("gospel", "gospel", (-2.75, 7.5), (-4.0, 8.1), "path:gospel", "a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", "the star gate flickers out (-4)"),
+]
+for _n, _q, _g, _h, _route, _ok, _bad in GATES:
+    _portal = sc("warehouse", "enter_" + _n, P(_g[0], 1.0, _g[1]), "pulse", out(route=_route), out(energy=-4), s_text=_ok, f_text=_bad)
+    if _q != "dungeon":
+        _portal["look"]["finished"] = finished(_q)
+
 ch("warehouse", "wizard", T("wizard_floor"), "beckon",
    out(route="1", flags=["wh_wizard_met"]), out(flags=["wh_wizard_shrug"], energy=-2, cin=cin(w, "wizard_shrug", walk("floor_edge", "dancer", "walk", 2, look="wizard_floor"))),
    s_text="he leads you down the hatch: the Bassment (route 1)", f_text="he shrugs; nothing happens (-2), the door stays shut", av=avail(none=["wh_wizard_met"]),
@@ -93,3 +110,6 @@ herald("gospel", "warehouse.balcony.star", at=(-10.05, -0.55), gate=True)  # the
 herald("squadron", "warehouse.booth.radio", at=(3.7, -5.6))  # the Gunner, on the stage beside the radio, seen from the decks
 herald("ember", "warehouse.bar.ember", at=(10.2, 2.9))  # Bram, under the bar's lamp, pointing to the glass on the counter
 herald("dungeon", "warehouse.chill.wizard", self_thing=True, toward=W("chill_door"), mark_over_self=True)  # the chill-out's wizard: the Bassment's mark over his hat, his arm to the way out
+
+for _n, _q, _g, _h, _route, _ok, _bad in GATES:
+    herald(_q, "warehouse.enter_" + _n, at=_h, gate=True)
