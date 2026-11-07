@@ -1076,9 +1076,9 @@
    "map": "underworld",
    "anchor": {
     "pos": [
-     22.8,
+     17.2,
      1.0,
-     17.8
+     16.8
     ]
    },
    "kind": "secret",
@@ -1114,12 +1114,12 @@
    "herald": {
     "quest": "squadron",
     "at": [
-     21.4,
-     18.6
+     16.0,
+     17.6
     ],
     "toward": [
-     22.8,
-     17.8
+     17.2,
+     16.8
     ],
     "mark_y": 1.8,
     "gate": true
