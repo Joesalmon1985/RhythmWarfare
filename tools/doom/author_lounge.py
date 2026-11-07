@@ -115,7 +115,7 @@ THINGS = [  # id, sprite, doom point, y centre above the sector's floor, size (h
     ("lg_plant_bar", "thing_plant", W("nw", 85, 60), 1.0, 2.0),
     ("lg_lamp_table", "thing_lamp", (0, 0), 0.34, 0.7), ("lg_vase", "thing_vase", (16, 10), 0.4, 0.8),
     ("lg_cushion_a", "thing_cushion", (-34, 106), 0.36, 0.55), ("lg_cushion_b", "thing_cushion_b", (-14, 108), 0.34, 0.5),
-    ("lg_cushion_c", "thing_cushion_b", (60, -104), 0.34, 0.5), ("lg_cushion_d", "thing_cushion", (-50, -102), 0.36, 0.55),
+    ("lg_cushion_c", "thing_cushion_b", (50, -104), 0.34, 0.5), ("lg_cushion_d", "thing_cushion", (-50, -102), 0.36, 0.55),
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the hub, a cool pool beyond each doorway: grey-blue rain, amber bar, cobalt passage)
     ("lg_lt_table", (0, 0), 1.6, 9.0, "#ffa43c", 1.8), ("lg_lt_dome", (0, 0), 5.2, 15.0, "#ffb860", 1.1),

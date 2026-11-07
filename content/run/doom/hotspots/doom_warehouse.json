@@ -181,10 +181,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_lounge"
+    "route": "doom_warehouse.chill"
    },
    "on_failure": {
-    "route": "doom_lounge",
+    "route": "doom_warehouse.chill",
     "cinematic": "doom_warehouse.stagger_lounge",
     "energy": -5
    },

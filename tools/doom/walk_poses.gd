@@ -1,13 +1,14 @@
 extends SceneTree
 ## The camera poses along a Doom scene's polyline moves, for tools/doom/shoot_scene.py walk (docs/doom/scenes/warehouse.md):
-##   godot --headless --audio-driver Dummy --path . -s tools/doom/walk_poses.gd -- doom_warehouse ahead|stay [run.json]
+##   godot --headless --audio-driver Dummy --path . -s tools/doom/walk_poses.gd -- doom_warehouse ahead|stay [run.json [node id]]   (the Lounge: doom_lounge ahead|left|right|stay res://content/run/doom/run.json doom_lounge)
 ## `ahead` is the scene's rail.routes.up move from the node's home; `stay` is the good rail from home, move after move with each place's hold_bars. Prints
 ##   WALK <route> <i> t=<s> @<x>:<z>:<yaw>:<pitch>:<eye y> sector=<id> ground=<floor> above=<eye over the local floor> still=<0..1>
 ## one line per frame (12 frames: evenly in time along `ahead`; the third, the two thirds and the end of each leg of `stay`), then
 ##   HOLD <place> <bars> moved=<metres the camera moves between the middle and the end of the hold> turned=<degrees>
 ## for every hold of the route, and `MOVE <place> via=<n> length=<m>` for every move. The player runs with the idle drift off and the bob on, as in play.
 
-const NODE := "doom_warehouse"
+const NODE := "doom_warehouse"  # (the default; a fifth argument names another scene, the Lounge: `doom_lounge`)
+const ROUTE_KEYS := {"ahead": "up", "left": "left", "right": "right"}  # (`left` and `right` are the other two route moves, from the node's home)
 
 
 func _initialize() -> void:
@@ -15,10 +16,11 @@ func _initialize() -> void:
 	var map_id := str(args[0]) if args.size() > 0 else "doom_warehouse"
 	var route := str(args[1]) if args.size() > 1 else "ahead"
 	var run_path := str(args[2]) if args.size() > 2 else "res://content/run/doom/run.json"
+	var node_id := str(args[3]) if args.size() > 3 else NODE
 	var run: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(run_path))
 	var node: Dictionary = {}
 	for n in run["nodes"]:
-		if str(n["id"]) == NODE:
+		if str(n["id"]) == node_id:
 			node = n
 	var home := str(node["place"]["waypoint"])
 	var rail: Dictionary = node["place"]["rail"]
@@ -28,11 +30,11 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var moves: Array = []
-	if route == "ahead":
+	if ROUTE_KEYS.has(route):
 		var fr: Array = []
 		for k in 12:
 			fr.append(float(k) / 11.0)
-		moves.append({"spec": rail["routes"]["up"], "from": home, "frames": fr})
+		moves.append({"spec": rail["routes"][ROUTE_KEYS[route]], "from": home, "frames": fr})
 	else:
 		var from := home
 		for g in rail["good"]:
