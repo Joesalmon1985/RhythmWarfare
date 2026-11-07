@@ -1,0 +1,21 @@
+{
+	"_comment": "The row shape of a rave's cloakroom entry (content/run/hotspots/<scene>.json), with {theme} filled per rave: an object hotspot at the cloakroom prop (props role 'cloakroom', spot 'cloak_counter') whose success outcome is {activity: cloakroom}. The host builds the ActivityRequest with RunMinigameHost.build_request('cloakroom', <content/minigames/cloakroom.json>, theme, <the rave's theme file>, scene, home): theme keys cloakroom_symbols and customers merged, flags_on_complete 'rave.<theme>.cloakroom_done', return_pose the station's waypoint (cloak_view). window 'final' seats at the next phase start. Not loaded by the game: reference for the rave builder.",
+	"id": "{theme}.cloakroom",
+	"world": "{theme}",
+	"scene": "rave.{theme}",
+	"map": "rave_{theme}",
+	"anchor": {"waypoint": "cloak_counter"},
+	"kind": "object",
+	"radius_m": 2.4,
+	"min_px": 220,
+	"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
+	"look": {"available": "beckon", "selected": "claim", "committed": "flash", "ring_m": 1.7},
+	"challenge": null,
+	"on_success": {"cinematic": "{theme}.cloak_sit", "activity": "cloakroom"},
+	"on_failure": {"cinematic": "{theme}.cloak_waved_off", "energy": -3},
+	"default": false,
+	"repeatable": true,
+	"window": "final",
+	"pass_credit": 0.25,
+	"on_select": {"cinematic": "{theme}.cloak_approach"}
+}
