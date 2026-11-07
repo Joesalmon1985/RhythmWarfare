@@ -111,7 +111,7 @@
     "color": "#d6c8a8",
     "density": 0.01
    },
-   "ambient": 0.42
+   "ambient": 0.45
   },
   {
    "id": "grove",
@@ -224,7 +224,7 @@
     "color": "#d6c8a8",
     "density": 0.01
    },
-   "ambient": 0.42
+   "ambient": 0.45
   },
   {
    "id": "hill",
@@ -337,7 +337,7 @@
     "color": "#e2d4b0",
     "density": 0.01
    },
-   "ambient": 0.42
+   "ambient": 0.45
   },
   {
    "id": "road",
@@ -394,7 +394,7 @@
     "color": "#e2d4b0",
     "density": 0.01
    },
-   "ambient": 0.42
+   "ambient": 0.45
   },
   {
    "id": "jerusalem_spine",
@@ -1061,12 +1061,12 @@
    "kind": "light",
    "at": [
     0.0,
-    -7.5
+    -6.5
    ],
-   "y": 6.0,
-   "radius": 20.0,
+   "y": 5.0,
+   "radius": 12.5,
    "color": "#ffe6b8",
-   "strength": 1.3,
+   "strength": 1.7,
    "sector": "temple"
   },
   {
@@ -1293,12 +1293,12 @@
    "kind": "light",
    "at": [
     36.0,
-    -7.5
+    -6.5
    ],
-   "y": 6.0,
-   "radius": 20.0,
+   "y": 5.0,
+   "radius": 12.5,
    "color": "#ffe6b8",
-   "strength": 1.3,
+   "strength": 1.7,
    "sector": "praetorium"
   },
   {
@@ -1567,12 +1567,12 @@
    "kind": "light",
    "at": [
     72.0,
-    -7.5
+    -6.5
    ],
-   "y": 6.0,
-   "radius": 20.0,
+   "y": 5.0,
+   "radius": 12.5,
    "color": "#ffe6b8",
-   "strength": 1.3,
+   "strength": 1.7,
    "sector": "tomb"
   },
   {
@@ -1670,12 +1670,12 @@
    "kind": "light",
    "at": [
     90.0,
-    -7.5
+    -6.5
    ],
-   "y": 6.0,
-   "radius": 20.0,
+   "y": 5.0,
+   "radius": 12.5,
    "color": "#ffe6b8",
-   "strength": 1.3,
+   "strength": 1.7,
    "sector": "road"
   }
  ],

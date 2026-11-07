@@ -21,8 +21,8 @@ EYE = 1.6
 SKY = {"night": "sky_night", "dawn": "sky_dawn", "day": "sky_day", "dusk": "sky_dusk", "storm": "sky_storm", "morning": "sky_morning", "lake": "sky_lake", "grove": "sky_grove"}
 # Open-air views are not boxes (docs/art/VISUAL_AUDIT.md F7): their walls are low banks (OPEN_H metres, or OPEN_BAND_H when a lake or river runs in front of the far wall, whose floor sits 0.4 below),
 # so the sky strip's hills and far shore (tools/story/art/gospel_tex.py) rise behind them at eye level; the enclosed yards, streets and courts keep their tall house walls.
-SUN_K = 1.3  # the sun's pool over a daylight room; the rest of it keeps AMBIENT of the flat light (shade)
-AMBIENT = 0.42
+SUN_K = 1.7  # the sun's pool over a daylight room; the rest of it keeps AMBIENT of the flat light (shade)
+AMBIENT = 0.45
 OPEN_H = 1.2
 OPEN_BAND_H = 0.8
 # time of day: sector light (0..1), tint, distance fog colour/density
@@ -367,7 +367,7 @@ def build_map(map_id: str, views: list) -> tuple[dict, dict, dict]:
         thing_ids = {}
         extra = []
         if v["tod"] in ("day", "morning"):  # sunlight: a broad warm pool over the room's middle, and the side walls and their feet in shade 
-            extra = [LT("sunlt", 0.0, -7.5, 6.0, 20.0, "#ffe6b8", SUN_K)]
+            extra = [LT("sunlt", 0.0, -6.5, 5.0, 12.5, "#ffe6b8", SUN_K)]
         for t in v["props"] + extra:
             d = dict(t)
             d["id"] = f"{vid}.{t['id']}"

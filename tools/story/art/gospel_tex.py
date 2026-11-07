@@ -1246,7 +1246,7 @@ def _finish(rgb, levels: int = 20, gain: float = 1.0) -> np.ndarray:
 
 def sky_day() -> np.ndarray:
     """The Judean day: a deep blue overhead going to a dusty haze, fair-weather clouds, a sun to the right, three layers of hills (blue far, grey mid, ochre near)."""
-    rgb = _grad([(0, "#123c96"), (40, "#2a6cc0"), (70, "#58a2de"), (88, "#b4d6e4"), (96, "#e2dcc0")])
+    rgb = _grad([(0, "#0a2872"), (40, "#1e58b0"), (70, "#58a2de"), (88, "#b4d6e4"), (96, "#e2dcc0")])
     rgb = _cirrus(rgb, 501, 6, (50, 84), 12, 36, "#e8f0f4", 0.55)
     rgb = _glow(rgb, 30, 24, 90, 90, "#ffd890", 0.75)
     rgb = _disc(rgb, 30, 24, 4.2, "#fff6c8")
@@ -1255,12 +1255,12 @@ def sky_day() -> np.ndarray:
     rgb = _layer(rgb, _ridge(512, 10, 3.2, step=1, peaks=[(300, 4, 30), (820, 5, 20)]), "#7a8ea6", "#dcd6bc", 9)
     rgb = _layer(rgb, _ridge(513, 5, 1.8, harm=(3, 7, 12, 19), step=1), "#a39064", "#e0d4b0", 5)
     rgb = _ground(rgb, "#dcc8a0", "#b89a68", 514, "#7a6642", 0.008)
-    return _finish(rgb, 20, 0.72)
+    return _finish(rgb, 20, 0.8)
 
 
 def sky_lake() -> np.ndarray:
     """The Sea of Galilee: Hermon's snow far to the left, the flat Golan shore across the water, the water itself under the horizon with the sun's glitter."""
-    rgb = _grad([(0, "#143e9a"), (38, "#2c70c4"), (68, "#5eaae2"), (88, "#b8dae8"), (96, "#d4e4e4")])
+    rgb = _grad([(0, "#0c2c78"), (38, "#205cb4"), (68, "#5eaae2"), (88, "#b8dae8"), (96, "#d4e4e4")])
     rgb = _cirrus(rgb, 521, 5, (50, 84), 12, 36, "#e8f0f4", 0.5)
     rgb = _glow(rgb, 32, 22, 90, 90, "#ffd890", 0.75)
     rgb = _disc(rgb, 32, 22, 4.2, "#fff6c8")
@@ -1280,14 +1280,14 @@ def sky_lake() -> np.ndarray:
     for y in range(HZ + 1, SH):
         for _ in range(3):
             rgb[y, int(_az(32) + rng.randn() * (2 + (y - HZ) * 0.35)) % SW] = px.hexc("#fff6d8")
-    return _finish(rgb, 20, 0.72)
+    return _finish(rgb, 20, 0.8)
 
 
 def sky_dawn() -> np.ndarray:
     """Dawn over the Jordan valley: the sun just clear of the far hills, a glow in dithered steps, clouds lit from under, purple hills of Moab."""
     rgb = _grad([(0, "#1c2866"), (28, "#3c3c88"), (56, "#9c5a88"), (78, "#e48a74"), (90, "#f6b87a"), (96, "#fadc9c")])
-    rgb = _glow(rgb, -10, 3, 210, 60, "#ffc47a", 0.8)
-    rgb = _glow(rgb, -10, 2, 60, 30, "#fff0b8", 0.7)
+    rgb = _glow(rgb, -10, 3, 210, 60, "#ffc47a", 0.65)
+    rgb = _glow(rgb, -10, 2, 60, 30, "#fff0b8", 0.45)
     rgb = _cumulus(rgb, 541, 12, (44, 86), 18, 44, "#f4a898", "#c07084", "#6a4a82", hmin=3, hmax=7)
     rgb = _cirrus(rgb, 542, 6, (50, 84), 14, 40, "#f6c0a8", 0.6)
     rgb = _disc(rgb, -10, 3.6, 4.2, "#fff4c4", "#ffd890")
@@ -1301,7 +1301,7 @@ def sky_dawn() -> np.ndarray:
 def sky_morning() -> np.ndarray:
     """A clear morning in the hill country: a pale blue going to gold, a low sun, olive-green hills in layers."""
     rgb = _grad([(0, "#5a94d4"), (34, "#86b8e4"), (66, "#c4d8d0"), (88, "#f0e4bc"), (96, "#f6e8b8")])
-    rgb = _glow(rgb, 32, 9, 100, 80, "#ffd890", 0.7)
+    rgb = _glow(rgb, 32, 9, 100, 80, "#ffd890", 0.5)
     rgb = _disc(rgb, 32, 9, 4.2, "#fff6c8")
     rgb = _cumulus(rgb, 551, 9, (46, 78), 16, 36, "#fbf4e0", "#e4dcc4", "#bcb8a8", hmin=4, hmax=8, keep_clear=(32, 30))
     rgb = _cirrus(rgb, 552, 4, (52, 84), 12, 36, "#f6f0dc", 0.5)
@@ -1315,7 +1315,7 @@ def sky_morning() -> np.ndarray:
 def sky_dusk() -> np.ndarray:
     """Sunset: the sun half down behind the hills, an orange glow, red-lit clouds, purple layers."""
     rgb = _grad([(0, "#241c52"), (30, "#48306a"), (58, "#a04068"), (80, "#e0683e"), (92, "#f4a04c"), (96, "#f8c070")])
-    rgb = _glow(rgb, 24, 2, 220, 60, "#ffb060", 0.8)
+    rgb = _glow(rgb, 24, 2, 220, 70, "#ffb060", 1.0)
     rgb = _glow(rgb, 24, 2, 64, 30, "#ffe090", 0.6)
     rgb = _cumulus(rgb, 561, 12, (42, 84), 18, 46, "#f28a68", "#bc5668", "#582e66", hmin=3, hmax=8)
     rgb = _cirrus(rgb, 562, 6, (50, 84), 14, 40, "#f4a078", 0.6)
@@ -1329,7 +1329,7 @@ def sky_dusk() -> np.ndarray:
 
 def sky_night() -> np.ndarray:
     """The shepherds' night: the Milky Way, single-texel stars and a few small crosses, a crescent moon, black-blue hills with a shepherd's fire or two."""
-    rgb = _grad([(0, "#080e2c"), (40, "#121e4c"), (78, "#223268"), (96, "#3a4c84")])
+    rgb = _grad([(0, "#080e2c"), (40, "#162458"), (78, "#2e4282"), (96, "#5470ac")])
     rgb = _milky(rgb, 572)
     rgb = _stars(rgb, 573, 900)
     rgb = _glow(rgb, -24, 20, 40, 8, "#8a9ad0", 0.22)
@@ -1349,7 +1349,7 @@ def sky_night() -> np.ndarray:
 
 def sky_grove() -> np.ndarray:
     """Gethsemane: a full moon, fewer stars, and the city across the valley (wall, towers, the Temple platform) in the moon's pale blue with a few lit windows."""
-    rgb = _grad([(0, "#0a1030"), (40, "#16245a"), (78, "#2a3a74"), (96, "#445890")])
+    rgb = _grad([(0, "#0a1030"), (40, "#1a2a62"), (78, "#324488"), (96, "#566fa6")])
     rgb = _milky(rgb, 582, k=0.12)
     rgb = _stars(rgb, 583, 380, bright=0.08)
     rgb = _glow(rgb, 24, 22, 70, 12, "#9aaee0", 0.32)
