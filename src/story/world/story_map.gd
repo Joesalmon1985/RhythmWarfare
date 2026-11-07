@@ -45,6 +45,19 @@ var rooms: Dictionary = {}  # room id -> {palette: the chapter palette the room'
 var palette_weight := 0.25  # how much the stage palette (one colour per bar) overrides the tint of a dance floor or stage sector: 1 in Night One (the club), a little elsewhere so a ward stays blue and a lab stays green
 var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (a hospital is light, the pit is red)
 var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
+## Heights (docs/story/HEIGHTS_AND_PATHS.md): a floor change across a portal of at most `max_step` metres is a step a walker takes (stairs are runs of them); a taller one,
+## or any change into or out of a sector marked "drop", is a drop nobody walks (a "climb" move may take up to `max_climb`). A sector marked "void", or one whose floor lies
+## `void_drop` metres or more below every neighbour and that holds no waypoint, home or spot, is a void: drawn far below, hazed by depth, never stood in (the depth rule is
+## on, at 3 m, for maps of CLIP_FROM pieces or more, the converted ones; a hand-made map opts in with "void_drop").
+var max_step := 0.5
+var max_climb := 2.0
+var void_drop := 3.0
+## Which sectors are drawn (visible_sectors): "flood" (the hand-made maps: every sector whose portal opening is in the view cone, up to a depth) or "clip" (each portal
+## narrows the view window, for maps of hundreds of pieces); the default is "clip" from CLIP_FROM sectors up. Map key {"visibility": {"mode", "depth", "far"}}.
+const CLIP_FROM := 64
+var vis_mode := "flood"
+var vis_depth := 48
+var vis_far := 0.0  # metres: portals farther than this are not looked through (0: no limit)
 var errors: Array = []
 
 var _sector_index: Dictionary = {}
@@ -101,7 +114,17 @@ func build(d: Dictionary, check_files: bool) -> void:
 	for an in animated:
 		if typeof(an) != TYPE_DICTIONARY or not textures.has(str(an.get("tex", ""))) or str(an.get("mode", "")) not in ANIM_MODES:
 			errors.append("animated surface %s: needs a map texture and a mode of %s" % [an, ANIM_MODES])
+	max_step = float(d.get("max_step", 0.5))
+	max_climb = maxf(float(d.get("max_climb", 2.0)), max_step)
+	var many: bool = typeof(d.get("sectors")) == TYPE_ARRAY and (d["sectors"] as Array).size() >= CLIP_FROM
+	void_drop = float(d.get("void_drop", 3.0 if many else 0.0))  # the depth rule is on by default for converted maps only (a hand-made pit keeps its look)
 	_build_sectors(d.get("sectors", []))
+	var vis: Dictionary = d.get("visibility", {}) if typeof(d.get("visibility", {})) == TYPE_DICTIONARY else {}
+	vis_mode = str(vis.get("mode", "clip" if sectors.size() >= CLIP_FROM else "flood"))
+	if vis_mode not in ["flood", "clip"]:
+		errors.append("visibility mode %s is not flood or clip" % vis_mode)
+	vis_depth = maxi(int(vis.get("depth", 48)), 1)
+	vis_far = maxf(float(vis.get("far", 0.0)), 0.0)
 	_build_walls(d.get("walls", []))
 	_build_things(d.get("things", []))
 	_build_waypoints(d.get("waypoints", []))
@@ -114,6 +137,7 @@ func build(d: Dictionary, check_files: bool) -> void:
 	_build_spots(d.get("spots", {}))
 	_build_silhouettes(d.get("silhouettes", []))
 	_build_occluders(d.get("occluders", []))
+	_find_voids()
 	_check_reachability()
 	if errors.is_empty():
 		_resolve_walls()
@@ -150,6 +174,12 @@ func _build_sectors(list: Array) -> void:
 		sec["activities"] = _build_activities(sid, s.get("activities", {}), sec["flags"])
 		sec["sky"] = str(s.get("sky", ""))  # a name of the map sky's `by_name`: the sky (and `fog`, {color, density}) this sector shows (a map holding a night room and a dawn one)
 		sec["fog"] = s.get("fog", {}) if typeof(s.get("fog", {})) == TYPE_DICTIONARY else {}
+		sec["step_tex"] = str(s.get("step_tex", ""))  # the riser of a step up onto this sector (Doom's lower texture), when the portal names none
+		sec["lip_tex"] = str(s.get("lip_tex", ""))  # the lip where this sector's ceiling is lower than its neighbour's (Doom's upper texture)
+		sec["drop"] = bool(s.get("drop", false))  # any floor change into or out of it is a drop, not a step
+		sec["void"] = bool(s.get("void", false))  # a pit: drawn far below, never stood in (see _find_voids for the depth rule)
+		for k in ["step_tex", "lip_tex"]:
+			_tex_ok(str(sec[k]), "sector " + sid)
 		if pts.size() < 3:
 			errors.append("sector %s: a polygon needs 3 points or more" % sid)
 		else:
@@ -326,7 +356,17 @@ func _build_walls(list: Array) -> void:
 		var tex := str(w.get("tex", ""))
 		for k in ["tex", "lower_tex", "upper_tex"]:
 			_tex_ok(str(w.get(k, "")), where)
-		_walls_in.append({"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", "")), "blocked": bool(w.get("blocked", false)) and portal != ""})
+		var rec := {"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", "")), "blocked": bool(w.get("blocked", false)) and portal != ""}
+		if str(w.get("kind", "")) == "railing":  # a see-through strip on a portal edge: open to the eye, closed to walkers (other kinds are not this renderer's)
+			if portal == "" or tex == "":
+				errors.append("%s: a railing stands on a portal edge and names its tile (tex)" % where)
+				continue
+			rec["kind"] = "railing"
+			rec["rail_tex"] = tex
+			rec["rail_h"] = clampf(float(w.get("height", 1.0)), 0.2, 3.0)
+			rec["tex"] = ""  # (the portal's step and lip faces keep the sector's wall_tex)
+			rec["blocked"] = true
+		_walls_in.append(rec)
 	# a portal is declared once (the other sector sees it implicitly)
 	for k in seen_portals:
 		var segs: Array = seen_portals[k]
@@ -650,6 +690,126 @@ func lights_reaching(sid: String) -> Array:
 	return out
 
 
+## Voids (docs/story/HEIGHTS_AND_PATHS.md): a sector marked "void", or one whose floor lies `void_drop` metres or more below every sector next to it through a portal
+## and that holds no waypoint, home or spot (a pit nobody stands in; the Mothership's reactor floor, 4 m down, has its waypoint and stays a room). Each void gets `void_top`:
+## the lowest floor around it, where its haze starts. The camera is never placed in a void: a waypoint, home or spot in a marked one is an error.
+func _find_voids() -> void:
+	var used := {}
+	for w in waypoints.values():
+		used[str(w["sector"])] = true
+	for h in homes.values():
+		used[str(h["sector"])] = true
+	for sp in spots.values():
+		used[str(sp["sector"])] = true
+	for s in sectors:
+		var sid := str(s["id"])
+		var top := INF
+		for p in portals():
+			if p["a"] == sid:
+				top = minf(top, float(sector(str(p["b"]))["floor"]))
+			elif p["b"] == sid:
+				top = minf(top, float(sector(str(p["a"]))["floor"]))
+		if top == INF:
+			top = float(s["floor"])
+		if not bool(s["void"]) and void_drop > 0.0 and not used.has(sid) and top - float(s["floor"]) >= void_drop - 1.0e-4:
+			s["void"] = true
+			s["void_auto"] = true
+		s["void_top"] = maxf(top, float(s["floor"]))
+		if bool(s["void"]) and used.has(sid):
+			errors.append("sector %s is a void: no waypoint, home or spot may stand in it (the camera is never placed in a void)" % sid)
+
+
+func is_void(sid: String) -> bool:
+	return bool(sector(sid).get("void", false))
+
+
+## The floor change of walking from sector a into sector b: {dh (metres, up positive), kind}: "level", "step" (at most max_step; a "climb" style takes up to max_climb),
+## "drop" (taller, or any change into or out of a sector marked "drop") or "void" (b is a void: nobody walks into one).
+func floor_change(a: String, b: String, style := "walk") -> Dictionary:
+	var dh := float(sector(b).get("floor", 0.0)) - float(sector(a).get("floor", 0.0))
+	if is_void(b):
+		return {"dh": dh, "kind": "void"}
+	if absf(dh) < 1.0e-3:
+		return {"dh": dh, "kind": "level"}
+	var lim := max_climb if style == "climb" else max_step
+	if bool(sector(a).get("drop", false)) or bool(sector(b).get("drop", false)) or absf(dh) > lim + 1.0e-4:
+		return {"dh": dh, "kind": "drop"}
+	return {"dh": dh, "kind": "step"}
+
+
+var _walls_by_sector: Dictionary = {}  # sector id -> its resolved walls
+
+
+## Walks the straight segment a to b from sector `sa` through the map (docs/story/HEIGHTS_AND_PATHS.md): {sectors: [...], points: PackedVector2Array, errors: [...]}, the
+## stretch ending at points[k] lying in sectors[k] (each portal crossing, then b). The segment may only leave a sector through a portal open to walkers (not a wall, not a
+## railing or a `blocked` opening), into a sector that is not a void, over a floor change that is a step for `style`, through an opening with room for the eye
+## (eye_height + 0.1 m). The first problem ends the walk and is the error. Needs a map without errors (resolved walls).
+func trace_segment(a: Vector2, b: Vector2, sa: String, style := "walk") -> Dictionary:
+	var out := {"sectors": [], "points": PackedVector2Array(), "errors": []}
+	if not _sector_index.has(sa):
+		out["errors"].append("starts in no sector (%s)" % sa)
+		return out
+	if _walls_by_sector.is_empty():
+		for w in _walls_out:
+			if not _walls_by_sector.has(str(w["sector"])):
+				_walls_by_sector[str(w["sector"])] = []
+			_walls_by_sector[str(w["sector"])].append(w)
+	var dir := b - a
+	var cur := sa
+	var t := 0.0
+	for guard in 4096:
+		var poly: PackedVector2Array = sector(cur)["poly"]
+		var t_exit := INF
+		if dir.length() > 1.0e-6:
+			for i in poly.size():
+				var q0 := poly[i]
+				var e := poly[(i + 1) % poly.size()] - q0
+				var nrm := Vector2(e.y, -e.x)  # outward (the polygon runs counter-clockwise)
+				var dn := dir.dot(nrm)
+				if dn <= 1.0e-12:
+					continue
+				var te := (q0 - a).dot(nrm) / dn
+				if te > t - 1.0e-7 and te < t_exit:
+					t_exit = te
+		if t_exit >= 1.0 - 1.0e-6:
+			out["sectors"].append(cur)
+			out["points"].append(b)
+			return out
+		var c := a + dir * t_exit
+		var nxt := ""
+		var shut := ""
+		for w in _walls_by_sector.get(cur, []):
+			if str(w["portal"]) != "" and _dist_to_segment(c, w["a"], w["b"]) < 2.0e-3:
+				if bool(w.get("blocked", false)):
+					shut = "the railing" if str(w.get("kind", "")) == "railing" else "the closed opening"
+					shut += " between %s and %s" % [cur, w["portal"]]
+					continue
+				nxt = str(w["portal"])
+				break
+		if nxt == "":
+			out["errors"].append(("crosses %s" % shut if shut != "" else "crosses a wall of %s" % cur) + " at (%.2f, %.2f)" % [c.x, c.y])
+			return out
+		var fc := floor_change(cur, nxt, style)
+		if str(fc["kind"]) == "void":
+			out["errors"].append("steps off %s into the void %s at (%.2f, %.2f)" % [cur, nxt, c.x, c.y])
+			return out
+		if str(fc["kind"]) == "drop":
+			out["errors"].append("crosses a drop of %.2f m from %s to %s at (%.2f, %.2f) (style %s; a step is at most %.2f m)" % [float(fc["dh"]), cur, nxt, c.x, c.y, style, max_climb if style == "climb" else max_step])
+			return out
+		var sc := sector(cur)
+		var sn := sector(nxt)
+		var opening := minf(float(sc["ceiling"]), float(sn["ceiling"])) - maxf(float(sc["floor"]), float(sn["floor"]))
+		if opening < eye_height + 0.1:
+			out["errors"].append("goes through an opening %.2f m high from %s to %s (the eye needs %.2f)" % [opening, cur, nxt, eye_height + 0.1])
+			return out
+		out["sectors"].append(cur)
+		out["points"].append(c)
+		cur = nxt
+		t = t_exit
+	out["errors"].append("does not end")
+	return out
+
+
 func neighbors(sid: String) -> Array:
 	var out: Array = []
 	for p in portals():
@@ -696,7 +856,11 @@ func _resolve_walls() -> void:
 	for w in _walls_in:
 		all.append(w)
 		if str(w["portal"]) != "":
-			all.append({"a": w["b"], "b": w["a"], "sector": w["portal"], "portal": w["sector"], "tex": w["tex"], "lower_tex": w["lower_tex"], "upper_tex": w["upper_tex"], "implicit": true})
+			var mirror := {"a": w["b"], "b": w["a"], "sector": w["portal"], "portal": w["sector"], "tex": w["tex"], "lower_tex": w["lower_tex"], "upper_tex": w["upper_tex"], "implicit": true}
+			for k in ["blocked", "kind", "rail_tex", "rail_h"]:
+				if w.has(k):
+					mirror[k] = w[k]
+			all.append(mirror)
 	for s in sectors:
 		var poly: PackedVector2Array = s["poly"]
 		for i in poly.size():
@@ -727,10 +891,18 @@ func _resolve_walls() -> void:
 		var sec: Dictionary = sectors[_sector_index[w["sector"]]]
 		if str(w["tex"]) == "":
 			w["tex"] = str(sec["wall_tex"])
-		if str(w["lower_tex"]) == "":
+		var o: Dictionary = sector(str(w["portal"])) if str(w["portal"]) != "" else {}
+		if str(w["lower_tex"]) == "":  # the riser: the higher sector's step_tex, a void's cliff the neighbour's wall going on down, else the wall's own texture (as always)
 			w["lower_tex"] = str(w["tex"])
-		if str(w["upper_tex"]) == "":
+			if not o.is_empty() and float(o["floor"]) > float(sec["floor"]):
+				if str(o.get("step_tex", "")) != "":
+					w["lower_tex"] = str(o["step_tex"])
+				elif bool(sec.get("void", false)) and str(o["wall_tex"]) != "" and str(o["wall_tex"]) != "sky":
+					w["lower_tex"] = str(o["wall_tex"])
+		if str(w["upper_tex"]) == "":  # the lip: the lower-ceilinged sector's lip_tex, else the wall's own texture
 			w["upper_tex"] = str(w["tex"])
+			if not o.is_empty() and float(o["ceiling"]) < float(sec["ceiling"]) and str(o.get("lip_tex", "")) != "":
+				w["upper_tex"] = str(o["lip_tex"])
 
 
 func _default_wall(s: Dictionary, a: Vector2, b: Vector2) -> Dictionary:
@@ -876,6 +1048,12 @@ func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dict
 ## projector's vertical field of view: the camera's own sector (depth 0) and the sectors beyond portals whose opening lies in view, up to `max_depth` portals deep.
 ## Returns {sector id: portal depth}. A generous margin keeps a dancer in the doorway from popping.
 func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_depth := 4) -> Dictionary:
+	if vis_mode == "clip":  # (the same answer for the crowd's walk and the geometry's: the window decides, not the depth; worked out once per pose)
+		var key := [cam, yaw, sec, aspect]
+		if key != _vis_key:
+			_vis_key = key
+			_vis_memo = _visible_clipped(cam, yaw, sec, aspect)
+		return _vis_memo
 	var out := {}
 	if not _sector_index.has(sec):
 		return out
@@ -900,6 +1078,106 @@ func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_d
 					next.append(other)
 		frontier = next
 	return out
+
+
+const VIS_NEAR_FULL := 0.3  # metres: a portal this near the camera passes the whole window (standing in a doorway)
+const VIS_MAX_STEPS := 6000  # a bound on the walk (a map of 600 pieces walks a few hundred)
+var _portals_by_sector: Dictionary = {}  # sector id -> indices into portals()
+var _portal_open: PackedByteArray = PackedByteArray()  # per portal: 1 when it has an opening to see through (not a shut door)
+var _vis_key: Array = []
+var _vis_memo: Dictionary = {}
+
+
+func _portals_of(sid: String) -> Array:
+	if _portals_by_sector.is_empty():
+		var ps := portals()
+		for i in ps.size():
+			for k in ["a", "b"]:
+				var id := str(ps[i][k])
+				if not _portals_by_sector.has(id):
+					_portals_by_sector[id] = []
+				_portals_by_sector[id].append(i)
+			var sa := sector(str(ps[i]["a"]))
+			var sb := sector(str(ps[i]["b"]))
+			_portal_open.append(1 if minf(float(sa["ceiling"]), float(sb["ceiling"])) - maxf(float(sa["floor"]), float(sb["floor"])) >= 0.02 else 0)
+	return _portals_by_sector.get(sid, [])
+
+
+## The clipping portal walk (map visibility mode "clip", docs/story/HEIGHTS_AND_PATHS.md): breadth first from the camera's sector with the view window [-half, half]
+## (radians either side of the facing, in the ground plane); a portal is looked through only where its angular extent overlaps the window it is seen through, and the
+## sector beyond is walked with the overlap. A room behind a solid wall is never reached; an open hall cut into pieces is seen to its far end. Portals with no opening
+## stop the eye, a portal past `vis_far` (when set) is not looked through, the walk stops at `vis_depth` portals. Railings and `blocked` portals never stop the eye.
+func _visible_clipped(cam: Vector2, yaw: float, sec: String, aspect: float) -> Dictionary:
+	var out := {}
+	if not _sector_index.has(sec):
+		return out
+	out[sec] = 0
+	var half := atan(tan(deg_to_rad(StoryProjector.FOV_V) * 0.5) * aspect) + deg_to_rad(8.0)
+	var fwd := StoryProjector.forward(yaw)
+	var rgt := StoryProjector.right(yaw)
+	var ps := portals()
+	var walked := {sec: [Vector2(-half, half)]}  # sector -> the windows it has been walked with
+	var queue: Array = [[sec, -half, half, 0, -1]]
+	var head := 0
+	while head < queue.size() and head < VIS_MAX_STEPS:
+		var it: Array = queue[head]
+		head += 1
+		var cur := str(it[0])
+		var depth := int(it[3])
+		if depth >= vis_depth:
+			continue
+		for pi in _portals_of(cur):
+			if pi == int(it[4]):
+				continue
+			var p: Dictionary = ps[pi]
+			var other := str(p["b"]) if str(p["a"]) == cur else str(p["a"])
+			if _portal_open[pi] == 0:
+				continue  # a closed opening (a shut door)
+			var p0: Vector2 = p["p0"]
+			var p1: Vector2 = p["p1"]
+			var near := _dist_to_segment(cam, p0, p1)
+			if vis_far > 0.0 and near > vis_far:
+				continue
+			var lo := float(it[1])
+			var hi := float(it[2])
+			if near > VIS_NEAR_FULL:
+				var win := _portal_window(cam, fwd, rgt, p0, p1)
+				if win.x > win.y:
+					continue
+				lo = maxf(lo, win.x)
+				hi = minf(hi, win.y)
+				if hi - lo <= 1.0e-5:
+					continue
+			var seen: Array = walked.get(other, [])
+			var covered := false
+			for wv in seen:
+				if wv.x <= lo + 1.0e-6 and wv.y >= hi - 1.0e-6:
+					covered = true
+					break
+			if covered:
+				continue
+			seen.append(Vector2(lo, hi))
+			walked[other] = seen
+			if not out.has(other):
+				out[other] = depth + 1
+			queue.append([other, lo, hi, depth + 1, pi])
+	return out
+
+
+## The angular extent [x, y] (radians, right of the facing positive) of the segment p0 p1 seen from cam, clipped to the near plane; x > y when it lies behind the camera.
+static func _portal_window(cam: Vector2, fwd: Vector2, rgt: Vector2, p0: Vector2, p1: Vector2) -> Vector2:
+	var a := Vector2((p0 - cam).dot(rgt), (p0 - cam).dot(fwd))  # (right, depth)
+	var b := Vector2((p1 - cam).dot(rgt), (p1 - cam).dot(fwd))
+	var near := 0.05
+	if a.y < near and b.y < near:
+		return Vector2(1, -1)
+	if a.y < near:
+		a = a.lerp(b, (near - a.y) / (b.y - a.y))
+	elif b.y < near:
+		b = b.lerp(a, (near - b.y) / (a.y - b.y))
+	var ang_a := atan2(a.x, a.y)
+	var ang_b := atan2(b.x, b.y)
+	return Vector2(minf(ang_a, ang_b), maxf(ang_a, ang_b))
 
 
 func _portal_in_view(cam: Vector2, fwd: Vector2, rgt: Vector2, p0: Vector2, p1: Vector2, half: float) -> bool:
@@ -966,8 +1244,11 @@ func validate_chapter(chapter_raw: Dictionary) -> void:
 		var args: Dictionary = ja["args"]
 		match str(ja["action"]):
 			"player_move":
-				if not waypoints.has(str(args.get("to", ""))):
-					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], args.get("to", "")])
+				if not waypoints.has(StoryPlayer.target_of(args)):
+					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], StoryPlayer.target_of(args)])
+				for v in StoryPlayer.via_of(args):
+					if not waypoints.has(str(v)):
+						errors.append("%s: player_move via %s is not a waypoint" % [ja["where"], v])
 				if str(args.get("style", "walk")) not in MOVE_STYLES:
 					errors.append("%s: unknown move style %s" % [ja["where"], args.get("style")])
 			"player_walk":

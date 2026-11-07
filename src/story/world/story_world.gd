@@ -19,6 +19,9 @@ const SKY_TEXELS_AROUND := 1024.0  # a sky strip is drawn so that this many texe
 const SKY_HORIZON := 0.76  # the strip's row at eye level, as a fraction of its height from the top (the old 80 m cylinder put it here; map `sky.horizon` overrides)
 const SKY_FADE := 8.0  # texels over which the strip's top row dissolves into the zenith colour
 const DECAL_GAP := 0.006  # metres a wall decal stands off its wall (no z-fighting at 90 m with a 24-bit depth buffer and the 0.15 m near plane)
+const VOID_HAZE := 0.9  # how far the bottom of a void goes toward the haze colour (docs/story/HEIGHTS_AND_PATHS.md)
+const VOID_DARK := 0.3  # the haze colour's brightness: the fog colour scaled to its brightest channel, times this
+const RAIL_PREFIX := "~rail:"  # a texture group of railing strips (a cut-out material)
 const SKY_SHADER := """
 shader_type sky;
 // StoryWorld's sky at infinity: the map's sky strip looked up by the view direction alone (StoryWorld.sky_params).
@@ -67,6 +70,7 @@ var _sky_shown: Texture2D
 var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
+var faces: Array = []  # every vertical face drawn: {sector (whose mesh holds it), portal, kind: wall | step | lip | cliff | railing, y0, y1, tex, a, b} (the tests read it)
 var shadow_count := 0  # floor props with a contact shadow
 var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
 var _last_col: Dictionary = {}  # sector id -> the colour last written to its materials
@@ -92,6 +96,8 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 		_add_flat(by_sector[s["id"]], s, false)
 	for w in map.resolved_walls():
 		_add_wall(by_sector[w["sector"]], w)
+		if str(w.get("kind", "")) == "railing" and not bool(w.get("implicit", false)):
+			_add_railing(by_sector, w)
 	for s in map.sectors:
 		_make_sector_mesh(s, by_sector[s["id"]])
 	for t in map.things:
@@ -172,7 +178,7 @@ func _add_flat(g: Dictionary, s: Dictionary, floor_side: bool) -> void:
 					for q in piece:
 						d["v"].append(Vector3(q.x, y, q.y))
 						d["uv"].append(Vector2(q.x / m, q.y / m))
-						d["c"].append(_vertex_light(Vector3(q.x, y, q.y), shade, s, lit))
+						d["c"].append(_hazed(_vertex_light(Vector3(q.x, y, q.y), shade, s, lit), s, y))
 					for k in range(0, ptri.size(), 3):
 						d["i"].append_array([base2 + ptri[k], base2 + ptri[k + 1], base2 + ptri[k + 2]] if floor_side else [base2 + ptri[k], base2 + ptri[k + 2], base2 + ptri[k + 1]])
 				gz += LIGHT_CELL
@@ -180,7 +186,7 @@ func _add_flat(g: Dictionary, s: Dictionary, floor_side: bool) -> void:
 		return
 	var tris := Geometry2D.triangulate_polygon(poly)
 	var base: int = d["v"].size()
-	var flat := _flat_shade(s, shade)
+	var flat := _hazed(_flat_shade(s, shade), s, y)
 	for p in poly:
 		d["v"].append(Vector3(p.x, y, p.y))
 		d["uv"].append(Vector2(p.x / m, p.y / m))
@@ -195,15 +201,15 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 	var b: Vector2 = w["b"]
 	var floor_y := float(s["floor"])
 	var ceil_y := float(s["ceiling"])
-	var parts: Array = []  # [y0, y1, tex]
+	var parts: Array = []  # [y0, y1, tex, kind]
 	if str(w["portal"]) == "":
-		parts.append([floor_y, ceil_y, str(w["tex"])])
-	else:
+		parts.append([floor_y, ceil_y, str(w["tex"]), "wall"])
+	else:  # a portal: the step face below the opening where the floor beyond is higher (a void's cliff), the lip above it where the ceiling beyond is lower
 		var o: Dictionary = map.sector(str(w["portal"]))
 		if float(o["floor"]) > floor_y + 1.0e-4:
-			parts.append([floor_y, float(o["floor"]), str(w["lower_tex"])])
+			parts.append([floor_y, float(o["floor"]), str(w["lower_tex"]), "cliff" if bool(s.get("void", false)) else "step"])
 		if float(o["ceiling"]) < ceil_y - 1.0e-4:
-			parts.append([float(o["ceiling"]), ceil_y, str(w["upper_tex"])])
+			parts.append([float(o["ceiling"]), ceil_y, str(w["upper_tex"]), "lip"])
 	var along := (b - a).length()
 	var dir := (b - a) / along
 	var shade := WALL_SHADE_X if absf(dir.y) > absf(dir.x) else 1.0  # a wall running along z faces along x
@@ -211,6 +217,7 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 		var tex := str(part[2])
 		if tex == "" or tex == "sky":
 			continue
+		faces.append({"sector": str(w["sector"]), "portal": str(w["portal"]), "kind": str(part[3]), "y0": float(part[0]), "y1": float(part[1]), "tex": tex, "a": a, "b": b})
 		var m: float = _metres.get(tex, 2.0)
 		var d := _group(g, tex)
 		var base: int = d["v"].size()
@@ -230,7 +237,7 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 					var yy := lerpf(y0, y1, fv)
 					d["v"].append(Vector3(pt.x, yy, pt.y))
 					d["uv"].append(Vector2(lerpf(u0, u1, fu), (y1 - yy) / m))
-					d["c"].append(_vertex_light(Vector3(pt.x, yy, pt.y), shade, s, lit))
+					d["c"].append(_hazed(_vertex_light(Vector3(pt.x, yy, pt.y), shade, s, lit), s, yy))
 			for iv in nv:
 				for iu in nu:
 					var i00 := base + iv * (nu + 1) + iu
@@ -242,9 +249,64 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 		d["v"].append_array([Vector3(a.x, y0, a.y), Vector3(b.x, y0, b.y), Vector3(b.x, y1, b.y), Vector3(a.x, y1, a.y)])
 		d["uv"].append_array([Vector2(u0, (y1 - y0) / m), Vector2(u1, (y1 - y0) / m), Vector2(u1, 0.0), Vector2(u0, 0.0)])
 		var flat := _flat_shade(s, shade)
-		for k in 4:
-			d["c"].append(flat)
+		if bool(s.get("void", false)):  # a void's faces fade into the haze with depth (bottom, bottom, top, top)
+			d["c"].append_array([_hazed(flat, s, y0), _hazed(flat, s, y0), _hazed(flat, s, y1), _hazed(flat, s, y1)])
+		else:
+			for k in 4:
+				d["c"].append(flat)
 		d["i"].append_array([base, base + 1, base + 2, base, base + 2, base + 3])
+
+
+## A railing (docs/story/HEIGHTS_AND_PATHS.md): a cut-out strip along a portal from the higher floor up `rail_h` metres, in the higher sector's mesh (its light, its lamps).
+## The tile spans the railing's height (v 0 to 1) and repeats along it at its own aspect.
+func _add_railing(by_sector: Dictionary, w: Dictionary) -> void:
+	var s: Dictionary = map.sector(str(w["sector"]))
+	var o: Dictionary = map.sector(str(w["portal"]))
+	var hs: Dictionary = o if float(o["floor"]) > float(s["floor"]) else s
+	var tex := str(w["rail_tex"])
+	if not _tex.has(tex):
+		return
+	var a: Vector2 = w["a"]
+	var b: Vector2 = w["b"]
+	var y0 := maxf(float(s["floor"]), float(o["floor"]))
+	var y1 := minf(y0 + float(w["rail_h"]), minf(float(s["ceiling"]), float(o["ceiling"])))
+	if y1 <= y0 + 0.01:
+		return
+	var t2d: Texture2D = _tex[tex]
+	var along := (b - a).length()
+	var u1 := along / maxf((y1 - y0) * float(t2d.get_width()) / maxf(float(t2d.get_height()), 1.0), 0.01)
+	var d := _group(by_sector[str(hs["id"])], RAIL_PREFIX + tex)
+	var base: int = d["v"].size()
+	d["v"].append_array([Vector3(a.x, y0, a.y), Vector3(b.x, y0, b.y), Vector3(b.x, y1, b.y), Vector3(a.x, y1, a.y)])
+	d["uv"].append_array([Vector2(0.0, 1.0), Vector2(u1, 1.0), Vector2(u1, 0.0), Vector2(0.0, 0.0)])
+	var lit := _lights_of(hs)
+	for q in [Vector3(a.x, y0, a.y), Vector3(b.x, y0, b.y), Vector3(b.x, y1, b.y), Vector3(a.x, y1, a.y)]:
+		d["c"].append(_flat_shade(hs, 1.0) if lit.is_empty() else _vertex_light(q, 1.0, hs, lit))
+	d["i"].append_array([base, base + 1, base + 2, base, base + 2, base + 3])
+	faces.append({"sector": str(hs["id"]), "portal": str(w["portal"]) if hs == s else str(w["sector"]), "kind": "railing", "y0": y0, "y1": y1, "tex": tex, "a": a, "b": b})
+
+
+## How far toward the haze a point at height y of sector s is: 0 outside voids and at the walkway's level, VOID_HAZE at the void's floor.
+func haze_at(s: Dictionary, y: float) -> float:
+	if not bool(s.get("void", false)):
+		return 0.0
+	var top := float(s.get("void_top", s["floor"]))
+	var span := maxf(top - float(s["floor"]), 0.1)
+	return clampf((top - y) / span, 0.0, 1.0) * VOID_HAZE
+
+
+## Colour c taken `f` of the way toward the haze: the map's fog colour scaled to its brightest channel, at VOID_DARK brightness (a multiplier: the light still breathes on it).
+func haze_color(c: Color, f: float) -> Color:
+	var fc: Color = Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR
+	var mx := maxf(maxf(fc.r, fc.g), maxf(fc.b, 0.001))
+	var target := Color(fc.r / mx, fc.g / mx, fc.b / mx) * VOID_DARK
+	return Color(c.r * lerpf(1.0, target.r, f), c.g * lerpf(1.0, target.g, f), c.b * lerpf(1.0, target.b, f), c.a)
+
+
+func _hazed(c: Color, s: Dictionary, y: float) -> Color:
+	if not bool(s.get("void", false)):
+		return c
+	return haze_color(c, haze_at(s, y))
 
 
 # --- authored light sources, baked once into vertex colours ------------------------------------------------------------------------------
@@ -337,15 +399,19 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 		arrays[Mesh.ARRAY_INDEX] = d["i"]
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		triangle_count += (d["i"] as PackedInt32Array).size() / 3
-		var mat := _material(_tex[tex])
+		var real := str(tex).trim_prefix(RAIL_PREFIX)
+		var mat := _material(_tex[real])
+		if str(tex).begins_with(RAIL_PREFIX):  # a railing: a cut-out (alpha scissor, nearest, no blending, no sorting)
+			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+			mat.alpha_scissor_threshold = 0.5
 		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
 		mats.append(mat)
 		for an in map.animated:
-			if str(an.get("tex", "")) == str(tex):
+			if str(an.get("tex", "")) == real:
 				_anim_sectors[str(s["id"])] = true
-		if not _mats_by_tex.has(tex):
-			_mats_by_tex[tex] = []
-		_mats_by_tex[tex].append(mat)
+		if not _mats_by_tex.has(real):
+			_mats_by_tex[real] = []
+		_mats_by_tex[real].append(mat)
 	var mi := MeshInstance3D.new()
 	mi.name = "Sector_" + str(s["id"])
 	mi.mesh = mesh
@@ -717,8 +783,11 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 ## which is what they show the moment they come back into view and are refreshed before the next draw).
 func set_visible_sectors(vis: Dictionary) -> void:
 	_vis = vis
-	for id in _sector_nodes:
-		(_sector_nodes[id]["node"] as MeshInstance3D).visible = vis.is_empty() or vis.has(id)
+	for id in _sector_nodes:  # (only the nodes whose state changes are touched: a map of hundreds of pieces walks this every frame the camera moves)
+		var on := vis.is_empty() or vis.has(id)
+		var mi: MeshInstance3D = _sector_nodes[id]["node"]
+		if mi.visible != on:
+			mi.visible = on
 
 
 func update(t: float, ctx: Dictionary) -> void:
