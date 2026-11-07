@@ -10,6 +10,7 @@ const PACKS_DIR := "res://songs/packs"
 const ARRANGEMENTS_DIR := "res://content/music/arrangements"
 const RECIPES_PATH := "res://content/music/mix_recipes.json"
 const HOTSPOTS_DIR := "res://content/run/hotspots"  # <world>.json per run world: the scenes' hotspots (HotspotContract)
+const DOOM_DIR := "res://content/run/doom"  # the Doom worlds' overlay (tools/run/make_doom.py): merged into the main run only when RW_DOOM_WORLDS=1 (docs/doom/LAUNCH.md)
 const PATHS_DIR := "res://content/paths"  # <id>/run.json, music.json, hotspots/<world>.json: a sister run at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md section 3)
 const INHERITED := ["judgement", "energy", "stages", "mix", "effects", "treatments"]  # a path's run.json may leave these out: the main run's apply
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
@@ -102,6 +103,8 @@ static func load_files(run_path: String, music_path: String, packs_dir: String, 
 	var music: Variant = _json(music_path, d.errors)
 	if typeof(run) != TYPE_DICTIONARY or typeof(music) != TYPE_DICTIONARY:
 		return d
+	if run_path == RUN_PATH and doom_worlds_on():
+		d._merge_doom(run, music)
 	d.cfg = run
 	if (run as Dictionary).has("path"):
 		d._setup_path(run)
@@ -353,6 +356,25 @@ func chart_pack_at(id: String, beat: float) -> String:
 func section_start_at(id: String, beat: float) -> int:
 	var s := section_at(id, beat)
 	return int(s["start_beat"]) if not s.is_empty() else 0
+
+
+## RW_DOOM_WORLDS=1: the Doom worlds' scenes join the main run (default off: the legacy campaign is exactly as it was).
+static func doom_worlds_on() -> bool:
+	return OS.get_environment("RW_DOOM_WORLDS") == "1"
+
+
+## Adds the overlay's worlds, nodes, cinematics and music entries to the parsed run and music documents (before they are read into the nodes).
+func _merge_doom(run: Dictionary, music: Dictionary) -> void:
+	var r: Variant = _json(DOOM_DIR.path_join("run.json"), errors)
+	var m: Variant = _json(DOOM_DIR.path_join("music.json"), errors)
+	if typeof(r) != TYPE_DICTIONARY or typeof(m) != TYPE_DICTIONARY:
+		return
+	run["worlds"] = (run.get("worlds", []) as Array) + (r.get("worlds", []) as Array)
+	run["nodes"] = (run.get("nodes", []) as Array) + (r.get("nodes", []) as Array)
+	var cin: Dictionary = (run.get("cinematics", {}) as Dictionary).duplicate()
+	cin.merge(r.get("cinematics", {}), true)
+	run["cinematics"] = cin
+	music["nodes"] = (music.get("nodes", []) as Array) + (m.get("nodes", []) as Array)
 
 
 static func _json(path: String, errors: Array) -> Variant:
@@ -719,6 +741,8 @@ func _load_hotspots(dir_path: String) -> void:
 	var extra: Array = HotspotContract.extra_rows.get(path_id if path_id != "" else "main", [])  # (test fixtures only: rows added beside the files, HotspotContract.extra_rows)
 	for w in world_order:
 		var path := dir_path.path_join("%s.json" % w)
+		if not FileAccess.file_exists(path) and doom_worlds_on() and FileAccess.file_exists(DOOM_DIR.path_join("hotspots/%s.json" % w)):
+			path = DOOM_DIR.path_join("hotspots/%s.json" % w)  # (a Doom world's hotspots live in its overlay)
 		var rows_extra: Array = extra.filter(func(h: Variant) -> bool: return typeof(h) == TYPE_DICTIONARY and str((h as Dictionary).get("world", "")) == w)
 		if not FileAccess.file_exists(path) and rows_extra.is_empty():
 			continue
