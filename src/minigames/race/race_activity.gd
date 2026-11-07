@@ -71,6 +71,7 @@ var _flash_until := -1.0  # the gauge's deadline flash
 var _jolt_until := -1.0
 var _brake_until := -1.0
 var _judged_since_block := 0
+var _judged_total := 0
 var max_s := 0.0  # a race longer than this (song s from the green light) is a bug: the minimum speed finishes sooner
 
 
@@ -163,6 +164,7 @@ func on_judge(ev: Dictionary, t: float) -> void:
 		return
 	_pending.append([float(ev.get("time", t)), float(QUALITY[k])])
 	_judged_since_block += 1
+	_judged_total += 1
 
 
 ## A block's result: only when no single judgement arrived in the block (a run without per-note events) does it count, as a pass (0.9) or a fail (0.2).
@@ -492,6 +494,11 @@ static func safe_responses(sit: Dictionary) -> Array:
 
 # --- what the host reads ----------------------------------------------------------------------------------------------------------
 
+## How many pad judgements the race has heard.
+func judged_count() -> int:
+	return _judged_total
+
+
 func finished() -> bool:
 	return finish_t >= 0.0
 
@@ -587,7 +594,7 @@ func things() -> Array:
 		if l >= 0 and l < course.lane_count():
 			var ahead := float(player["s"]) + float(vw.get("glow_ahead_m", 14.0))
 			var gp: Vector2 = course.point(ahead, course.lane_x(l))["at"]
-			out.append({"id": "race_choice", "sprite": "lane_glow", "at": [gp.x, gp.y], "sector": course.road_at(ahead), "size": [2.8, 0.4], "frame": 1 if fmod(t / beat_s, 1.0) < 0.75 else 0,
+			out.append({"id": "race_choice", "sprite": "lane_glow", "at": [gp.x, gp.y], "sector": course.road_at(ahead), "size": [2.8, 0.55], "frame": 1 if fmod(t / beat_s, 1.0) < 0.75 else 0,
 				"y": 0.02, "grid": [2, 1]})
 	var sl: Dictionary = vw.get("start_lights", {"s": 16.0, "y": 4.6, "size": [3.2, 1.1]})
 	if t < t_go + 3.0:

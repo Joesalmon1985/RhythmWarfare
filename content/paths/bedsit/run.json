@@ -661,17 +661,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "space_race",
-   "scene": "space_race",
-   "title": "PLACEHOLDER: Hangar",
+   "scene": "hangar",
+   "title": "Hangar",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "space",
-    "activity": "race"
-   },
+   "blurb": "The hangar in the ring's south-west alcove: a hover racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
    "theme": "space",
-   "blurb": "A stand-in for the hangar activity (id 'race' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "activity": "race",
    "next": [
     {
      "to": "space_rave",
@@ -686,19 +682,20 @@
     }
    ],
    "place": {
-    "waypoint": "hangar_view",
+    "waypoint": "hangar_door",
     "rail": {
      "good": [
       {
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
       {
-       "to": "hangar_view",
+       "to": "hangar_door",
        "role": "dancer",
        "style": "walk",
        "bars": 2
