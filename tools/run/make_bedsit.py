@@ -17,7 +17,7 @@ THE DATA FOR THE ENGINE HOOKS (built on another branch; today's engine ignores t
     node.bedsit.regions                       contract 5: the four screen regions are not the pads: left/right turn, bottom stays, top leaves
 
 THE PLACEHOLDER RAVES. The four rave scenes do not exist yet. Each facing's forward route (content/bedsit/routes.json) names the rave's scene id (space_rave, magic_rave,
-dino_rave, transport_rave) and, while "placeholder.active" is true, those four ids are PLACEHOLDER nodes of this path that resolve to the bedsit itself (route "bedsit", loop).
+dino_rave, transport_rave) and, while "placeholder.active" is true, those four ids are PLACEHOLDER nodes of this path that are one-scene endings (route "run:warehouse").
 To land a real rave: in content/bedsit/routes.json set "placeholder.active" to false and replace the placeholder node of that id in content/paths/bedsit/run.json (generated here:
 tools/run/make_bedsit.py, the PLACEHOLDER_RAVES table) by the real scene, or route to it with `{"path": "<rave path>", "node": "<scene id>"}` through the TransitionPort.
 """
@@ -86,12 +86,10 @@ def run_json() -> dict:
         theme = FACING[f][0]
         nodes.append({
             "id": scene_id, "world": "bedsit", "scene": scene_id, "title": "PLACEHOLDER: the %s rave" % theme, "entry": False, "exit_scene": False, "role": "dancer",
-            "placeholder": True, "placeholder_for": {"theme": theme, "facing": f},
-            "relaxed": True,
-            "blurb": "A stand-in for the %s rave, which does not exist yet: it is the bedsit again, still facing %s. See content/bedsit/routes.json." % (theme, f),
-            "next": [{"to": "bedsit", "dir": "up", "label": "Back to the bedsit", "loop": True},
-                     {"to": "bedsit.end", "dir": "out", "label": "Out of the bedsit (development exit to the Warehouse)"}],
-            "place": {"waypoint": FACING[f][2], "rail": {**place(FACING[f][2])["rail"], "exits": {"up": FACING[f][3], "out": "threshold_s"}}},
+            "placeholder": True, "placeholder_for": {"theme": theme, "facing": f}, "ending": theme + "_placeholder",
+            "blurb": "A stand-in for the %s rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json." % theme,
+            "next": [{"to": "run:warehouse", "dir": "up", "label": "Back to the Warehouse"}],
+            "place": {"waypoint": FACING[f][2], "rail": {**place(FACING[f][2])["rail"], "exits": {"up": FACING[f][3]}}},
         })
     nodes.append({
         "id": "bedsit.end", "world": "bedsit", "scene": "end", "title": "Out of the bedsit", "entry": False, "exit_scene": False, "ending": "leave", "role": "dancer",
@@ -128,8 +126,16 @@ def hotspots_json() -> dict:
     rows.append(hotspot_row("bedsit.dev_exit", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
                             {"flags_all": ["bedsit_dev_exit"], "flags_none": [], "energy_min": 0, "once": False}))
     for scene_id, f in PLACEHOLDER_RAVES.items():
-        rows.append(hotspot_row("%s.back" % scene_id, scene_id, {"waypoint": FACING[f][3]}, "bedsit", True))
-        rows.append(hotspot_row("%s.out" % scene_id, scene_id, {"waypoint": "threshold_s"}, "bedsit.end", False))
+        ph = hotspot_row("%s.back" % scene_id, scene_id, {"waypoint": FACING[f][3]}, "run:warehouse", True)
+        flag = ["keep:path_bedsit_%s_placeholder" % FACING[f][0]]
+        ph["on_success"]["flags_set"] = flag
+        ph["on_failure"]["flags_set"] = flag
+        rows.append(ph)
+        obj = hotspot_row("%s.look" % scene_id, scene_id, {"thing": "w_car"}, "", False, kind="object")
+        obj["on_success"] = {"flags_set": ["bedsit_placeholder_looked"], "energy": 4}
+        obj["on_failure"] = {"energy": -2}
+        obj["look"] = {"available": "glow", "selected": "ring", "committed": "flash"}
+        rows.append(obj)
     end = hotspot_row("bedsit.end.exit", "bedsit.end", {"waypoint": "threshold_s"}, "run:warehouse", True)
     end["on_success"]["flags_set"] = ["keep:path_bedsit_leave"]
     end["on_failure"]["flags_set"] = ["keep:path_bedsit_leave"]
@@ -159,7 +165,7 @@ def routes_json() -> dict:
         "version": 1,
         "note": "Where the top region goes, per facing (brief 2). `scene` is the rave's scene id. While placeholder.active is true each of those ids is a PLACEHOLDER node of content/paths/bedsit/run.json that resolves to the bedsit itself. "
                 "TO LAND THE REAL RAVES: set placeholder.active to false here, and delete the four nodes with \"placeholder\": true from run.json (or regenerate it from tools/run/make_bedsit.py after replacing PLACEHOLDER_RAVES).",
-        "placeholder": {"active": True, "resolves_to": "bedsit", "node_flag": "placeholder"},
+        "placeholder": {"active": True, "resolves_to": "run:warehouse", "node_flag": "placeholder"},
         "routes": {f: {"theme": FACING[f][0], "scene": FACING[f][1], "scene_contract_id": "rave." + FACING[f][0], "threshold": FACING[f][3]} for f in FACINGS},
     }
 

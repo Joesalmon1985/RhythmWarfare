@@ -358,12 +358,14 @@ func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
 					var ok := false
 					for e2 in data.nodes[str(seq[k - 1])]["next"]:
 						ok = ok or str(e2["to"]) == str(seq[k])
+					ok = ok or (seq[k - 1] == seq[k] and bool(data.nodes[str(seq[k])].get("relaxed", false)))  # (a relaxed node, H1.7, stays: its next phase is the same scene)
 					assert_true(ok, "%s: %s leads to %s" % [tag, seq[k - 1], seq[k]])
 				# a path may own a loop (the Mission Count's endless missions, route marked `loop`): a player who never touches its way out lives in it for as long as the crowd stays, which is the design
 				var has_loop := false
 				for nid in data.nodes:
 					for e3 in data.nodes[nid]["next"]:
 						has_loop = has_loop or bool(e3.get("loop", false))
+					has_loop = has_loop or bool((data.nodes[nid] as Dictionary).get("relaxed", false))  # (a relaxed node, H1.7, is a loop by design: nothing touched stays)
 				var lives_in_loop: bool = has_loop and seq.size() > 1 and seq.size() != _unique(seq).size() and taps in ["none", "failure"]
 				assert_true(bool(r["over"]) or str(r["away"]) == "run:warehouse" or lives_in_loop, "%s: the path ends by the crowd leaving or by the way back to the Warehouse (%s)" % [tag, str(r["away"])])
 				if policy == "perfect" and taps != "failure" and not lives_in_loop:

@@ -189,19 +189,13 @@
     "theme": "space",
     "facing": "N"
    },
-   "relaxed": true,
-   "blurb": "A stand-in for the space rave, which does not exist yet: it is the bedsit again, still facing N. See content/bedsit/routes.json.",
+   "ending": "space_placeholder",
+   "blurb": "A stand-in for the space rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json.",
    "next": [
     {
-     "to": "bedsit",
+     "to": "run:warehouse",
      "dir": "up",
-     "label": "Back to the bedsit",
-     "loop": true
-    },
-    {
-     "to": "bedsit.end",
-     "dir": "out",
-     "label": "Out of the bedsit (development exit to the Warehouse)"
+     "label": "Back to the Warehouse"
     }
    ],
    "place": {
@@ -238,8 +232,7 @@
       }
      ],
      "exits": {
-      "up": "threshold_n",
-      "out": "threshold_s"
+      "up": "threshold_n"
      }
     }
    }
@@ -257,19 +250,13 @@
     "theme": "dinos",
     "facing": "E"
    },
-   "relaxed": true,
-   "blurb": "A stand-in for the dinos rave, which does not exist yet: it is the bedsit again, still facing E. See content/bedsit/routes.json.",
+   "ending": "dinos_placeholder",
+   "blurb": "A stand-in for the dinos rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json.",
    "next": [
     {
-     "to": "bedsit",
+     "to": "run:warehouse",
      "dir": "up",
-     "label": "Back to the bedsit",
-     "loop": true
-    },
-    {
-     "to": "bedsit.end",
-     "dir": "out",
-     "label": "Out of the bedsit (development exit to the Warehouse)"
+     "label": "Back to the Warehouse"
     }
    ],
    "place": {
@@ -306,8 +293,7 @@
       }
      ],
      "exits": {
-      "up": "threshold_e",
-      "out": "threshold_s"
+      "up": "threshold_e"
      }
     }
    }
@@ -325,19 +311,13 @@
     "theme": "magic",
     "facing": "S"
    },
-   "relaxed": true,
-   "blurb": "A stand-in for the magic rave, which does not exist yet: it is the bedsit again, still facing S. See content/bedsit/routes.json.",
+   "ending": "magic_placeholder",
+   "blurb": "A stand-in for the magic rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json.",
    "next": [
     {
-     "to": "bedsit",
+     "to": "run:warehouse",
      "dir": "up",
-     "label": "Back to the bedsit",
-     "loop": true
-    },
-    {
-     "to": "bedsit.end",
-     "dir": "out",
-     "label": "Out of the bedsit (development exit to the Warehouse)"
+     "label": "Back to the Warehouse"
     }
    ],
    "place": {
@@ -374,8 +354,7 @@
       }
      ],
      "exits": {
-      "up": "threshold_s",
-      "out": "threshold_s"
+      "up": "threshold_s"
      }
     }
    }
@@ -393,19 +372,13 @@
     "theme": "transport",
     "facing": "W"
    },
-   "relaxed": true,
-   "blurb": "A stand-in for the transport rave, which does not exist yet: it is the bedsit again, still facing W. See content/bedsit/routes.json.",
+   "ending": "transport_placeholder",
+   "blurb": "A stand-in for the transport rave, which does not exist yet: a one-scene ending that returns to the Warehouse. See content/bedsit/routes.json.",
    "next": [
     {
-     "to": "bedsit",
+     "to": "run:warehouse",
      "dir": "up",
-     "label": "Back to the bedsit",
-     "loop": true
-    },
-    {
-     "to": "bedsit.end",
-     "dir": "out",
-     "label": "Out of the bedsit (development exit to the Warehouse)"
+     "label": "Back to the Warehouse"
     }
    ],
    "place": {
@@ -442,8 +415,7 @@
       }
      ],
      "exits": {
-      "up": "threshold_w",
-      "out": "threshold_s"
+      "up": "threshold_w"
      }
     }
    }

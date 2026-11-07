@@ -187,23 +187,29 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_space_placeholder"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_space_placeholder"
+    ]
    },
    "default": true,
    "repeatable": true
   },
   {
-   "id": "space_rave.out",
+   "id": "space_rave.look",
    "world": "bedsit",
    "scene": "space_rave",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_s"
+    "thing": "w_car"
    },
-   "kind": "exit",
+   "kind": "object",
    "radius_m": 1.0,
    "min_px": 88,
    "available": {
@@ -213,16 +219,19 @@
     "once": false
    },
    "look": {
-    "available": "open",
+    "available": "glow",
     "selected": "ring",
     "committed": "flash"
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit.end"
+    "flags_set": [
+     "bedsit_placeholder_looked"
+    ],
+    "energy": 4
    },
    "on_failure": {
-    "route": "bedsit.end"
+    "energy": -2
    },
    "default": false,
    "repeatable": true
@@ -251,23 +260,29 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_dinos_placeholder"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_dinos_placeholder"
+    ]
    },
    "default": true,
    "repeatable": true
   },
   {
-   "id": "dino_rave.out",
+   "id": "dino_rave.look",
    "world": "bedsit",
    "scene": "dino_rave",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_s"
+    "thing": "w_car"
    },
-   "kind": "exit",
+   "kind": "object",
    "radius_m": 1.0,
    "min_px": 88,
    "available": {
@@ -277,16 +292,19 @@
     "once": false
    },
    "look": {
-    "available": "open",
+    "available": "glow",
     "selected": "ring",
     "committed": "flash"
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit.end"
+    "flags_set": [
+     "bedsit_placeholder_looked"
+    ],
+    "energy": 4
    },
    "on_failure": {
-    "route": "bedsit.end"
+    "energy": -2
    },
    "default": false,
    "repeatable": true
@@ -315,23 +333,29 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_magic_placeholder"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_magic_placeholder"
+    ]
    },
    "default": true,
    "repeatable": true
   },
   {
-   "id": "magic_rave.out",
+   "id": "magic_rave.look",
    "world": "bedsit",
    "scene": "magic_rave",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_s"
+    "thing": "w_car"
    },
-   "kind": "exit",
+   "kind": "object",
    "radius_m": 1.0,
    "min_px": 88,
    "available": {
@@ -341,16 +365,19 @@
     "once": false
    },
    "look": {
-    "available": "open",
+    "available": "glow",
     "selected": "ring",
     "committed": "flash"
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit.end"
+    "flags_set": [
+     "bedsit_placeholder_looked"
+    ],
+    "energy": 4
    },
    "on_failure": {
-    "route": "bedsit.end"
+    "energy": -2
    },
    "default": false,
    "repeatable": true
@@ -379,23 +406,29 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_transport_placeholder"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_transport_placeholder"
+    ]
    },
    "default": true,
    "repeatable": true
   },
   {
-   "id": "transport_rave.out",
+   "id": "transport_rave.look",
    "world": "bedsit",
    "scene": "transport_rave",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_s"
+    "thing": "w_car"
    },
-   "kind": "exit",
+   "kind": "object",
    "radius_m": 1.0,
    "min_px": 88,
    "available": {
@@ -405,16 +438,19 @@
     "once": false
    },
    "look": {
-    "available": "open",
+    "available": "glow",
     "selected": "ring",
     "committed": "flash"
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit.end"
+    "flags_set": [
+     "bedsit_placeholder_looked"
+    ],
+    "energy": 4
    },
    "on_failure": {
-    "route": "bedsit.end"
+    "energy": -2
    },
    "default": false,
    "repeatable": true

@@ -3,7 +3,7 @@
  "note": "Where the top region goes, per facing (brief 2). `scene` is the rave's scene id. While placeholder.active is true each of those ids is a PLACEHOLDER node of content/paths/bedsit/run.json that resolves to the bedsit itself. TO LAND THE REAL RAVES: set placeholder.active to false here, and delete the four nodes with \"placeholder\": true from run.json (or regenerate it from tools/run/make_bedsit.py after replacing PLACEHOLDER_RAVES).",
  "placeholder": {
   "active": true,
-  "resolves_to": "bedsit",
+  "resolves_to": "run:warehouse",
   "node_flag": "placeholder"
  },
  "routes": {

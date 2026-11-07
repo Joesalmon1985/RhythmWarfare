@@ -126,7 +126,7 @@ func test_the_path_loads_clean_and_the_bedsit_node_is_relaxed() -> void:
 	assert_eq(n["map"], "bedsit")
 
 
-func test_the_raves_are_placeholders_that_resolve_to_the_bedsit() -> void:
+func test_the_raves_are_placeholders_that_end_the_path() -> void:
 	var d := RunData.load_path("bedsit")
 	var routes := BedsitNav.routes()
 	assert_true(bool(routes["placeholder"]["active"]), "the placeholder flag is on until the raves land")
@@ -135,9 +135,9 @@ func test_the_raves_are_placeholders_that_resolve_to_the_bedsit() -> void:
 		assert_true(d.nodes.has(id), "%s exists as a placeholder node" % id)
 		var n: Dictionary = d.nodes[id]
 		assert_true(bool(n.get("placeholder", false)), "%s is marked placeholder" % id)
-		assert_eq((n["next"] as Array).size(), 2, "the way back to the bedsit and the development way out")
-		assert_eq(n["next"][0]["to"], "bedsit", "%s resolves to the bedsit" % id)
-		assert_true(bool(n["next"][0].get("loop", false)))
+		assert_eq((n["next"] as Array).size(), 1, "one route")
+		assert_eq(n["next"][0]["to"], "run:warehouse", "%s is a one-scene ending that returns to the Warehouse" % id)
+		assert_true(str(n["ending"]) != "", "%s is an ending" % id)
 		assert_eq(n["waypoint"], "bedsit_" + str(f).to_lower(), "and comes home facing %s" % f)
 
 
