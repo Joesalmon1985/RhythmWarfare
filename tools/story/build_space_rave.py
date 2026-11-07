@@ -459,7 +459,7 @@ def theme_json() -> dict:
                         {"id": "plasma", "icon": "space/ing_plasma", "color": "#ff5fd2"}, {"id": "moon_syrup", "icon": "space/ing_syrup", "color": "#ffd25f"}],
         "cloakroom_symbols": [{"id": "ringed_planet", "icon": "space/sym_planet"}, {"id": "rocket", "icon": "space/sym_rocket"}, {"id": "crescent", "icon": "space/sym_moon"}, {"id": "ufo", "icon": "space/sym_ufo"}],
         "stations": {"stage": {"waypoint": "deck_view", "route": "space.to_stage"}, "cloakroom": {"waypoint": "cloak_hold", "route": "space.to_cloak"}, "bar": {"waypoint": "bar_hold", "route": "space.to_bar"}},
-        "race": {"entrance": "hangar_view", "course": "race_street_space", "activity": "race"},
+        "race": {"entrance": "hangar_view", "course": "race_space", "activity": "race"},
         "home": {"threshold": "home_door", "route": "home"},
         "activities": {"stage": "bass_knob", "cloakroom": "cloakroom", "bar": "bar", "race": "race"},
         "routes": {

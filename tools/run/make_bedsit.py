@@ -51,7 +51,9 @@ SPACE_STATIONS = {  # activity scene -> (title, home waypoint, doorway waypoint,
 SPACE_ACTIVITY_SCENES = {
     "space_cloakroom": ("cloakroom", "cloak_hold", "cloak_counter", "cloakroom", "The coat check in the ring's west alcove: a counter, a rail of coats and an attendant who wants the right coat for each symbol."),
     "space_bar": ("bar", "bar_hold", "bar_counter", "bar", "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks."),
+    "space_race": ("hangar", "hangar_view", "hangar_racer", "race", "The hangar in the ring's south-west alcove: a hover racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
 }
+REPLAYABLE = ["race"]  # activities whose hotspot stays after completion (the race may be run again; its record is the save's raves.<theme>.race)
 
 
 def place(home: str) -> dict:
@@ -227,7 +229,7 @@ def space_hotspots() -> list:
         if sid in SPACE_ACTIVITY_SCENES:  # the activity's hotspot: the counter, an object whose success outcome is {activity: id} (content/bedsit/cloakroom_hotspot_example.json); any window seats it at the end of the block
             scene, hold, thing, mg, blurb = SPACE_ACTIVITY_SCENES[sid]
             h = row("%s.%s" % (sid, mg), sid, {"thing": thing}, "object", window="any", success={"activity": mg},
-                    available={"flags_all": [], "flags_none": ["space_%s_done" % mg], "energy_min": 0, "once": False})
+                    available={"flags_all": [], "flags_none": [] if mg in REPLAYABLE else ["space_%s_done" % mg], "energy_min": 0, "once": False})
             h["radius_m"] = 2.4
             h["min_px"] = 220
             rows.append(h)

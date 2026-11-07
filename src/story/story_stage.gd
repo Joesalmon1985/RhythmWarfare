@@ -25,6 +25,7 @@ var lines := 0  # internal resolution lines for the low-res world (0: the defaul
 var high_contrast := false
 var palette := "low"
 var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
+var pose_fn: Callable = Callable()  # H8.2 (CONTRACTS.md 8): (t) -> pose overriding the player's (the race's cockpit camera, RaceStageHost); unset: the rail's
 var crowd_cap := 100.0  # the energy the crowd shows is at most this (action crowd_cap: the Space rave's crowd stands about until the bass is back)
 var _pieces: Dictionary = {}  # id -> {on_t, off_t, pulse_t, bars}
 var _ambient: Dictionary = {}  # ids of the extra rooms' own pieces
@@ -351,6 +352,8 @@ func update(t: float, p_energy: float) -> void:
 		player.reduced = reduced or motion >= 1
 		player.cut = motion >= 2
 		pose = player.pose_at(t)
+		if pose_fn.is_valid():
+			pose = pose_fn.call(t)
 		if _cam_override != "":
 			pose = _override_pose(pose)
 		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)

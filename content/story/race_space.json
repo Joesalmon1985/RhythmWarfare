@@ -1,0 +1,122 @@
+{
+ "id": "race_space",
+ "title": "The Mothership Strip",
+ "chapter": 9,
+ "art": "race_space",
+ "description": "The street race of the space rave (docs/bedsit/RACE.md): a path's activity stage, not a Story Campaign chapter.",
+ "intro": "",
+ "duration_bars": 8,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#3a2a8a",
+   "#1d6a8a"
+  ],
+  "cool": [
+   "#3ff0ff",
+   "#6a7bff"
+  ],
+  "warm": [
+   "#ffae4a",
+   "#ff3fb4"
+  ],
+  "rave": [
+   "#ff3fb4",
+   "#3ff0ff",
+   "#b06aff",
+   "#ffae4a"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "The Mothership Strip",
+   "start_bar": 1
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_street",
+   "title": "The Mothership Strip",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    }
+   ]
+  }
+ ],
+ "decisions": [],
+ "endings": {
+  "road_open": {
+   "title": "The road opens",
+   "energy_min": 80,
+   "pass_min": 0.9,
+   "text": "",
+   "journey": []
+  },
+  "road_hard": {
+   "title": "A hard road",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "",
+   "journey": []
+  },
+  "road_lost": {
+   "title": "Lost on the road",
+   "energy_min": 0,
+   "pass_min": 0.0,
+   "text": "",
+   "journey": []
+  }
+ },
+ "ending_order": [
+  "road_open",
+  "road_hard",
+  "road_lost"
+ ],
+ "groups": {
+  "circle": [],
+  "all": [],
+  "early": []
+ },
+ "actors": [],
+ "silhouettes": []
+}

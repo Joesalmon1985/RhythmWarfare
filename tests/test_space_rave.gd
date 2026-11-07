@@ -79,7 +79,7 @@ func test_the_hub_leads_to_five_places_and_the_stations_loop_back() -> void:
 	for to in ["space_stage", "space_cloakroom", "space_bar", "space_race", "bedsit"]:
 		assert_true(to in next, "the hub leads to %s" % to)
 	for id in ["space_cloakroom", "space_bar", "space_race"]:
-		assert_eq(bool(d.nodes[id].get("placeholder", false)), id == "space_race", "%s: only the hangar is still a placeholder" % id)
+		assert_false(bool(d.nodes[id].get("placeholder", false)), "%s is a real scene (the hangar is the race's: tests/test_race.gd)" % id)
 		assert_true(d.nodes[id]["next"].any(func(e: Dictionary) -> bool: return str(e["to"]) == "space_rave" and bool(e.get("loop", false))), "%s loops back to the ring" % id)
 	assert_eq(ContractShapes.theme_data(theme), [], "content/raves/space.json has the contract-2 shape")
 
