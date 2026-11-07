@@ -20,13 +20,13 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
 
-## Now (7 November, night)
+## Now (7 November, night; the lead's usage limit was reached here: agents may still be running or have reported into their worktrees, check each worktree's `git log` and the branch table)
 
 `feature/one-pc` `b35c2f56`: the Ward (N2.4) merged. Merged today in order: A6, W7, Hell, pins, N2.5 returns,
 Spaceship, Hell clearance fix, W6 Gospel daylight, Ward. **Red on one-pc right now**: `test_heralds_view` 4
 failures (`ward.corridor.enter_squadron`, `ward_late.dorm.enter_gospel`: 0% of the route window, because the
 one-pc camera re-aim of `run.json` and the N2.5 returns landed after the Ward forked; green on the Ward branch
-itself) being fixed on `wip/narr-ward-fix` (worktree `MusicGame-import`, the Ward agent resumed); `test_blackjack`
+itself) plus `test_camera_clearance` 3 failures (ward arrival, ward.corridor from art and dorm: herald looks onto walls), same cause, being fixed on `wip/narr-ward-fix` (worktree `MusicGame-import`, the Ward agent resumed); `test_blackjack`
 2 failures (edge-beacon touch stacks, `hotspot_view.gd:273`) and one culled gate in `ward_late.treat`, with A7
 (`wip/engine-choice`, `MusicGame-engine`, Opus). Still open on stage A: Hospital N2.4 (`MusicGame-music`,
 running), then the shared wiring step and the Floor's entrances, then the full suite.
