@@ -56,15 +56,15 @@ squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
 # Mental Hospital (N2.4)
-ward_bassment  ward               -              0.9:2.0:0:3       right,right,up,up,right,up,up,right
-ward_gospel    ward               -              2.5:2.0:0:3       right,right,up,up,right,up,up,right
-ward_squadron  ward               -              4.1:2.0:0:3       right,right,up,up,right,up,up,right
-ward_ember     ward               -              5.4:2.0:0:3       right,right,up,up,right,up,up,right
-ward_art_bassment ward.art           -              36.0:7.0:8:2      right,right,up,up,right,up,up,right,right
-ward_dorm_gospel ward.dorm          -              26.0:13.0:30:2    right,right,up,up,right,up,up,right,up
+ward_bassment  ward               -              1.8:5.4:-120:2    right,right,up,up,right,up,up,right
+ward_gospel    ward               -              1.8:5.4:-130:2    right,right,up,up,right,up,up,right
+ward_squadron  ward               -              2.6:5.4:-110:2    right,right,up,up,right,up,up,right
+ward_ember     ward               -              3.0:5.2:-100:2    right,right,up,up,right,up,up,right
+ward_art_bassment ward.art           -              41.0:8.0:50:2     right,right,up,up,right,up,up,right,right
+ward_dorm_gospel ward.dorm          -              26.0:9.8:0:2      right,right,up,up,right,up,up,right,up
 ward_corridor_squadron ward.corridor      -              20.0:5.0:124:2    right,right,up,up,right,up,up,right,right,up
-ward_courtyard_ember ward.courtyard     -              55.5:6.5:-46:2    right,right,up,up,right,up,up,right,right,up,up
-ward_late_treat_bassment ward_late.treat    -              -   right,right,up,up,right,up,up,left,up,left,up,up,right,left
+ward_courtyard_ember ward.courtyard     -              55.5:6.5:-70:2    right,right,up,up,right,up,up,right,right,up,up
+ward_late_treat_bassment ward_late.treat    -              16.0:15.6:8:0     right,right,up,up,right,up,up,left,up,left,up,up,right,left
 ward_late_dorm_gospel ward_late.dorm     -              26.0:13.0:30:2    right,right,up,up,right,up,up,left,up,left,up,up,right,right
 LIST
 rm -rf "$TMP"

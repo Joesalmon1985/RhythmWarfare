@@ -568,9 +568,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     18.8,
+     18.5,
      1.1,
-     11.3
+     13.5
     ]
    },
    "kind": "secret",
@@ -599,12 +599,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     17.7,
-     10.0
+     17.0,
+     12.4
     ],
     "toward": [
-     18.8,
-     11.3
+     18.5,
+     13.5
     ],
     "mark_y": 1.8,
     "gate": true
@@ -617,9 +617,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     23.2,
+     24.6,
      1.1,
-     8.2
+     13.0
     ]
    },
    "kind": "secret",
@@ -648,12 +648,12 @@
    "herald": {
     "quest": "gospel",
     "at": [
-     23.0,
-     10.0
+     23.8,
+     11.2
     ],
     "toward": [
-     23.2,
-     8.2
+     24.6,
+     13.0
     ],
     "mark_y": 1.8,
     "gate": true

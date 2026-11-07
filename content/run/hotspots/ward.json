@@ -234,9 +234,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     6.85,
+     3.9,
      1.1,
-     8.3
+     8.9
     ]
    },
    "kind": "secret",
@@ -265,12 +265,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     5.0,
-     7.9
+     4.2,
+     7.3
     ],
     "toward": [
-     6.85,
-     8.3
+     3.9,
+     8.9
     ],
     "mark_y": 1.8,
     "gate": true
@@ -283,7 +283,7 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     5.0,
+     2.6,
      1.1,
      8.9
     ]
@@ -314,11 +314,11 @@
    "herald": {
     "quest": "gospel",
     "at": [
-     4.2,
-     7.6
+     3.3,
+     7.7
     ],
     "toward": [
-     5.0,
+     2.6,
      8.9
     ],
     "mark_y": 1.8,
@@ -332,7 +332,7 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     3.4,
+     5.2,
      1.1,
      8.9
     ]
@@ -363,11 +363,11 @@
    "herald": {
     "quest": "squadron",
     "at": [
-     2.6,
+     4.5,
      7.6
     ],
     "toward": [
-     3.4,
+     5.2,
      8.9
     ],
     "mark_y": 1.8,
@@ -381,7 +381,7 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     1.8,
+     6.5,
      1.1,
      8.9
     ]
@@ -412,11 +412,11 @@
    "herald": {
     "quest": "ember",
     "at": [
-     0.9,
-     7.9
+     5.1,
+     8.1
     ],
     "toward": [
-     1.8,
+     6.5,
      8.9
     ],
     "mark_y": 1.8,
@@ -1155,9 +1155,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     34.9,
+     37.6,
      1.1,
-     0.5
+     11.7
     ]
    },
    "kind": "secret",
@@ -1186,12 +1186,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     36.5,
-     2.2
+     39.2,
+     10.2
     ],
     "toward": [
-     34.9,
-     0.5
+     37.6,
+     11.7
     ],
     "mark_y": 1.8,
     "gate": true
@@ -1204,9 +1204,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     23.2,
+     24.6,
      1.1,
-     8.2
+     13.0
     ]
    },
    "kind": "secret",
@@ -1235,12 +1235,12 @@
    "herald": {
     "quest": "gospel",
     "at": [
-     23.0,
-     10.0
+     23.8,
+     11.2
     ],
     "toward": [
-     23.2,
-     8.2
+     24.6,
+     13.0
     ],
     "mark_y": 1.8,
     "gate": true
@@ -1302,9 +1302,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     60.2,
+     61.8,
      1.1,
-     2.0
+     4.6
     ]
    },
    "kind": "secret",
@@ -1333,12 +1333,12 @@
    "herald": {
     "quest": "ember",
     "at": [
-     58.8,
-     3.4
+     59.9,
+     4.0
     ],
     "toward": [
-     60.2,
-     2.0
+     61.8,
+     4.6
     ],
     "mark_y": 1.8,
     "gate": true
