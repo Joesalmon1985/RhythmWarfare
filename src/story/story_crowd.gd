@@ -871,6 +871,65 @@ func direct(ids: Array, state: String, t0: float, seconds: float, sync := false,
 		k += 1
 
 
+## The per-activity states (CONTRACTS.md 10, package A8): each is a row of the figure sheets when the sheet was baked with it; a sheet without it falls back to the first
+## of these candidates that the person's sheet (or the live rig) has, [state, face]. The plain crowd states play as they are where the sheet has them (CROWD_FALLBACKS otherwise).
+const ACTIVITY_STATES := {
+	"waiting": [["waiting", ""], ["queue", ""], ["stand", ""], ["idle", ""]],
+	"happy": [["happy", ""], ["nod", "happy"], ["clap", ""], ["cheer", ""], ["idle", "happy"]],
+	"impatient": [["impatient", ""], ["shake_head", "anger"], ["stamp", "anger"], ["look", ""], ["idle", "anger"]],
+	"frown": [["frown", ""], ["shake_head", "doubt"], ["sad", ""], ["idle", "sad"]],
+	"beckon": [["beckon", ""], ["wave", ""], ["point", ""], ["idle", ""]],
+	"raise_glass": [["raise_glass", ""], ["toast", ""], ["drink", ""], ["cheer", ""], ["idle", ""]],
+}
+## The crowd states an activity also asks for, with fallbacks for a sheet baked without them (a directed actor's sheet has its acts, not always the crowd's moves).
+const CROWD_FALLBACKS := {
+	"clap": [["clap", ""], ["cheer", ""], ["nod", "happy"], ["idle", "happy"]],
+	"hands_up": [["hands_up", ""], ["cheer", ""], ["wave", ""], ["idle", "happy"]],
+	"cheer": [["cheer", ""], ["wave", ""], ["laugh", ""], ["idle", "happy"]],
+	"look": [["look", ""], ["idle", ""]],
+	"idle": [["idle", ""]],
+}
+
+
+## What actor `id` will show for activity state `state`: {state: the state played, face, fallback: true when it is not `state` itself, sheet_state: the sheet row it shows
+## (StoryCharacter.sheet_pick; "" with the live rig)}. {} for an unknown actor.
+func resolve_state(id: String, state: String) -> Dictionary:
+	if not actors.has(id):
+		return {}
+	var c: StoryCharacter = actors[id]["node"]
+	var has := func(st: String) -> bool:
+		if c.uses_sheet():
+			return (c.sheet.get("states", {}) as Dictionary).has(st)
+		return st in StoryCharacter.STATES
+	var cands: Array = ACTIVITY_STATES.get(state, CROWD_FALLBACKS.get(state, [[state, ""], ["idle", ""]]))
+	var pick: Array = cands[cands.size() - 1]
+	for cd: Array in cands:
+		if has.call(str(cd[0])):
+			pick = cd
+			break
+	var out := {"state": str(pick[0]), "face": str(pick[1]), "fallback": str(pick[0]) != state, "sheet_state": ""}
+	if c.uses_sheet():
+		var keep := [c.state, c.face_override]
+		c.state = out["state"]
+		c.face_override = out["face"]
+		out["sheet_state"] = str(c.sheet_pick(0.0)[0])
+		c.state = keep[0]
+		c.face_override = keep[1]
+	return out
+
+
+## An activity directs one of its people (the customer, the attendant, the bartender): `state` (an ACTIVITY_STATES key or any crowd state) from song time `t0` for `dur`
+## seconds (0: until the next call), resolved to what their sheet has (resolve_state). Forced (a bartender at his post plays it too); someone not yet in the room fades in.
+## Returns the resolution ({} for an unknown actor).
+func person(id: String, state: String, t0: float, dur: float = 0.0) -> Dictionary:
+	var r := resolve_state(id, state)
+	if r.is_empty():
+		return r
+	ensure_present(id)
+	direct_chain(id, [{"act": str(r["state"]), "face": str(r["face"]), "look_at": "", "from": t0, "until": t0 + dur if dur > 0.0 else NO_END}], "activity")
+	return r
+
+
 ## A person beckons the player (a hotspot anchored on an actor with no `acting` block): they wave at us until `until`, even a bartender or a bouncer with a fixed activity. `stand_down` puts them back.
 func beckon(id: String, t0: float, until: float) -> void:
 	direct_actor(id, "wave", "", t0, until, "", "hotspot")
