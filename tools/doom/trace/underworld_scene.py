@@ -23,41 +23,41 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "underworld_pilot.json")
 U = 32.0
-CEIL = 22.0
-ABYSS_FLOOR = -4.0
-BOX = (-4.5, 5.5, 24.0, 39.5)  # the abyss's bounding box (x0, y0, x1, y1): its edge on the walls is the far cliff  # (west of x = -4.5 the ledge and the tower stand against the solid cliff wall)
+CEIL = 12.0  # (every ceiling but the cave's is the map's red cloud sky: 12 m is the height of the far cliffs)
+ABYSS_FLOOR = -5.0
+BOX = (-4.5, 5.5, 30.0, 50.0)  # the abyss's bounding box (x0, y0, x1, y1): its edge on the walls is the far cliff  # (west of x = -4.5 the ledge and the tower stand against the solid cliff wall)
 
 # name, rect (x0, y0, x1, y1) in m, floor, ceiling, light 0..255
 WALK = [
-    ("plateau_s", (-6.5, -2, 7.5, 3), 0.0, CEIL, 150),
-    ("plateau_n", (-6.5, 3, 3, 5.5), 0.0, CEIL, 150),
+    ("plateau_s", (-6.5, -2, 9.5, 3), 0.0, CEIL, 150),
+    ("plateau_n", (-6.5, 3, 5, 5.5), 0.0, CEIL, 150),
     ("plateau_w", (-6.5, 5.5, -4.5, 9.5), 0.0, CEIL, 150),
     ("cave_mouth", (-8.5, 4.5, -6.5, 9.5), 0.0, 4.5, 130),
     ("cave", (-16, 4.5, -8.5, 9.5), 0.0, 3.5, 110),
     # the right: stair up to the shelf
-    ("dstair_1", (3, 3, 7.5, 4.5), 0.375, CEIL, 150),
-    ("dstair_2", (3, 4.5, 7.5, 6), 0.75, CEIL, 150),
-    ("dstair_3", (3, 6, 7.5, 7.5), 1.125, CEIL, 150),
-    ("dstair_4", (3, 7.5, 7.5, 9), 1.5, CEIL, 150),
-    ("shelf", (3, 9, 12, 16), 1.5, CEIL, 160),
+    ("dstair_1", (5, 3, 9.5, 4.5), 0.375, CEIL, 150),
+    ("dstair_2", (5, 4.5, 9.5, 6), 0.75, CEIL, 150),
+    ("dstair_3", (5, 6, 9.5, 7.5), 1.125, CEIL, 150),
+    ("dstair_4", (5, 7.5, 9.5, 9), 1.5, CEIL, 150),
+    ("shelf", (5, 9, 14, 16), 1.5, CEIL, 160),
     # ahead: the ledge, the gate pad, the causeway, the tower's stair and terrace
     ("ledge_1", (-4.5, 5.5, -1, 7.5), 0.375, CEIL, 150),
     ("ledge_2", (-4.5, 7.5, -1, 9.5), 0.75, CEIL, 150),
     ("ledge_3", (-4.5, 9.5, -1, 11.5), 1.125, CEIL, 150),
     ("ledge_4", (-4.5, 11.5, -1, 13.5), 1.5, CEIL, 150),
     ("gate_pad", (-4.5, 13.5, -1, 17.5), 1.5, CEIL, 160),
-    ("causeway", (-4.5, 17.5, -1, 23.5), 1.5, CEIL, 150),
-    ("tstair_1", (-4.5, 23.5, -1, 24.5), 1.875, CEIL, 150),
-    ("tstair_2", (-4.5, 24.5, -1, 25.5), 2.25, CEIL, 150),
-    ("tstair_3", (-4.5, 25.5, -1, 26.5), 2.625, CEIL, 150),
-    ("tstair_4", (-4.5, 26.5, -1, 27.5), 3.0, CEIL, 150),
-    ("tower_s", (-6.5, 27.5, 9, 31.5), 3.0, CEIL, 170),
-    ("tower_w", (-6.5, 31.5, -3, 35.5), 3.0, CEIL, 170),
-    ("tower_e", (3, 31.5, 9, 35.5), 3.0, CEIL, 170),
-    ("ttop_1", (-3, 31.5, 3, 32.5), 3.5, CEIL, 170),
-    ("ttop_2", (-3, 32.5, 3, 33.5), 4.0, CEIL, 170),
-    ("ttop_3", (-3, 33.5, 3, 34.5), 4.5, CEIL, 170),
-    ("ttop_4", (-3, 34.5, 3, 35.5), 5.0, CEIL, 170),
+    ("causeway", (-4.5, 17.5, -1, 27.5), 1.5, CEIL, 150),
+    ("tstair_1", (-4.5, 27.5, -1, 28.5), 1.875, CEIL, 150),
+    ("tstair_2", (-4.5, 28.5, -1, 29.5), 2.25, CEIL, 150),
+    ("tstair_3", (-4.5, 29.5, -1, 30.5), 2.625, CEIL, 150),
+    ("tstair_4", (-4.5, 30.5, -1, 31.5), 3.0, CEIL, 150),
+    ("tower_s", (-6.5, 31.5, 9, 35.5), 3.0, CEIL, 170),
+    ("tower_w", (-6.5, 35.5, -3, 39.5), 3.0, CEIL, 170),
+    ("tower_e", (3, 35.5, 9, 39.5), 3.0, CEIL, 170),
+    ("ttop_1", (-3, 35.5, 3, 36.5), 3.5, CEIL, 170),
+    ("ttop_2", (-3, 36.5, 3, 37.5), 4.0, CEIL, 170),
+    ("ttop_3", (-3, 37.5, 3, 38.5), 4.5, CEIL, 170),
+    ("ttop_4", (-3, 38.5, 3, 39.5), 5.0, CEIL, 170),
 ]
 
 

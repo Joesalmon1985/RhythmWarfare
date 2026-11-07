@@ -66,7 +66,7 @@ def columns(base, lit, dark, seed, widths=(14, 18, 22), glow=None):
 
 
 def wall_rock():
-    return columns("#2a2230", "#4a3a52", "#100c14", 3, glow="#d65a14")
+    return columns("#2a2230", "#4a3a52", "#100c14", 3, widths=(26, 34, 42), glow="#d65a14")
 
 
 def wall_cliff():
@@ -373,16 +373,207 @@ def lavafall():
     return im
 
 
-TEXTURES = {"uw_wall_rock": wall_rock, "uw_wall_cliff": wall_cliff, "uw_wall_step": wall_step, "uw_wall_cave": wall_cave, "uw_wall_tower": wall_tower, "uw_floor_slab": floor_slab,
-            "uw_floor_stone": floor_stone, "uw_floor_cave": floor_cave, "uw_floor_tower": floor_tower, "uw_floor_lava": floor_lava, "uw_ceil": ceil_cloud, "uw_rail": rail_tile}
+# --- stage D round 1 (docs/briefs/DOOM_POLISH_BRIEF.md): the abyss, the far cliffs, the sky, the rim, the tunnel and the passage -------------------------------------------------
+
+BAYER4 = ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
+
+
+def wall_abyss():
+    """The abyss's cliffs (the faces under the plateau, the ledge, the shelf and the tower, 5 m down to the lava): tall basalt prisms, a lit edge, a dark seam, dithered highlights, no
+    horizontal seam (the old one tiled into a grid); a few glowing cracks climbing from below. The lava lamps light their feet orange, their tops stay dark (ABYSS_AMBIENT)."""
+    rnd = random.Random(301)
+    im = Image.new("RGB", (S, S), hexc("#0c080e"))
+    d = ImageDraw.Draw(im)
+    x = 0
+    while x < S:
+        w = rnd.choice((22, 28, 36))
+        w = S - x if S - x < 24 else w
+        k = 0.8 + rnd.random() * 0.45
+        d.rectangle([x, 0, x + w - 1, S], fill=shade(hexc("#2a2030"), k))
+        d.rectangle([x, 0, x + 1, S], fill=shade(hexc("#54445e"), k))
+        for yy in range(S):  # a dithered lit band down the prism's left third
+            for xx in range(x + 2, x + max(3, w // 3)):
+                if BAYER4[yy % 4][xx % 4] < 6:
+                    im.putpixel((xx % S, yy), shade(hexc("#3c3046"), k))
+        d.rectangle([x + w - 2, 0, x + w - 1, S], fill=hexc("#08060a"))
+        y = rnd.randrange(S)  # a facet break, short and slanted (not a full seam)
+        d.line([(x + 2, y), (x + w - 3, y + rnd.randint(-3, 3))], fill=hexc("#140e18"))
+        x += w
+    veins(im, 302, "#ff7a1c", 0.35, vertical=True)
+    return speckle(im, 0.18, 303)
+
+
+def wall_far():
+    """The far cliffs round the abyss (12 m above the lava, the sky over them): terraced basalt, darker and redder with the distance, ledges every so often with a glowing lip."""
+    rnd = random.Random(311)
+    im = Image.new("RGB", (S, S), hexc("#1a0e14"))
+    d = ImageDraw.Draw(im)
+    x = 0
+    while x < S:
+        w = rnd.choice((18, 24, 30))
+        w = S - x if S - x < 20 else w
+        k = 0.75 + rnd.random() * 0.5
+        top = rnd.randrange(0, 40)
+        d.rectangle([x, top, x + w - 1, S], fill=shade(hexc("#30202c"), k))
+        d.rectangle([x, top, x + 1, S], fill=shade(hexc("#4e3646"), k))
+        d.rectangle([x, top, x + w - 1, top + 1], fill=hexc("#ff7a2a") if rnd.random() < 0.4 else hexc("#5a3a48"))
+        x += w
+    veins(im, 312, "#ff6a14", 0.3, vertical=True)
+    return speckle(im, 0.2, 313)
+
+
+def wall_cliff_v2():
+    """The cliff faces beside the paths (the plateau's sides, the shelf): basalt prisms as the abyss's, a little lighter, no grid seams."""
+    im = columns("#2c2234", "#4a3a56", "#0e0a12", 7, widths=(28, 36, 44), glow=None)
+    return veins(im, 8, "#ff6a14", 0.3, vertical=True)
+
+
+def floor_lava_v2():
+    """The lava seen from above: bright orange-yellow flow, dark crust rafts with glowing rims, braided flow lines (the painting's river)."""
+    rnd = random.Random(91)
+    im = Image.new("RGB", (S, S), hexc("#e0521a"))
+    d = ImageDraw.Draw(im)
+    for _ in range(16):  # crust rafts with a glowing rim
+        x, y = rnd.randrange(S), rnd.randrange(S)
+        w, h = rnd.randint(10, 30), rnd.randint(6, 14)
+        for ox in (-S, 0):
+            for oy in (-S, 0):
+                d.ellipse([x + ox, y + oy, x + ox + w, y + oy + h], fill=hexc("#ff9a30"))
+                d.ellipse([x + ox + 2, y + oy + 2, x + ox + w - 2, y + oy + h - 2], fill=hexc(rnd.choice(["#4a1008", "#5a160a", "#3a0c06"])))
+    for _ in range(26):  # braided bright flow lines
+        x, y = rnd.randrange(S), rnd.randrange(S)
+        for _k in range(rnd.randint(20, 50)):
+            d.point((x % S, y % S), fill=hexc(rnd.choice(["#ffd040", "#ffb020", "#fff080"])))
+            d.point(((x + 1) % S, y % S), fill=hexc("#ff9a20"))
+            x += 1
+            y += rnd.choice((-1, 0, 0, 1))
+    px = im.load()
+    for y in range(S):  # dithered glow pockets (no flat fill)
+        for x in range(S):
+            if BAYER4[y % 4][x % 4] < 2 and px[x, y][0] > 200:
+                px[x, y] = shade(px[x, y], 1.15)
+    return im
+
+
+def sky_red():
+    """The red cloud sky (512 x 128, the map's `sky`, horizon at row 97): banded crimson clouds, dithered, darker toward the zenith; near the horizon a far range of terraced cliffs in
+    silhouette with lava falls and glowing ledges (the painting's far right)."""
+    W, Hh, hz = 512, 128, 97
+    rnd = random.Random(401)
+    im = Image.new("RGB", (W, Hh), hexc("#2a0606"))
+    px = im.load()
+    for y in range(Hh):
+        t = y / float(hz)
+        base = (int(60 + 120 * t), int(10 + 26 * t), int(10 + 14 * t))
+        for x in range(W):
+            n = math.sin(x * 0.045 + y * 0.31) + math.sin(x * 0.013 - y * 0.17 + 1.3) * 1.4 + math.sin(x * 0.11 + y * 0.07) * 0.5
+            k = 0.78 + 0.16 * n + (BAYER4[y % 4][x % 4] - 7.5) / 60.0
+            px[x, y] = shade(base, k)
+    d = ImageDraw.Draw(im)
+    x = 0
+    while x < W:  # the far terraces
+        w = rnd.randint(14, 40)
+        top = rnd.randint(52, 86)
+        d.rectangle([x, top, x + w, Hh], fill=hexc(rnd.choice(["#1a0a10", "#200c12", "#160810"])))
+        d.rectangle([x, top, x + w, top], fill=hexc("#7a2a1a"))
+        if rnd.random() < 0.3:  # a lava fall
+            fx = x + rnd.randint(2, max(3, w - 4))
+            for yy in range(top, Hh):
+                d.point((fx, yy), fill=hexc(rnd.choice(["#ff8a20", "#ffb030"])))
+                d.point((fx + 1, yy), fill=hexc("#c03a10"))
+        x += w
+    return im
+
+
+def rail_stumps():
+    """The rim of the abyss: a row of short basalt column stumps (the painting's rim stones), alpha 0 between them so the lava shows through; 128 px for 0.9 m along and up."""
+    T = 128
+    im = Image.new("RGBA", (T, T), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(501)
+    for x0, w, top in ((10, 18, 92), (78, 16, 100)):  # low stones (0.2 to 0.25 m of the 0.9 m strip): the lava shows over them
+        body, lit, dark = hexc("#2a2230"), hexc("#54445e"), hexc("#0c080e")
+        d.rectangle([x0, top + 8, x0 + w, T - 1], fill=(*body, 255))
+        d.polygon([(x0, top + 8), (x0 + 6, top), (x0 + w - 6, top), (x0 + w, top + 8)], fill=(*hexc("#4a3c54"), 255))
+        d.rectangle([x0, top + 8, x0 + 4, T - 1], fill=(*lit, 255))
+        d.rectangle([x0 + w - 4, top + 8, x0 + w, T - 1], fill=(*dark, 255))
+        for _ in range(3):
+            y = rnd.randint(top + 12, T - 4)
+            d.line([(x0 + 2, y), (x0 + w - 2, y + rnd.randint(-2, 2))], fill=(*dark, 255))
+        cx = x0 + w // 2  # a glowing crack at the foot
+        d.line([(cx, T - 1), (cx + rnd.randint(-3, 3), T - 14)], fill=(*hexc("#ff7a1c"), 255))
+    return im
+
+
+def tunnel():
+    """The cave's far end: the blue tunnel running on (an emissive decal, 192 x 192): round-topped rock arches shrinking toward a lit bend, columns between them, a cobbled floor
+    narrowing to the vanishing point, bone chimes hanging in the first arch."""
+    im, d = canvas(192, 192)
+    d.rectangle([0, 0, 191, 191], fill=hexc("#080a18"))
+    cx, horizon = 96, 110
+    for y in range(horizon, 192):  # the floor: cobbles in perspective, lighter toward the bend
+        t = (y - horizon) / 82.0
+        hw = int(10 + 86 * t)
+        d.line([(cx - hw, y), (cx + hw, y)], fill=shade(hexc("#26305a"), 1.25 - 0.6 * t))
+        if y % max(2, int(8 * t)) == 0:
+            d.line([(cx - hw, y), (cx + hw, y)], fill=hexc("#10142c"))
+    for k in range(6, -1, -1):  # arches, far first
+        t = k / 6.0
+        hw, top, bot = int(10 + 86 * (1 - t)), int(horizon - 20 - 90 * (1 - t)), int(horizon + 82 * (1 - t))
+        col = shade(hexc("#3a4c9a"), 0.45 + 0.7 * t)
+        wid = max(2, int(10 * (1 - t)))
+        d.arc([cx - hw, top, cx + hw, top + 2 * hw], 180, 360, fill=col, width=wid)
+        d.rectangle([cx - hw, top + hw, cx - hw + wid, bot], fill=col)
+        d.rectangle([cx + hw - wid, top + hw, cx + hw, bot], fill=shade(col, 0.7))
+    d.ellipse([84, 88, 108, 112], fill=hexc("#6a88f0"))
+    d.ellipse([90, 94, 102, 106], fill=hexc("#d0e0ff"))
+    for x in (30, 46, 146, 162):
+        d.line([(x, 10), (x, 30 + (x % 13))], fill=hexc("#8a1818"))
+        d.rounded_rectangle([x - 2, 30 + (x % 13), x + 2, 50 + (x % 13)], radius=2, fill=hexc("#e8dcc0"))
+    return speckle(im, 0.2, 601)
+
+
+def passage():
+    """A lit path climbing the far east cliff (emissive decal, 128 x 256): a zigzag stair cut in the rock, a lantern at each turn, the Dock route's way on."""
+    im, d = canvas(128, 256)
+    pts = [(20, 250), (100, 210), (30, 160), (96, 110), (40, 60), (80, 20)]
+    for a, b in zip(pts, pts[1:]):
+        d.line([a, b], fill=hexc("#6a4a3a"), width=9)
+        d.line([a, b], fill=hexc("#a07a5a"), width=3)
+    for p in pts[1:]:
+        d.rectangle([p[0] - 3, p[1] - 10, p[0] + 3, p[1] - 2], fill=hexc("#ffd070"))
+        d.ellipse([p[0] - 8, p[1] - 14, p[0] + 8, p[1] + 2], outline=hexc("#ff9a40"))
+    return im
+
+
+TEXTURES = {"uw_wall_rock": wall_rock, "uw_wall_cliff": wall_cliff_v2, "uw_wall_step": wall_step, "uw_wall_cave": wall_cave, "uw_wall_tower": wall_tower, "uw_floor_slab": floor_slab,
+            "uw_floor_stone": floor_stone, "uw_floor_cave": floor_cave, "uw_floor_tower": floor_tower, "uw_floor_lava": floor_lava_v2, "uw_ceil": ceil_cloud, "uw_rail": rail_stumps,
+            "uw_wall_abyss": wall_abyss, "uw_wall_far": wall_far, "uw_sky": sky_red}
 PROPS = {"uw_pillar": pillar, "uw_tusks": tusks, "uw_gong": gong, "uw_drum": drum, "uw_cloth": cloth, "uw_tent": tent, "uw_lantern": lantern, "uw_crate": crate, "uw_stub": stub}
-DECALS = {"uw_bones": bones, "uw_lavafall": lavafall}
+DECALS = {"uw_bones": bones, "uw_lavafall": lavafall, "uw_tunnel": tunnel, "uw_passage": passage}
+
+
+# the exposure lift (style guide section 2, frame_check p50 0.25 to 0.38): the basalt is drawn this much lighter than the painting's near-black (the room has no light but its lamps; the
+# painting's basalt reads lighter than its pixels because the lava lights it): the dark rock tiles only, the lava, the sky and the props keep their colours
+WARM = (1.12, 1.0, 0.9)  # the lift leans warm: the basalt takes the lava's light, not a lilac cast
+LIFT = {"uw_wall_rock": 1.7, "uw_wall_cliff": 1.7, "uw_wall_step": 1.6, "uw_wall_tower": 1.6, "uw_floor_slab": 1.55, "uw_floor_stone": 1.6, "uw_floor_tower": 1.6, "uw_wall_abyss": 1.6,
+        "uw_wall_far": 1.6, "uw_wall_cave": 1.7, "uw_floor_cave": 1.7, "uw_sky": 1.55}
+
+
+def lifted(name, im):
+    k = LIFT.get(name)
+    if k is None:
+        return im
+    if name in ("uw_wall_cave", "uw_floor_cave", "uw_sky"):
+        return im.point(lambda v: min(255, int(v * k)))
+    r, g, b = im.convert("RGB").split()
+    return Image.merge("RGB", [ch.point(lambda v, f=k * w: min(255, int(v * f))) for ch, w in zip((r, g, b), WARM)])
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, fn in {**TEXTURES, **PROPS, **DECALS}.items():
-        fn().save(os.path.join(OUT, name + ".png"))
+        lifted(name, fn()).save(os.path.join(OUT, name + ".png"))
     print("wrote %d textures, %d props and %d decals to %s" % (len(TEXTURES), len(PROPS), len(DECALS), OUT))
 
 
