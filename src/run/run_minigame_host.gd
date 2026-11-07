@@ -486,15 +486,15 @@ func _step_view(t: float) -> void:
 	var pitch := float(mg.activity.config.get("view_pitch", 0.0))
 	if pitch == 0.0 or not play.stages.has(play.active_world):
 		return
-	var span := 4.0 * play.engine.beat_s
-	var t0 := mg.seat_t - play.engine.beat_s
+	var span: float = 4.0 * float(play.engine.beat_s)
+	var t0: float = mg.seat_t - float(play.engine.beat_s)
 	if t < t0:
 		return
 	var k := int(floor((t - t0) / span))
 	if k <= _pitch_k:
 		return
 	_pitch_k = k
-	play._journey_apply({"world": play.active_world, "t0": t0 + float(k) * span, "action": "player_look", "args": {"by": 0.0, "pitch": pitch, "bars": 2.0}})
+	play._journey_apply({"world": play.active_world, "t0": t0 + float(k) * span, "action": "player_look", "args": {"by": 0.0, "pitch": pitch, "bars": 2.0, "steady": true}})
 	mode_log.append({"kind": "view_pitch", "t": t0 + float(k) * span, "pitch": pitch})
 
 

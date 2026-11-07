@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "assets/minigames/blackjack"
 
 CARD_W, CARD_H = 24, 34
-CHIP_W, CHIP_H = 20, 50
+CHIP_W, CHIP_H = 24, 68
 MAX_CHIPS = 15
 
 # the 3 x 5 font of src/minigames/draw/pixel_glyphs.gd (bit 2 = left column)
@@ -97,17 +97,15 @@ def stack(d: ImageDraw.ImageDraw, x0: int, y0: int, n: int, colour: int, change:
     """n chips, 3 px apart: each a rounded disc seen from a little above (a lit rim line, the body with its edge stripes, a dark underside)."""
     body, dark, light = CHIP_COLS[colour]
     bottom = y0 + CHIP_H - 1
-    cx0, cx1 = x0 + 1, x0 + CHIP_W - 8  # a 12 px wide chip, room for the coin on the right
-    for i in range(n):
-        yb = bottom - i * 3
+    cx0, cx1 = x0 + 1, x0 + CHIP_W - 7  # a 16 px wide chip, room for the coin on the right
+    for i in range(n):  # 4 px a chip: a dark underside, the body with its edge stripes (two rows), a lit rim
+        yb = bottom - i * 4
         d.line([cx0 + 1, yb, cx1 - 1, yb], fill=dark + (255,))
-        d.line([cx0, yb - 1, cx1, yb - 1], fill=body + (255,))
+        d.rectangle([cx0, yb - 2, cx1, yb - 1], fill=body + (255,))
         for k in range(cx0 + 1, cx1, 3):  # the edge stripes
             d.point((k, yb - 1), fill=(250, 246, 236, 255))
-        d.line([cx0 + 1, yb - 2, cx1 - 1, yb - 2], fill=light + (255,))
-    if n > 0:
-        top = bottom - (n - 1) * 3 - 2
-        d.line([cx0 + 2, top - 1, cx1 - 2, top - 1], fill=light + (255,))
+            d.point((k, yb - 2), fill=(250, 246, 236, 255))
+        d.line([cx0 + 1, yb - 3, cx1 - 1, yb - 3], fill=light + (255,))
     if change:
         d.ellipse([x0 + CHIP_W - 7, bottom - 4, x0 + CHIP_W - 2, bottom], fill=(204, 204, 214, 255), outline=(110, 110, 124, 255))
 

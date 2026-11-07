@@ -51,12 +51,13 @@ const CHIP_PENCE := 500  # one chip is five pounds; the pence under that show as
 const CHIP_COLOUR := {"player": 0, "npc_a": 1, "npc_b": 2, "bet": 3}
 const BET_STEPS := 4  # the most stake steps on one hand (config "bet_steps")
 ## Where things stand on the table (metres, the day room's map; config "staging" overrides any key). The map's `cards_table` occluder stands at z 3.3 with the felt at 0.82 to
-## 0.97 m: the player's own things stand just nearer than it (near_z, on the near edge of the felt), the others' just behind it (far_z, the far edge), so the table hides
-## nothing that is meant to be seen and the players stand behind their cards. cards_x: where a seat's first card goes (the rest fan to the right by `fan`).
+## 0.97 m: the player's own things (cards, stack, bet pile) and the deck stand just nearer than it (near_z, on the near edge of the felt), the others' just behind it (far_z,
+## the far edge, low enough not to hide the players' faces from the chair), so the table hides nothing that is meant to be seen. cards_x: where a seat's first card goes
+## (the rest fan to the right by `fan`). Sizes are larger than life so a card is at least 48 px and a stack at least 32 px tall from the chair (tests/test_blackjack_view.gd).
 const STAGING := {
-	"sector": "dayroom", "near_z": 3.45, "far_z": 3.1, "near_y": 0.84, "far_y": 0.99, "card": [0.21, 0.3], "fan": 0.12, "chip": [0.14, 0.35],
+	"sector": "dayroom", "near_z": 3.45, "far_z": 3.1, "near_y": 0.84, "far_y": 0.9, "card": [0.23, 0.33], "fan": 0.13, "chip": [0.24, 0.62],
 	"cards_x": {"npc_a": 1.5, "dealer": 2.12, "npc_b": 3.02, "player": 2.32},
-	"deck": [2.78, 3.1, 1.0], "stack_x": {"player": 1.72, "npc_a": 1.32, "npc_b": 3.58}, "bet_x": 2.02,
+	"deck": [3.22, 3.45, 0.86], "stack_x": {"player": 1.62, "npc_a": 1.28, "npc_b": 3.64}, "bet_x": 1.98,
 }
 const DEFAULT_TIMING := {
 	"sit_pockets": 2.0, "sit_lay": 2.0, "sit_invite": 1.0, "invite_gaze": 1.5, "bet_move": 1.5, "deal_gap": 0.5, "deal_flight": 0.5, "twist_flight": 1.0, "act": 1.0,
