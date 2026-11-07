@@ -43,10 +43,10 @@ WAYPOINTS = [
     ("wh_sw_corner", (-710, -520), (500, 500), 0, "recovery: along the west band"),
     ("wh_fence", (60, -640), (400, -500), 4, "reveal: along the south fence, the platforms across the floor"),
     ("wh_plinths", (-640, 100), (0, 0), 4, "reveal: the west band, the platforms across the fence"),
-    ("wh_platform", (66, 22), (660, 680), 4, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
-    ("wh_stage_approach", (640, 300), (660, 700), 2, "approach to the stage, the east band"),
-    ("wh_stage_steps", (660, 535), (660, 700), 0, "approach: the foot of the stage steps"),
-    ("wh_stage_top", (660, 640), (660, 700), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
+    ("wh_platform", (66, 22), (660, 700), 4, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
+    ("wh_stage_approach", (640, 300), (660, 715), 2, "approach to the stage, the east band"),
+    ("wh_stage_steps", (660, 535), (660, 715), 0, "approach: the foot of the stage steps"),
+    ("wh_stage_top", (660, 625), (660, 715), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
     ("wh_bar_approach", (-655, -490), (-655, -300), 2, "approach to the bar"),
     ("wh_bar_door", (-655, -420), (-655, -300), 0, "THRESHOLD left: the bar's canopy edge"),
     ("wh_lounge_approach", (-705, -610), (-470, -600), 2, "approach to the lounge"),
@@ -83,7 +83,7 @@ BORROWED = ["floor_dark", "floor_led", "floor_stage", "floor_boards", "floor_car
             "ceil_truss", "ceil_low", "trim", "thing_pendant", "thing_truss_tower", "thing_sofa", "thing_rail"]
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
-    "stage": ((660, 700), 2.2, (660, 735)),
+    "stage": ((660, 715), 2.2, (660, 738)),
     "bar": ((-655, -300), 2.2, (-655, -250)),
     "lounge": ((-470, -600), 2.2, (-440, -600)),
 }
@@ -96,7 +96,7 @@ THINGS = [  # extra dressing: id, sprite, doom point, y, size
 LIGHTS = [  # id, doom point, y, radius, colour, strength
     ("wh_lt_floor", (0, 0), 6.0, 14.0, "#3a62ff", 1.3), ("wh_lt_cube", (66, 22), 3.2, 4.5, "#ff4b6e", 1.1),
     ("wh_lt_spot_l", (-300, -150), 6.0, 9.0, "#4f7bff", 1.0), ("wh_lt_spot_r", (300, 150), 6.0, 9.0, "#4f7bff", 1.0),
-    ("wh_lt_stage", (660, 690), 3.6, 7.0, "#9fc4ff", 1.1), ("wh_lt_bar", (-655, -300), 2.7, 5.5, "#ffb060", 1.2), ("wh_lt_lounge", (-470, -600), 2.7, 5.5, "#ffcf80", 1.2),
+    ("wh_lt_stage", (660, 700), 3.6, 7.0, "#9fc4ff", 1.1), ("wh_lt_bar", (-655, -300), 2.7, 5.5, "#ffb060", 1.2), ("wh_lt_lounge", (-470, -600), 2.7, 5.5, "#ffcf80", 1.2),
     ("wh_lt_ref", (-600, -550), 3.0, 8.0, "#6f90ff", 0.9),
 ]
 
