@@ -215,7 +215,8 @@ func test_repeated_presses_within_the_debounce_are_ignored() -> void:
 	var tb := _to_input(b)
 	var o2 := b.recipe()
 	assert_true(b.tap("ing:%d" % int(o2[0]), tb))
-	assert_false(b.tap("ing:%d" % int(o2[0]), tb + 0.01), "a second press of the same one is the wrong ingredient now (recipes never repeat): a mistake, not ignored")
+	assert_true(b.tap("ing:%d" % int(o2[0]), tb + 0.01), "with no debounce a second press of the same one is taken: the wrong ingredient now (recipes never repeat), a mistake")
+	assert_eq(b.state()["outcome"], "mistake")
 	assert_eq(int(b.state()["ignored"]), 0)
 
 
