@@ -143,3 +143,22 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     over the world. This applies to the legacy campaign's hotspots and marks as much as to the Doom scenes
     and the raves. The contracts (rail, choice states) carry it; a dedicated art and engine package (A7,
     Opus) replaces the rings in the existing worlds; the shoot sheets stay as the proof.
+36. **The art standard (owner, 7 November).** The concept paintings in `art/reference/doom_worlds/` and the
+    four in `art/reference/standard/` are the bar for all art polish: dense pixel painting, dithered highlights,
+    wet reflections, warm practical lights against cool ambience, every surface drawn, no flat fills. The
+    **sprite standard is `art/reference/standard/guide_floor_sprite_standard.png`** (the Floor guide: braids,
+    hoop earrings, magenta sequin top, silver sequin trousers, gold bangles): game sprites are drawn to that
+    density and finish, with sequins and skin shading dithered, readable costume colours and silhouette, a
+    face with an expression. For a 1.8 m figure at the style guide's 128 texels per metre that is a sheet
+    about 230 px tall (256 px sheets), not the 128 px figures of today; the figure cap of 1.25x still holds.
+    This governs the Doom scenes' guides, the raves' customers and guides, and the people re-bake (A2) of the
+    legacy worlds. Placeholder figures are called placeholders in every report.
+37. **Decisions on the contracts' open questions** (`docs/parallel-development/CONTRACTS.md`, merged into
+    `feature/shared-contracts`): the bass knob runs in rhythm mode (pads stay live); leaving the bedsit goes at
+    the next block boundary; race wins carry across runs; **race energy loss never ends the run** (penalties
+    are bounded and only slow the car); save VERSION 3, the loader accepts 2 and 3 (an older build sets a v3
+    save aside: the owner is told); the opening is its own path `content/paths/bedsit`; the race is an
+    activity with a stage swap. The stem lock in `stem_transport.gd` (H7.0) is accepted as the contracts
+    agent built it. The remaining hooks H1 to H9 in CONTRACTS.md are lead-owned engine work, built by the
+    engine agents in the order the pilots need them: H5 (suspend/resume, tap owner, controls layer), H6
+    (save), H3 (holds), H1 (threshold walk, relaxed node), H7 (song-time unlock), H4, H8, H9.
