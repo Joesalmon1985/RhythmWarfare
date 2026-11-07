@@ -388,6 +388,9 @@ func selected_route() -> String:
 		return node_id
 	if choice != "":
 		return choice
+	if relaxed():  # (the bedsit, H1.7: nothing chosen is "stay"; the rhythm never forces a departure)
+		var sel := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", "")) if hotspots != null and hotspots.selected != "" else ""
+		return sel if sel != "" and not HotspotContract.is_special_route(sel) else node_id
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
 		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
 		if r != "" and not HotspotContract.is_special_route(r):  # (the Bassment, a portal or the way back are known only at the commit)
@@ -614,7 +617,7 @@ func _decide(b: int, t_dec: float) -> void:
 	elif passed:
 		energy += float(e["pass_gain"]) + float(e["pass_bonus"]) * (credit - pc) / maxf(1.0 - pc, 0.001)
 	else:
-		energy -= float(e["fail_loss"]) * (pc - credit) / pc + (3.0 if track.is_empty() else float(e["fail_flat"]))
+		energy -= 0.0 if relaxed() else float(e["fail_loss"]) * (pc - credit) / pc + (3.0 if track.is_empty() else float(e["fail_flat"]))  # (a relaxed node never drains the crowd: H1.7)
 	energy = clampf(energy, 0.0, float(e["max"]))
 	var boundary_beat := float((b + 1) * int(timing("block_beats")))
 	var next_stage := stage
@@ -722,6 +725,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 		out = hotspots.on_block(b, passed, credit)
 	elif lap < laps and not (_doors_open() and _exit_touched()):
 		return  # (no window, no commit before the last lap; on a track scene's open lap, none unless an exit was touched)
+	elif relaxed() and hotspots.selected == "":
+		return  # (a relaxed node, H1.7: nothing touched commits nothing, the scene stays)
 	else:
 		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
@@ -780,6 +785,12 @@ func _chart_next_phase() -> void:
 	_next_phase_charted = true
 	route_locked = true
 	_locked_chart = _chart_key(to)
+
+
+## The current scene is relaxed (its node's `"relaxed": true`, the bedsit; CONTRACTS.md 1, H1.7): a failed block costs no energy (the run cannot end there) and
+## the scene is left only by a choice, never by its default route.
+func relaxed() -> bool:
+	return data != null and data.nodes.has(node_id) and bool((data.nodes[node_id] as Dictionary).get("relaxed", false))
 
 
 ## Credit of block `b` of the current phase: the mean credit of its cues (1 when it has none).
