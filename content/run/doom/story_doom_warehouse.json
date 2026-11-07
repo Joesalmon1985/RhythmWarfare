@@ -79,10 +79,6 @@
      "action": "lights_low_pulse"
     },
     {
-     "at_bar": 1,
-     "action": "doors_open"
-    },
-    {
      "at_bar": 3,
      "action": "front_row_sway"
     },

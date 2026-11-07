@@ -10,6 +10,7 @@ const HUD_BOXES := [Rect2(0, 0, 345, 100)]
 const GUIDES := ["wh_guide_stage", "wh_guide_bar", "wh_guide_lounge"]
 const HOLD_PLACES := ["wh_ref", "wh_fence", "wh_plinths", "wh_platform"]
 const CHOICE_REF_HOLD := 8.0
+const MIN_GUIDE_PX := 60.0  # the farthest guide (the stage's) must still be this tall in the 460 px stage strip
 
 
 func _map() -> StoryMap:
@@ -80,6 +81,7 @@ func test_the_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_ref
 			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
 			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "%s %s: inside the picture (%s)" % [asp, g, str(r)])
 			assert_true(r.end.y <= view.y, "%s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "%s %s: at least %d px tall at the reference viewpoint (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
 			for b in HUD_BOXES:
 				assert_false(r.intersects(b), "%s %s: clear of the HUD's corner" % [asp, g])
 			print("  %s %-16s rect %s" % [asp, g, str(r)])

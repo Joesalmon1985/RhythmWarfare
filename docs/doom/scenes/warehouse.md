@@ -21,23 +21,24 @@ The render shows (Doom units, 32 = 1 m, x east, y north): an outer terrace +96 (
 | Reference element | Trace piece | Where |
 | --- | --- | --- |
 | Walkway round the floor (steel, wet) | `stone_ring`, 0 | the band round the courtyard; the viewer stands in its **south-west corner** |
-| Fenced dance floor | `courtyard`, lowered to **+16** (0.5 m up, from the render's guessed +32); its four edges are the **fence** (impassable lines), two gates (south x -400..-320, west y -120..-40) | centre |
-| Four speaker plinths | `plat_n/e/w/s` (210 square, +80: 2 m over the floor) | one per quadrant |
-| Lit cube | `pedestal` (+64), two stair strips on its south side (`ped_step_a/b`, 28 and 40) | centre |
-| Stage (guide: ahead) | `stage` island, +60, two steps (`stage_step_a/b`) on its south side | the ring's north-east corner, on the diagonal ahead |
-| Bar (guide: left) | `bar` island, +24, 4 m canopy | the ring's west band, y -400..-200 |
-| Lounge (guide: right) | `lounge` island, +12, 4 m canopy | the ring's south band, x -540..-400 |
-| Arrival | `wh_arrive`, the ring's north-west corner (the nub is not connected: no stairs were traced) | |
+| Fenced dance floor | `courtyard`, +32 (the render's guess): its 1 m ledge is the **railing wall** all round (impassable lines, trim texture), with two gates (south x -400..-320, west y -120..-40), each a 0.5 m step island (`gate_step_s/w`) | centre |
+| Four speaker plinths | `plat_n/e/w/s` (210 square, +80: 1.5 m over the floor) | one per quadrant |
+| Lit cube | `pedestal` (+64), two stair strips on its south side (`ped_step_a/b`, 40 and 52) | centre |
+| Stage (guide: ahead) | `stage` island in the courtyard, +68, two steps (`stage_step_a/b`) on its east side | south-west part of the floor, 16 m from the reference viewpoint on the diagonal ahead |
+| Bar (guide: left) | `bar`: a room cut out of the ring's west band, three solid walls, 5 m opening to the south (towards the viewer), floor +24, 4 m ceiling | west band, y -400..-200 |
+| Lounge (guide: right) | `lounge`: a room cut out of the ring's south band, three solid walls, opening to the west, floor +12, 4 m ceiling | south band, x -540..-400 |
+| Arrival | `wh_arrive`: the ring's south-west corner facing the floor (a cut, then a 3 bar walk to the reference viewpoint) | |
 
-**Reference viewpoint** `wh_ref` (-650, -600), looking north-east: the courtyard's near corner is 4 m away and the V of the fence opens ahead. The bar guide stands at 45 degrees to the left (9.4 m), the lounge guide at 45 degrees to the right
-(5.6 m), the stage guide dead ahead at 45 m.
+**Reference viewpoint** `wh_ref` (-620, -600), looking north-east: the courtyard's near corner is 4 m away and the V of the railing opens ahead. The bar guide stands at 41 degrees to the left (9.4 m), the lounge guide at 41 degrees to the right
+(4.8 m), the stage guide dead ahead at 16 m (64 px tall at 16:9; `tests/test_doom_views.gd` requires 60).
+
+**Exposure** (A1 night interior): the Doom lights are too low for this renderer, so every sector is lit at least 0.9 (`LIGHT_GAIN`, `LIGHT_FLOOR` in `tools/doom/author_warehouse.py`), tints are lifted towards white, the fog is cobalt (`#2f48ac`, 0.021) and 16 light things carry the colour (cobalt over the floor and the ring, amber in the bar and the lounge, a cool pool on the stage). `python -I tools/doom/frame_check.py docs/shots/doom/warehouse` prints the figures (before shrinking).
 
 ## What the render and the pilot still lack
 
-* **Railings**: the fence is impassable lines at a 0.5 m ledge, not a railing (the renderer extension adds railings for blocked portals).
-* The islands have no side walls: the bar and lounge are raised floors under a low canopy, open on all sides (a hole's edges are portals). The bar counter, taps, curtains and sofa are not modelled (one sofa billboard, pendants, truss towers, lights).
-* The stage is 45 m from the reference viewpoint (the painting's is about 20 m): its guide is a 20 px figure at the reference view. The painting's room is about a third the size of the render's.
+* The railing is the 1 m ledge with the `trim` lattice tile, a solid wall, not a railing with a gap under the rail: the renderer's railing kind replaces it later.
+* The bar counter, taps, curtains and sofa are not modelled (one sofa billboard, pendants, truss towers, lights); the rooms are plain boxes.
+* The stage is on the dance floor, not against a far wall as in the painting (the render's courtyard is 32 m across, the painting's room about a third of that); no window with the moon, banners, hanging speaker cage or light shafts.
 * The terrace (+96) and the nub: no stairs; the render draws ramps (untraced).
-* The window with the moon, the banners, the hanging speaker cage, the spotlight shafts: textures and things still to draw.
 
-Regenerate: see `docs/doom/LAUNCH.md`. Trace result: 20 Doom sectors, 67 convex pieces, 138 portals (6 blocked: the fence), 0 unreachable; 9 pieces not on foot (the platforms and the terrace, on purpose).
+Regenerate: see `docs/doom/LAUNCH.md`. Trace result: 22 Doom sectors, 72 convex pieces, 141 portals (6 blocked: the ledge), 0 unreachable; 9 pieces not on foot (the platforms and the terrace, on purpose).
