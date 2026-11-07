@@ -363,7 +363,7 @@ func test_the_three_activity_nodes_exist_with_their_holds_hotspots_and_things_in
 		assert_true(float(good[good.size() - 1]["hold_bars"]) >= 4.0, "%s: a hold for the activity" % id)
 		var hold: Dictionary = m.waypoint(str(want[id][0]))
 		var sec := str(hold["sector"])
-		assert_eq(sec, "cloak" if id == "space_cloakroom" else "bar", "the hold stands in the alcove")
+		assert_eq(sec, "r7" if id == "space_cloakroom" else "r5", "the hold stands in the ring just outside the alcove, facing it")
 		var rows: Array = (d.hotspots[id] as Array).filter(func(h: Dictionary) -> bool: return (h["on_success"] as Dictionary).has("activity"))
 		assert_eq(rows.size(), 1, "%s: one hotspot carries the activity" % id)
 		assert_eq(str(rows[0]["on_success"]["activity"]), want[id][2])
@@ -371,8 +371,8 @@ func test_the_three_activity_nodes_exist_with_their_holds_hotspots_and_things_in
 		assert_true(m.things.any(func(t: Dictionary) -> bool: return str(t["id"]) == want[id][1]), "the counter is a map thing")
 		# the things the activity declares stand in the alcove's sector, inside its polygon
 		var layout: Dictionary = (themes["cloakroom" if id == "space_cloakroom" else "bar"]["space"] as Dictionary)["layout"]
-		assert_eq(str(layout["sector"]), sec)
-		var poly: PackedVector2Array = m.sector(sec)["poly"]
+		assert_eq(str(layout["sector"]), "cloak" if id == "space_cloakroom" else "bar")
+		var poly: PackedVector2Array = m.sector(str(layout["sector"]))["poly"]
 		var pts: Array = []
 		if id == "space_cloakroom":
 			pts.append_array(layout["customer_slots"])
@@ -385,7 +385,7 @@ func test_the_three_activity_nodes_exist_with_their_holds_hotspots_and_things_in
 			for k in ["customer_at", "customer_glass_at", "glass_at", "bubble_at"]:
 				pts.append(layout[k])
 		for p: Array in pts:
-			assert_true(Geometry2D.is_point_in_polygon(Vector2(float(p[0]), float(p[1])), poly), "%s: %s is inside the %s" % [id, str(p), sec])
+			assert_true(Geometry2D.is_point_in_polygon(Vector2(float(p[0]), float(p[1])), poly), "%s: %s is inside the %s" % [id, str(p), str(layout["sector"])])
 	# the customers, the attendant, the bartender and the DJ are crowd actors of those rooms, with homes there
 	var story: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/space_rave.json"))
 	var actors := (story["actors"] as Array).map(func(a: Dictionary) -> String: return str(a["id"]))
@@ -471,3 +471,103 @@ func test_the_run_plays_hub_cloakroom_hub_bar_stage_knob_and_home_with_the_save_
 	for p in ["bass_fixed", "cloakroom_done", "bar_done"]:
 		assert_true(prog.puzzle_done("space", p), "saved: %s" % p)
 	dr.finish()
+
+
+# --- the three-moment view test (contract 10): the things at the hold, in the real map ------------------------------------------------------------
+
+const BEAT := 60.0 / 174.0
+
+
+func _cloak_moments() -> Array:
+	CloakroomSession.reset()
+	var cfg: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/minigames/cloakroom.json"))
+	var a := CloakroomActivity.new()
+	a.setup({"seed": 7, "beat_s": BEAT, "config": cfg, "request": {"theme": "space"}, "world": WorldThings.new()})
+	a.begin(0.0)
+	var out: Array = []
+	a.update(1.0 * BEAT)
+	out.append(["demonstration", 1.0 * BEAT, a.things()])
+	var t := 11.0 * BEAT
+	a.update(t)
+	for i in 3:
+		a.tap(a.expected[a.answers.size()], t)
+		t += 1.2
+		a.update(t)
+	out.append(["mid-way", t, a.things()])
+	var guard := 0
+	while str(a.state()["phase"]) != "payoff" and guard < 40:
+		if str(a.state()["phase"]) == "await":
+			a.tap(a.expected[a.answers.size()], t)
+		t += 0.6
+		a.update(t)
+		guard += 1
+	out.append(["payoff", t, a.things()])
+	CloakroomSession.reset()
+	return out
+
+
+func _bar_moments() -> Array:
+	BarActivity.forget_all()
+	var cfg: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/minigames/bar.json"))
+	var a := BarActivity.new()
+	a.setup({"seed": 7, "beat_s": BEAT, "config": cfg, "wallet": null, "request": {"theme": "space"}})
+	a.begin(0.0)
+	var out: Array = []
+	var t := 0.0
+	var wrong_done := false
+	var shot_demo := false
+	var shot_mistake := false
+	var guard := 0
+	while str(a.state()["phase"]) != "payoff" and guard < 4000:
+		t += 0.05
+		a.update(t)
+		var s := a.state()
+		if str(s["phase"]) == "demo" and not shot_demo:
+			shot_demo = true
+			out.append(["demonstration", t, a.things()])
+		if str(s["phase"]) == "input":
+			var rec: Array = s["recipe"]
+			var pos := int(s["pos"])
+			if not wrong_done and pos == 0:
+				wrong_done = true
+				a.tap("ing:%d" % ((int(rec[0]) + 1) % 4), t)
+				a.update(t + 0.05)
+				out.append(["mistake", t + 0.05, a.things()])
+				shot_mistake = true
+			elif fmod(t, 0.5) < 0.05 and pos < rec.size():
+				a.tap("ing:%d" % int(rec[pos]), t)
+		guard += 1
+	out.append(["payoff", t, a.things()])
+	BarActivity.forget_all()
+	return out
+
+
+func test_every_thing_of_each_activity_is_inside_the_strip_and_at_least_48_px_tall_at_the_hold_in_three_moments() -> void:
+	var cases := {"cloak_hold": _cloak_moments(), "bar_hold": _bar_moments()}
+	cases["deck_view"] = [["stuck", 1.0, _knob(BEAT).things()]]
+	var freed := _knob(BEAT)
+	freed.tap("knob", 1.0)
+	freed.tap("knob", 2.0)
+	freed.tap("knob", 3.0)
+	freed.update(7.0)
+	cases["deck_view"].append(["free", 7.0, freed.things()])
+	for sz: Vector2 in [Vector2(1280, 460), Vector2(1600, 460)]:
+		var stage := _stage(sz)
+		for hold: String in cases:
+			stage.player.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": hold, "bars": 0.01, "cut": true}})
+			var moments: Array = cases[hold]
+			assert_true(moments.size() >= 2, "%s: moments shot" % hold)
+			for mo: Array in moments:
+				stage.set_things(mo[2])
+				stage.update(float(mo[1]), 60.0)
+				assert_eq(stage.world.dynamic.errors, [], "%s %s: the sheets load" % [hold, mo[0]])
+				assert_true((mo[2] as Array).size() >= 1, "%s %s: something to see" % [hold, mo[0]])
+				for th: Dictionary in mo[2]:
+					var r: Variant = stage.thing_screen_rect(str(th["id"]))
+					assert_true(r != null, "%s %s %s %s: drawn" % [str(sz), hold, mo[0], th["id"]])
+					if r == null:
+						continue
+					var rr: Rect2 = r
+					assert_true(Rect2(Vector2.ZERO, sz).encloses(rr), "%s %s %s %s: inside the strip (%s)" % [str(sz), hold, mo[0], th["id"], str(rr)])
+					assert_true(rr.size.y >= 48.0, "%s %s %s %s: at least 48 px tall (%.1f)" % [str(sz), hold, mo[0], th["id"], rr.size.y])
+		stage.free()

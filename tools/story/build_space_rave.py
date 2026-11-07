@@ -206,12 +206,12 @@ APSES = {
 }
 STAGE_W0, STAGE_W1, STAGE_D = 4.4, 7.2, 11.0
 STEP1_U, STEP2_U = 19.2, 21.4
-CLOAK_HOLD_U = BAR_HOLD_U = 17.8
-CLOAK_CUSTOMER_SLOTS = [(19.4, -1.3), (19.4, -2.0), (19.4, -2.7), (19.4, -3.4), (20.4, -1.7), (20.4, -2.4), (20.4, -3.1), (20.4, -3.8)]  # (u, s) of customer_0..7: a queue to the camera's right
-CLOAK_ATTENDANT = (21.3, 0.8)
-CLOAK_RAIL = (22.6, 1.05, -0.3)  # (u, s of coat 0, s step per coat): eight coats along the back wall
-CLOAK_SYMBOL, CLOAK_PREV, CLOAK_LAMP = (20.0, 0.0), (20.0, 0.9), (20.1, -0.55)
-BAR_CUSTOMER, BAR_GLASS, BAR_CUSTOMER_GLASS, BAR_BUBBLE = (19.4, -1.5), (20.3, 0.5), (20.0, -1.0), (19.4, -1.5)
+CLOAK_HOLD_U = BAR_HOLD_U = 16.4  # in the ring just outside the alcove's mouth: the whole alcove is in the picture
+CLOAK_CUSTOMER_SLOTS = [(19.6, -1.3), (19.6, -2.0), (19.6, -2.7), (19.6, -3.4), (20.4, -1.7), (20.4, -2.4), (20.4, -3.1), (20.4, -3.8)]  # (u, s) of customer_0..7: a queue to the camera's right
+CLOAK_ATTENDANT = (21.8, 0.8)
+CLOAK_RAIL = (22.7, 1.05, -0.3)  # (u, s of coat 0, s step per coat): eight coats along the back wall
+CLOAK_SYMBOL, CLOAK_PREV, CLOAK_LAMP = (20.5, 0.0), (20.5, 0.9), (20.5, -0.55)
+BAR_CUSTOMER, BAR_GLASS, BAR_CUSTOMER_GLASS, BAR_BUBBLE = (19.2, -1.6), (20.3, 0.5), (20.0, -1.0), (19.2, -1.6)
 BAR_BAYS = (-3.0, -1.0, 1.0, 3.0)
 
 
@@ -270,10 +270,10 @@ def build_map() -> dict:
     wp("deck_view", loc(180, 22.6), yaw_out(180), "stage")
     wp("cloak_door", loc(210, 15.2), yaw_out(210), "r7")
     wp("cloak_view", loc(210, 20.0), yaw_out(210), "cloak")
-    wp("cloak_hold", loc(210, CLOAK_HOLD_U), yaw_out(210), "cloak")   # where the cloakroom activity is played: at the alcove's mouth, facing the counter, the rail and the attendant
+    wp("cloak_hold", loc(210, CLOAK_HOLD_U), yaw_out(210), "r7")   # where the cloakroom activity is played: at the alcove's mouth, facing the counter, the rail and the attendant
     wp("bar_door", loc(150, 15.2), yaw_out(150), "r5")
     wp("bar_view", loc(150, 20.0), yaw_out(150), "bar")
-    wp("bar_hold", loc(150, BAR_HOLD_U), yaw_out(150), "bar")         # where the bar activity is played: at the alcove's mouth, facing the counter and the shelf
+    wp("bar_hold", loc(150, BAR_HOLD_U), yaw_out(150), "r5")         # where the bar activity is played: at the alcove's mouth, facing the counter and the shelf
     wp("hangar_door", loc(240, 15.2), yaw_out(240), "r8")
     wp("hangar_view", loc(240, 21.0), yaw_out(240), "hangar")
     wp("home_door", loc(0, 19.0), yaw_out(0), "airlock")
@@ -340,9 +340,9 @@ def build_map() -> dict:
     for i, s_ in enumerate(BAR_BAYS):  # the bar's static set (contract 10): the back shelf's four bays, and a glass piece in each, lit by piece_on as the drinks are served
         bb("bar_cab_%d" % (i + 1), "thing_cabinet", 150, 22.9, s_, 1.8, y=0.9)
         bb("bar_shelf_%d" % (i + 1), "pc_glass_lit", 150, 22.5, s_, 0.6, y=1.75, piece="bar_shelf_%d" % (i + 1), emissive=True)
-    bb("cloak_counter", "thing_bar", 210, 20.2, 0.0, 1.2, y=0.6)   # the cloakroom's counter (contract 10), its lamp (a piece, lit when the work is done) and its coat rail
+    bb("cloak_counter", "thing_bar", 210, 20.6, 0.0, 1.2, y=0.6)   # the cloakroom's counter (contract 10), its lamp (a piece, lit when the work is done) and its coat rail
     bb("cloak_lamp", "pc_lamp_lit", *([210] + list(CLOAK_LAMP)), 0.5, y=1.5, piece="cloak_lamp", emissive=True)
-    bb("cloak_rail", "thing_suit", 210, 22.9, 0.0, 1.8, y=0.9)
+    bb("cloak_rail", "thing_suit", 210, 22.95, 0.0, 1.8, y=0.9)
     bb("coat_cabinet", "thing_cabinet", 210, 22.2, -3.0, 1.8, y=0.9)
     bb("hangar_racer", "sr_racer", 240, 23.8, 0.0, 1.5, y=0.75)
     bb("hangar_console", "thing_console", 240, 21.6, -3.2, 1.3, y=0.65)
@@ -458,7 +458,7 @@ def theme_json() -> dict:
         "ingredients": [{"id": "stardust", "icon": "space/ing_stardust", "color": "#d8e8ff"}, {"id": "comet_ice", "icon": "space/ing_ice", "color": "#7fe3ff"},
                         {"id": "plasma", "icon": "space/ing_plasma", "color": "#ff5fd2"}, {"id": "moon_syrup", "icon": "space/ing_syrup", "color": "#ffd25f"}],
         "cloakroom_symbols": [{"id": "ringed_planet", "icon": "space/sym_planet"}, {"id": "rocket", "icon": "space/sym_rocket"}, {"id": "crescent", "icon": "space/sym_moon"}, {"id": "ufo", "icon": "space/sym_ufo"}],
-        "stations": {"stage": {"waypoint": "deck_view", "route": "space.to_stage"}, "cloakroom": {"waypoint": "cloak_view", "route": "space.to_cloak"}, "bar": {"waypoint": "bar_view", "route": "space.to_bar"}},
+        "stations": {"stage": {"waypoint": "deck_view", "route": "space.to_stage"}, "cloakroom": {"waypoint": "cloak_hold", "route": "space.to_cloak"}, "bar": {"waypoint": "bar_hold", "route": "space.to_bar"}},
         "race": {"entrance": "hangar_view", "course": "race_street_space", "activity": "race"},
         "home": {"threshold": "home_door", "route": "home"},
         "activities": {"stage": "bass_knob", "cloakroom": "cloakroom", "bar": "bar", "race": "race"},
@@ -472,13 +472,13 @@ def theme_json() -> dict:
             "space.to_cloak": {"id": "space.to_cloak", "map": "space_rave", "from": "hub_view", "legs": [
                 {"to": "rv9", "bars": 4, "hold_bars": 1, "style": "walk", "via": ["rv11", "rv10"]},
                 {"to": "cloak_door", "bars": 2, "hold_bars": 1, "style": "walk", "via": ["rv8"]},
-                {"to": "cloak_view", "bars": 2, "hold_bars": 4, "style": "walk", "look": "attendant"}],
-                "arrive": {"waypoint": "cloak_view", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
+                {"to": "cloak_hold", "bars": 2, "hold_bars": 4, "style": "walk", "look": "attendant"}],
+                "arrive": {"waypoint": "cloak_hold", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
             "space.to_bar": {"id": "space.to_bar", "map": "space_rave", "from": "hub_view", "legs": [
                 {"to": "rv3", "bars": 4, "hold_bars": 1, "style": "walk", "via": ["rv1", "rv2"]},
                 {"to": "bar_door", "bars": 2, "hold_bars": 1, "style": "walk", "via": ["rv4"]},
-                {"to": "bar_view", "bars": 2, "hold_bars": 4, "style": "walk", "look": "bartender"}],
-                "arrive": {"waypoint": "bar_view", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
+                {"to": "bar_hold", "bars": 2, "hold_bars": 4, "style": "walk", "look": "bartender"}],
+                "arrive": {"waypoint": "bar_hold", "choice_view": True, "hold": "window"}, "eye_m": 1.6},
         },
         "hub": {"viewpoint": "hub_view", "choice_view": True, "hold_bars": 8,
                 "choices": {"stage": {"actor": "dj", "node": "space_stage"}, "cloakroom": {"actor": "attendant", "node": "space_cloakroom"},
@@ -496,13 +496,13 @@ def write_activity_layouts() -> None:
     d["cloakroom"]["space"]["layout"] = {
         "sector": "cloak", "customer_slots": [r2(loc(c, u, s_)) for (u, s_) in CLOAK_CUSTOMER_SLOTS], "hand_off": r2(loc(c, -0.3, 0.0)), "attendant_at": r2(loc(c, *CLOAK_ATTENDANT)),
         "rail_at": r2(loc(c, CLOAK_RAIL[0], CLOAK_RAIL[1])), "rail_step": r2(loc(c, 0.0, CLOAK_RAIL[2])), "rail_y": 0.8, "coat_size": [0.5, 0.8],
-        "symbol_at": r2(loc(c, *CLOAK_SYMBOL)), "symbol_y": 1.4, "symbol_size": [0.8, 0.8], "prev_at": r2(loc(c, *CLOAK_PREV)), "prev_y": 1.45, "prev_size": [0.5, 0.5],
+        "symbol_at": r2(loc(c, *CLOAK_SYMBOL)), "symbol_y": 1.35, "symbol_size": [0.8, 0.8], "prev_at": r2(loc(c, *CLOAK_PREV)), "prev_y": 1.45, "prev_size": [0.5, 0.5],
         "counter_piece": "cloak_counter", "lamp_piece": "cloak_lamp",
     }
     b = 150
     d["bar"]["space"]["layout"] = {
         "map": "mothership", "sector": "bar", "customer_at": r2(loc(b, *BAR_CUSTOMER)), "customer_glass_at": r2(loc(b, *BAR_CUSTOMER_GLASS)), "glass_at": r2(loc(b, *BAR_GLASS)), "glass_y": 1.55,
-        "glass_size": [0.3, 0.5], "bubble_at": r2(loc(b, *BAR_BUBBLE)), "bubble_y": 2.5, "bubble_size": [0.9, 0.9], "counter_piece": "bar_counter", "shelf_prefix": "bar_shelf_",
+        "glass_size": [0.3, 0.5], "bubble_at": r2(loc(b, *BAR_BUBBLE)), "bubble_y": 2.25, "bubble_size": [0.9, 0.9], "counter_piece": "bar_counter", "shelf_prefix": "bar_shelf_",
     }
     with open(path, "w", encoding="utf-8", newline=chr(10)) as fh:
         json.dump(d, fh, indent=1)

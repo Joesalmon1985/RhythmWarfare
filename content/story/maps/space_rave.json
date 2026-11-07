@@ -1858,8 +1858,8 @@
    "actor": "attendant",
    "sector": "cloak",
    "at": [
-    -11.343,
-    -18.046
+    -11.593,
+    -18.479
    ]
   },
   {
@@ -1922,32 +1922,32 @@
    "actor": "customer_0",
    "sector": "cloak",
    "at": [
-    -8.574,
-    -17.451
+    -8.674,
+    -17.624
    ]
   },
   {
    "actor": "customer_1",
    "sector": "cloak",
    "at": [
-    -7.968,
-    -17.801
+    -8.068,
+    -17.974
    ]
   },
   {
    "actor": "customer_2",
    "sector": "cloak",
    "at": [
-    -7.362,
-    -18.151
+    -7.462,
+    -18.324
    ]
   },
   {
    "actor": "customer_3",
    "sector": "cloak",
    "at": [
-    -6.756,
-    -18.501
+    -6.856,
+    -18.674
    ]
   },
   {
@@ -1986,8 +1986,8 @@
    "actor": "customer",
    "sector": "bar",
    "at": [
-    10.999,
-    -16.051
+    10.986,
+    -15.828
    ]
   }
  ],
@@ -2170,11 +2170,11 @@
   {
    "id": "cloak_hold",
    "at": [
-    -8.9,
-    -15.415
+    -8.2,
+    -14.203
    ],
    "yaw": 30,
-   "sector": "cloak"
+   "sector": "r7"
   },
   {
    "id": "bar_door",
@@ -2197,11 +2197,11 @@
   {
    "id": "bar_hold",
    "at": [
-    8.9,
-    -15.415
+    8.2,
+    -14.203
    ],
    "yaw": -30,
-   "sector": "bar"
+   "sector": "r5"
   },
   {
    "id": "hangar_door",
@@ -2551,8 +2551,8 @@
    "kind": "billboard",
    "sprite": "thing_bar",
    "at": [
-    -10.1,
-    -17.494
+    -10.3,
+    -17.84
    ],
    "size": 1.2,
    "anim": "none",
@@ -2563,8 +2563,8 @@
    "kind": "billboard",
    "sprite": "pc_lamp_lit",
    "at": [
-    -9.574,
-    -17.682
+    -9.774,
+    -18.029
    ],
    "size": 0.5,
    "anim": "none",
@@ -2577,8 +2577,8 @@
    "kind": "billboard",
    "sprite": "thing_suit",
    "at": [
-    -11.45,
-    -19.832
+    -11.475,
+    -19.875
    ],
    "size": 1.8,
    "anim": "none",
