@@ -1,0 +1,152 @@
+{
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "art": "mothership",
+ "start": "doom_start",
+ "textures": {
+  "floor_grate": "textures/floor_grate.png",
+  "floor_bridge": "textures/floor_bridge.png",
+  "floor_airlock": "textures/floor_airlock.png",
+  "ceil_hull": "textures/ceil_hull.png",
+  "wall_hull": "textures/wall_hull.png",
+  "trim": "textures/trim.png"
+ },
+ "sky": {
+  "tex": "textures/sky_space.png",
+  "mode": "cylinder"
+ },
+ "sectors": [
+  {
+   "id": "2_0",
+   "polygon": [
+    [
+     47.4375,
+     -29.65625
+    ],
+    [
+     48.625,
+     -29.0625
+    ],
+    [
+     48.9375,
+     -25.21875
+    ],
+    [
+     42.40625,
+     -22.25
+    ],
+    [
+     37.65625,
+     -22.25
+    ],
+    [
+     31.71875,
+     -28.15625
+    ],
+    [
+     37.0625,
+     -29.9375
+    ]
+   ],
+   "floor": 0.5,
+   "ceiling": 6.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5843,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 2
+  }
+ ],
+ "walls": [],
+ "things": [],
+ "homes": [],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "waypoints": [
+  {
+   "id": "doom_start",
+   "at": [
+    43.28125,
+    -27.875
+   ],
+   "yaw": 135.0,
+   "sector": "2_0"
+  }
+ ],
+ "doom": {
+  "map": "MAP02",
+  "units_per_m": 32.0,
+  "vscale": 1.0,
+  "axis": "x_m = x/32, z_m = -y/32 (Doom y up -> StoryMap -z)",
+  "sector_map": {
+   "2": {
+    "pieces": [
+     "2_0"
+    ],
+    "floor": 16,
+    "ceiling": 192,
+    "light": 140,
+    "floor_flat": "FLOOR5_1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   }
+  },
+  "dropped_tiny": [],
+  "dropped_unreachable_pieces": [
+   "0_0",
+   "1_0",
+   "3_0",
+   "4_0",
+   "4_1",
+   "4_2",
+   "4_3",
+   "4_4",
+   "4_5",
+   "5_0",
+   "5_1",
+   "5_2",
+   "5_3",
+   "5_4",
+   "5_5",
+   "5_6",
+   "5_7",
+   "6_0",
+   "6_1",
+   "6_2",
+   "6_3",
+   "7_0",
+   "7_1",
+   "8_0",
+   "8_1",
+   "9_0",
+   "9_1",
+   "9_2",
+   "10_0",
+   "11_0",
+   "14_0",
+   "14_1"
+  ],
+  "dropped_unbuildable_sectors": [
+   12,
+   13
+  ],
+  "broken_sectors": [],
+  "doors_opened": [],
+  "outside_cut_sectors": 0,
+  "warnings": [],
+  "approximate": true,
+  "uncertain": [
+   "TRACED FROM THE RENDER MAP02.jpg, rough; see CONVERSION.md"
+  ],
+  "stats": {
+   "doom_sectors": 1,
+   "pieces": 1,
+   "portals": 0
+  }
+ }
+}

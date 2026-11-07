@@ -20,224 +20,28 @@
    "id": "0_0",
    "polygon": [
     [
-     2.5,
-     8.0
+     3.4375,
+     3.4375
     ],
     [
-     -2.5,
-     8.0
+     -3.4375,
+     3.4375
     ],
     [
-     -3.3125,
-     8.0
+     -3.4375,
+     -3.4375
     ],
     [
-     -4.875,
-     6.4375
-    ],
-    [
-     -6.4375,
-     4.875
-    ],
-    [
-     -8.0,
-     3.3125
-    ],
-    [
-     -8.0,
-     2.5
-    ],
-    [
-     -2.0,
-     2.0
-    ],
-    [
-     2.0,
-     2.0
+     3.4375,
+     -3.4375
     ]
    ],
-   "floor": 0.0,
-   "ceiling": 6.0,
-   "floor_tex": "floor_bridge",
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "floor_airlock",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
-   "light": 0.7216,
-   "tint": "#ffffff",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 0
-  },
-  {
-   "id": "0_1",
-   "polygon": [
-    [
-     -2.0,
-     -2.0
-    ],
-    [
-     -2.0,
-     2.0
-    ],
-    [
-     -8.0,
-     2.5
-    ]
-   ],
-   "floor": 0.0,
-   "ceiling": 6.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
-   "light": 0.7216,
-   "tint": "#ffffff",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 0
-  },
-  {
-   "id": "0_2",
-   "polygon": [
-    [
-     8.0,
-     -2.5
-    ],
-    [
-     8.0,
-     2.5
-    ],
-    [
-     8.0,
-     3.3125
-    ],
-    [
-     6.4375,
-     4.875
-    ],
-    [
-     4.875,
-     6.4375
-    ],
-    [
-     3.3125,
-     8.0
-    ],
-    [
-     2.5,
-     8.0
-    ],
-    [
-     2.0,
-     2.0
-    ],
-    [
-     2.0,
-     -2.0
-    ]
-   ],
-   "floor": 0.0,
-   "ceiling": 6.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
-   "light": 0.7216,
-   "tint": "#ffffff",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 0
-  },
-  {
-   "id": "0_3",
-   "polygon": [
-    [
-     3.3125,
-     -8.0
-    ],
-    [
-     4.875,
-     -6.4375
-    ],
-    [
-     6.4375,
-     -4.875
-    ],
-    [
-     8.0,
-     -3.3125
-    ],
-    [
-     8.0,
-     -2.5
-    ],
-    [
-     2.0,
-     -2.0
-    ],
-    [
-     -2.0,
-     -2.0
-    ]
-   ],
-   "floor": 0.0,
-   "ceiling": 6.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
-   "light": 0.7216,
-   "tint": "#ffffff",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 0
-  },
-  {
-   "id": "0_4",
-   "polygon": [
-    [
-     -8.0,
-     -3.3125
-    ],
-    [
-     -6.4375,
-     -4.875
-    ],
-    [
-     -4.875,
-     -6.4375
-    ],
-    [
-     -3.3125,
-     -8.0
-    ],
-    [
-     -2.5,
-     -8.0
-    ],
-    [
-     2.5,
-     -8.0
-    ],
-    [
-     3.3125,
-     -8.0
-    ],
-    [
-     -2.0,
-     -2.0
-    ],
-    [
-     -8.0,
-     2.5
-    ],
-    [
-     -8.0,
-     -2.5
-    ]
-   ],
-   "floor": 0.0,
-   "ceiling": 6.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
-   "light": 0.7216,
+   "light": 0.4471,
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
@@ -247,28 +51,215 @@
    "id": "1_0",
    "polygon": [
     [
-     2.0,
-     2.0
+     -3.4375,
+     -3.4375
     ],
     [
-     -2.0,
-     2.0
+     -7.25,
+     -4.03125
     ],
     [
-     -2.0,
-     -2.0
+     -4.03125,
+     -7.25
     ],
     [
-     2.0,
-     -2.0
+     -3.3125,
+     -7.96875
+    ],
+    [
+     -3.21875,
+     -7.96875
+    ],
+    [
+     1.4375,
+     -7.96875
+    ],
+    [
+     3.3125,
+     -7.96875
+    ],
+    [
+     3.375,
+     -7.90625
+    ],
+    [
+     6.65625,
+     -4.625
+    ],
+    [
+     3.4375,
+     -3.4375
     ]
    ],
-   "floor": 0.5,
-   "ceiling": 6.0,
-   "floor_tex": "floor_airlock",
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
-   "light": 0.8314,
+   "light": 0.7216,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 1
+  },
+  {
+   "id": "1_1",
+   "polygon": [
+    [
+     -3.4375,
+     3.4375
+    ],
+    [
+     -3.3125,
+     7.96875
+    ],
+    [
+     -7.96875,
+     3.3125
+    ],
+    [
+     -7.96875,
+     -3.3125
+    ],
+    [
+     -7.25,
+     -4.03125
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.7216,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 1
+  },
+  {
+   "id": "1_2",
+   "polygon": [
+    [
+     7.96875,
+     3.3125
+    ],
+    [
+     7.90625,
+     3.375
+    ],
+    [
+     4.625,
+     6.65625
+    ],
+    [
+     3.3125,
+     7.96875
+    ],
+    [
+     -3.3125,
+     7.96875
+    ],
+    [
+     3.4375,
+     3.4375
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.7216,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 1
+  },
+  {
+   "id": "1_3",
+   "polygon": [
+    [
+     -3.4375,
+     3.4375
+    ],
+    [
+     3.4375,
+     3.4375
+    ],
+    [
+     -3.3125,
+     7.96875
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.7216,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 1
+  },
+  {
+   "id": "1_4",
+   "polygon": [
+    [
+     -3.4375,
+     -3.4375
+    ],
+    [
+     -3.4375,
+     3.4375
+    ],
+    [
+     -7.25,
+     -4.03125
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.7216,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 1
+  },
+  {
+   "id": "1_5",
+   "polygon": [
+    [
+     3.4375,
+     -3.4375
+    ],
+    [
+     6.65625,
+     -4.625
+    ],
+    [
+     7.96875,
+     -3.3125
+    ],
+    [
+     7.96875,
+     3.3125
+    ],
+    [
+     3.4375,
+     3.4375
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.7216,
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
@@ -278,28 +269,86 @@
    "id": "2_0",
    "polygon": [
     [
-     2.5,
-     -15.625
+     4.75,
+     -64.09375
     ],
     [
-     2.5,
-     -8.0
+     8.3125,
+     -23.75
     ],
     [
-     -2.5,
-     -8.0
+     4.75,
+     -10.6875
     ],
     [
-     -2.5,
-     -15.625
+     -1.78125,
+     -8.90625
+    ],
+    [
+     -1.78125,
+     -9.03125
     ]
    ],
-   "floor": 0.0,
-   "ceiling": 4.0,
+   "floor": 0.75,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
-   "light": 0.5294,
+   "light": 0.5569,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 2
+  },
+  {
+   "id": "2_1",
+   "polygon": [
+    [
+     -2.5,
+     -14.84375
+    ],
+    [
+     -8.59375,
+     -63.8125
+    ],
+    [
+     4.75,
+     -64.09375
+    ]
+   ],
+   "floor": 0.75,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5569,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 2
+  },
+  {
+   "id": "2_2",
+   "polygon": [
+    [
+     -1.78125,
+     -9.03125
+    ],
+    [
+     -2.5,
+     -14.84375
+    ],
+    [
+     4.75,
+     -64.09375
+    ]
+   ],
+   "floor": 0.75,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5569,
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
@@ -309,28 +358,137 @@
    "id": "3_0",
    "polygon": [
     [
-     11.125,
-     -9.5625
+     32.0625,
+     0.59375
     ],
     [
-     6.4375,
-     -4.875
+     23.4375,
+     5.625
     ],
     [
-     4.875,
-     -6.4375
+     4.75,
+     -7.71875
     ],
     [
-     9.5625,
-     -11.125
+     4.8125,
+     -7.78125
     ]
    ],
-   "floor": 0.125,
-   "ceiling": 4.0,
+   "floor": 0.25,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
-   "light": 0.502,
+   "light": 0.6118,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 3
+  },
+  {
+   "id": "3_1",
+   "polygon": [
+    [
+     43.625,
+     -3.84375
+    ],
+    [
+     38.59375,
+     5.34375
+    ],
+    [
+     32.0625,
+     0.59375
+    ]
+   ],
+   "floor": 0.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6118,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 3
+  },
+  {
+   "id": "3_2",
+   "polygon": [
+    [
+     7.53125,
+     -13.0
+    ],
+    [
+     27.3125,
+     -32.0625
+    ],
+    [
+     28.25,
+     -32.0625
+    ],
+    [
+     34.90625,
+     -32.0625
+    ],
+    [
+     36.8125,
+     -32.0625
+    ],
+    [
+     45.6875,
+     -20.78125
+    ],
+    [
+     50.75,
+     -10.96875
+    ],
+    [
+     43.625,
+     -3.84375
+    ],
+    [
+     32.0625,
+     0.59375
+    ],
+    [
+     4.8125,
+     -7.78125
+    ]
+   ],
+   "floor": 0.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6118,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 3
+  },
+  {
+   "id": "3_3",
+   "polygon": [
+    [
+     7.53125,
+     -13.0
+    ],
+    [
+     12.46875,
+     -22.5625
+    ],
+    [
+     27.3125,
+     -32.0625
+    ]
+   ],
+   "floor": 0.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6118,
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
@@ -340,28 +498,106 @@
    "id": "4_0",
    "polygon": [
     [
-     -8.0,
-     -2.5
+     24.75,
+     -49.09375
     ],
     [
-     -8.0,
-     2.5
+     21.96875,
+     -49.25
     ],
     [
-     -15.625,
-     2.5
+     7.71875,
+     -55.78125
     ],
     [
-     -15.625,
-     -2.5
+     15.5625,
+     -65.15625
     ]
    ],
-   "floor": 0.1875,
-   "ceiling": 4.5,
+   "floor": 0.5,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
-   "light": 0.5569,
+   "light": 0.5843,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 4
+  },
+  {
+   "id": "4_1",
+   "polygon": [
+    [
+     29.6875,
+     -64.9375
+    ],
+    [
+     44.5,
+     -64.6875
+    ],
+    [
+     52.8125,
+     -59.9375
+    ],
+    [
+     53.40625,
+     -52.8125
+    ],
+    [
+     43.3125,
+     -50.4375
+    ],
+    [
+     31.46875,
+     -48.65625
+    ],
+    [
+     31.34375,
+     -48.65625
+    ],
+    [
+     24.75,
+     -49.09375
+    ],
+    [
+     15.5625,
+     -65.15625
+    ]
+   ],
+   "floor": 0.5,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5843,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 4
+  },
+  {
+   "id": "4_2",
+   "polygon": [
+    [
+     29.6875,
+     -64.9375
+    ],
+    [
+     34.71875,
+     -64.875
+    ],
+    [
+     44.5,
+     -64.6875
+    ]
+   ],
+   "floor": 0.5,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5843,
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
@@ -371,24 +607,24 @@
    "id": "5_0",
    "polygon": [
     [
-     -4.875,
-     -6.4375
+     32.125,
+     -68.90625
     ],
     [
-     -6.4375,
-     -4.875
+     32.0625,
+     -68.84375
     ],
     [
-     -11.125,
-     -9.5625
+     26.71875,
+     -70.625
     ],
     [
-     -9.5625,
-     -11.125
+     27.3125,
+     -78.34375
     ]
    ],
-   "floor": 0.3125,
-   "ceiling": 4.0,
+   "floor": 1.25,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
@@ -399,27 +635,391 @@
    "doom_sector": 5
   },
   {
-   "id": "6_0",
+   "id": "5_1",
    "polygon": [
     [
-     2.5,
-     8.0
+     35.03125,
+     -70.15625
     ],
     [
-     2.5,
-     15.625
+     32.125,
+     -68.90625
     ],
     [
-     -2.5,
-     15.625
+     27.3125,
+     -78.34375
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 5
+  },
+  {
+   "id": "5_2",
+   "polygon": [
+    [
+     26.125,
+     -87.84375
     ],
     [
-     -2.5,
-     8.0
+     35.03125,
+     -88.4375
+    ],
+    [
+     36.21875,
+     -83.6875
+    ],
+    [
+     37.40625,
+     -74.1875
+    ],
+    [
+     36.21875,
+     -70.625
+    ],
+    [
+     35.03125,
+     -70.15625
+    ],
+    [
+     27.3125,
+     -78.34375
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 5
+  },
+  {
+   "id": "8_0",
+   "polygon": [
+    [
+     -21.96875,
+     -19.59375
+    ],
+    [
+     -28.78125,
+     -18.6875
+    ],
+    [
+     -35.90625,
+     -31.15625
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "8_1",
+   "polygon": [
+    [
+     -10.4375,
+     -7.375
+    ],
+    [
+     -11.5625,
+     -6.21875
+    ],
+    [
+     -16.90625,
+     -8.0
+    ],
+    [
+     -22.25,
+     -15.71875
+    ],
+    [
+     -21.96875,
+     -19.59375
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "8_2",
+   "polygon": [
+    [
+     -7.375,
+     -10.4375
+    ],
+    [
+     -10.4375,
+     -7.375
+    ],
+    [
+     -21.96875,
+     -19.59375
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "8_3",
+   "polygon": [
+    [
+     -15.125,
+     -22.25
+    ],
+    [
+     -8.90625,
+     -17.21875
+    ],
+    [
+     -7.125,
+     -10.6875
+    ],
+    [
+     -7.375,
+     -10.4375
+    ],
+    [
+     -21.96875,
+     -19.59375
+    ],
+    [
+     -35.90625,
+     -31.15625
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "8_4",
+   "polygon": [
+    [
+     -17.8125,
+     -27.3125
+    ],
+    [
+     -15.125,
+     -22.25
+    ],
+    [
+     -35.90625,
+     -31.15625
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "8_5",
+   "polygon": [
+    [
+     -28.78125,
+     -38.28125
+    ],
+    [
+     -15.125,
+     -38.875
+    ],
+    [
+     -17.8125,
+     -27.3125
+    ],
+    [
+     -35.90625,
+     -31.15625
+    ]
+   ],
+   "floor": 1.25,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.5294,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8
+  },
+  {
+   "id": "11_0",
+   "polygon": [
+    [
+     -1.78125,
+     -9.03125
+    ],
+    [
+     1.4375,
+     -7.96875
+    ],
+    [
+     -3.21875,
+     -7.96875
     ]
    ],
    "floor": 0.375,
-   "ceiling": 4.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6392,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 11
+  },
+  {
+   "id": "11_1",
+   "polygon": [
+    [
+     -2.5,
+     -14.84375
+    ],
+    [
+     -1.78125,
+     -9.03125
+    ],
+    [
+     -3.21875,
+     -7.96875
+    ]
+   ],
+   "floor": 0.375,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6392,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 11
+  },
+  {
+   "id": "12_0",
+   "polygon": [
+    [
+     4.8125,
+     -7.78125
+    ],
+    [
+     6.65625,
+     -4.625
+    ],
+    [
+     3.375,
+     -7.90625
+    ]
+   ],
+   "floor": 0.125,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6667,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 12
+  },
+  {
+   "id": "12_1",
+   "polygon": [
+    [
+     7.53125,
+     -13.0
+    ],
+    [
+     4.8125,
+     -7.78125
+    ],
+    [
+     3.375,
+     -7.90625
+    ]
+   ],
+   "floor": 0.125,
+   "ceiling": 8.0,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6667,
+   "tint": "#ffffff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 12
+  },
+  {
+   "id": "14_0",
+   "polygon": [
+    [
+     -7.375,
+     -10.4375
+    ],
+    [
+     -4.03125,
+     -7.25
+    ],
+    [
+     -7.25,
+     -4.03125
+    ],
+    [
+     -10.4375,
+     -7.375
+    ]
+   ],
+   "floor": 0.625,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
@@ -427,61 +1027,30 @@
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
-   "doom_sector": 6
+   "doom_sector": 14
   },
   {
-   "id": "7_0",
+   "id": "15_0",
    "polygon": [
     [
-     -4.875,
-     6.4375
+     31.34375,
+     -48.65625
     ],
     [
-     -9.5625,
-     11.125
+     34.90625,
+     -32.0625
     ],
     [
-     -11.125,
-     9.5625
+     28.25,
+     -32.0625
     ],
     [
-     -6.4375,
-     4.875
+     24.75,
+     -49.09375
     ]
    ],
-   "floor": 0.5,
-   "ceiling": 4.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
-   "light": 0.5569,
-   "tint": "#ffffff",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 7
-  },
-  {
-   "id": "8_0",
-   "polygon": [
-    [
-     15.625,
-     2.5
-    ],
-    [
-     8.0,
-     2.5
-    ],
-    [
-     8.0,
-     -2.5
-    ],
-    [
-     15.625,
-     -2.5
-    ]
-   ],
-   "floor": 0.5625,
-   "ceiling": 4.5,
+   "floor": 0.375,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
@@ -489,30 +1058,30 @@
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
-   "doom_sector": 8
+   "doom_sector": 15
   },
   {
-   "id": "9_0",
+   "id": "16_0",
    "polygon": [
     [
-     9.5625,
-     11.125
+     35.03125,
+     -70.15625
     ],
     [
-     4.875,
-     6.4375
+     34.71875,
+     -64.875
     ],
     [
-     6.4375,
-     4.875
+     29.6875,
+     -64.9375
     ],
     [
-     11.125,
-     9.5625
+     32.125,
+     -68.90625
     ]
    ],
-   "floor": 0.6875,
-   "ceiling": 4.0,
+   "floor": 0.875,
+   "ceiling": 8.0,
    "floor_tex": "floor_bridge",
    "ceil_tex": "ceil_hull",
    "wall_tex": "wall_hull",
@@ -520,247 +1089,513 @@
    "tint": "#ffffff",
    "room": "main",
    "flags": [],
-   "doom_sector": 9
+   "doom_sector": 16
   }
  ],
  "walls": [
   {
    "from": [
-    -8.0,
-    2.5
+    -35.90625,
+    -31.15625
    ],
    "to": [
-    -8.0,
-    -2.5
+    -21.96875,
+    -19.59375
    ],
-   "sector": "0_4",
-   "portal": "4_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
-  },
-  {
-   "from": [
-    -8.0,
-    2.5
-   ],
-   "to": [
-    -2.0,
-    2.0
-   ],
-   "sector": "0_0",
-   "portal": "0_1",
+   "sector": "8_0",
+   "portal": "8_3",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    -8.0,
-    2.5
+    -35.90625,
+    -31.15625
    ],
    "to": [
-    -2.0,
-    -2.0
+    -17.8125,
+    -27.3125
    ],
-   "sector": "0_1",
-   "portal": "0_4",
+   "sector": "8_4",
+   "portal": "8_5",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    -4.875,
-    6.4375
+    -35.90625,
+    -31.15625
    ],
    "to": [
-    -6.4375,
-    4.875
+    -15.125,
+    -22.25
+   ],
+   "sector": "8_3",
+   "portal": "8_4",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -21.96875,
+    -19.59375
+   ],
+   "to": [
+    -10.4375,
+    -7.375
+   ],
+   "sector": "8_1",
+   "portal": "8_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -21.96875,
+    -19.59375
+   ],
+   "to": [
+    -7.375,
+    -10.4375
+   ],
+   "sector": "8_2",
+   "portal": "8_3",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -10.4375,
+    -7.375
+   ],
+   "to": [
+    -7.375,
+    -10.4375
+   ],
+   "sector": "14_0",
+   "portal": "8_2",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -4.03125,
+    -7.25
+   ],
+   "to": [
+    -7.25,
+    -4.03125
+   ],
+   "sector": "14_0",
+   "portal": "1_0",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -7.25,
+    -4.03125
+   ],
+   "to": [
+    -3.4375,
+    3.4375
+   ],
+   "sector": "1_1",
+   "portal": "1_4",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.4375,
+    -3.4375
+   ],
+   "to": [
+    -7.25,
+    -4.03125
+   ],
+   "sector": "1_0",
+   "portal": "1_4",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.4375,
+    3.4375
+   ],
+   "to": [
+    -3.4375,
+    -3.4375
    ],
    "sector": "0_0",
-   "portal": "7_0",
+   "portal": "1_4",
    "lower_tex": "trim",
-   "upper_tex": "trim"
+   "upper_tex": ""
   },
   {
    "from": [
-    -6.4375,
-    -4.875
+    -3.4375,
+    3.4375
    ],
    "to": [
-    -4.875,
-    -6.4375
+    -3.3125,
+    7.96875
    ],
-   "sector": "0_4",
-   "portal": "5_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
+   "sector": "1_1",
+   "portal": "1_3",
+   "lower_tex": "",
+   "upper_tex": ""
   },
   {
    "from": [
-    2.5,
-    8.0
+    3.4375,
+    3.4375
+   ],
+   "to": [
+    -3.4375,
+    3.4375
+   ],
+   "sector": "0_0",
+   "portal": "1_3",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.4375,
+    -3.4375
+   ],
+   "to": [
+    3.4375,
+    -3.4375
+   ],
+   "sector": "0_0",
+   "portal": "1_0",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.3125,
+    7.96875
+   ],
+   "to": [
+    3.4375,
+    3.4375
+   ],
+   "sector": "1_2",
+   "portal": "1_3",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.21875,
+    -7.96875
+   ],
+   "to": [
+    -1.78125,
+    -9.03125
+   ],
+   "sector": "11_0",
+   "portal": "11_1",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    1.4375,
+    -7.96875
+   ],
+   "to": [
+    -3.21875,
+    -7.96875
+   ],
+   "sector": "11_0",
+   "portal": "1_0",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -2.5,
+    -14.84375
+   ],
+   "to": [
+    -1.78125,
+    -9.03125
+   ],
+   "sector": "11_1",
+   "portal": "2_2",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    4.75,
+    -64.09375
    ],
    "to": [
     -2.5,
-    8.0
+    -14.84375
+   ],
+   "sector": "2_1",
+   "portal": "2_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -1.78125,
+    -9.03125
+   ],
+   "to": [
+    4.75,
+    -64.09375
+   ],
+   "sector": "2_0",
+   "portal": "2_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.375,
+    -7.90625
+   ],
+   "to": [
+    4.8125,
+    -7.78125
+   ],
+   "sector": "12_0",
+   "portal": "12_1",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    6.65625,
+    -4.625
+   ],
+   "to": [
+    3.375,
+    -7.90625
+   ],
+   "sector": "12_0",
+   "portal": "1_0",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.4375,
+    -3.4375
+   ],
+   "to": [
+    3.4375,
+    3.4375
    ],
    "sector": "0_0",
-   "portal": "6_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
-  },
-  {
-   "from": [
-    -2.5,
-    -8.0
-   ],
-   "to": [
-    2.5,
-    -8.0
-   ],
-   "sector": "0_4",
-   "portal": "2_0",
-   "lower_tex": "",
-   "upper_tex": "trim"
-  },
-  {
-   "from": [
-    -2.0,
-    -2.0
-   ],
-   "to": [
-    -2.0,
-    2.0
-   ],
-   "sector": "0_1",
-   "portal": "1_0",
+   "portal": "1_5",
    "lower_tex": "trim",
    "upper_tex": ""
   },
   {
    "from": [
-    -2.0,
-    2.0
+    3.4375,
+    3.4375
    ],
    "to": [
-    2.0,
-    2.0
+    7.96875,
+    3.3125
    ],
-   "sector": "0_0",
-   "portal": "1_0",
-   "lower_tex": "trim",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    2.0,
-    -2.0
-   ],
-   "to": [
-    -2.0,
-    -2.0
-   ],
-   "sector": "0_3",
-   "portal": "1_0",
-   "lower_tex": "trim",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -2.0,
-    -2.0
-   ],
-   "to": [
-    3.3125,
-    -8.0
-   ],
-   "sector": "0_3",
-   "portal": "0_4",
+   "sector": "1_2",
+   "portal": "1_5",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    2.0,
-    2.0
+    6.65625,
+    -4.625
    ],
    "to": [
-    2.0,
-    -2.0
+    3.4375,
+    -3.4375
    ],
-   "sector": "0_2",
-   "portal": "1_0",
-   "lower_tex": "trim",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    2.0,
-    2.0
-   ],
-   "to": [
-    2.5,
-    8.0
-   ],
-   "sector": "0_0",
-   "portal": "0_2",
+   "sector": "1_0",
+   "portal": "1_5",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    2.0,
-    -2.0
+    7.53125,
+    -13.0
    ],
    "to": [
-    8.0,
-    -2.5
+    4.8125,
+    -7.78125
    ],
-   "sector": "0_2",
-   "portal": "0_3",
+   "sector": "12_1",
+   "portal": "3_2",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    4.8125,
+    -7.78125
+   ],
+   "to": [
+    32.0625,
+    0.59375
+   ],
+   "sector": "3_0",
+   "portal": "3_2",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    6.4375,
-    4.875
+    7.53125,
+    -13.0
    ],
    "to": [
-    4.875,
-    6.4375
+    27.3125,
+    -32.0625
    ],
-   "sector": "0_2",
-   "portal": "9_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
+   "sector": "3_2",
+   "portal": "3_3",
+   "lower_tex": "",
+   "upper_tex": ""
   },
   {
    "from": [
-    4.875,
-    -6.4375
+    15.5625,
+    -65.15625
    ],
    "to": [
-    6.4375,
-    -4.875
+    24.75,
+    -49.09375
    ],
-   "sector": "0_3",
-   "portal": "3_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
+   "sector": "4_0",
+   "portal": "4_1",
+   "lower_tex": "",
+   "upper_tex": ""
   },
   {
    "from": [
-    8.0,
-    -2.5
+    24.75,
+    -49.09375
    ],
    "to": [
-    8.0,
-    2.5
+    31.34375,
+    -48.65625
    ],
-   "sector": "0_2",
-   "portal": "8_0",
+   "sector": "15_0",
+   "portal": "4_1",
    "lower_tex": "trim",
-   "upper_tex": "trim"
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    27.3125,
+    -78.34375
+   ],
+   "to": [
+    32.125,
+    -68.90625
+   ],
+   "sector": "5_0",
+   "portal": "5_1",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    27.3125,
+    -78.34375
+   ],
+   "to": [
+    35.03125,
+    -70.15625
+   ],
+   "sector": "5_1",
+   "portal": "5_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    34.90625,
+    -32.0625
+   ],
+   "to": [
+    28.25,
+    -32.0625
+   ],
+   "sector": "15_0",
+   "portal": "3_2",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    34.71875,
+    -64.875
+   ],
+   "to": [
+    29.6875,
+    -64.9375
+   ],
+   "sector": "16_0",
+   "portal": "4_2",
+   "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    29.6875,
+    -64.9375
+   ],
+   "to": [
+    44.5,
+    -64.6875
+   ],
+   "sector": "4_1",
+   "portal": "4_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    32.0625,
+    0.59375
+   ],
+   "to": [
+    43.625,
+    -3.84375
+   ],
+   "sector": "3_1",
+   "portal": "3_2",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    32.125,
+    -68.90625
+   ],
+   "to": [
+    35.03125,
+    -70.15625
+   ],
+   "sector": "16_0",
+   "portal": "5_1",
+   "lower_tex": "trim",
+   "upper_tex": ""
   }
  ],
  "things": [],
@@ -772,11 +1607,11 @@
   {
    "id": "doom_start",
    "at": [
-    0.0,
-    5.625
+    -5.34375,
+    -5.34375
    ],
-   "yaw": 0.0,
-   "sector": "0_0"
+   "yaw": 225.0,
+   "sector": "1_0"
   }
  ],
  "doom": {
@@ -787,39 +1622,42 @@
   "sector_map": {
    "0": {
     "pieces": [
-     "0_0",
-     "0_1",
-     "0_2",
-     "0_3",
-     "0_4"
+     "0_0"
     ],
-    "floor": 0,
-    "ceiling": 192,
-    "light": 190,
-    "floor_flat": "FLOOR4_8",
+    "floor": -24,
+    "ceiling": 256,
+    "light": 90,
+    "floor_flat": "FWATER1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
    "1": {
     "pieces": [
-     "1_0"
+     "1_0",
+     "1_1",
+     "1_2",
+     "1_3",
+     "1_4",
+     "1_5"
     ],
-    "floor": 16,
-    "ceiling": 192,
-    "light": 230,
-    "floor_flat": "FLOOR0_1",
+    "floor": 0,
+    "ceiling": 256,
+    "light": 190,
+    "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
    "2": {
     "pieces": [
-     "2_0"
+     "2_0",
+     "2_1",
+     "2_2"
     ],
-    "floor": 0,
-    "ceiling": 128,
-    "light": 120,
+    "floor": 24,
+    "ceiling": 256,
+    "light": 130,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -827,107 +1665,162 @@
    },
    "3": {
     "pieces": [
-     "3_0"
+     "3_0",
+     "3_1",
+     "3_2",
+     "3_3"
     ],
-    "floor": 4,
-    "ceiling": 128,
-    "light": 110,
-    "floor_flat": "FLOOR5_1",
+    "floor": 8,
+    "ceiling": 256,
+    "light": 150,
+    "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
    "4": {
     "pieces": [
-     "4_0"
+     "4_0",
+     "4_1",
+     "4_2"
     ],
-    "floor": 6,
-    "ceiling": 144,
-    "light": 130,
-    "floor_flat": "FLOOR5_1",
+    "floor": 16,
+    "ceiling": 256,
+    "light": 140,
+    "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
    "5": {
     "pieces": [
-     "5_0"
+     "5_0",
+     "5_1",
+     "5_2"
     ],
-    "floor": 10,
-    "ceiling": 128,
+    "floor": 40,
+    "ceiling": 256,
     "light": 120,
-    "floor_flat": "FLOOR5_1",
-    "ceil_flat": "CEIL3_5",
-    "special": 0,
-    "tag": 0
-   },
-   "6": {
-    "pieces": [
-     "6_0"
-    ],
-    "floor": 12,
-    "ceiling": 128,
-    "light": 140,
-    "floor_flat": "FLOOR5_1",
-    "ceil_flat": "CEIL3_5",
-    "special": 0,
-    "tag": 0
-   },
-   "7": {
-    "pieces": [
-     "7_0"
-    ],
-    "floor": 16,
-    "ceiling": 128,
-    "light": 130,
-    "floor_flat": "FLOOR5_1",
+    "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
    "8": {
     "pieces": [
-     "8_0"
+     "8_0",
+     "8_1",
+     "8_2",
+     "8_3",
+     "8_4",
+     "8_5"
     ],
-    "floor": 18,
-    "ceiling": 144,
-    "light": 150,
+    "floor": 40,
+    "ceiling": 256,
+    "light": 120,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    },
-   "9": {
+   "11": {
     "pieces": [
-     "9_0"
+     "11_0",
+     "11_1"
     ],
-    "floor": 22,
-    "ceiling": 128,
+    "floor": 12,
+    "ceiling": 256,
+    "light": 160,
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "12": {
+    "pieces": [
+     "12_0",
+     "12_1"
+    ],
+    "floor": 4,
+    "ceiling": 256,
+    "light": 170,
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "14": {
+    "pieces": [
+     "14_0"
+    ],
+    "floor": 20,
+    "ceiling": 256,
     "light": 140,
-    "floor_flat": "FLOOR5_1",
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "15": {
+    "pieces": [
+     "15_0"
+    ],
+    "floor": 12,
+    "ceiling": 256,
+    "light": 150,
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "16": {
+    "pieces": [
+     "16_0"
+    ],
+    "floor": 28,
+    "ceiling": 256,
+    "light": 140,
+    "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
    }
   },
   "dropped_tiny": [],
-  "dropped_unreachable_pieces": [],
-  "dropped_unbuildable_sectors": [],
+  "dropped_unreachable_pieces": [
+   "6_0",
+   "6_1",
+   "6_2",
+   "6_3",
+   "7_0",
+   "7_1",
+   "7_2",
+   "9_0",
+   "9_1",
+   "9_2",
+   "10_0",
+   "17_0",
+   "18_0"
+  ],
+  "dropped_unbuildable_sectors": [
+   13
+  ],
   "broken_sectors": [],
   "doors_opened": [],
   "outside_cut_sectors": 0,
   "warnings": [],
   "approximate": true,
   "uncertain": [
-   "Footprint is an estimate from knowledge of the level, not read from the WAD or measured on the render.",
-   "An octagonal central hub (512 across) with eight doors is taken from the brief; the real map's hub size, door positions and the traps are unknown.",
-   "The eight rooms are identical closets of invented size and heights; the real rooms are different shapes and connect to each other and to further areas.",
-   "The central dais is invented."
+   "TRACED FROM THE RENDER MAP08.jpg (rotated 45 degrees, north upper right), at an assumed 1 render px = 1 Doom unit; the hub is about 510 units across.",
+   "Read from the render: an octagonal blue-water hub (a sunken square pool inside) with big rooms radiating from it: a long brown room to the north-east, a large grey room to the east leading to a far north-east grey hall and a cross-shaped tower, a long grey room to the south-west leading to a cross-shaped south room and a brown snake-shaped room, a brown room to the west, a brown stepped room to the north-west.",
+   "NOT readable: heights (guessed 0 to +40, pool -24), the doors between rooms (the tracer inserts 60 to 90 unit links at the nearest edges, not where the real doors are), the interior walls and the small trap rooms, the long diagonal corridor to the north-west, the small dark tower west of the hub and the little room south-east of the hub.",
+   "The brief's eight doors on the hub are NOT confirmed by the render: five links are inserted on the hub here.",
+   "Room outlines are coarse readings of a 1500 px thumbnail."
   ],
   "stats": {
-   "doom_sectors": 10,
-   "pieces": 14,
-   "portals": 17
+   "doom_sectors": 12,
+   "pieces": 33,
+   "portals": 36
   }
  }
 }
