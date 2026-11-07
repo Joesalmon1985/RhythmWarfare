@@ -2,6 +2,112 @@
  "world": "hospital_late",
  "hotspots": [
   {
+   "id": "hospital_late.cafe.enter_ember",
+   "world": "hospital_late",
+   "scene": "hospital_late.cafe",
+   "map": "hospital",
+   "anchor": {
+    "pos": [
+     44.8,
+     1.0,
+     3.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_ember_kept",
+      "keep:path_ember_quenched"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     43.5,
+     4.4
+    ],
+    "toward": [
+     44.8,
+     3.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "hospital_late.quiet.enter_bassment",
+   "world": "hospital_late",
+   "scene": "hospital_late.quiet",
+   "map": "hospital",
+   "anchor": {
+    "pos": [
+     13.7,
+     1.0,
+     8.0
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     14.8,
+     6.9
+    ],
+    "toward": [
+     13.7,
+     8.0
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
    "id": "hospital_late.exit_cafe",
    "world": "hospital_late",
    "scene": "hospital_late",

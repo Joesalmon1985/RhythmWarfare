@@ -8001,7 +8001,7 @@
    "kind": "quest_entry",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "hospital.enter_bassment"
@@ -8017,7 +8017,7 @@
    "kind": "quest_entry",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "hospital.enter_ember"
@@ -8033,7 +8033,7 @@
    "kind": "quest_entry",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "hospital.enter_gospel"
@@ -8188,7 +8188,7 @@
    "kind": "quest_entry",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "hospital.enter_squadron"
@@ -8204,7 +8204,7 @@
    "link": "extra_entrance",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "hospital.cafeteria.enter_gospel"
@@ -8478,7 +8478,7 @@
    "link": "extra_entrance",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "hospital.dayroom.enter_bassment"
@@ -8811,7 +8811,7 @@
    "link": "extra_entrance",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "hospital.garden.enter_squadron"
@@ -9002,7 +9002,7 @@
    "link": "extra_entrance",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "hospital_late.cafe.enter_ember"
@@ -9306,7 +9306,7 @@
    "link": "extra_entrance",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "hospital_late.quiet.enter_bassment"
@@ -15078,8 +15078,8 @@
    },
    "edges_by_status": {
     "changed": 177,
-    "existing": 582,
-    "proposed": 244
+    "existing": 591,
+    "proposed": 235
    },
    "nodes": 146
   },

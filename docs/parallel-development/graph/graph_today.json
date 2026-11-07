@@ -6297,6 +6297,114 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "hospital.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "hospital.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6420,6 +6528,53 @@
    "status": "existing",
    "to": "main/hospital.corridor",
    "via": "hospital.nurse"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "hospital.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "hospital.cafeteria.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.garden",
+   "via": "hospital.cafeteria.enter_gospel"
   },
   {
    "condition": {
@@ -6655,6 +6810,37 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital.dayroom.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.garden",
+   "via": "hospital.dayroom.enter_bassment"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6839,6 +7025,21 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.garden",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.exit",
+   "via": "hospital.garden.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6930,6 +7131,22 @@
    "status": "existing",
    "to": "main/hospital.exit",
    "via": "hospital.garden.mum"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.garden",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "hospital.garden.enter_squadron"
   },
   {
    "condition": {
@@ -7092,6 +7309,37 @@
    "status": "existing",
    "to": "main/hospital_late.quiet",
    "via": "hospital_late.exit_quiet"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "hospital_late.cafe.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital_late.exit",
+   "via": "hospital_late.cafe.enter_ember"
   },
   {
    "condition": {
@@ -7354,6 +7602,37 @@
    "status": "existing",
    "to": "main/ward_late",
    "via": "hospital_late.exit.exit_ward_late"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital_late.quiet.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital_late.exit",
+   "via": "hospital_late.quiet.enter_bassment"
   },
   {
    "condition": {
@@ -12760,14 +13039,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 842,
+   "edges": 860,
    "edges_by_kind": {
-    "quest_entry": 29,
+    "quest_entry": 38,
     "quest_return": 230,
-    "scene": 583
+    "scene": 592
    },
    "edges_by_status": {
-    "existing": 842
+    "existing": 860
    },
    "nodes": 146
   },

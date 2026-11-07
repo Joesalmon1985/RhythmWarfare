@@ -81,5 +81,15 @@ ward_corridor_squadron ward.corridor      -              20.0:5.0:124:2    right
 ward_courtyard_ember ward.courtyard     -              55.5:6.5:-70:2    right,right,up,up,right,up,up,right,right,up,up
 ward_late_treat_bassment ward_late.treat    -              14.6:8.6:-144:0    right,right,up,up,right,up,up,left,up,left,up,up,right,left
 ward_late_dorm_gospel ward_late.dorm     -              26.0:9.6:156:0    right,right,up,up,right,up,up,left,up,left,up,up,right,right
+# N2.4 Hospital Ward (hospital, hospital_late): the ward's four gates (one routed run shows all four: the other three are close shots), then one per side scene (close camera x:z:yaw:pitch)
+hw_ember       hospital             -   -2.2:1.2:-120:2   right,right,up,up,right,up,up,left
+hw_bassment    hospital             -   0.0:1.8:-125:2    -
+hw_gospel      hospital             -   -0.2:0.5:-119:2   -
+hw_squadron    hospital             -   -2.5:0.2:-118:2   -
+hw_day_bass    hospital.dayroom     -   21.0:-3.2:-53:2   right,right,up,up,right,up,up,left,up,left
+hw_cafe_gospel hospital.cafeteria   -   41.5:2.5:-48:2    right,right,up,up,right,up,up,left,up,right
+hw_garden_squad hospital.garden     -   51.0:0.5:-44:2    right,right,up,up,right,up,up,left,up,left,up
+hw_late_ember  hospital_late.cafe   -   40.5:1.0:-129:2   right,right,up,up,right,up,up,left,up,left,up,up,left,left
+hw_quiet_bass  hospital_late.quiet  -   14.2:10.5:0:2     right,right,up,up,right,up,up,left,up,left,up,up,left,right
 LIST
 rm -rf "$TMP"

@@ -399,7 +399,7 @@
    "scene": "main/hospital",
    "object": {
     "id": "hospital.enter_bassment",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A service hatch with chalk marks behind the nurses' station."
    },
    "transition": "port",
@@ -414,7 +414,7 @@
    "scene": "main/hospital",
    "object": {
     "id": "hospital.enter_gospel",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A figure of light under a star-shaped lamp above a bed."
    },
    "transition": "port",
@@ -429,7 +429,7 @@
    "scene": "main/hospital",
    "object": {
     "id": "hospital.enter_squadron",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A crackling wartime radio on a bedside table, a bomber's shadow on the wall."
    },
    "transition": "port",
@@ -444,7 +444,7 @@
    "scene": "main/hospital",
    "object": {
     "id": "hospital.enter_ember",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A small ember glowing in a water glass on the locker."
    },
    "transition": "port",
@@ -728,7 +728,7 @@
    "quest": "bassment",
    "object": {
     "id": "hospital.dayroom.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -738,7 +738,7 @@
    "quest": "gospel",
    "object": {
     "id": "hospital.cafeteria.enter_gospel",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -748,7 +748,7 @@
    "quest": "squadron",
    "object": {
     "id": "hospital.garden.enter_squadron",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -798,7 +798,7 @@
    "quest": "ember",
    "object": {
     "id": "hospital_late.cafe.enter_ember",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -808,7 +808,7 @@
    "quest": "bassment",
    "object": {
     "id": "hospital_late.quiet.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
