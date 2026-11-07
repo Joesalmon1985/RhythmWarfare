@@ -145,6 +145,9 @@ def write(helpers: dict | None = None) -> None:
     extra_hot.update(lounge["hotspots"])
     for stem, doc in lounge["story"].items():
         (OUT / (stem + ".json")).write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8", newline="\n")
+    # --- the Underworld (env-underworld): its world, nodes, music, hotspots and story, from tools/run/make_doom_underworld.py (docs/doom/scenes/underworld.md)
+    import make_doom_underworld
+    make_doom_underworld.add(P, worlds, nodes, cin, music, extra_hot)
     for wid, doc in extra_hot.items():
         (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
