@@ -1,0 +1,8 @@
+{
+	"note": "Test fixture of tests/test_geography.gd: the geography worlds' music, merged into content/story/music.json by the test.",
+	"nodes": [
+		{"id": "geo_floor", "audio": "dd_part2", "chart": "dd_part2", "treatment": "none", "temporary": true},
+		{"id": "geo_bar", "audio": "dd_part2", "chart": "dd_part2", "treatment": "none", "temporary": true},
+		{"id": "geo_lounge", "audio": "dd_part2", "chart": "dd_part2", "treatment": "none", "temporary": true}
+	]
+}
