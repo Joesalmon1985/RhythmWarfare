@@ -43,6 +43,7 @@ func load_pack_streams(pack: TrackPack) -> String:
 	_initial_program = []
 	_low_keys = {}
 	_bar_s = 0.0
+	_apply_locks()  # (a stem locked before the load starts silent: CONTRACTS.md section 7)
 	player.stream = sync_stream
 	_loaded = true
 	return ""

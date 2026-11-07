@@ -1,0 +1,14 @@
+{
+	"requests": [
+		{"activity_id": "cloakroom", "mode": "replace", "theme": "space", "scene_id": "rave.space", "return_pose": "cloak_view", "config": {"coats": 8}},
+		{"activity_id": "bar", "mode": "replace", "theme": "space", "scene_id": "rave.space", "return_pose": "bar_view", "config": {"drinks": 4}},
+		{"activity_id": "race", "mode": "overlay", "theme": "space", "scene_id": "rave.space", "return_pose": "race_door", "config": {"course": "race_street_space"}},
+		{"activity_id": "bass_knob", "mode": "rhythm", "theme": "space", "scene_id": "rave.space", "return_pose": "stage_deck_view", "config": {}}
+	],
+	"results": [
+		{"activity_id": "cloakroom", "completed": true, "score": 7, "flags_to_set": ["rave.space.cloakroom_done"], "reason": "done"},
+		{"activity_id": "bar", "completed": false, "score": 2, "flags_to_set": [], "reason": "left"},
+		{"activity_id": "race", "completed": true, "score": 1, "flags_to_set": [], "reason": "done", "race": {"won": true, "position": 1, "time_s": 74.2}},
+		{"activity_id": "bass_knob", "completed": true, "score": 1, "flags_to_set": ["rave.space.bass_fixed"], "reason": "done"}
+	]
+}

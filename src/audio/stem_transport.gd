@@ -38,6 +38,11 @@ var _fade_master := 1.0
 var _fade_target := 1.0
 var _fade_speed := 0.0
 var _loaded := false
+## THE STEM LOCK (docs/parallel-development/CONTRACTS.md section 7): a stem's availability, apart from the mix. A locked stem's target is 0 whatever the gain
+## program and the miss mutes say, so no mixing rule can bring it in. A lock may be set before the stems are loaded and survives a reload. Unlocking only
+## ramps the gain (over `ramp_s`, the musical ramp the caller chooses); the stem never stops or restarts, so it comes in at the current song position.
+var _locked: Dictionary = {}  # key -> true
+var _ramp: Dictionary = {}  # key -> seconds: the ramp of the stem's next rise (an unlock's); dropped once the target is reached
 
 
 ## The "Music" bus (created on first use, sends to Master) so the music volume never scales the battle effects.
@@ -103,9 +108,40 @@ func load_level(level: Level) -> String:
 		if str(level.stem_family.get(k, k)) in ["kick", "bass", "drums"]:
 			_low_keys[k] = true
 	_bar_s = level.ticks_per_bar() * 60.0 / (level.bpm * float(level.ticks_per_beat))
+	_apply_locks()
 	player.stream = sync_stream
 	_loaded = true
 	return ""
+
+
+## After a load: every locked stem starts silent (its target and gain 0).
+func _apply_locks() -> void:
+	for i in stem_keys.size():
+		var key: String = stem_keys[i]
+		if _locked.has(key):
+			_target[key] = 0.0
+			_current[key] = 0.0
+			sync_stream.set_sync_stream_volume(i, SILENT_DB)
+
+
+## Lock or unlock a stem (CONTRACTS.md section 7). `ramp_s` is the length of the rise when it is unlocked (a lock falls at the ordinary RAMP_S).
+## The key need not be loaded yet: the lock applies when it is.
+func set_stem_locked(key: String, locked: bool, ramp_s: float = RAMP_S) -> void:
+	if locked:
+		_locked[key] = true
+		_ramp.erase(key)
+	else:
+		_locked.erase(key)
+		_ramp[key] = maxf(ramp_s, 0.001)
+	if _target.has(key):
+		_retarget(key)
+		if float(_target[key]) <= 0.0:  # still silent (programmed off or muted): the next rise is an ordinary one
+			_ramp.erase(key)
+
+
+## True while the stem is locked (the puzzle has not freed it).
+func is_stem_locked(key: String) -> bool:
+	return _locked.has(key)
 
 
 static func _set_loop(stream: AudioStream) -> void:
@@ -210,7 +246,7 @@ func stem_target(key: String) -> float:
 
 
 func _retarget(key: String) -> void:
-	_target[key] = 1.0 if bool(_program.get(key, true)) and not bool(_muted.get(key, false)) else 0.0
+	_target[key] = 1.0 if bool(_program.get(key, true)) and not bool(_muted.get(key, false)) and not _locked.has(key) else 0.0
 
 
 func stem_gain(key: String) -> float:
@@ -251,7 +287,15 @@ func _process(delta: float) -> void:
 		var cur: float = _current[key]
 		var tgt: float = _target[key]
 		if cur != tgt or duck_changed:
-			cur = move_toward(cur, tgt, step)
+			var k_step := step
+			if _ramp.has(key):  # an unlock's own ramp, only while rising
+				if tgt > cur:
+					k_step = delta / float(_ramp[key])
+				else:
+					_ramp.erase(key)
+			cur = move_toward(cur, tgt, k_step)
+			if cur == tgt:
+				_ramp.erase(key)
 			_current[key] = cur
 			sync_stream.set_sync_stream_volume(i, _to_db(effective_gain(key)))
 	if _fade_master != _fade_target:

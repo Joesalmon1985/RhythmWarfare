@@ -1,0 +1,20 @@
+{
+	"version": 3,
+	"reached": {"warehouse": {"entries": 3}},
+	"runs": 5,
+	"best_phases": 9,
+	"migrated_from": "",
+	"flags": {"keep:wh_saw_star": true},
+	"paths": {"gospel": {"reached": ["galilee"], "endings": []}},
+	"wallet": {"pence": 2000, "held": {}},
+	"seed": 12345,
+	"narrative": {"version": 1},
+	"bedsit_facing": "E",
+	"rave_theme": "space",
+	"raves": {
+		"space": {"bass_fixed": true, "cloakroom_done": true, "bar_done": false, "race": {"wins": 2, "runs": 3, "best": 71.5}},
+		"magic": {"bass_fixed": false, "cloakroom_done": false, "bar_done": false, "race": {"wins": 0, "runs": 0, "best": 0.0}},
+		"dinos": {"bass_fixed": false, "cloakroom_done": false, "bar_done": false, "race": {"wins": 0, "runs": 1, "best": 88.0}},
+		"transport": {"bass_fixed": false, "cloakroom_done": false, "bar_done": false, "race": {"wins": 0, "runs": 0, "best": 0.0}}
+	}
+}

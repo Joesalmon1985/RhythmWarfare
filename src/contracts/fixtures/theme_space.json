@@ -1,0 +1,47 @@
+{
+	"id": "space",
+	"scene_id": "rave.space",
+	"geography": "mothership",
+	"map": "rave_space",
+	"track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+	"arrival": "space_arrive",
+	"props": [
+		{"id": "deck", "role": "stage_deck", "sprite": "space/deck", "spot": "stage_deck"},
+		{"id": "bass_knob", "role": "bass_knob", "sprite": "space/knob_stuck", "spot": "stage_deck"},
+		{"id": "coat_hatch", "role": "cloakroom", "sprite": "space/airlock_hatch", "spot": "cloak_counter"},
+		{"id": "bar_counter", "role": "bar", "sprite": "space/nebula_bar", "spot": "bar_counter"},
+		{"id": "shuttle_bay", "role": "race_entrance", "sprite": "space/shuttle_bay_door", "spot": "race_door"},
+		{"id": "bedsit_portal", "role": "home_threshold", "sprite": "space/wardrobe_hatch", "spot": "home_door"},
+		{"id": "ring_lamps", "role": "decor", "sprite": "space/ring_lamp", "at": [4.0, -12.0]}
+	],
+	"customers": [
+		{"id": "aliens_floor", "sprite_set": "space/aliens", "count": 14, "spot": "floor_circle"},
+		{"id": "aliens_queue", "sprite_set": "space/aliens_coats", "count": 8, "spot": "cloak_queue"}
+	],
+	"guides": [
+		{"id": "roadie_bot", "sprite": "space/roadie_bot", "spot": "guide_stage", "for": "stage"},
+		{"id": "cloak_attendant", "sprite": "space/cloak_alien", "spot": "guide_cloak", "for": "cloakroom"},
+		{"id": "bartender", "sprite": "space/bartender_octo", "spot": "guide_bar", "for": "bar"},
+		{"id": "pilot", "sprite": "space/pilot", "spot": "guide_race", "for": "race"},
+		{"id": "moth", "sprite": "space/moth", "spot": "guide_home", "for": "home"}
+	],
+	"ingredients": [
+		{"id": "stardust", "icon": "space/ing_stardust", "color": "#d8e8ff"},
+		{"id": "comet_ice", "icon": "space/ing_ice", "color": "#7fe3ff"},
+		{"id": "plasma", "icon": "space/ing_plasma", "color": "#ff5fd2"},
+		{"id": "moon_syrup", "icon": "space/ing_syrup", "color": "#ffd25f"}
+	],
+	"cloakroom_symbols": [
+		{"id": "ringed_planet", "icon": "space/sym_planet"},
+		{"id": "rocket", "icon": "space/sym_rocket"},
+		{"id": "crescent", "icon": "space/sym_moon"},
+		{"id": "ufo", "icon": "space/sym_ufo"}
+	],
+	"stations": {
+		"stage": {"waypoint": "stage_deck_view", "route": "space.to_stage"},
+		"cloakroom": {"waypoint": "cloak_view", "route": "space.to_cloak"},
+		"bar": {"waypoint": "bar_view", "route": "space.to_bar"}
+	},
+	"race": {"entrance": "race_door", "course": "race_street_space", "activity": "race"},
+	"home": {"threshold": "home_door", "route": "home"}
+}
