@@ -1,0 +1,117 @@
+{
+ "note": "References copied unchanged from Concept art/. Primary = the image the brief names; secondary = the owner's second variant of the scene. Routing from docs/briefs/DOOM_WORLDS_BRIEF.md section 5; bottom is always stay. Hotspot tables exist only where listed (hotspot_table null = to be written).",
+ "scenes": {
+  "warehouse": {
+   "primary": "Cobalt Warehouse Dance Floor-1.png",
+   "secondary": "Midnight dance hall with three guides-1.png",
+   "doom_map": "MAP07 Dead Simple",
+   "story_map": "content/story/maps/doom_warehouse.json",
+   "hotspot_table": "tools/run/hotspot_tables/doom_warehouse.py",
+   "routing": {
+    "ahead": "balcony",
+    "left": "bar",
+    "right": "lounge",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": "legacy table for the old scene: tools/run/hotspot_tables/warehouse.py"
+  },
+  "bar": {
+   "primary": "Copper Basement Bar, Three Hidden Routes-3.png",
+   "secondary": "Copper Bar Crossroads-2.png",
+   "doom_map": "MAP02 Underhalls",
+   "story_map": "content/story/maps/doom_bar.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "booth",
+    "left": "warehouse",
+    "right": "lounge",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": null
+  },
+  "balcony": {
+   "primary": "Rainy industrial rooftop, three musical paths-8.png",
+   "secondary": "Rain-Slick Rooftop Crossroads-3.png",
+   "doom_map": "MAP15 Industrial Zone",
+   "story_map": "content/story/maps/doom_balcony.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "mothership",
+    "left": "warehouse",
+    "right": "booth",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": null
+  },
+  "lounge": {
+   "primary": "Mustard octagonal lounge of three routes-2.png",
+   "secondary": "Mustard lounge with three new paths-5.png",
+   "doom_map": "MAP08 Tricks and Traps",
+   "story_map": "content/story/maps/doom_lounge.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "dock",
+    "left": "bar",
+    "right": "warehouse",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": null
+  },
+  "booth": {
+   "primary": "Rhythm Booth, Three Hidden Routes-5.png",
+   "secondary": "Rainy DJ Booth and Three Visitors-4.png",
+   "doom_map": "MAP04 The Focus",
+   "story_map": "content/story/maps/doom_booth.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "mothership",
+    "left": "balcony",
+    "right": "dock",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": null
+  },
+  "dock": {
+   "primary": "Rainy Rhythm Club Loading Dock-6.png",
+   "secondary": "Rainy Dock of Three Paths-7.png",
+   "doom_map": "MAP13 Downtown",
+   "story_map": "content/story/maps/doom_dock.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "mothership",
+    "left": "warehouse",
+    "right": "underworld",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": null
+  },
+  "mothership": {
+   "primary": "Mothership Ringwalk Over the Void-7.png",
+   "secondary": "Mothership atrium_ three paths, one stay-8.png",
+   "doom_map": "MAP11 Circle of Death",
+   "story_map": "content/story/maps/doom_mothership.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "underworld",
+    "left": "booth",
+    "right": "dock",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": "legacy table for the old scene: tools/run/hotspot_tables/mothership.py"
+  },
+  "underworld": {
+   "primary": "Three Paths Across the Basalt Abyss-4.png",
+   "secondary": "Three Visitors in the Basalt Underworld-6.png",
+   "doom_map": "MAP29 The Living End",
+   "story_map": "content/story/maps/doom_underworld.json",
+   "hotspot_table": null,
+   "routing": {
+    "ahead": "mothership",
+    "left": "warehouse",
+    "right": "dock",
+    "bottom": "stay"
+   },
+   "hotspot_table_note": "legacy table for the old scene: tools/run/hotspot_tables/underworld.py"
+  }
+ }
+}
