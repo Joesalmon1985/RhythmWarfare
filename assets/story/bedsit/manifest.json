@@ -10,7 +10,7 @@
    "file": "textures/bed_side.png",
    "size": [
     336,
-    168
+    200
    ],
    "metres": 1.0
   },
@@ -51,6 +51,14 @@
    "size": [
     144,
     10
+   ],
+   "metres": 1.0
+  },
+  "door_transom": {
+   "file": "textures/door_transom.png",
+   "size": [
+    144,
+    40
    ],
    "metres": 1.0
   },

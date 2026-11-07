@@ -895,6 +895,46 @@ def bed_side(w=336, h=168) -> Cv:
     return cv
 
 
+def bed_tall() -> Cv:
+    """bed_side with the headboard carried up to 1.25 m (the camera at 1.6 m sees a wall from 0.63 m up when it is 2 m away: the headboard is what shows of the bed)."""
+    base = bed_side()
+    w, h = base.w, base.h + 32
+    cv = Cv(w, h)
+    cv.stamp(base, 0, 32)
+    head = cv.rrect(w - 40, 0, w - 6, 80, 5)
+    cv.paint(head, WOOD, cv.lit((w - 40, 0, w - 6, 160), 0.6, 0.4, 0.12, 175))
+    for sy in range(14, 80, 14):
+        cv.shade_mul(cv.rect(w - 38, sy, w - 8, sy + 2), 0.65)
+        cv.flat(cv.rect(w - 38, sy - 1, w - 8, sy), "#b98a52")
+    cv.paint(cv.rrect(w - 44, 0, w - 2, 8, 4), WOOD, cv.lit((w - 44, 0, w - 2, 8), 0.85, 0.2), edge=True)
+    # a string of beads and a scarf hung on the headboard post, the sort of thing left there
+    cv.paint(cv.rect(w - 36, 40, w - 10, 78), PINK, cv.lit((w - 36, 40, w - 10, 78), 0.55, 0.4, 0.15, 177), edge=True)
+    cv.shade_mul(cv.rect(w - 36, 56, w - 10, 58), 0.7)
+    return cv
+
+
+def door_transom(w=144, h=40) -> Cv:
+    """The fanlight over the west door (emissive): frosted amber glass lit by the street, a dark double-decker passing, headlamps."""
+    cv = Cv(w, h)
+    cv.paint(cv.rect(0, 0, w, h), CREAM, cv.lit((0, 0, w, h), 0.62, 0.3, 0.1, 240))
+    gx0, gy0, gx1, gy1 = 8, 5, w - 8, h - 5
+    g = cv.rect(gx0, gy0, gx1, gy1)
+    t = (cv.xx - gx0) / (gx1 - gx0)
+    sh = 0.62 + 0.25 * np.sin(t * 6.0) * 0.4 + (fnoise(h, w, 6, 241) - 0.5) * 0.18
+    cv.paint(g, ramp("#7a3a08", "#c76a14", "#ffa030", "#ffcf70", "#fff0b8", "#fffbe0"), sh, edge=False)
+    bus = cv.rect(40, 12, 104, gy1)
+    cv.flat(bus, "#3a2410")
+    for wx in range(46, 100, 10):
+        cv.flat(cv.rect(wx, 15, wx + 6, 21), "#ffe08a")
+        cv.flat(cv.rect(wx, 25, wx + 6, 29), "#ffcf70")
+    cv.flat(cv.rect(36, 28, 40, 33), "#ffffff")
+    cv.flat(cv.rect(104, 28, 108, 33), "#ffffff")
+    # glazing bars
+    for bx in (gx0 + 44, gx0 + 88):
+        cv.paint(cv.rect(bx - 1, gy0, bx + 2, gy1), CREAM, cv.lit((bx, gy0, bx + 3, gy1), 0.7, 0.2), edge=False)
+    return cv
+
+
 # ================================================================================ things (billboards) =============================================================
 
 def model_rocket(w=36, h=84) -> Cv:
@@ -978,7 +1018,7 @@ def toy_dino(w=56, h=56) -> Cv:
 def headphones(w=48, h=52) -> Cv:
     cv = Cv(w, h)
     band = cv.ell(6, 4, 42, 48) & ~cv.ell(11, 9, 37, 52)
-    cv.paint(band, IRON, cv.lit((6, 4, 42, 48), 0.5, 0.5, 0.05, 190))
+    cv.paint(band, STEEL, cv.lit((6, 4, 42, 48), 0.6, 0.5, 0.05, 190))
     for cx in (6, 36):
         cv.paint(cv.rrect(cx - 3, 26, cx + 10, 48, 5), RED, cv.lit((cx - 3, 26, cx + 10, 48), 0.55, 0.45, 0.06, 191 + cx))
         cv.paint(cv.rect(cx, 30, cx + 5, 44), IRON, cv.lit((cx, 30, cx + 5, 44), 0.35, 0.3), edge=False)
@@ -1098,7 +1138,8 @@ def build() -> dict:
     out["hooks"] = ("decal", hooks(), None, {})
     for k in range(5):
         out["poster_%d" % k] = ("decal", poster(k), None, {})
-    out["bed_side"] = ("decal", bed_side(), None, {})
+    out["bed_side"] = ("decal", bed_tall(), None, {})
+    out["door_transom"] = ("decal", door_transom(), None, {})
     out["thing_rocket"] = ("thing", model_rocket(), None, {})
     out["thing_mobile"] = ("thing", star_mobile(), None, {})
     out["thing_unicorn"] = ("thing", unicorn(), None, {})

@@ -40,6 +40,7 @@
   "thing_fern": "textures/thing_fern.png",
   "thing_car": "textures/thing_car.png",
   "thing_indicator": "textures/thing_indicator.png",
+  "door_transom": "textures/door_transom.png",
   "thing_lamp": "textures/thing_lamp.png",
   "thing_glow_pink": "textures/thing_glow_pink.png",
   "thing_glow_cyan": "textures/thing_glow_cyan.png",
@@ -575,7 +576,7 @@
     -1.4
    ],
    "y": 0.0,
-   "size": 1.05,
+   "size": 1.25,
    "yaw": -90
   },
   {
@@ -601,6 +602,19 @@
    "y": 0.025,
    "size": 0.0625,
    "yaw": -90
+  },
+  {
+   "id": "w_transom",
+   "kind": "decal",
+   "sprite": "door_transom",
+   "at": [
+    -1.994,
+    0.6
+   ],
+   "y": 2.13,
+   "size": 0.25,
+   "yaw": -90,
+   "emissive": true
   },
   {
    "id": "w_timetable",
@@ -634,7 +648,7 @@
     -1.994,
     -1.65
    ],
-   "y": 1.32,
+   "y": 1.45,
    "size": 0.7,
    "yaw": -90
   },
@@ -646,7 +660,7 @@
     -1.994,
     -0.95
    ],
-   "y": 1.32,
+   "y": 1.45,
    "size": 0.6,
    "yaw": -90
   },
@@ -666,12 +680,12 @@
    "kind": "billboard",
    "sprite": "thing_indicator",
    "at": [
-    -1.88,
-    0.6
+    -1.9,
+    1.38
    ],
    "size": 0.175,
    "anim": "pulse",
-   "y": 2.2675,
+   "y": 1.7075,
    "emissive": true
   },
   {

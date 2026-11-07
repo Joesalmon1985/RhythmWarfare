@@ -71,7 +71,7 @@ def sprite_size(name: str):
     return w, h
 
 
-def decal(did, sprite, wall, along, y, layer="frame", height=None, flip=False):
+def decal(did, sprite, wall, along, y, layer="frame", height=None, emissive=False):
     """A decal on `wall` ("N", "E", "S", "W"), `along` metres along it (x on N and S, z on E and W), its bottom edge `y` above the floor, on the plane `layer`."""
     w = WALLS[wall]
     pos = w["pos"] - w["sign"] * -1 * 0  # the wall plane
@@ -84,6 +84,8 @@ def decal(did, sprite, wall, along, y, layer="frame", height=None, flip=False):
         at = [round(w["pos"] + inward[0] * off, 4), round(along, 4)]
     w_px, h_px = sprite_size(sprite)
     d = {"id": did, "kind": "decal", "sprite": sprite, "at": at, "y": round(y, 4), "size": round(height if height else h_px / PPM, 4), "yaw": w["yaw"]}
+    if emissive:
+        d["emissive"] = True
     return d
 
 
@@ -111,7 +113,7 @@ def build_map() -> dict:
     tex_names = ["wall_paper_n", "wall_paper_e", "wall_paper_s", "wall_paper_w", "ceil_plaster", "floor_room", "win_frame", "win_glass", "radiator", "wardrobe", "wardrobe_light",
                  "shelf", "fairy_lights", "clothes_rail", "desk", "jungle_poster", "jungle_glow", "door", "door_light", "timetable", "mirror", "hooks", "poster_0", "poster_1",
                  "poster_2", "poster_3", "poster_4", "bed_side", "thing_rocket", "thing_mobile", "thing_unicorn", "thing_dino", "thing_headphones", "thing_fern", "thing_car",
-                 "thing_indicator", "thing_lamp", "thing_glow_pink", "thing_glow_cyan", "thing_glow_green"]
+                 "thing_indicator", "door_transom", "thing_lamp", "thing_glow_pink", "thing_glow_cyan", "thing_glow_green"]
     textures = {n: f"textures/{n}.png" for n in tex_names}
     sz = lambda n: sprite_size(n)  # noqa: E731
     things: list = []
@@ -168,12 +170,13 @@ def build_map() -> dict:
     things += [decal("w_bed", "bed_side", "W", -1.4, 0.0, "frame"),
                decal("w_door", "door", "W", door_z, 0.0, "frame"),
                decal("w_door_light", "door_light", "W", door_z, gap_y0, "back"),
+               decal("w_transom", "door_transom", "W", door_z, 2.13, "frame", emissive=True),
                decal("w_timetable", "timetable", "W", door_z - 0.1, 1.18, "top"),
                decal("w_mirror", "mirror", "W", 1.78, 0.35, "frame"),
-               decal("w_poster_a", "poster_1", "W", -1.65, 1.32, "frame"),
-               decal("w_poster_b", "poster_4", "W", -0.95, 1.32, "frame", height=0.6)]
+               decal("w_poster_a", "poster_1", "W", -1.65, 1.45, "frame"),
+               decal("w_poster_b", "poster_4", "W", -0.95, 1.45, "frame", height=0.6)]
     things += [thing("w_car", "thing_car", (-1.55, 1.0)),
-               thing("w_indicator", "thing_indicator", (-1.88, door_z), y_base=2.18, anim="pulse", emissive=True)]
+               thing("w_indicator", "thing_indicator", (-1.9, door_z + 0.78), y_base=1.62, anim="pulse", emissive=True)]
     things += [light("w_street", (-1.9, door_z), 0.5, 3.4, "#ffb347", 1.25, -90, 52),
                light("w_street_up", (-1.9, door_z), 2.0, 2.2, "#ffe08a", 0.5, -90, 40)]
 

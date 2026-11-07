@@ -72,6 +72,19 @@ texture: `python3 tools/story/build_bedsit.py --sheet <file.png>`.
 Floor: oak boards with a kilim rug, a record, socks, slippers, a laundry heap, the headphone lead and painted pools of each threshold's light. Lived-in and warm; the
 thresholds are the strange part.
 
+## The shots (what reads and what does not)
+
+`docs/shots/bedsit/bedsit_contact.jpg`: the four facings at 16:9 (top row) and 20:9 (bottom), made by `tools/dev/shoot_bedsit.sh` (the map through the game's low-res pipeline).
+
+- Reads at a glance: **North** the window with the night sky, planet and rooftop glow, rocket on the sill, star mobile. **East** the jungle poster with its glowing circular opening and leaves breaking out
+  over the paper, the decks, the plastic dinosaur. **South** the wardrobe with the iridescent slot, the unicorn on the shelf, fairy lights, the clothes rail. **West** the door with the bus timetable,
+  the amber fanlight with a bus passing, the indicator lamp.
+- Does not read yet: with the camera 2 m from the east and west walls (2.5 m from north and south) at eye 1.6 m and a level gaze, the picture spans 0.63 m to 2.57 m up the wall, so **the floor, the rug,
+  the bed's mattress, the desk's legs and the toy car are out of frame** in every facing (the headboard, the posters over it and the desk top show). The painted pools of coloured light on the boards are
+  therefore never seen; the lights still colour the walls. A waypoint carries no pitch today (only a rail glance does); a held downward tilt of about 10 degrees on the four viewpoints would bring the floor
+  in (suggested for the hold hook H3.1). The blinking of the indicator and the traffic, wardrobe and jungle sounds cannot be seen or heard in a still: no ambient sound cue hook exists for a map.
+- The dado (the lower wall, olive) is about a third of every frame; it could go warmer.
+
 ## Checks
 
     bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tests/run_tests.gd -- --filter bedsit
