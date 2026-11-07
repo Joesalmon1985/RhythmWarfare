@@ -114,7 +114,7 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 	var on := RunData.load_default()
 	OS.set_environment("RW_DOOM_WORLDS", "")
 	assert_true(on.errors.is_empty(), "flag on: the run loads clean: %s" % str(on.errors))
-	for id in ["doom_warehouse", "doom_balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return", "warehouse"]:
+	for id in ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return", "warehouse"]:
 		assert_true(on.nodes.has(id), "flag on: scene %s" % id)
 	var hs: Array = on.hotspots.get("doom_warehouse", [])
 	assert_eq(hs.size(), 4, "the three guides and the stay hotspot")
@@ -122,12 +122,12 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 	for h in hs:
 		routes.append(str((h["on_success"] as Dictionary).get("route", "")))
 	routes.sort()
-	assert_eq(routes, ["doom_balcony", "doom_warehouse", "doom_warehouse.bar", "doom_warehouse.chill"], "ahead, left (the bar stand-in: the real Bar is the world doom_bar), right (the chill-out stand-in: the real lounge is the world doom_lounge), and stay on the floor")
+	assert_eq(routes, ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill"], "ahead, left (the bar stand-in: the real Bar is the world doom_bar), right (the chill-out stand-in: the real lounge is the world doom_lounge), and stay on the floor")
 
 
 # --- the rail as polyline moves with holds, and the railing (docs/story/HEIGHTS_AND_PATHS.md) ---------------------------------------------------------------------------------
 
-const DOOM_NODES := ["doom_warehouse", "doom_balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return"]  # the Warehouse world scenes (its map); the Booth, Bar and Lounge worlds are tested below
+const DOOM_NODES := ["doom_warehouse", "doom_warehouse.balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return"]  # the Warehouse world scenes (its map); the Booth, Bar and Lounge worlds are tested below
 const REVEAL_HOLD := 2.0
 
 
@@ -861,3 +861,204 @@ func test_lounge_check_rail_paths_reports_no_problem() -> void:
 		if str(mv["where"]).contains(" route "):
 			named += 1
 	assert_eq(named, 5, "the five routes (up, left, right, stumble, arrive) are checked as moves")
+
+
+# --- THE BALCONY (docs/doom/scenes/balcony.md): its own block, its own map (doom_balcony) and world (doom_balcony) -----------------------------------------------------------
+
+const BC_MAP := "doom_balcony"
+const BC_GUIDES := ["bc_guide_mothership", "bc_guide_floor", "bc_guide_booth"]
+const BC_HOLD_PLACES := ["bc_ref", "bc_bridge_view", "bc_stair_view", "bc_cabin_view"]
+const BC_NODES := ["doom_balcony", "doom_balcony.mothership", "doom_balcony.floor", "doom_balcony.booth", "doom_balcony.return"]
+const BC_EXITS := ["bc_bridge_end", "bc_stair_foot", "bc_cabin_in"]
+
+
+func _bc_map() -> StoryMap:
+	return StoryMap.load_chapter(BC_MAP, true)
+
+
+func _bc_pose(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": BC_MAP})
+	return p.pose_at(2.0)
+
+
+func test_balcony_map_loads_clean_with_routes_holds_and_the_reference_viewpoint() -> void:
+	var m := _bc_map()
+	assert_true(m != null and m.errors.is_empty(), "the balcony map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BC_MAP))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "balcony: still flagged approximate")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "balcony route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "balcony route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["bc_ref"]) >= CHOICE_REF_HOLD, "the balcony's reference viewpoint holds at least 8 bars")
+	for id in BC_HOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s has hold_bars" % id)
+	for id in BC_EXITS:
+		assert_true(float(holds[id]) > 0.0, "the threshold %s holds" % id)
+	assert_true(float((_bc_pose(m, "bc_ref")["pos"] as Vector2).distance_to(m.waypoint("bc_ref")["at"])) < 0.05, "the camera stands at the balcony's reference viewpoint")
+	var voids := 0
+	for s in m.sectors:
+		if bool(s.get("void", false)):
+			voids += 1
+	assert_eq(voids, 4, "the four pits round the roof are voids")
+
+
+func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _bc_map()
+	if m == null:
+		fail("balcony map did not load")
+		return
+	var pose := _bc_pose(m, "bc_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in BC_GUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "balcony %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "balcony %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "balcony %s %s: at least %d px tall (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "balcony %s %s: clear of the HUD's corner" % [asp, g])
+			print("  balcony %s %-22s rect %s" % [asp, g, str(r)])
+		for i in BC_GUIDES.size():
+			for j in range(i + 1, BC_GUIDES.size()):
+				assert_false((rects[BC_GUIDES[i]] as Rect2).intersects(rects[BC_GUIDES[j]]), "balcony %s: %s and %s do not overlap" % [asp, BC_GUIDES[i], BC_GUIDES[j]])
+
+
+func test_balcony_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _bc_map()
+	if m == null:
+		fail("balcony map did not load")
+		return
+	var cam: Vector2 = m.waypoint("bc_ref")["at"]
+	for g in BC_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a step, a railing or a drop: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "%s: the sightline from bc_ref stays clear of solid walls" % g)
+
+
+func test_balcony_guides_keep_their_distance_from_the_camera_places() -> void:
+	var m := _bc_map()
+	if m == null:
+		fail("balcony map did not load")
+		return
+	for g in BC_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			var d: float = (m.waypoints[wid]["at"] as Vector2).distance_to(at)
+			if str(wid) in BC_EXITS:
+				assert_true(d >= 1.2, "balcony: %s is not on top of %s (%.1f m)" % [g, wid, d])
+			else:
+				assert_true(d >= 1.5, "balcony: %s is at least 1.5 m from %s (%.1f m)" % [g, wid, d])
+
+
+func test_balcony_overlay_world_nodes_hotspots_and_rail_validate() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "balcony: the run loads clean with the flag: %s" % str(on.errors))
+	for id in BC_NODES:
+		assert_true(on.nodes.has(id), "balcony: scene %s" % id)
+	assert_true(on.nodes.has("doom_warehouse.balcony"), "the Warehouse keeps its own stand-in, renamed doom_warehouse.balcony")
+	assert_true(str(on.nodes["doom_balcony"]["world"]) == "doom_balcony" and bool(on.nodes["doom_balcony"]["entry"]), "balcony: doom_balcony is the entry of the world doom_balcony")
+	for id in BC_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_false((routes[k].get("via", []) as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+		for k in ["up", "left", "right"]:
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
+		assert_eq([str(routes["up"]["to"]), str(routes["left"]["to"]), str(routes["right"]["to"])], BC_EXITS, "%s: the route moves end at the thresholds" % id)
+		assert_eq([str(rail["exits"]["up"]), str(rail["exits"]["left"]), str(rail["exits"]["right"])], BC_EXITS, "%s: rail.exits are the doorways" % id)
+	var good: Array = on.nodes["doom_balcony"]["rail"]["good"]
+	assert_eq(good.size(), 4, "balcony: the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "balcony: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "balcony: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "bc_ref", "balcony: the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "balcony: bc_ref is a choice viewpoint holding the whole window")
+	var hs: Array = on.hotspots.get("doom_balcony", [])
+	assert_eq(hs.size(), 4, "balcony: three guides and the stay hotspot")
+	var dests := []
+	for h in hs:
+		dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		assert_true(h.has("show"), "balcony: hotspot %s declares show" % h["id"])
+		if str(h["id"]) != "doom_balcony.exit_stay":
+			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "balcony: %s is a figure (a guide, no ring)" % h["id"])
+	dests.sort()
+	assert_eq(dests, ["doom_balcony", "doom_balcony.booth", "doom_balcony.floor", "doom_balcony.mothership"], "balcony: ahead, left, right and stay")
+	var labels := []
+	for n in on.nodes["doom_balcony"]["next"]:
+		labels.append(str(n["label"]))
+	var all_labels := " ".join(labels)
+	assert_true(all_labels.contains("mothership") and all_labels.contains("floor") and all_labels.contains("booth"), "balcony: the route labels name the destinations")
+
+
+func test_balcony_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
+	var on := _doom_run()
+	var m := _bc_map()
+	if m == null:
+		fail("balcony map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	for id in BC_NODES:
+		var node: Dictionary = on.nodes[id]
+		for mv in _moves_of(node["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var sid := str(m.waypoint(str(wid))["sector"])
+				assert_true(m.inside(m.waypoint(str(wid))["at"], sid, StoryMap.WAYPOINT_MARGIN) and reach.has(sid) and not m.is_void(sid), "%s: %s stands in a walkable piece" % [id, wid])
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+
+
+func test_balcony_railing_voids_decals_and_the_art_are_in_the_map() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BC_MAP))
+	assert_eq(float(doc["max_step"]), 0.5, "balcony: max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "balcony: visibility mode clip")
+	var textures: Dictionary = doc["textures"]
+	assert_true(textures.has("bc_rail"), "balcony: bc_rail is one of the map's textures")
+	var im := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/doom_balcony/textures/bc_rail.png"))
+	assert_true(im != null and im.get_width() == 128 and im.detect_alpha() != Image.ALPHA_NONE, "balcony: bc_rail is a 128 px tile with an alpha channel")
+	var rails := 0
+	for w in doc["walls"]:
+		if str(w.get("kind", "")) != "railing":
+			continue
+		assert_true(bool(w.get("blocked", false)), "balcony: a railing is shut to walkers")
+		rails += 1
+	assert_true(rails >= 12, "balcony: the deck, stair, bridge and platform edges carry the railing (%d)" % rails)
+	var decals := 0
+	var lit := 0
+	for t in doc["things"]:
+		if str(t.get("kind", "")) == "decal":
+			decals += 1
+			if bool(t.get("emissive", false)):
+				lit += 1
+	assert_true(decals >= 8 and lit >= 5, "balcony: wall decals (%d), the glow and graffiti emissive (%d)" % [decals, lit])
+	for g in BC_GUIDES:
+		var stem: String = g.trim_prefix("bc_guide_")
+		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
+			assert_true(textures.has("guide_%s_%s" % [stem, st]), "balcony: guide sprite %s_%s" % [stem, st])
+			assert_true(FileAccess.file_exists("res://assets/story/doom_balcony/textures/guide_%s_%s.png" % [stem, st]), "balcony: guide file %s_%s exists" % [stem, st])

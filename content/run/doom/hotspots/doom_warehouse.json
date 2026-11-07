@@ -25,10 +25,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "doom_balcony"
+    "route": "doom_warehouse.balcony"
    },
    "on_failure": {
-    "route": "doom_balcony",
+    "route": "doom_warehouse.balcony",
     "cinematic": "doom_warehouse.stagger_balcony",
     "energy": -5
    },

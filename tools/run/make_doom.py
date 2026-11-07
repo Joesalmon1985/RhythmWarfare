@@ -65,16 +65,16 @@ def rail(arrive="wh_arrive"):
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot
 DOOM_SCENES = [
     ("doom_warehouse", "floor", "The Dance Floor", True, False,
-     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_balcony", "up", "Up the stage steps to the balcony", False), ("doom_warehouse.bar", "left", "Into the bar", False),
+     [("doom_warehouse", "down", "Stay on the floor", True), ("doom_warehouse.balcony", "up", "Up the stage steps to the balcony", False), ("doom_warehouse.bar", "left", "Into the bar", False),
       ("doom_warehouse.chill", "right", "Into the chill-out", False)], 0),
-    ("doom_balcony", "balcony", "The Balcony (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 2),
+    ("doom_warehouse.balcony", "balcony", "The Balcony (stand-in; the real scene is the world doom_balcony)", False, False, [("doom_warehouse.return", "up", "On", False)], 2),
     ("doom_warehouse.bar", "bar", "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 1),
     ("doom_warehouse.chill", "chill", "The Chill-out (stand-in; the real scene is the world doom_lounge, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 3),
     ("doom_warehouse.return", "return", "Back to the Floor", False, True,
      [("doom_warehouse", "up", "Round again", True), ("doom_bar", "left", "On to the Copper Bar", False), ("doom_lounge", "right", "On to the Chill-out lounge", False)], 5),
 ]
 GUIDE = {  # hotspot id suffix: (guide thing, route, sprite stem)
-    "balcony": ("wh_guide_stage", "doom_balcony", "stage"),
+    "balcony": ("wh_guide_stage", "doom_warehouse.balcony", "stage"),
     "bar": ("wh_guide_bar", "doom_warehouse.bar", "bar"),
     "lounge": ("wh_guide_lounge", "doom_warehouse.chill", "lounge"),
 }
@@ -145,6 +145,9 @@ def write(helpers: dict | None = None) -> None:
     extra_hot.update(lounge["hotspots"])
     for stem, doc in lounge["story"].items():
         (OUT / (stem + ".json")).write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8", newline="\n")
+    # --- the Balcony (env-balcony): its world, nodes, music and hotspots, from tools/run/make_doom_balcony.py (docs/doom/scenes/balcony.md)
+    import make_doom_balcony
+    make_doom_balcony.add(P, worlds, nodes, cin, music, extra_hot)
     for wid, doc in extra_hot.items():
         (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
