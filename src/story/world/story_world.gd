@@ -107,6 +107,11 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 	_make_shadows()
 	_make_sky()
 	env = _make_environment()
+	dynamic = StoryDynamicThings.new()
+	dynamic.name = "DynamicThings"
+	dynamic.map = map
+	dynamic.assets = assets
+	dynamic.fog_color = Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR
 
 
 func _load_tex(file: String) -> Texture2D:
@@ -894,6 +899,48 @@ func set_thing_visible(id: String, on: bool) -> void:
 	for th in _thing_nodes:
 		if str(th["thing"]["id"]) == id or str(th["thing"]["id"]).begins_with(id + "_"):
 			(th["node"] as Node3D).visible = on
+
+
+# --- an activity's dynamic things (CONTRACTS.md 10, hook H8.1) ---------------------------------------------------------------------------
+
+## The activity's things: billboards that may move and change frame every frame (StoryDynamicThings: the list's shape, the sheets, the light). They are 2D figures of the
+## crowd's overlay (the stage puts `dynamic` there and sorts it with the crowd), not 3D billboards of this node: so they sort by distance with the customers and the attendant.
+var dynamic: StoryDynamicThings
+
+
+## H8.1: the activity's things now, [{id, sprite, at: [x, z], sector, size: [w_m, h_m], frame, y?, anchor?, grid?}] (replaces the last list; [] clears).
+func set_dynamic_things(arr: Array) -> void:
+	if dynamic != null:
+		dynamic.set_things(arr)
+
+
+## Where thing `id` is drawn on screen: its drawn rect's centre in low-res viewport pixels (the frame the host's feedback is drawn in), or null when it is not drawn
+## (off screen, its sector out of sight, unknown). `id` is a dynamic thing's, else a map thing's id or the piece id of a map thing (a counter: `cloak_counter`).
+func thing_screen_point(id: String) -> Variant:
+	var r: Variant = thing_screen_rect(id)
+	return (r as Rect2).get_center() if r != null else null
+
+
+## The rect thing `id` is drawn in (low-res viewport pixels), or null. A map thing's rect is its billboard's (its texture's aspect at its authored height); a set piece
+## counts only while it is shown.
+func thing_screen_rect(id: String) -> Variant:
+	if dynamic == null:
+		return null
+	if not dynamic.thing(id).is_empty():
+		return dynamic.screen_rect(id)
+	for th: Dictionary in _thing_nodes:
+		var t: Dictionary = th["thing"]
+		if str(t["id"]) != id and str(t.get("piece", "")) != id:
+			continue
+		if t.has("piece") and not (th["node"] as Node3D).visible:
+			return null
+		var node: Node3D = th["node"]  # (where it is drawn now: a choice pose or `thing_pose` moves and scales it, the Space rave's bass knob)
+		var at: Vector2 = t["at"]
+		var box := {"at": Vector2(node.position.x, at.y), "sector": str(t["sector"]), "size": Vector2(float(th["w"]) * node.scale.x, float(th["h"]) * node.scale.y),
+			"y": node.position.y - float(th["floor"]), "anchor": "center"}
+		var pl := dynamic.placement(box, false)
+		return pl["rect"] if not pl.is_empty() else null
+	return null
 
 
 func sector_node(id: String) -> MeshInstance3D:
