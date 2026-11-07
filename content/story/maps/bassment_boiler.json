@@ -358,9 +358,9 @@
    "id": "valve_look",
    "at": [
     -3.4,
-    6.6
+    8.0
    ],
-   "yaw": 25,
+   "yaw": 10,
    "sector": "walk"
   },
   {
