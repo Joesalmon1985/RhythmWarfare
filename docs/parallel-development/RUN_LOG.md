@@ -15,7 +15,23 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
 - Push policy unchanged. Owner's words: "start the run and don't finish until everything altogether and
   done as new playable thing. Make sure to do art polish."
 
-## Now
+## Now (7 November, evening)
+
+`feature/one-pc` `c16aac62`: merged today A6, W7, Hell, N2.5 returns, Spaceship entrances, the pinned tests made
+data-driven, the Hell clearance fix. Full suite at `db53b4d3`: 149,354 checks, 1 failure (fixed since). Open: Ward
+(spacing pass), Hospital (finishing), W6 Gospel (daylight pass). Then the shared wiring step and the Floor's entrances.
+
+`feature/shared-contracts` `04cd0d7b` (pushed): the nine contracts, fixtures, the stem lock, the renderer and rail
+extension (steps, voids, railings, clipped visibility, polyline moves, holds, `check_rail_paths`), the art
+standard images; `wip/engine-host` (Opus) is building hooks H5, H6, H3, H1, H7, H4 on top.
+
+`feature/doom-layout-worlds` `8900f4cf` (pushed): the conversion chain, all eight maps traced from the renders
+(approximate), the Warehouse pilot (scene behind `RW_DOOM_WORLDS=1`, `tools\dev\play_doom_worlds.cmd`); the pilot's
+layout pass runs on `wip/env-warehouse`. The supplied WAD has no map geometry: a complete `DOOM2.WAD` is still wanted.
+
+`feature/bedsit-raves` `04cd0d7b` (pushed): `wip/play-bedsit` builds the room, the path and the four facings.
+
+## Earlier today
 
 Stage: **A phase 1 and B1/B2 in parallel**, 7 November afternoon.
 
