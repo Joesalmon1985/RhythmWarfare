@@ -3561,7 +3561,8 @@
        "via": [
         "uw_v_a1",
         "uw_v_a2",
-        "uw_v_a3"
+        "uw_v_a3",
+        "uw_v_a4"
        ],
        "hold_bars": 1
       },
@@ -3724,7 +3725,8 @@
        "via": [
         "uw_v_a1",
         "uw_v_a2",
-        "uw_v_a3"
+        "uw_v_a3",
+        "uw_v_a4"
        ],
        "hold_bars": 1
       },
@@ -3887,7 +3889,8 @@
        "via": [
         "uw_v_a1",
         "uw_v_a2",
-        "uw_v_a3"
+        "uw_v_a3",
+        "uw_v_a4"
        ],
        "hold_bars": 1
       },
@@ -4050,7 +4053,8 @@
        "via": [
         "uw_v_a1",
         "uw_v_a2",
-        "uw_v_a3"
+        "uw_v_a3",
+        "uw_v_a4"
        ],
        "hold_bars": 1
       },
@@ -4220,7 +4224,8 @@
        "via": [
         "uw_v_a1",
         "uw_v_a2",
-        "uw_v_a3"
+        "uw_v_a3",
+        "uw_v_a4"
        ],
        "hold_bars": 1
       },

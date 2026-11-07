@@ -63,3 +63,18 @@ No state-driven guides beyond what the existing choice staging does (sprite per 
 | Tests | `--filter doom_views` (the booth block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_booth` |
 
 Details: `docs/doom/scenes/booth.md`.
+
+
+## The Underworld (scene `doom_underworld`, MAP29, env-underworld block)
+
+| What | How |
+| --- | --- |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_underworld` (world `doom_underworld`, depth 2; routes: stay on the plateau (default), `doom_underworld.mothership` ahead, `doom_underworld.floor` left, `doom_underworld.dock` right: stand-ins that lead to `doom_underworld.return`) |
+| Rebuild the geometry | `python -I tools/doom/trace/underworld_scene.py && python -I tools/doom/convert.py --scene underworld --trace tools/doom/trace/underworld_pilot.json && python -I tools/doom/author_underworld.py` |
+| Rebuild the art and guides | `python -I tools/doom/art/make_underworld_art.py && python -I tools/doom/art/make_underworld_guides.py`, then `godot --headless --import` |
+| Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_underworld.py`, which also writes `content/run/doom/story_doom_underworld.json`) |
+| Shots | `python3 tools/doom/shoot_underworld.py` (`docs/shots/doom/underworld/contact.jpg`, `walk_strip.jpg`, `walk_*.txt`; `RW_KEEP=<dir>` keeps the per-frame jpgs for `tools/doom/frame_check.py`) |
+| Tests | `--filter doom_views` (the underworld block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_underworld` |
+
+The abyss is a set of `abyss_*` sectors the engine treats as a void; every portal onto it is a `railing` (chain strip) shut to walkers, but one dead-end portal on the tower's north rim (6.0, 35.5) that the map loader
+needs to keep the map connected. Details: `docs/doom/scenes/underworld.md`.

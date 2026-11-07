@@ -27,7 +27,7 @@ OWN = "textures/"
 MARGIN = 0.5
 MAX_STEP = 0.5
 RAIL_TEX, RAIL_H = "uw_rail", 0.9
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.6, 0.3, 2.4
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.6, 0.55, 3.0
 
 
 def M(x, y):
@@ -45,35 +45,35 @@ WAYPOINTS = [
     ("uw_ref", (0.0, 1.6), (0.0, 14), 8, "THE reference viewpoint: the plateau looking north over the abyss, the Floor guide at the cave mouth left, the Mothership guide up the ledge ahead, the Dock guide on the shelf right"),
     ("uw_ref_back", (1.0, 0.1), (0.0, 14), 0, "recovery: a stumble back to the south edge"),
     ("uw_sw_corner", (-3.5, 0.8), (0.0, 14), 0, "recovery: along the south-west rock"),
-    ("uw_ledge_view", (-2.2, 8.0), (-2.75, 20), 2, "reveal: the foot of the ledge, up the steps to the Mothership guide and the causeway to the tower"),
-    ("uw_cave_view", (-3.8, 6.0), (-11, 10.5), 2, "reveal: the west wall, the cave mouth and the Floor guide, the blue tunnel behind her"),
-    ("uw_stair_view", (0.6, 5.0), (7, 11), 2, "reveal: the plateau's east side, the stair up to the shelf, the tent and the Dock guide"),
-    ("uw_gate", (-2.75, 23.0), (-2.75, 31), 1, "THRESHOLD ahead (Mothership): the gate pad past the Mothership guide, the causeway and the tower ahead; the world transition happens here"),
-    ("uw_cave_in", (-10.5, 10.5), (-16, 10.5), 1, "THRESHOLD left (Floor): inside the cave, the tunnel ahead; the world transition happens here"),
+    ("uw_ledge_view", (-2.4, 4.2), (-2.75, 14), 2, "reveal: the foot of the ledge, up the steps to the Mothership guide and the causeway to the tower"),
+    ("uw_cave_view", (-3.8, 4.0), (-11, 7.0), 2, "reveal: the west wall, the cave mouth and the Floor guide, the blue tunnel behind her"),
+    ("uw_stair_view", (0.6, 4.2), (7, 11), 2, "reveal: the plateau's east side, the stair up to the shelf, the tent and the Dock guide"),
+    ("uw_gate", (-2.75, 22.0), (-2.75, 29), 1, "THRESHOLD ahead (Mothership): the causeway past the Mothership guide, the tower ahead; the world transition happens here"),
+    ("uw_cave_in", (-10.5, 7.0), (-16, 7.0), 1, "THRESHOLD left (Floor): inside the cave, the tunnel ahead; the world transition happens here"),
     ("uw_shelf_end", (9.5, 13.5), (12, 16), 1, "THRESHOLD right (Dock): the far end of the shelf under the tent; the world transition happens here"),
     # via points (corners of the polyline moves)
-    ("uw_v_s1", (-0.5, 5.0), (-0.5, 12), 0, "via: the plateau, mid way north"),
-    ("uw_v_s2", (-3.0, 7.0), (-3.0, 12), 0, "via: the plateau, west of the ledge foot"),
-    ("uw_v_a1", (-0.8, 5.5), (-1.8, 11), 0, "via: ahead, the plateau"),
-    ("uw_v_a2", (-1.8, 11.0), (-1.8, 17), 0, "via: ahead, the foot of the ledge"),
-    ("uw_v_a3", (-1.9, 17.0), (-2.75, 23), 0, "via: ahead, up the ledge beside the Mothership guide"),
-    ("uw_v_l1", (-3.0, 4.5), (-4, 8.5), 0, "via: left, the plateau"),
-    ("uw_v_l2", (-4.0, 8.5), (-7.5, 9.5), 0, "via: left, below the Floor guide"),
-    ("uw_v_l3", (-7.5, 9.5), (-10.5, 10.5), 0, "via: left, the cave mouth"),
-    ("uw_v_r1", (2.8, 2.2), (3.8, 6.5), 0, "via: right, the plateau's east side"),
-    ("uw_v_r2", (3.8, 6.5), (3.8, 10), 0, "via: right, up the stair"),
-    ("uw_v_r3", (3.8, 10.0), (5.5, 14.2), 0, "via: right, the shelf"),
+    ("uw_v_s1", (-0.5, 3.6), (-0.5, 12), 0, "via: the plateau, north of the reference viewpoint"),
+    ("uw_v_s2", (-3.0, 3.5), (-3.0, 12), 0, "via: the plateau, west of the ledge foot"),
+    ("uw_v_a1", (-0.8, 3.8), (-1.8, 11), 0, "via: ahead, the plateau"),
+    ("uw_v_a2", (-2.0, 6.5), (-1.9, 13), 0, "via: ahead, the foot of the ledge"),
+    ("uw_v_a3", (-1.9, 12.5), (-1.9, 17), 0, "via: ahead, up the ledge"),
+    ("uw_v_a4", (-1.9, 17.0), (-2.75, 22), 0, "via: ahead, past the Mothership guide"),
+    ("uw_v_l1", (-3.0, 4.0), (-5.2, 5.0), 0, "via: left, the plateau"),
+    ("uw_v_l2", (-5.2, 5.0), (-7.5, 6.0), 0, "via: left, below the Floor guide"),
+    ("uw_v_l3", (-7.5, 6.0), (-10.5, 7.0), 0, "via: left, the cave mouth"),
+    ("uw_v_r1", (4.6, 2.2), (5.2, 6.5), 0, "via: right, the plateau's east side"),
+    ("uw_v_r2", (5.2, 6.5), (4.6, 10), 0, "via: right, up the stair"),
+    ("uw_v_r3", (4.6, 9.8), (5.5, 14.2), 0, "via: right, the shelf"),
     ("uw_v_r4", (5.5, 14.2), (9.5, 13.5), 0, "via: right, behind the Dock guide"),
 ]
 ROUTES = {
-    "ahead": ["uw_v_a1", "uw_v_a2", "uw_v_a3", "uw_gate"],
+    "ahead": ["uw_v_a1", "uw_v_a2", "uw_v_a3", "uw_v_a4", "uw_gate"],
     "left": ["uw_v_l1", "uw_v_l2", "uw_v_l3", "uw_cave_in"],
     "right": ["uw_v_r1", "uw_v_r2", "uw_v_r3", "uw_v_r4", "uw_shelf_end"],
     "stay": ["uw_v_s1", "uw_ledge_view", "uw_v_s2", "uw_cave_view", "uw_v_s1", "uw_stair_view", "uw_v_s1", "uw_ref"],
     "arrive": ["uw_arrive", "uw_ref"],
     "stumble": ["uw_ref_back", "uw_sw_corner", "uw_ref"],
 }
-# sector name prefix -> floor, wall, ceiling texture, tint, step_tex (the riser / cliff face of the piece), lip_tex, light override
 STYLE = {
     "plateau": ("uw_floor_slab", "uw_wall_rock", "uw_ceil", "#d0a898", "uw_wall_cliff", "uw_wall_rock", 0.85),
     "cave": ("uw_floor_cave", "uw_wall_cave", "uw_ceil", "#8090e8", "uw_wall_cave", "uw_wall_rock", 0.8),
@@ -89,29 +89,29 @@ STYLE = {
 }
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
-    "mothership": ((-3.7, 18.4), 2.6, (-3.7, 17.2)),
-    "floor": ((-5.0, 11.0), 2.2, (-5.0, 10.2)),
+    "mothership": ((-3.7, 16.2), 2.6, (-3.7, 15.0)),
+    "floor": ((-5.4, 7.2), 2.2, (-5.4, 6.4)),
     "dock": ((6.5, 10.6), 2.3, (7.4, 10.6)),
 }
 # billboards: id, sprite, point (m), size (height m); y is the centre (half the size) unless a fifth value is given (height of the centre above the floor)
 THINGS = [
-    ("uw_gong", "uw_gong", (-5.5, 4.6), 2.1), ("uw_drum_a", "uw_drum", (-5.4, 3.2), 0.9), ("uw_drum_b", "uw_drum", (-4.4, 2.6), 0.7), ("uw_cloth", "uw_cloth", (-5.7, 1.4), 1.0),
+    ("uw_gong", "uw_gong", (-5.7, 2.2), 2.1), ("uw_drum_a", "uw_drum", (-5.3, 0.8), 0.9), ("uw_drum_b", "uw_drum", (-4.3, 0.3), 0.7), ("uw_cloth", "uw_cloth", (-5.7, -1.0), 1.0),
     ("uw_stub_a", "uw_stub", (4.6, 0.6), 1.3), ("uw_stub_b", "uw_stub", (3.4, -1.0), 0.9), ("uw_stub_c", "uw_stub", (-1.6, -1.3), 0.8), ("uw_stub_d", "uw_stub", (5.3, 2.4), 1.1),
-    ("uw_tusks", "uw_tusks", (-3.0, 19.5), 2.8),
+    ("uw_tusks", "uw_tusks", (-3.0, 17.0), 2.8),
     ("uw_tent", "uw_tent", (9.6, 15.0), 3.0), ("uw_lantern", "uw_lantern", (8.4, 14.6), 0.9, 2.2), ("uw_crate_a", "uw_crate", (8.0, 12.2), 0.95), ("uw_crate_b", "uw_crate", (8.9, 15.2), 0.75),
-    ("uw_pillar_a", "uw_pillar", (-4.0, 41.5), 9.0), ("uw_pillar_b", "uw_pillar", (6.0, 41.5), 10.0), ("uw_pillar_c", "uw_pillar", (0.0, 41.8), 8.0), ("uw_pillar_d", "uw_pillar", (-1.0, 37.4), 5.0),
+    ("uw_pillar_a", "uw_pillar", (-4.0, 35.0), 9.0), ("uw_pillar_b", "uw_pillar", (6.0, 35.0), 10.0), ("uw_pillar_c", "uw_pillar", (0.0, 35.3), 8.0), ("uw_pillar_d", "uw_pillar", (-1.0, 30.9), 5.0),
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y above the wall's sector floor, emissive
 DECALS = [
-    ("uw_dc_bones_a", "uw_bones", (-6.5, 6.4), 2.4, 0.9, False), ("uw_dc_bones_b", "uw_bones", (-6.5, 2.4), 1.8, 1.9, False),
-    ("uw_dc_fall_a", "uw_lavafall", (3.0, 46.0), 20.0, 2.0, True), ("uw_dc_fall_b", "uw_lavafall", (15.0, 46.0), 22.0, 0.0, True), ("uw_dc_fall_c", "uw_lavafall", (24.0, 28.0), 20.0, 2.0, True),
+    ("uw_dc_bones_a", "uw_bones", (-6.5, 1.0), 2.4, 0.9, False), ("uw_dc_bones_b", "uw_bones", (-6.5, 3.6), 1.8, 1.9, False),
+    ("uw_dc_fall_a", "uw_lavafall", (3.0, 39.5), 12.0, 1.0, True), ("uw_dc_fall_b", "uw_lavafall", (15.0, 39.5), 14.0, 0.0, True), ("uw_dc_fall_c", "uw_lavafall", (24.0, 22.0), 12.0, 1.0, True),
 ]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (lava glow along the abyss, the cave's blue, a lantern on the shelf, red fire on the tower)
-    ("uw_lt_ref", (0.0, 3.0), 2.4, 10.0, "#ff8a50", 1.0), ("uw_lt_edge", (0.0, 11.0), 1.4, 14.0, "#ff5a20", 1.6), ("uw_lt_ledge", (-2.8, 20.0), 3.0, 12.0, "#ff6a30", 1.4),
-    ("uw_lt_causeway", (-2.8, 28.0), 3.0, 12.0, "#ff5a20", 1.4), ("uw_lt_lava_a", (10.0, 30.0), -7.0, 22.0, "#ff4a10", 2.0), ("uw_lt_lava_b", (2.0, 20.0), -7.0, 20.0, "#ff5a14", 1.8),
-    ("uw_lt_lava_c", (14.0, 18.0), -6.0, 18.0, "#ff4a10", 1.8), ("uw_lt_cave", (-11.0, 10.0), 2.0, 8.0, "#4060ff", 1.7), ("uw_lt_cave2", (-7.5, 10.0), 2.0, 5.0, "#6a80ff", 1.2),
-    ("uw_lt_shelf", (8.4, 14.0), 2.4, 7.0, "#ffb860", 1.7), ("uw_lt_stair", (3.8, 6.0), 2.4, 7.0, "#ff8a40", 1.0), ("uw_lt_tower", (1.0, 36.0), 6.0, 14.0, "#ff6a40", 1.4),
-    ("uw_lt_tower2", (-3.0, 40.0), 5.0, 10.0, "#d84a30", 1.2),
+    ("uw_lt_ref", (0.0, 3.0), 2.4, 10.0, "#ff8a50", 1.0), ("uw_lt_edge", (0.0, 5.0), 1.4, 14.0, "#ff5a20", 1.6), ("uw_lt_ledge", (-2.8, 13.5), 3.0, 12.0, "#ff6a30", 1.4),
+    ("uw_lt_causeway", (-2.8, 21.5), 3.0, 12.0, "#ff5a20", 1.4), ("uw_lt_lava_a", (10.0, 24.0), -2.0, 22.0, "#ff4a10", 2.0), ("uw_lt_lava_b", (2.0, 14.0), -2.0, 20.0, "#ff5a14", 1.8),
+    ("uw_lt_lava_c", (14.0, 12.0), -2.0, 18.0, "#ff4a10", 1.8), ("uw_lt_cave", (-11.0, 7.0), 2.0, 8.0, "#4060ff", 1.7), ("uw_lt_cave2", (-7.5, 7.0), 2.0, 5.0, "#6a80ff", 1.2),
+    ("uw_lt_shelf", (8.4, 14.0), 2.4, 7.0, "#ffb860", 1.7), ("uw_lt_stair", (5.2, 6.0), 2.4, 7.0, "#ff8a40", 1.0), ("uw_lt_tower", (1.0, 29.5), 6.0, 14.0, "#ff6a40", 1.4),
+    ("uw_lt_tower2", (-3.0, 33.5), 5.0, 10.0, "#d84a30", 1.2),
 ]
 
 
@@ -208,7 +208,7 @@ def main():
         f, w, c, tint, step, lip, light = STYLE[st]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"], s["lip_tex"] = f, w, c, lift(tint), step, lip
         s["room"] = "main"
-        s["light"] = round(light, 3)
+        s["light"] = 1.0  # (sector light is at its ceiling: the lamps and the tint carry the exposure)
         s["room_name"] = nm
         if st == "abyss":
             s["void"] = True

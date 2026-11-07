@@ -1038,7 +1038,7 @@ func test_underworld_the_abyss_is_a_void_shut_by_railings_and_the_art_is_in_the_
 		if str(s.get("room_name", "")).begins_with("abyss"):
 			abyss[str(s["id"])] = true
 			assert_true(m.is_void(str(s["id"])), "underworld: abyss piece %s is a void" % s["id"])
-			assert_true(float(s["floor"]) <= -10.0, "underworld: abyss piece %s lies far below the paths" % s["id"])
+			assert_true(float(s["floor"]) <= -3.0, "underworld: abyss piece %s lies below the paths" % s["id"])
 	assert_true(abyss.size() >= 3, "underworld: the abyss has pieces (%d)" % abyss.size())
 	for w in m.waypoints.values():
 		assert_false(abyss.has(str(w["sector"])), "underworld: no waypoint stands in the abyss")

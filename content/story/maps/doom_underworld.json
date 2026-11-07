@@ -64,11 +64,11 @@
    "id": "0_0",
    "polygon": [
     [
-     6.0,
+     7.5,
      -3.0
     ],
     [
-     6.0,
+     7.5,
      2.0
     ],
     [
@@ -80,7 +80,7 @@
      -3.0
     ],
     [
-     1.5,
+     3.0,
      -3.0
     ]
    ],
@@ -89,8 +89,8 @@
    "floor_tex": "uw_floor_slab",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.85,
-   "tint": "#dec2b6",
+   "light": 1.0,
+   "tint": "#e9d7d0",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
@@ -103,38 +103,26 @@
    "polygon": [
     [
      -6.5,
-     -12.0
+     -5.5
     ],
     [
      -4.5,
-     -12.0
+     -5.5
     ],
     [
      -1.0,
-     -12.0
+     -5.5
     ],
     [
-     1.5,
-     -12.0
+     3.0,
+     -5.5
     ],
     [
-     1.5,
-     -9.0
-    ],
-    [
-     1.5,
-     -7.5
-    ],
-    [
-     1.5,
-     -6.0
-    ],
-    [
-     1.5,
+     3.0,
      -4.5
     ],
     [
-     1.5,
+     3.0,
      -3.0
     ],
     [
@@ -143,7 +131,7 @@
     ],
     [
      -6.5,
-     -8.0
+     -4.5
     ]
    ],
    "floor": 0.0,
@@ -151,8 +139,8 @@
    "floor_tex": "uw_floor_slab",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.85,
-   "tint": "#dec2b6",
+   "light": 1.0,
+   "tint": "#e9d7d0",
    "room": "main",
    "flags": [],
    "doom_sector": 1,
@@ -164,20 +152,62 @@
    "id": "2_0",
    "polygon": [
     [
-     -6.5,
-     -8.0
-    ],
-    [
-     -8.5,
-     -8.0
-    ],
-    [
-     -8.5,
-     -12.0
+     -4.5,
+     -5.5
     ],
     [
      -6.5,
-     -12.0
+     -5.5
+    ],
+    [
+     -6.5,
+     -9.5
+    ],
+    [
+     -4.5,
+     -9.5
+    ],
+    [
+     -4.5,
+     -7.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_slab",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_rock",
+   "light": 1.0,
+   "tint": "#e9d7d0",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 2,
+   "step_tex": "uw_wall_cliff",
+   "lip_tex": "uw_wall_rock",
+   "room_name": "plateau_w"
+  },
+  {
+   "id": "3_0",
+   "polygon": [
+    [
+     -6.5,
+     -4.5
+    ],
+    [
+     -8.5,
+     -4.5
+    ],
+    [
+     -8.5,
+     -9.5
+    ],
+    [
+     -6.5,
+     -9.5
+    ],
+    [
+     -6.5,
+     -5.5
     ]
    ],
    "floor": 0.0,
@@ -185,33 +215,33 @@
    "floor_tex": "uw_floor_cave",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cave",
-   "light": 0.8,
-   "tint": "#a6b1ee",
+   "light": 1.0,
+   "tint": "#c5cdf4",
    "room": "main",
    "flags": [],
-   "doom_sector": 2,
+   "doom_sector": 3,
    "step_tex": "uw_wall_cave",
    "lip_tex": "uw_wall_rock",
    "room_name": "cave_mouth"
   },
   {
-   "id": "3_0",
+   "id": "4_0",
    "polygon": [
     [
      -8.5,
-     -12.0
+     -9.5
     ],
     [
      -8.5,
-     -8.0
+     -4.5
     ],
     [
      -16.0,
-     -8.0
+     -4.5
     ],
     [
      -16.0,
-     -12.0
+     -9.5
     ]
    ],
    "floor": 0.0,
@@ -219,32 +249,32 @@
    "floor_tex": "uw_floor_cave",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cave",
-   "light": 0.8,
-   "tint": "#a6b1ee",
+   "light": 1.0,
+   "tint": "#c5cdf4",
    "room": "main",
    "flags": [],
-   "doom_sector": 3,
+   "doom_sector": 4,
    "step_tex": "uw_wall_cave",
    "lip_tex": "uw_wall_rock",
    "room_name": "cave"
   },
   {
-   "id": "4_0",
+   "id": "5_0",
    "polygon": [
     [
-     6.0,
+     7.5,
      -3.0
     ],
     [
-     1.5,
+     3.0,
      -3.0
     ],
     [
-     1.5,
+     3.0,
      -4.5
     ],
     [
-     6.0,
+     7.5,
      -4.5
     ]
    ],
@@ -253,32 +283,40 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 4,
+   "doom_sector": 5,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "dstair_1"
   },
   {
-   "id": "5_0",
+   "id": "6_0",
    "polygon": [
     [
-     6.0,
-     -4.5
-    ],
-    [
-     1.5,
-     -4.5
-    ],
-    [
-     1.5,
+     7.5,
      -6.0
     ],
     [
-     6.0,
+     7.5,
+     -5.5
+    ],
+    [
+     7.5,
+     -4.5
+    ],
+    [
+     3.0,
+     -4.5
+    ],
+    [
+     3.0,
+     -5.5
+    ],
+    [
+     3.0,
      -6.0
     ]
    ],
@@ -287,32 +325,32 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 5,
+   "doom_sector": 6,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "dstair_2"
   },
   {
-   "id": "6_0",
+   "id": "7_0",
    "polygon": [
     [
-     6.0,
+     7.5,
      -6.0
     ],
     [
-     1.5,
+     3.0,
      -6.0
     ],
     [
-     1.5,
+     3.0,
      -7.5
     ],
     [
-     6.0,
+     7.5,
      -7.5
     ]
    ],
@@ -321,78 +359,70 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 6,
-   "step_tex": "uw_wall_step",
-   "lip_tex": "uw_wall_rock",
-   "room_name": "dstair_3"
-  },
-  {
-   "id": "7_0",
-   "polygon": [
-    [
-     6.0,
-     -7.5
-    ],
-    [
-     1.5,
-     -7.5
-    ],
-    [
-     1.5,
-     -9.0
-    ],
-    [
-     6.0,
-     -9.0
-    ]
-   ],
-   "floor": 1.5,
-   "ceiling": 22.0,
-   "floor_tex": "uw_floor_stone",
-   "ceil_tex": "uw_ceil",
-   "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
-   "room_name": "dstair_4"
+   "room_name": "dstair_3"
   },
   {
    "id": "8_0",
    "polygon": [
     [
+     7.5,
+     -7.5
+    ],
+    [
+     3.0,
+     -7.5
+    ],
+    [
+     3.0,
+     -9.0
+    ],
+    [
+     7.5,
+     -9.0
+    ]
+   ],
+   "floor": 1.5,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_stone",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_rock",
+   "light": 1.0,
+   "tint": "#eddbd4",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 8,
+   "step_tex": "uw_wall_step",
+   "lip_tex": "uw_wall_rock",
+   "room_name": "dstair_4"
+  },
+  {
+   "id": "9_0",
+   "polygon": [
+    [
      12.0,
+     -9.0
+    ],
+    [
+     7.5,
+     -9.0
+    ],
+    [
+     3.0,
+     -9.0
+    ],
+    [
+     3.0,
      -16.0
     ],
     [
      12.0,
-     -12.0
-    ],
-    [
-     12.0,
-     -9.0
-    ],
-    [
-     6.0,
-     -9.0
-    ],
-    [
-     1.5,
-     -9.0
-    ],
-    [
-     1.5,
-     -12.0
-    ],
-    [
-     1.5,
      -16.0
     ]
    ],
@@ -401,67 +431,67 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.9,
-   "tint": "#e9cdbc",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 8,
-   "step_tex": "uw_wall_cliff",
-   "lip_tex": "uw_wall_rock",
-   "room_name": "shelf"
-  },
-  {
-   "id": "9_0",
-   "polygon": [
-    [
-     -1.0,
-     -14.0
-    ],
-    [
-     -1.0,
-     -12.0
-    ],
-    [
-     -4.5,
-     -12.0
-    ],
-    [
-     -4.5,
-     -14.0
-    ]
-   ],
-   "floor": 0.375,
-   "ceiling": 22.0,
-   "floor_tex": "uw_floor_stone",
-   "ceil_tex": "uw_ceil",
-   "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#f1dfd4",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_rock",
-   "room_name": "ledge_1"
+   "room_name": "shelf"
   },
   {
    "id": "10_0",
    "polygon": [
     [
      -1.0,
-     -16.0
+     -5.5
+    ],
+    [
+     -4.5,
+     -5.5
+    ],
+    [
+     -4.5,
+     -7.5
     ],
     [
      -1.0,
-     -14.0
+     -7.5
+    ]
+   ],
+   "floor": 0.375,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_stone",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_rock",
+   "light": 1.0,
+   "tint": "#eddbd4",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 10,
+   "step_tex": "uw_wall_cliff",
+   "lip_tex": "uw_wall_rock",
+   "room_name": "ledge_1"
+  },
+  {
+   "id": "11_0",
+   "polygon": [
+    [
+     -1.0,
+     -7.5
     ],
     [
      -4.5,
-     -14.0
+     -7.5
     ],
     [
      -4.5,
-     -16.0
+     -9.5
+    ],
+    [
+     -1.0,
+     -9.5
     ]
    ],
    "floor": 0.75,
@@ -469,33 +499,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 10,
+   "doom_sector": 11,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_rock",
    "room_name": "ledge_2"
   },
   {
-   "id": "11_0",
+   "id": "12_0",
    "polygon": [
     [
      -1.0,
-     -18.0
+     -11.5
     ],
     [
      -1.0,
-     -16.0
+     -9.5
     ],
     [
      -4.5,
-     -16.0
+     -9.5
     ],
     [
      -4.5,
-     -18.0
+     -11.5
     ]
    ],
    "floor": 1.125,
@@ -503,67 +533,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 11,
-   "step_tex": "uw_wall_cliff",
-   "lip_tex": "uw_wall_rock",
-   "room_name": "ledge_3"
-  },
-  {
-   "id": "12_0",
-   "polygon": [
-    [
-     -1.0,
-     -20.0
-    ],
-    [
-     -1.0,
-     -18.0
-    ],
-    [
-     -4.5,
-     -18.0
-    ],
-    [
-     -4.5,
-     -20.0
-    ]
-   ],
-   "floor": 1.5,
-   "ceiling": 22.0,
-   "floor_tex": "uw_floor_stone",
-   "ceil_tex": "uw_ceil",
-   "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
    "doom_sector": 12,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_rock",
-   "room_name": "ledge_4"
+   "room_name": "ledge_3"
   },
   {
    "id": "13_0",
    "polygon": [
     [
      -1.0,
-     -24.0
+     -13.5
     ],
     [
      -1.0,
-     -20.0
+     -11.5
     ],
     [
      -4.5,
-     -20.0
+     -11.5
     ],
     [
      -4.5,
-     -24.0
+     -13.5
     ]
    ],
    "floor": 1.5,
@@ -571,33 +567,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.9,
-   "tint": "#e9cdbc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
    "doom_sector": 13,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_rock",
-   "room_name": "gate_pad"
+   "room_name": "ledge_4"
   },
   {
    "id": "14_0",
    "polygon": [
     [
      -1.0,
-     -30.0
+     -17.5
     ],
     [
      -1.0,
-     -24.0
+     -13.5
     ],
     [
      -4.5,
-     -24.0
+     -13.5
     ],
     [
      -4.5,
-     -30.0
+     -17.5
     ]
    ],
    "floor": 1.5,
@@ -605,33 +601,67 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#f1dfd4",
    "room": "main",
    "flags": [],
    "doom_sector": 14,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_rock",
-   "room_name": "causeway"
+   "room_name": "gate_pad"
   },
   {
    "id": "15_0",
    "polygon": [
     [
      -1.0,
-     -31.0
+     -23.5
     ],
     [
      -1.0,
-     -30.0
+     -17.5
     ],
     [
      -4.5,
-     -30.0
+     -17.5
     ],
     [
      -4.5,
-     -31.0
+     -23.5
+    ]
+   ],
+   "floor": 1.5,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_stone",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_rock",
+   "light": 1.0,
+   "tint": "#eddbd4",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 15,
+   "step_tex": "uw_wall_cliff",
+   "lip_tex": "uw_wall_rock",
+   "room_name": "causeway"
+  },
+  {
+   "id": "16_0",
+   "polygon": [
+    [
+     -1.0,
+     -24.5
+    ],
+    [
+     -1.0,
+     -23.5
+    ],
+    [
+     -4.5,
+     -23.5
+    ],
+    [
+     -4.5,
+     -24.5
     ]
    ],
    "floor": 1.875,
@@ -639,33 +669,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 15,
+   "doom_sector": 16,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "tstair_1"
   },
   {
-   "id": "16_0",
+   "id": "17_0",
    "polygon": [
     [
      -1.0,
-     -32.0
+     -25.5
     ],
     [
      -1.0,
-     -31.0
+     -24.5
     ],
     [
      -4.5,
-     -31.0
+     -24.5
     ],
     [
      -4.5,
-     -32.0
+     -25.5
     ]
    ],
    "floor": 2.25,
@@ -673,33 +703,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 16,
+   "doom_sector": 17,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "tstair_2"
   },
   {
-   "id": "17_0",
+   "id": "18_0",
    "polygon": [
     [
      -1.0,
-     -33.0
+     -26.5
     ],
     [
      -1.0,
-     -32.0
+     -25.5
     ],
     [
      -4.5,
-     -32.0
+     -25.5
     ],
     [
      -4.5,
-     -33.0
+     -26.5
     ]
    ],
    "floor": 2.625,
@@ -707,33 +737,33 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 17,
+   "doom_sector": 18,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "tstair_3"
   },
   {
-   "id": "18_0",
+   "id": "19_0",
    "polygon": [
     [
      -1.0,
-     -34.0
+     -27.5
     ],
     [
      -1.0,
-     -33.0
+     -26.5
     ],
     [
      -4.5,
-     -33.0
+     -26.5
     ],
     [
      -4.5,
-     -34.0
+     -27.5
     ]
    ],
    "floor": 3.0,
@@ -741,103 +771,53 @@
    "floor_tex": "uw_floor_stone",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_rock",
-   "light": 0.88,
-   "tint": "#e3c7bc",
+   "light": 1.0,
+   "tint": "#eddbd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 18,
+   "doom_sector": 19,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_rock",
    "room_name": "tstair_4"
   },
   {
-   "id": "19_0",
-   "polygon": [
-    [
-     9.0,
-     -38.0
-    ],
-    [
-     9.0,
-     -34.0
-    ],
-    [
-     1.5,
-     -34.0
-    ],
-    [
-     -1.0,
-     -34.0
-    ],
-    [
-     -4.5,
-     -34.0
-    ],
-    [
-     -6.5,
-     -34.0
-    ],
-    [
-     -6.5,
-     -38.0
-    ],
-    [
-     -3.0,
-     -38.0
-    ],
-    [
-     3.0,
-     -38.0
-    ]
-   ],
-   "floor": 3.0,
-   "ceiling": 22.0,
-   "floor_tex": "uw_floor_tower",
-   "ceil_tex": "uw_ceil",
-   "wall_tex": "uw_wall_tower",
-   "light": 0.9,
-   "tint": "#e9c7bc",
-   "room": "main",
-   "flags": [],
-   "doom_sector": 19,
-   "step_tex": "uw_wall_cliff",
-   "lip_tex": "uw_wall_tower",
-   "room_name": "tower_s"
-  },
-  {
    "id": "20_0",
    "polygon": [
     [
-     -3.0,
-     -42.0
+     9.0,
+     -31.5
     ],
     [
-     -3.0,
-     -41.0
+     9.0,
+     -27.5
     ],
     [
-     -3.0,
-     -40.0
+     3.0,
+     -27.5
     ],
     [
-     -3.0,
-     -39.0
-    ],
-    [
-     -3.0,
-     -38.0
-    ],
-    [
-     -6.5,
-     -38.0
-    ],
-    [
-     -6.5,
-     -42.0
+     -1.0,
+     -27.5
     ],
     [
      -4.5,
-     -42.0
+     -27.5
+    ],
+    [
+     -6.5,
+     -27.5
+    ],
+    [
+     -6.5,
+     -31.5
+    ],
+    [
+     -3.0,
+     -31.5
+    ],
+    [
+     3.0,
+     -31.5
     ]
    ],
    "floor": 3.0,
@@ -845,45 +825,49 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.9,
-   "tint": "#e9c7bc",
+   "light": 1.0,
+   "tint": "#f1dbd4",
    "room": "main",
    "flags": [],
    "doom_sector": 20,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_tower",
-   "room_name": "tower_w"
+   "room_name": "tower_s"
   },
   {
    "id": "21_0",
    "polygon": [
     [
-     3.0,
-     -42.0
+     -3.0,
+     -35.5
     ],
     [
-     9.0,
-     -42.0
+     -3.0,
+     -34.5
     ],
     [
-     9.0,
-     -38.0
+     -3.0,
+     -33.5
     ],
     [
-     3.0,
-     -38.0
+     -3.0,
+     -32.5
     ],
     [
-     3.0,
-     -39.0
+     -3.0,
+     -31.5
     ],
     [
-     3.0,
-     -40.0
+     -6.5,
+     -31.5
     ],
     [
-     3.0,
-     -41.0
+     -6.5,
+     -35.5
+    ],
+    [
+     -4.5,
+     -35.5
     ]
    ],
    "floor": 3.0,
@@ -891,33 +875,79 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.9,
-   "tint": "#e9c7bc",
+   "light": 1.0,
+   "tint": "#f1dbd4",
    "room": "main",
    "flags": [],
    "doom_sector": 21,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_tower",
-   "room_name": "tower_e"
+   "room_name": "tower_w"
   },
   {
    "id": "22_0",
    "polygon": [
     [
      3.0,
-     -38.0
+     -35.5
     ],
     [
-     -3.0,
-     -38.0
+     9.0,
+     -35.5
     ],
     [
-     -3.0,
-     -39.0
+     9.0,
+     -31.5
     ],
     [
      3.0,
-     -39.0
+     -31.5
+    ],
+    [
+     3.0,
+     -32.5
+    ],
+    [
+     3.0,
+     -33.5
+    ],
+    [
+     3.0,
+     -34.5
+    ]
+   ],
+   "floor": 3.0,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_tower",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_tower",
+   "light": 1.0,
+   "tint": "#f1dbd4",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 22,
+   "step_tex": "uw_wall_cliff",
+   "lip_tex": "uw_wall_tower",
+   "room_name": "tower_e"
+  },
+  {
+   "id": "23_0",
+   "polygon": [
+    [
+     3.0,
+     -31.5
+    ],
+    [
+     -3.0,
+     -31.5
+    ],
+    [
+     -3.0,
+     -32.5
+    ],
+    [
+     3.0,
+     -32.5
     ]
    ],
    "floor": 3.5,
@@ -925,33 +955,33 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.95,
-   "tint": "#eecdbc",
+   "light": 1.0,
+   "tint": "#f4dfd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 22,
+   "doom_sector": 23,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_tower",
    "room_name": "ttop_1"
   },
   {
-   "id": "23_0",
+   "id": "24_0",
    "polygon": [
     [
      3.0,
-     -39.0
+     -32.5
     ],
     [
      -3.0,
-     -39.0
+     -32.5
     ],
     [
      -3.0,
-     -40.0
+     -33.5
     ],
     [
      3.0,
-     -40.0
+     -33.5
     ]
    ],
    "floor": 4.0,
@@ -959,33 +989,33 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.95,
-   "tint": "#eecdbc",
+   "light": 1.0,
+   "tint": "#f4dfd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 23,
+   "doom_sector": 24,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_tower",
    "room_name": "ttop_2"
   },
   {
-   "id": "24_0",
+   "id": "25_0",
    "polygon": [
     [
      3.0,
-     -40.0
+     -33.5
     ],
     [
      -3.0,
-     -40.0
+     -33.5
     ],
     [
      -3.0,
-     -41.0
+     -34.5
     ],
     [
      3.0,
-     -41.0
+     -34.5
     ]
    ],
    "floor": 4.5,
@@ -993,33 +1023,33 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.95,
-   "tint": "#eecdbc",
+   "light": 1.0,
+   "tint": "#f4dfd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 24,
+   "doom_sector": 25,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_tower",
    "room_name": "ttop_3"
   },
   {
-   "id": "25_0",
+   "id": "26_0",
    "polygon": [
     [
      3.0,
-     -41.0
+     -34.5
     ],
     [
      -3.0,
-     -41.0
+     -34.5
     ],
     [
      -3.0,
-     -42.0
+     -35.5
     ],
     [
      3.0,
-     -42.0
+     -35.5
     ]
    ],
    "floor": 5.0,
@@ -1027,256 +1057,315 @@
    "floor_tex": "uw_floor_tower",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_tower",
-   "light": 0.95,
-   "tint": "#eecdbc",
+   "light": 1.0,
+   "tint": "#f4dfd4",
    "room": "main",
    "flags": [],
-   "doom_sector": 25,
+   "doom_sector": 26,
    "step_tex": "uw_wall_step",
    "lip_tex": "uw_wall_tower",
    "room_name": "ttop_4"
   },
   {
-   "id": "26_0",
+   "id": "27_0",
    "polygon": [
     [
      -1.0,
-     -34.0
+     -27.5
     ],
     [
-     1.5,
-     -34.0
+     3.0,
+     -27.5
     ],
     [
-     1.5,
+     3.0,
      -16.0
     ],
     [
-     1.5,
-     -12.0
+     3.0,
+     -9.0
+    ],
+    [
+     3.0,
+     -7.5
+    ],
+    [
+     3.0,
+     -6.0
+    ],
+    [
+     3.0,
+     -5.5
     ],
     [
      -1.0,
-     -12.0
+     -5.5
     ],
     [
      -1.0,
-     -14.0
+     -7.5
     ],
     [
      -1.0,
-     -16.0
+     -9.5
     ],
     [
      -1.0,
-     -18.0
+     -11.5
     ],
     [
      -1.0,
-     -20.0
+     -13.5
     ],
     [
      -1.0,
-     -24.0
+     -17.5
     ],
     [
      -1.0,
-     -30.0
+     -23.5
     ],
     [
      -1.0,
-     -31.0
+     -24.5
     ],
     [
      -1.0,
-     -32.0
+     -25.5
     ],
     [
      -1.0,
-     -33.0
+     -26.5
     ]
    ],
-   "floor": -14.0,
+   "floor": -4.0,
    "ceiling": 22.0,
    "floor_tex": "uw_floor_lava",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cliff",
    "light": 1.0,
-   "tint": "#ffa684",
+   "tint": "#ffc5b0",
    "room": "main",
    "flags": [],
-   "doom_sector": 26,
+   "doom_sector": 27,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_cliff",
    "room_name": "abyss_00",
    "void": true
   },
   {
-   "id": "27_0",
+   "id": "28_0",
    "polygon": [
     [
+     7.5,
+     -9.0
+    ],
+    [
      12.0,
-     -46.0
+     -9.0
     ],
     [
      24.0,
-     -46.0
+     -9.0
     ],
     [
      24.0,
-     -12.0
+     -5.5
     ],
     [
-     12.0,
-     -12.0
+     7.5,
+     -5.5
     ],
     [
-     12.0,
-     -16.0
+     7.5,
+     -6.0
     ],
     [
-     12.0,
-     -34.0
+     7.5,
+     -7.5
     ]
    ],
-   "floor": -14.0,
+   "floor": -4.0,
    "ceiling": 22.0,
    "floor_tex": "uw_floor_lava",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cliff",
    "light": 1.0,
-   "tint": "#ffa684",
+   "tint": "#ffc5b0",
    "room": "main",
    "flags": [],
-   "doom_sector": 27,
+   "doom_sector": 28,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_cliff",
    "room_name": "abyss_01",
    "void": true
   },
   {
-   "id": "28_0",
+   "id": "29_0",
    "polygon": [
     [
      12.0,
-     -34.0
+     -39.5
+    ],
+    [
+     24.0,
+     -39.5
+    ],
+    [
+     24.0,
+     -9.0
+    ],
+    [
+     12.0,
+     -9.0
     ],
     [
      12.0,
      -16.0
     ],
     [
-     1.5,
-     -16.0
-    ],
-    [
-     1.5,
-     -34.0
-    ],
-    [
-     9.0,
-     -34.0
+     12.0,
+     -27.5
     ]
    ],
-   "floor": -14.0,
+   "floor": -4.0,
    "ceiling": 22.0,
    "floor_tex": "uw_floor_lava",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cliff",
    "light": 1.0,
-   "tint": "#ffa684",
+   "tint": "#ffc5b0",
    "room": "main",
    "flags": [],
-   "doom_sector": 28,
+   "doom_sector": 29,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_cliff",
    "room_name": "abyss_02",
    "void": true
   },
   {
-   "id": "29_0",
+   "id": "30_0",
    "polygon": [
     [
-     9.0,
-     -46.0
+     12.0,
+     -27.5
     ],
     [
      12.0,
-     -46.0
+     -16.0
     ],
     [
-     12.0,
-     -34.0
+     3.0,
+     -16.0
     ],
     [
-     9.0,
-     -34.0
-    ],
-    [
-     9.0,
-     -38.0
+     3.0,
+     -27.5
     ],
     [
      9.0,
-     -42.0
+     -27.5
     ]
    ],
-   "floor": -14.0,
+   "floor": -4.0,
    "ceiling": 22.0,
    "floor_tex": "uw_floor_lava",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cliff",
    "light": 1.0,
-   "tint": "#ffa684",
+   "tint": "#ffc5b0",
    "room": "main",
    "flags": [],
-   "doom_sector": 29,
+   "doom_sector": 30,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_cliff",
    "room_name": "abyss_03",
    "void": true
   },
   {
-   "id": "30_0",
+   "id": "31_0",
    "polygon": [
     [
      9.0,
-     -46.0
+     -39.5
+    ],
+    [
+     12.0,
+     -39.5
+    ],
+    [
+     12.0,
+     -27.5
     ],
     [
      9.0,
-     -42.0
+     -27.5
     ],
     [
-     3.0,
-     -42.0
+     9.0,
+     -31.5
     ],
     [
-     -3.0,
-     -42.0
-    ],
-    [
-     -4.5,
-     -42.0
-    ],
-    [
-     -4.5,
-     -46.0
+     9.0,
+     -35.5
     ]
    ],
-   "floor": -14.0,
+   "floor": -4.0,
    "ceiling": 22.0,
    "floor_tex": "uw_floor_lava",
    "ceil_tex": "uw_ceil",
    "wall_tex": "uw_wall_cliff",
    "light": 1.0,
-   "tint": "#ffa684",
+   "tint": "#ffc5b0",
    "room": "main",
    "flags": [],
-   "doom_sector": 30,
+   "doom_sector": 31,
    "step_tex": "uw_wall_cliff",
    "lip_tex": "uw_wall_cliff",
    "room_name": "abyss_04",
+   "void": true
+  },
+  {
+   "id": "32_0",
+   "polygon": [
+    [
+     9.0,
+     -39.5
+    ],
+    [
+     9.0,
+     -35.5
+    ],
+    [
+     3.0,
+     -35.5
+    ],
+    [
+     -3.0,
+     -35.5
+    ],
+    [
+     -4.5,
+     -35.5
+    ],
+    [
+     -4.5,
+     -39.5
+    ]
+   ],
+   "floor": -4.0,
+   "ceiling": 22.0,
+   "floor_tex": "uw_floor_lava",
+   "ceil_tex": "uw_ceil",
+   "wall_tex": "uw_wall_cliff",
+   "light": 1.0,
+   "tint": "#ffc5b0",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 32,
+   "step_tex": "uw_wall_cliff",
+   "lip_tex": "uw_wall_cliff",
+   "room_name": "abyss_05",
    "void": true
   }
  ],
@@ -1284,14 +1373,14 @@
   {
    "from": [
     -8.5,
-    -8.0
+    -4.5
    ],
    "to": [
     -8.5,
-    -12.0
+    -9.5
    ],
-   "sector": "2_0",
-   "portal": "3_0",
+   "sector": "3_0",
+   "portal": "4_0",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -1301,7 +1390,7 @@
     -3.0
    ],
    "to": [
-    1.5,
+    3.0,
     -3.0
    ],
    "sector": "0_0",
@@ -1312,11 +1401,39 @@
   {
    "from": [
     -6.5,
-    -8.0
+    -4.5
    ],
    "to": [
     -6.5,
-    -12.0
+    -5.5
+   ],
+   "sector": "1_0",
+   "portal": "3_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -6.5,
+    -5.5
+   ],
+   "to": [
+    -6.5,
+    -9.5
+   ],
+   "sector": "2_0",
+   "portal": "3_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -6.5,
+    -5.5
+   ],
+   "to": [
+    -4.5,
+    -5.5
    ],
    "sector": "1_0",
    "portal": "2_0",
@@ -1326,53 +1443,68 @@
   {
    "from": [
     -6.5,
-    -38.0
+    -31.5
    ],
    "to": [
     -3.0,
-    -38.0
+    -31.5
    ],
-   "sector": "19_0",
-   "portal": "20_0",
+   "sector": "20_0",
+   "portal": "21_0",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
     -4.5,
-    -12.0
-   ],
-   "to": [
-    -1.0,
-    -12.0
-   ],
-   "sector": "1_0",
-   "portal": "9_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -1.0,
-    -14.0
+    -5.5
    ],
    "to": [
     -4.5,
-    -14.0
+    -7.5
    ],
    "sector": "10_0",
-   "portal": "9_0",
+   "portal": "2_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -1.0,
+    -5.5
+   ],
+   "to": [
+    -4.5,
+    -5.5
+   ],
+   "sector": "10_0",
+   "portal": "1_0",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
     -4.5,
-    -16.0
+    -7.5
+   ],
+   "to": [
+    -4.5,
+    -9.5
+   ],
+   "sector": "11_0",
+   "portal": "2_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true
+  },
+  {
+   "from": [
+    -4.5,
+    -7.5
    ],
    "to": [
     -1.0,
-    -16.0
+    -7.5
    ],
    "sector": "10_0",
    "portal": "11_0",
@@ -1382,11 +1514,11 @@
   {
    "from": [
     -4.5,
-    -18.0
+    -9.5
    ],
    "to": [
     -1.0,
-    -18.0
+    -9.5
    ],
    "sector": "11_0",
    "portal": "12_0",
@@ -1396,11 +1528,11 @@
   {
    "from": [
     -4.5,
-    -20.0
+    -11.5
    ],
    "to": [
     -1.0,
-    -20.0
+    -11.5
    ],
    "sector": "12_0",
    "portal": "13_0",
@@ -1410,11 +1542,11 @@
   {
    "from": [
     -4.5,
-    -24.0
+    -13.5
    ],
    "to": [
     -1.0,
-    -24.0
+    -13.5
    ],
    "sector": "13_0",
    "portal": "14_0",
@@ -1424,11 +1556,11 @@
   {
    "from": [
     -4.5,
-    -30.0
+    -17.5
    ],
    "to": [
     -1.0,
-    -30.0
+    -17.5
    ],
    "sector": "14_0",
    "portal": "15_0",
@@ -1438,11 +1570,11 @@
   {
    "from": [
     -4.5,
-    -31.0
+    -23.5
    ],
    "to": [
     -1.0,
-    -31.0
+    -23.5
    ],
    "sector": "15_0",
    "portal": "16_0",
@@ -1452,11 +1584,11 @@
   {
    "from": [
     -4.5,
-    -32.0
+    -24.5
    ],
    "to": [
     -1.0,
-    -32.0
+    -24.5
    ],
    "sector": "16_0",
    "portal": "17_0",
@@ -1466,11 +1598,11 @@
   {
    "from": [
     -4.5,
-    -33.0
+    -25.5
    ],
    "to": [
     -1.0,
-    -33.0
+    -25.5
    ],
    "sector": "17_0",
    "portal": "18_0",
@@ -1480,11 +1612,11 @@
   {
    "from": [
     -4.5,
-    -34.0
+    -26.5
    ],
    "to": [
     -1.0,
-    -34.0
+    -26.5
    ],
    "sector": "18_0",
    "portal": "19_0",
@@ -1494,14 +1626,28 @@
   {
    "from": [
     -4.5,
-    -42.0
+    -27.5
+   ],
+   "to": [
+    -1.0,
+    -27.5
+   ],
+   "sector": "19_0",
+   "portal": "20_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -4.5,
+    -35.5
    ],
    "to": [
     -3.0,
-    -42.0
+    -35.5
    ],
-   "sector": "20_0",
-   "portal": "30_0",
+   "sector": "21_0",
+   "portal": "32_0",
    "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
@@ -1512,56 +1658,13 @@
   {
    "from": [
     -3.0,
-    -39.0
+    -32.5
    ],
    "to": [
     -3.0,
-    -38.0
+    -31.5
    ],
-   "sector": "20_0",
-   "portal": "22_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -3.0,
-    -38.0
-   ],
-   "to": [
-    3.0,
-    -38.0
-   ],
-   "sector": "19_0",
-   "portal": "22_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -3.0,
-    -40.0
-   ],
-   "to": [
-    -3.0,
-    -39.0
-   ],
-   "sector": "20_0",
-   "portal": "23_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    -3.0,
-    -39.0
-   ],
-   "to": [
-    3.0,
-    -39.0
-   ],
-   "sector": "22_0",
+   "sector": "21_0",
    "portal": "23_0",
    "lower_tex": "",
    "upper_tex": ""
@@ -1569,13 +1672,27 @@
   {
    "from": [
     -3.0,
-    -41.0
+    -31.5
+   ],
+   "to": [
+    3.0,
+    -31.5
+   ],
+   "sector": "20_0",
+   "portal": "23_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.0,
+    -33.5
    ],
    "to": [
     -3.0,
-    -40.0
+    -32.5
    ],
-   "sector": "20_0",
+   "sector": "21_0",
    "portal": "24_0",
    "lower_tex": "",
    "upper_tex": "",
@@ -1584,11 +1701,11 @@
   {
    "from": [
     -3.0,
-    -40.0
+    -32.5
    ],
    "to": [
     3.0,
-    -40.0
+    -32.5
    ],
    "sector": "23_0",
    "portal": "24_0",
@@ -1598,13 +1715,13 @@
   {
    "from": [
     -3.0,
-    -42.0
+    -34.5
    ],
    "to": [
     -3.0,
-    -41.0
+    -33.5
    ],
-   "sector": "20_0",
+   "sector": "21_0",
    "portal": "25_0",
    "lower_tex": "",
    "upper_tex": "",
@@ -1613,11 +1730,11 @@
   {
    "from": [
     -3.0,
-    -41.0
+    -33.5
    ],
    "to": [
     3.0,
-    -41.0
+    -33.5
    ],
    "sector": "24_0",
    "portal": "25_0",
@@ -1627,14 +1744,43 @@
   {
    "from": [
     -3.0,
-    -42.0
+    -35.5
+   ],
+   "to": [
+    -3.0,
+    -34.5
+   ],
+   "sector": "21_0",
+   "portal": "26_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true
+  },
+  {
+   "from": [
+    -3.0,
+    -34.5
    ],
    "to": [
     3.0,
-    -42.0
+    -34.5
    ],
    "sector": "25_0",
-   "portal": "30_0",
+   "portal": "26_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -3.0,
+    -35.5
+   ],
+   "to": [
+    3.0,
+    -35.5
+   ],
+   "sector": "26_0",
+   "portal": "32_0",
    "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
@@ -1645,13 +1791,368 @@
   {
    "from": [
     -1.0,
-    -12.0
+    -7.5
    ],
    "to": [
     -1.0,
-    -14.0
+    -5.5
    ],
-   "sector": "26_0",
+   "sector": "10_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -5.5
+   ],
+   "to": [
+    3.0,
+    -5.5
+   ],
+   "sector": "1_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -9.5
+   ],
+   "to": [
+    -1.0,
+    -7.5
+   ],
+   "sector": "11_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -11.5
+   ],
+   "to": [
+    -1.0,
+    -9.5
+   ],
+   "sector": "12_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -13.5
+   ],
+   "to": [
+    -1.0,
+    -11.5
+   ],
+   "sector": "13_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -17.5
+   ],
+   "to": [
+    -1.0,
+    -13.5
+   ],
+   "sector": "14_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -23.5
+   ],
+   "to": [
+    -1.0,
+    -17.5
+   ],
+   "sector": "15_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -24.5
+   ],
+   "to": [
+    -1.0,
+    -23.5
+   ],
+   "sector": "16_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -25.5
+   ],
+   "to": [
+    -1.0,
+    -24.5
+   ],
+   "sector": "17_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -26.5
+   ],
+   "to": [
+    -1.0,
+    -25.5
+   ],
+   "sector": "18_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    -1.0,
+    -27.5
+   ],
+   "to": [
+    -1.0,
+    -26.5
+   ],
+   "sector": "19_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    3.0,
+    -27.5
+   ],
+   "to": [
+    -1.0,
+    -27.5
+   ],
+   "sector": "20_0",
+   "portal": "27_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    3.0,
+    -4.5
+   ],
+   "to": [
+    3.0,
+    -3.0
+   ],
+   "sector": "1_0",
+   "portal": "5_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -3.0
+   ],
+   "to": [
+    7.5,
+    -3.0
+   ],
+   "sector": "0_0",
+   "portal": "5_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -5.5
+   ],
+   "to": [
+    3.0,
+    -4.5
+   ],
+   "sector": "1_0",
+   "portal": "6_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true
+  },
+  {
+   "from": [
+    3.0,
+    -4.5
+   ],
+   "to": [
+    7.5,
+    -4.5
+   ],
+   "sector": "5_0",
+   "portal": "6_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -6.0
+   ],
+   "to": [
+    3.0,
+    -5.5
+   ],
+   "sector": "27_0",
+   "portal": "6_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    3.0,
+    -7.5
+   ],
+   "to": [
+    3.0,
+    -6.0
+   ],
+   "sector": "27_0",
+   "portal": "7_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    3.0,
+    -6.0
+   ],
+   "to": [
+    7.5,
+    -6.0
+   ],
+   "sector": "6_0",
+   "portal": "7_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -9.0
+   ],
+   "to": [
+    3.0,
+    -7.5
+   ],
+   "sector": "27_0",
+   "portal": "8_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    3.0,
+    -7.5
+   ],
+   "to": [
+    7.5,
+    -7.5
+   ],
+   "sector": "7_0",
+   "portal": "8_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -16.0
+   ],
+   "to": [
+    3.0,
+    -9.0
+   ],
+   "sector": "27_0",
    "portal": "9_0",
    "lower_tex": "",
    "upper_tex": "",
@@ -1662,375 +2163,29 @@
   },
   {
    "from": [
-    -1.0,
-    -12.0
-   ],
-   "to": [
-    1.5,
-    -12.0
-   ],
-   "sector": "1_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -16.0
-   ],
-   "to": [
-    -1.0,
-    -14.0
-   ],
-   "sector": "10_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -18.0
-   ],
-   "to": [
-    -1.0,
-    -16.0
-   ],
-   "sector": "11_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -20.0
-   ],
-   "to": [
-    -1.0,
-    -18.0
-   ],
-   "sector": "12_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -24.0
-   ],
-   "to": [
-    -1.0,
-    -20.0
-   ],
-   "sector": "13_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -30.0
-   ],
-   "to": [
-    -1.0,
-    -24.0
-   ],
-   "sector": "14_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -31.0
-   ],
-   "to": [
-    -1.0,
-    -30.0
-   ],
-   "sector": "15_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -32.0
-   ],
-   "to": [
-    -1.0,
-    -31.0
-   ],
-   "sector": "16_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -33.0
-   ],
-   "to": [
-    -1.0,
-    -32.0
-   ],
-   "sector": "17_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    -1.0,
-    -34.0
-   ],
-   "to": [
-    -1.0,
-    -33.0
-   ],
-   "sector": "18_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    1.5,
-    -34.0
-   ],
-   "to": [
-    -1.0,
-    -34.0
-   ],
-   "sector": "19_0",
-   "portal": "26_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    1.5,
-    -4.5
-   ],
-   "to": [
-    1.5,
-    -3.0
-   ],
-   "sector": "1_0",
-   "portal": "4_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    1.5,
-    -3.0
-   ],
-   "to": [
-    6.0,
-    -3.0
-   ],
-   "sector": "0_0",
-   "portal": "4_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    1.5,
-    -6.0
-   ],
-   "to": [
-    1.5,
-    -4.5
-   ],
-   "sector": "1_0",
-   "portal": "5_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    1.5,
-    -4.5
-   ],
-   "to": [
-    6.0,
-    -4.5
-   ],
-   "sector": "4_0",
-   "portal": "5_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    1.5,
-    -7.5
-   ],
-   "to": [
-    1.5,
-    -6.0
-   ],
-   "sector": "1_0",
-   "portal": "6_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    1.5,
-    -6.0
-   ],
-   "to": [
-    6.0,
-    -6.0
-   ],
-   "sector": "5_0",
-   "portal": "6_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    1.5,
+    3.0,
     -9.0
    ],
    "to": [
-    1.5,
-    -7.5
+    7.5,
+    -9.0
    ],
-   "sector": "1_0",
-   "portal": "7_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    1.5,
-    -7.5
-   ],
-   "to": [
-    6.0,
-    -7.5
-   ],
-   "sector": "6_0",
-   "portal": "7_0",
+   "sector": "8_0",
+   "portal": "9_0",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    1.5,
-    -12.0
+    3.0,
+    -27.5
    ],
    "to": [
-    1.5,
-    -9.0
-   ],
-   "sector": "1_0",
-   "portal": "8_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    1.5,
-    -9.0
-   ],
-   "to": [
-    6.0,
-    -9.0
-   ],
-   "sector": "7_0",
-   "portal": "8_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    1.5,
+    3.0,
     -16.0
    ],
-   "to": [
-    1.5,
-    -12.0
-   ],
-   "sector": "26_0",
-   "portal": "8_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    1.5,
-    -34.0
-   ],
-   "to": [
-    1.5,
-    -16.0
-   ],
-   "sector": "26_0",
-   "portal": "28_0",
+   "sector": "27_0",
+   "portal": "30_0",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -2040,11 +2195,11 @@
     -16.0
    ],
    "to": [
-    1.5,
+    3.0,
     -16.0
    ],
-   "sector": "28_0",
-   "portal": "8_0",
+   "sector": "30_0",
+   "portal": "9_0",
    "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
@@ -2055,14 +2210,14 @@
   {
    "from": [
     9.0,
-    -34.0
+    -27.5
    ],
    "to": [
-    1.5,
-    -34.0
+    3.0,
+    -27.5
    ],
-   "sector": "19_0",
-   "portal": "28_0",
+   "sector": "20_0",
+   "portal": "30_0",
    "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
@@ -2073,13 +2228,27 @@
   {
    "from": [
     3.0,
-    -38.0
+    -31.5
    ],
    "to": [
     3.0,
-    -39.0
+    -32.5
    ],
-   "sector": "21_0",
+   "sector": "22_0",
+   "portal": "23_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    3.0,
+    -31.5
+   ],
+   "to": [
+    9.0,
+    -31.5
+   ],
+   "sector": "20_0",
    "portal": "22_0",
    "lower_tex": "",
    "upper_tex": ""
@@ -2087,42 +2256,13 @@
   {
    "from": [
     3.0,
-    -38.0
-   ],
-   "to": [
-    9.0,
-    -38.0
-   ],
-   "sector": "19_0",
-   "portal": "21_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    3.0,
-    -39.0
+    -32.5
    ],
    "to": [
     3.0,
-    -40.0
+    -33.5
    ],
-   "sector": "21_0",
-   "portal": "23_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true
-  },
-  {
-   "from": [
-    3.0,
-    -40.0
-   ],
-   "to": [
-    3.0,
-    -41.0
-   ],
-   "sector": "21_0",
+   "sector": "22_0",
    "portal": "24_0",
    "lower_tex": "",
    "upper_tex": "",
@@ -2131,13 +2271,13 @@
   {
    "from": [
     3.0,
-    -41.0
+    -33.5
    ],
    "to": [
     3.0,
-    -42.0
+    -34.5
    ],
-   "sector": "21_0",
+   "sector": "22_0",
    "portal": "25_0",
    "lower_tex": "",
    "upper_tex": "",
@@ -2146,28 +2286,97 @@
   {
    "from": [
     3.0,
-    -42.0
+    -34.5
+   ],
+   "to": [
+    3.0,
+    -35.5
+   ],
+   "sector": "22_0",
+   "portal": "26_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true
+  },
+  {
+   "from": [
+    3.0,
+    -35.5
    ],
    "to": [
     9.0,
-    -42.0
+    -35.5
    ],
-   "sector": "21_0",
-   "portal": "30_0",
+   "sector": "22_0",
+   "portal": "32_0",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    9.0,
-    -38.0
+    7.5,
+    -5.5
    ],
    "to": [
-    9.0,
-    -34.0
+    7.5,
+    -6.0
    ],
-   "sector": "19_0",
-   "portal": "29_0",
+   "sector": "28_0",
+   "portal": "6_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    7.5,
+    -6.0
+   ],
+   "to": [
+    7.5,
+    -7.5
+   ],
+   "sector": "28_0",
+   "portal": "7_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    7.5,
+    -7.5
+   ],
+   "to": [
+    7.5,
+    -9.0
+   ],
+   "sector": "28_0",
+   "portal": "8_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    7.5,
+    -9.0
+   ],
+   "to": [
+    12.0,
+    -9.0
+   ],
+   "sector": "28_0",
+   "portal": "9_0",
    "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
@@ -2178,11 +2387,93 @@
   {
    "from": [
     9.0,
-    -34.0
+    -31.5
+   ],
+   "to": [
+    9.0,
+    -27.5
+   ],
+   "sector": "20_0",
+   "portal": "31_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    9.0,
+    -27.5
    ],
    "to": [
     12.0,
-    -34.0
+    -27.5
+   ],
+   "sector": "30_0",
+   "portal": "31_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    9.0,
+    -35.5
+   ],
+   "to": [
+    9.0,
+    -31.5
+   ],
+   "sector": "22_0",
+   "portal": "31_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    9.0,
+    -35.5
+   ],
+   "to": [
+    9.0,
+    -39.5
+   ],
+   "sector": "31_0",
+   "portal": "32_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    12.0,
+    -9.0
+   ],
+   "to": [
+    12.0,
+    -16.0
+   ],
+   "sector": "29_0",
+   "portal": "9_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "uw_rail",
+   "height": 0.9
+  },
+  {
+   "from": [
+    12.0,
+    -9.0
+   ],
+   "to": [
+    24.0,
+    -9.0
    ],
    "sector": "28_0",
    "portal": "29_0",
@@ -2191,30 +2482,12 @@
   },
   {
    "from": [
-    9.0,
-    -42.0
+    12.0,
+    -16.0
    ],
    "to": [
-    9.0,
-    -38.0
-   ],
-   "sector": "21_0",
-   "portal": "29_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    9.0,
-    -42.0
-   ],
-   "to": [
-    9.0,
-    -46.0
+    12.0,
+    -27.5
    ],
    "sector": "29_0",
    "portal": "30_0",
@@ -2224,46 +2497,14 @@
   {
    "from": [
     12.0,
-    -12.0
+    -27.5
    ],
    "to": [
     12.0,
-    -16.0
+    -39.5
    ],
-   "sector": "27_0",
-   "portal": "8_0",
-   "lower_tex": "",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "uw_rail",
-   "height": 0.9
-  },
-  {
-   "from": [
-    12.0,
-    -16.0
-   ],
-   "to": [
-    12.0,
-    -34.0
-   ],
-   "sector": "27_0",
-   "portal": "28_0",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    12.0,
-    -34.0
-   ],
-   "to": [
-    12.0,
-    -46.0
-   ],
-   "sector": "27_0",
-   "portal": "29_0",
+   "sector": "29_0",
+   "portal": "31_0",
    "lower_tex": "",
    "upper_tex": ""
   }
@@ -2275,7 +2516,7 @@
    "sprite": "guide_mothership_idle_0",
    "at": [
     -3.7,
-    -18.4
+    -16.2
    ],
    "y": 1.3,
    "size": 2.6,
@@ -2286,8 +2527,8 @@
    "kind": "billboard",
    "sprite": "guide_floor_idle_0",
    "at": [
-    -5.0,
-    -11.0
+    -5.4,
+    -7.2
    ],
    "y": 1.1,
    "size": 2.2,
@@ -2310,8 +2551,8 @@
    "kind": "billboard",
    "sprite": "uw_gong",
    "at": [
-    -5.5,
-    -4.6
+    -5.7,
+    -2.2
    ],
    "y": 1.05,
    "size": 2.1,
@@ -2322,8 +2563,8 @@
    "kind": "billboard",
    "sprite": "uw_drum",
    "at": [
-    -5.4,
-    -3.2
+    -5.3,
+    -0.8
    ],
    "y": 0.45,
    "size": 0.9,
@@ -2334,8 +2575,8 @@
    "kind": "billboard",
    "sprite": "uw_drum",
    "at": [
-    -4.4,
-    -2.6
+    -4.3,
+    -0.3
    ],
    "y": 0.35,
    "size": 0.7,
@@ -2347,7 +2588,7 @@
    "sprite": "uw_cloth",
    "at": [
     -5.7,
-    -1.4
+    1.0
    ],
    "y": 0.5,
    "size": 1.0,
@@ -2407,7 +2648,7 @@
    "sprite": "uw_tusks",
    "at": [
     -3.0,
-    -19.5
+    -17.0
    ],
    "y": 1.4,
    "size": 2.8,
@@ -2467,7 +2708,7 @@
    "sprite": "uw_pillar",
    "at": [
     -4.0,
-    -41.5
+    -35.0
    ],
    "y": 4.5,
    "size": 9.0,
@@ -2479,7 +2720,7 @@
    "sprite": "uw_pillar",
    "at": [
     6.0,
-    -41.5
+    -35.0
    ],
    "y": 5.0,
    "size": 10.0,
@@ -2491,7 +2732,7 @@
    "sprite": "uw_pillar",
    "at": [
     0.0,
-    -41.8
+    -35.3
    ],
    "y": 4.0,
    "size": 8.0,
@@ -2503,7 +2744,7 @@
    "sprite": "uw_pillar",
    "at": [
     -1.0,
-    -37.4
+    -30.9
    ],
    "y": 2.5,
    "size": 5.0,
@@ -2515,7 +2756,7 @@
    "sprite": "uw_bones",
    "at": [
     -6.5,
-    -6.4
+    -1.0
    ],
    "y": 0.9,
    "size": 2.4
@@ -2526,7 +2767,7 @@
    "sprite": "uw_bones",
    "at": [
     -6.5,
-    -2.4
+    -3.6
    ],
    "y": 1.9,
    "size": 1.8
@@ -2537,10 +2778,10 @@
    "sprite": "uw_lavafall",
    "at": [
     3.0,
-    -46.0
+    -39.5
    ],
-   "y": 2.0,
-   "size": 20.0,
+   "y": 1.0,
+   "size": 12.0,
    "emissive": true
   },
   {
@@ -2549,10 +2790,10 @@
    "sprite": "uw_lavafall",
    "at": [
     15.0,
-    -46.0
+    -39.5
    ],
    "y": 0.0,
-   "size": 22.0,
+   "size": 14.0,
    "emissive": true
   },
   {
@@ -2561,10 +2802,10 @@
    "sprite": "uw_lavafall",
    "at": [
     24.0,
-    -28.0
+    -22.0
    ],
-   "y": 2.0,
-   "size": 20.0,
+   "y": 1.0,
+   "size": 12.0,
    "emissive": true
   },
   {
@@ -2577,14 +2818,14 @@
    "y": 2.4,
    "radius": 13.0,
    "color": "#ff8a50",
-   "strength": 2.4
+   "strength": 2.5
   },
   {
    "id": "uw_lt_edge",
    "kind": "light",
    "at": [
     0.0,
-    -11.0
+    -5.0
    ],
    "y": 1.4,
    "radius": 18.2,
@@ -2596,7 +2837,7 @@
    "kind": "light",
    "at": [
     -2.8,
-    -20.0
+    -13.5
    ],
    "y": 3.0,
    "radius": 15.6,
@@ -2608,7 +2849,7 @@
    "kind": "light",
    "at": [
     -2.8,
-    -28.0
+    -21.5
    ],
    "y": 3.0,
    "radius": 15.6,
@@ -2620,9 +2861,9 @@
    "kind": "light",
    "at": [
     10.0,
-    -30.0
+    -24.0
    ],
-   "y": -7.0,
+   "y": -2.0,
    "radius": 28.6,
    "color": "#ff4a10",
    "strength": 2.5
@@ -2632,9 +2873,9 @@
    "kind": "light",
    "at": [
     2.0,
-    -20.0
+    -14.0
    ],
-   "y": -7.0,
+   "y": -2.0,
    "radius": 26.0,
    "color": "#ff5a14",
    "strength": 2.5
@@ -2644,9 +2885,9 @@
    "kind": "light",
    "at": [
     14.0,
-    -18.0
+    -12.0
    ],
-   "y": -6.0,
+   "y": -2.0,
    "radius": 23.4,
    "color": "#ff4a10",
    "strength": 2.5
@@ -2656,7 +2897,7 @@
    "kind": "light",
    "at": [
     -11.0,
-    -10.0
+    -7.0
    ],
    "y": 2.0,
    "radius": 10.4,
@@ -2668,7 +2909,7 @@
    "kind": "light",
    "at": [
     -7.5,
-    -10.0
+    -7.0
    ],
    "y": 2.0,
    "radius": 6.5,
@@ -2691,20 +2932,20 @@
    "id": "uw_lt_stair",
    "kind": "light",
    "at": [
-    3.8,
+    5.2,
     -6.0
    ],
    "y": 2.4,
    "radius": 9.1,
    "color": "#ff8a40",
-   "strength": 2.4
+   "strength": 2.5
   },
   {
    "id": "uw_lt_tower",
    "kind": "light",
    "at": [
     1.0,
-    -36.0
+    -29.5
    ],
    "y": 6.0,
    "radius": 18.2,
@@ -2716,7 +2957,7 @@
    "kind": "light",
    "at": [
     -3.0,
-    -40.0
+    -33.5
    ],
    "y": 5.0,
    "radius": 13.0,
@@ -2728,7 +2969,7 @@
    "kind": "light",
    "at": [
     -3.7,
-    -17.2
+    -15.0
    ],
    "y": 2.8,
    "radius": 3.0,
@@ -2739,8 +2980,8 @@
    "id": "uw_lamp_floor",
    "kind": "light",
    "at": [
-    -5.0,
-    -10.2
+    -5.4,
+    -6.4
    ],
    "y": 2.8,
    "radius": 3.0,
@@ -2763,21 +3004,21 @@
  "homes": [],
  "spots": {
   "uw_guide_mothership": {
-   "sector": "12_0",
+   "sector": "14_0",
    "at": [
     -3.7,
-    -18.4
+    -16.2
    ]
   },
   "uw_guide_floor": {
-   "sector": "1_0",
+   "sector": "2_0",
    "at": [
-    -5.0,
-    -11.0
+    -5.4,
+    -7.2
    ]
   },
   "uw_guide_dock": {
-   "sector": "8_0",
+   "sector": "9_0",
    "at": [
     6.5,
     -10.6
@@ -2836,10 +3077,10 @@
   {
    "id": "uw_ledge_view",
    "at": [
-    -2.2,
-    -8.0
+    -2.4,
+    -4.2
    ],
-   "yaw": 2.6,
+   "yaw": 2.0,
    "sector": "1_0",
    "hold_bars": 2
   },
@@ -2847,9 +3088,9 @@
    "id": "uw_cave_view",
    "at": [
     -3.8,
-    -6.0
+    -4.0
    ],
-   "yaw": 58.0,
+   "yaw": 67.4,
    "sector": "1_0",
    "hold_bars": 2
   },
@@ -2857,9 +3098,9 @@
    "id": "uw_stair_view",
    "at": [
     0.6,
-    -5.0
+    -4.2
    ],
-   "yaw": -46.8,
+   "yaw": -43.3,
    "sector": "1_0",
    "hold_bars": 2
   },
@@ -2867,20 +3108,20 @@
    "id": "uw_gate",
    "at": [
     -2.75,
-    -23.0
+    -22.0
    ],
    "yaw": -0.0,
-   "sector": "13_0",
+   "sector": "15_0",
    "hold_bars": 1
   },
   {
    "id": "uw_cave_in",
    "at": [
     -10.5,
-    -10.5
+    -7.0
    ],
    "yaw": 90.0,
-   "sector": "3_0",
+   "sector": "4_0",
    "hold_bars": 1
   },
   {
@@ -2890,14 +3131,14 @@
     -13.5
    ],
    "yaw": -45.0,
-   "sector": "8_0",
+   "sector": "9_0",
    "hold_bars": 1
   },
   {
    "id": "uw_v_s1",
    "at": [
     -0.5,
-    -5.0
+    -3.6
    ],
    "yaw": -0.0,
    "sector": "1_0"
@@ -2906,7 +3147,7 @@
    "id": "uw_v_s2",
    "at": [
     -3.0,
-    -7.0
+    -3.5
    ],
    "yaw": -0.0,
    "sector": "1_0"
@@ -2915,82 +3156,91 @@
    "id": "uw_v_a1",
    "at": [
     -0.8,
-    -5.5
+    -3.8
    ],
-   "yaw": 10.3,
+   "yaw": 7.9,
    "sector": "1_0"
   },
   {
    "id": "uw_v_a2",
    "at": [
-    -1.8,
-    -11.0
+    -2.0,
+    -6.5
    ],
-   "yaw": -0.0,
-   "sector": "1_0"
+   "yaw": -0.9,
+   "sector": "10_0"
   },
   {
    "id": "uw_v_a3",
    "at": [
     -1.9,
+    -12.5
+   ],
+   "yaw": -0.0,
+   "sector": "13_0"
+  },
+  {
+   "id": "uw_v_a4",
+   "at": [
+    -1.9,
     -17.0
    ],
-   "yaw": 8.1,
-   "sector": "11_0"
+   "yaw": 9.6,
+   "sector": "14_0"
   },
   {
    "id": "uw_v_l1",
    "at": [
     -3.0,
-    -4.5
+    -4.0
    ],
-   "yaw": 14.0,
+   "yaw": 65.6,
    "sector": "1_0"
   },
   {
    "id": "uw_v_l2",
    "at": [
-    -4.0,
-    -8.5
+    -5.2,
+    -5.0
    ],
-   "yaw": 74.1,
+   "yaw": 66.5,
    "sector": "1_0"
   },
   {
    "id": "uw_v_l3",
    "at": [
     -7.5,
-    -9.5
+    -6.0
    ],
    "yaw": 71.6,
-   "sector": "2_0"
+   "sector": "3_0"
   },
   {
    "id": "uw_v_r1",
    "at": [
-    2.8,
+    4.6,
     -2.2
    ],
-   "yaw": -13.1,
+   "yaw": -7.9,
    "sector": "0_0"
   },
   {
    "id": "uw_v_r2",
    "at": [
-    3.8,
+    5.2,
     -6.5
    ],
-   "yaw": -0.0,
-   "sector": "6_0"
+   "yaw": 9.7,
+   "sector": "7_0"
   },
   {
    "id": "uw_v_r3",
    "at": [
-    3.8,
-    -10.0
+    4.6,
+    -9.8
    ],
-   "yaw": -22.0,
-   "sector": "8_0"
+   "yaw": -11.6,
+   "sector": "9_0"
   },
   {
    "id": "uw_v_r4",
@@ -2999,7 +3249,7 @@
     -14.2
    ],
    "yaw": -99.9,
-   "sector": "8_0"
+   "sector": "9_0"
   }
  ],
  "doom": {
@@ -3037,8 +3287,8 @@
      "2_0"
     ],
     "floor": 0,
-    "ceiling": 144,
-    "light": 130,
+    "ceiling": 704,
+    "light": 150,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3049,8 +3299,8 @@
      "3_0"
     ],
     "floor": 0,
-    "ceiling": 112,
-    "light": 110,
+    "ceiling": 144,
+    "light": 130,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3060,9 +3310,9 @@
     "pieces": [
      "4_0"
     ],
-    "floor": 12,
-    "ceiling": 704,
-    "light": 150,
+    "floor": 0,
+    "ceiling": 112,
+    "light": 110,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3072,7 +3322,7 @@
     "pieces": [
      "5_0"
     ],
-    "floor": 24,
+    "floor": 12,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3084,7 +3334,7 @@
     "pieces": [
      "6_0"
     ],
-    "floor": 36,
+    "floor": 24,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3096,7 +3346,7 @@
     "pieces": [
      "7_0"
     ],
-    "floor": 48,
+    "floor": 36,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3110,7 +3360,7 @@
     ],
     "floor": 48,
     "ceiling": 704,
-    "light": 160,
+    "light": 150,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3120,9 +3370,9 @@
     "pieces": [
      "9_0"
     ],
-    "floor": 12,
+    "floor": 48,
     "ceiling": 704,
-    "light": 150,
+    "light": 160,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3132,7 +3382,7 @@
     "pieces": [
      "10_0"
     ],
-    "floor": 24,
+    "floor": 12,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3144,7 +3394,7 @@
     "pieces": [
      "11_0"
     ],
-    "floor": 36,
+    "floor": 24,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3156,7 +3406,7 @@
     "pieces": [
      "12_0"
     ],
-    "floor": 48,
+    "floor": 36,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3170,7 +3420,7 @@
     ],
     "floor": 48,
     "ceiling": 704,
-    "light": 160,
+    "light": 150,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3182,7 +3432,7 @@
     ],
     "floor": 48,
     "ceiling": 704,
-    "light": 150,
+    "light": 160,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3192,7 +3442,7 @@
     "pieces": [
      "15_0"
     ],
-    "floor": 60,
+    "floor": 48,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3204,7 +3454,7 @@
     "pieces": [
      "16_0"
     ],
-    "floor": 72,
+    "floor": 60,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3216,7 +3466,7 @@
     "pieces": [
      "17_0"
     ],
-    "floor": 84,
+    "floor": 72,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3228,7 +3478,7 @@
     "pieces": [
      "18_0"
     ],
-    "floor": 96,
+    "floor": 84,
     "ceiling": 704,
     "light": 150,
     "floor_flat": "FLOOR4_8",
@@ -3242,7 +3492,7 @@
     ],
     "floor": 96,
     "ceiling": 704,
-    "light": 170,
+    "light": 150,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3276,7 +3526,7 @@
     "pieces": [
      "22_0"
     ],
-    "floor": 112,
+    "floor": 96,
     "ceiling": 704,
     "light": 170,
     "floor_flat": "FLOOR4_8",
@@ -3288,7 +3538,7 @@
     "pieces": [
      "23_0"
     ],
-    "floor": 128,
+    "floor": 112,
     "ceiling": 704,
     "light": 170,
     "floor_flat": "FLOOR4_8",
@@ -3300,7 +3550,7 @@
     "pieces": [
      "24_0"
     ],
-    "floor": 144,
+    "floor": 128,
     "ceiling": 704,
     "light": 170,
     "floor_flat": "FLOOR4_8",
@@ -3312,7 +3562,7 @@
     "pieces": [
      "25_0"
     ],
-    "floor": 160,
+    "floor": 144,
     "ceiling": 704,
     "light": 170,
     "floor_flat": "FLOOR4_8",
@@ -3324,9 +3574,9 @@
     "pieces": [
      "26_0"
     ],
-    "floor": -448,
+    "floor": 160,
     "ceiling": 704,
-    "light": 190,
+    "light": 170,
     "floor_flat": "FLOOR4_8",
     "ceil_flat": "CEIL3_5",
     "special": 0,
@@ -3336,7 +3586,7 @@
     "pieces": [
      "27_0"
     ],
-    "floor": -448,
+    "floor": -128,
     "ceiling": 704,
     "light": 190,
     "floor_flat": "FLOOR4_8",
@@ -3348,7 +3598,7 @@
     "pieces": [
      "28_0"
     ],
-    "floor": -448,
+    "floor": -128,
     "ceiling": 704,
     "light": 190,
     "floor_flat": "FLOOR4_8",
@@ -3360,7 +3610,7 @@
     "pieces": [
      "29_0"
     ],
-    "floor": -448,
+    "floor": -128,
     "ceiling": 704,
     "light": 190,
     "floor_flat": "FLOOR4_8",
@@ -3372,7 +3622,31 @@
     "pieces": [
      "30_0"
     ],
-    "floor": -448,
+    "floor": -128,
+    "ceiling": 704,
+    "light": 190,
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "31": {
+    "pieces": [
+     "31_0"
+    ],
+    "floor": -128,
+    "ceiling": 704,
+    "light": 190,
+    "floor_flat": "FLOOR4_8",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "32": {
+    "pieces": [
+     "32_0"
+    ],
+    "floor": -128,
     "ceiling": 704,
     "light": 190,
     "floor_flat": "FLOOR4_8",
@@ -3391,13 +3665,13 @@
   "approximate": true,
   "uncertain": [
    "INVENTED FROM THE PAINTING (tools/doom/trace/underworld_scene.py), not read from the render or the WAD (the supplied WAD has empty map lumps; the render of MAP29 gives only a lava basin and a rock mass with no way across, see tools/doom/trace/underworld.json).",
-   "Every size, height and place is a guess from the painting: a 12.5 x 14 m plateau, a cave mouth in the west wall, a 3.5 m ledge with 0.375 m steps along the west cliff to a gate pad and a causeway to the tower, a four step stair and a shelf on the east, a lava abyss 14 m down between them.",
+   "Every size, height and place is a guess from the painting: a 12.5 x 7.5 m plateau, a cave mouth in the west wall, a 3.5 m ledge with 0.375 m steps along the west cliff to a gate pad and a causeway to the tower, a four step stair and a shelf on the east, a lava abyss 4 m down between them.",
    "NOT built: the winding lava river and the lava falls (decals and haze stand in), the tower's nested rings (a terrace and a small stair), the far terraced cliffs, the path beyond each guide (a wall)."
   ],
   "stats": {
-   "doom_sectors": 31,
-   "pieces": 31,
-   "portals": 64
+   "doom_sectors": 33,
+   "pieces": 33,
+   "portals": 73
   },
   "authored": true
  },
@@ -3420,6 +3694,7 @@
     "uw_v_a1",
     "uw_v_a2",
     "uw_v_a3",
+    "uw_v_a4",
     "uw_gate"
    ],
    "left": [
