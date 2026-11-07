@@ -62,6 +62,6 @@ uw_ember       underworld         -              0.8:2.8:-90:2     right,left,up
 uw_squadron    underworld         -              1.0:2.2:-120:2    right,left,up,right
 uw_court_bass  underworld.court   -              17.0:3.0:-70:2    right,left,up,right,right
 uw_furn_gospel underworld.furnace -              -22.0:4.5:-115:2  right,left,up,right,left
-uw_pit_squad   underworld.pit     -              20.0:14.0:-145:2  right,left,up,right,right,up
+uw_pit_squad   underworld.pit     -              19.0:13.0:-205:2  right,left,up,right,right,up
 LIST
 rm -rf "$TMP"

@@ -77,7 +77,7 @@ _portal = sc("underworld.court", "enter_bassment", P(21.6, 1.0, 1.2), "pulse", o
 _portal = sc("underworld.furnace", "enter_gospel", P(-17.0, 1.0, 7.0), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="a gold gate by the anvils, the shepherd pointing: the Gospel path (route path:gospel)", f_text="the gate flickers out (-4)")
 _portal["look"]["finished"] = finished("gospel")
-_portal = sc("underworld.pit", "enter_squadron", P(22.8, 1.0, 17.8), "pulse", out(route="path:squadron"), out(energy=-4),
+_portal = sc("underworld.pit", "enter_squadron", P(17.2, 1.0, 16.8), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="a green gate on the pit's deck, the Gunner pointing: the Mission Count path (route path:squadron)", f_text="the gate gutters out (-4)")
 _portal["look"]["finished"] = finished("squadron")
 
@@ -89,4 +89,4 @@ herald("ember", "underworld.enter_ember", at=(3.4, 2.3), gate=True)
 herald("squadron", "underworld.enter_squadron", at=(4.5, 4.7), gate=True)
 herald("dungeon", "underworld.court.enter_bassment", at=(22.4, 2.6), gate=True)
 herald("gospel", "underworld.furnace.enter_gospel", at=(-18.4, 6.0), gate=True)
-herald("squadron", "underworld.pit.enter_squadron", at=(21.4, 18.6), gate=True)
+herald("squadron", "underworld.pit.enter_squadron", at=(16.0, 17.6), gate=True)
