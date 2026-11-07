@@ -236,8 +236,11 @@ func test_the_warehouse_floor_stages_the_choice_from_the_first_beat_and_swaps_on
 		var frames := {}
 		for k in hv.props.shown_keys():
 			frames[k] = hv.props.frame_of(k)
-		assert_eq(frames.get("warehouse.exit_bar#door", ""), "door_0", "the bar door has swung shut within a beat: %s" % str(frames))
-		assert_eq(frames.get("warehouse.exit_bar#lamp", ""), "lamp_stop")
+		assert_eq(frames.get("warehouse.exit_bar#door", ""), "door_1", "the bar door is no longer the pick: back to ajar within a beat (ruling 35b, no red lamp): %s" % str(frames))
+		assert_eq(frames.get("warehouse.exit_bar#lamp", ""), "lamp_lit", "its lamp is the practical lamp, lit (available), not a stop sign")
+		assert_false(frames.values().has("lamp_go") or frames.values().has("lamp_stop"), "no go or stop lamp is drawn")
+		assert_eq(str(s["options"]["warehouse.wizard"]["state"]), "selected", "the touched wizard is selected")
+		assert_eq(str(s["options"]["warehouse.exit_bar"]["state"]), "available")
 	_free(d)
 
 
