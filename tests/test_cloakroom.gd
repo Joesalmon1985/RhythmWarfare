@@ -547,7 +547,7 @@ func test_in_the_scene_strip_taps_reach_the_controls_not_the_pads_and_judging_re
 	assert_true(scene._mg.owns_strip(), "the controls own the strip")
 	var layer: RunActivityInput = scene._mg.controls_layer
 	assert_true(layer != null and layer.ids == ["same", "different"], "SAME and DIFFERENT")
-	assert_false(scene.pad_view.visible)
+	assert_true(scene.pad_view.visible and (scene.pad_view.slot_fn as Callable).is_valid(), "the pads stay drawn and show the controls in their slots (contract 10)")
 	var pad1: Rect2 = scene.pad_view.button_rects()[1]
 	var pad2: Rect2 = scene.pad_view.button_rects()[2]
 	var pad3: Rect2 = scene.pad_view.button_rects()[3]

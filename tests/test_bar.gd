@@ -639,7 +639,7 @@ func test_in_the_scene_the_bar_replaces_the_pads_costs_no_rhythm_and_resumes_on_
 	var moves0: int = (scene.journey_log as Array).size()
 	var layer: RunActivityInput = scene._mg.controls_layer
 	assert_true(layer != null and layer.ids == ["ing:0", "ing:1", "ing:2", "ing:3"], "four ingredient controls")
-	assert_false(scene.pad_view.visible, "the pads are hidden")
+	assert_true(scene.pad_view.visible and (scene.pad_view.slot_fn as Callable).is_valid(), "the pads stay drawn and show the controls in their slots (contract 10)")
 	assert_false(scene.lane_input.enabled, "the lane input is off")
 	assert_true(scene._mg.view == null, "no canvas layer over the room")
 	# arrive, demonstration: the strip taps are the controls' but not live yet
