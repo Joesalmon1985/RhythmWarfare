@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "content/run/doom"
 MAPS = ROOT / "content/story/maps"
-WORLD = {"id": "doom_warehouse", "title": "The Warehouse (Doom worlds pilot)", "map": "doom_warehouse", "depth": 1,
+WORLD = {"id": "doom_warehouse", "title": "The Warehouse (Doom worlds pilot)", "map": "doom_warehouse", "depth": 1, "story": "res://content/run/doom/story_doom_warehouse.json",
          "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like."}
 
 

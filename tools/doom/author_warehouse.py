@@ -208,6 +208,37 @@ def main():
         x, z = m(*at)
         spots["wh_guide_" + who] = {"sector": sector_of(d, x, z)["id"], "at": [x, z]}
     d["spots"] = spots
+    # the crowd: the night_one chapter's cast (copied to content/run/doom/story_doom_warehouse.json, the world's StoryData) dances on the fenced floor
+    ch = json.load(open(os.path.join(ROOT, "content", "story", "night_one.json"), encoding="utf-8"))
+    ch["id"], ch["title"] = "doom_warehouse", "Doom Warehouse (pilot)"
+    ch["art"] = "night_one"
+    for b in ch["blocks"]:  # the legacy night's camera moves belong to its own map: the Doom scene's camera is the run's rail (crowd and light events stay)
+        b["events"] = [e for e in b.get("events", []) if not str(e.get("action", "")).startswith("player_")]
+    for dec in ch["decisions"]:
+        for k in ("good", "bad"):
+            dec[k] = [e for e in dec.get(k, []) if not (isinstance(e, dict) and str(e.get("action", "")).startswith("player_"))]
+    for e in ch["endings"].values():
+        e["journey"] = []
+    open(os.path.join(ROOT, "content", "run", "doom", "story_doom_warehouse.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(ch, indent=1) + "\n")
+    floor_secs = [s for s in d["sectors"] if abs(s["floor"] + 0.5) < 0.01]
+    pts = []
+    gx = -9.0
+    while gx <= 9.0:
+        gz = -3.0
+        while gz <= 15.0:
+            for s in floor_secs:
+                if inside(s["polygon"], gx, gz) and dist_to_edges(s["polygon"], gx, gz) >= 0.32:
+                    pts.append((round(gx, 2), round(gz, 2), s["id"]))
+                    break
+            gz += 0.8
+        gx += 0.8
+    pts = [p for p in pts if abs(p[0]) < 6.0 or p[1] > 4.5 or p[1] < 1.5]
+    pts.sort(key=lambda p: (int(p[0] * 977 + p[1] * 1931) * 2654435761) % 4294967296)
+    need = len(ch["actors"]) + len(ch["silhouettes"])
+    if len(pts) < need:
+        raise SystemExit("only %d floor spots for %d people" % (len(pts), need))
+    d["homes"] = [{"actor": a["id"], "sector": pts[i][2], "at": [pts[i][0], pts[i][1]]} for i, a in enumerate(ch["actors"])]
+    d["silhouettes"] = [{"id": s["id"], "at": [pts[len(ch["actors"]) + i][0], pts[len(ch["actors"]) + i][1]]} for i, s in enumerate(ch["silhouettes"])]
     d["scene"] = {"id": "doom_warehouse", "reference": "art/reference/doom_worlds/Cobalt Warehouse Dance Floor-1.png", "routes": ROUTES,
                   "note": "authored by tools/doom/author_warehouse.py; routes are lists of waypoint ids (one hop today, the polyline later); hold_bars on a waypoint is the still hold at a choice window"}
     d["doom"]["authored"] = True
