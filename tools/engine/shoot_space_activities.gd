@@ -14,7 +14,7 @@ func _init() -> void:
 
 
 func _snap(name: String) -> void:
-	for i in 40:  # (real frames at a still song time: the fades that run on frame time finish)
+	for i in 12:  # (real frames at a still song time: RW_STORY_RATE is ~0 below, so the clock stands while the picture is drawn)
 		await process_frame
 	await RenderingServer.frame_post_draw
 	var img := root.get_viewport().get_texture().get_image()
@@ -26,6 +26,7 @@ func _snap(name: String) -> void:
 func _go() -> void:
 	await process_frame
 	Driver = load("res://tests/fixtures/space_run_driver.gd")
+	OS.set_environment("RW_STORY_RATE", "0.000001")  # the scene steps the clock by this per real frame in virtual mode; the driver steps it by hand
 	var args := OS.get_cmdline_user_args()
 	_out = args[0] if args.size() > 0 else "user://space_shots"
 	DirAccess.make_dir_recursive_absolute(_out)
@@ -95,8 +96,7 @@ func _go() -> void:
 		var kp: Variant = dr.knob_point()
 		if kp != null:
 			dr.scene.dispatch_tap(kp)
-		dr.run_for(0.9)
-	dr.run_for(1.2)
+		dr.run_for(0.9 if i < 2 else 0.5)
 	await _snap("deck_2_free")
 	dr.finish()
 	quit(0)
