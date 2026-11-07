@@ -6,8 +6,12 @@ set -e
 cd "$(dirname "$0")/../.."
 PY="${PYTHON:-python3}"
 "$PY" -I tools/doom/test_doom.py
-"$PY" -I tools/doom/wad.py
-"$PY" -I tools/doom/convert.py --all
+"$PY" -I tools/doom/wad.py || true
+if [ -n "${RW_DOOM_TRACE:-}" ]; then  # no complete WAD: the approximate traces from the renders
+  for s in warehouse bar balcony lounge booth dock mothership underworld; do "$PY" -I tools/doom/convert.py --scene $s --trace tools/doom/trace/$s.json; done
+else
+  "$PY" -I tools/doom/convert.py --all
+fi
 "$PY" -I tools/doom/check_world.py --all
 "$PY" -I tools/doom/render_plan.py --all
 if [ -z "${SKIP_GODOT:-}" ]; then
