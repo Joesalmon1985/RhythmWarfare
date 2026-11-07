@@ -23,62 +23,51 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
 
-## Now (8 November, night)
+## START HERE (9 November): the run paused on the owner's word, 8 November late night
 
-`feature/one-pc` `d01bb628` (pushed): + the Bassment viewpoint fix (`test_trial` green: since A7 removed the edge beacons a
-choice behind the camera has no tap target, so passages 2, 11, 28, 37 moved their viewpoints / raised the rope). All
-filters green except `camera` 3 (the wiring step's rule). **Wiring step running** on `wip/wiring` (Opus, resumed after the
-limit). After it: full suite, push, stage A's pause point (the owner plays `tools\dev\play_tracks.cmd --run` from
-`MusicGame-onepc`); `main` only on the owner's word.
+Say "Resume the run" and point the lead at this section. Everything below is pushed.
 
-`feature/shared-contracts` `97c6f53a` (pushed): geography worlds (H1.6) merged: a world flagged `geography` is one scene
-routing straight to other worlds' entry scenes; threshold = the route move's end; the threshold walk plays the polyline,
-then the frame, the swap, the arrival (`docs/engine/GEOGRAPHY_WORLDS.md`, `tests/test_geography.gd`). **Follow-ups on
-`wip/engine-geography`** (Opus): `commit_walk` (walk from the commit, built, 30628cc9) and ruling 39 (a geography guide's
-tap commits at once; the window hold gives way to the walk) running. Merge both when the second reports.
+### What the owner can play now
+- The campaign with all of stage A (one-pc, full suite green):
+  `& "C:\Users\joesa\Documents\Cursor\MusicGame-onepc\tools\dev\play_tracks.cmd" --run`
+- The eight Doom worlds as one geography with real doorway cuts (env):
+  `& "C:\Users\joesa\Documents\Cursor\MusicGame-env\tools\dev\play_doom_worlds.cmd"` (`--scene doom_<id>` starts anywhere)
+- The bedsit, the Space rave with its activities in the room, the card table, the race (play):
+  `& "C:\Users\joesa\Documents\Cursor\MusicGame-play\tools\dev\play_bedsit.cmd" --rave space` (`--race space` goes straight to the race)
+- Two stray Godot processes from a crashed race calibration (PIDs 11940 and 30000, `tools/race/calibrate_race.gd`) may still be
+  alive; they hold `MusicGame-race`'s godot.sh lock. End them in Task Manager (or `Stop-Process -Id 11940,30000`).
 
-`feature/doom-layout-worlds` (pushed after the Balcony suites): ALL EIGHT Doom worlds in the overlay (Warehouse, Booth, Bar,
-Lounge, Dock, Underworld, Mothership, Balcony), 40 scenes, 0 rail problems, doom 6177 green; every scene still a 5-scene
-stand-in world. **Next**: merge shared-contracts (geography) into env, then the REWIRE (Opus): each Doom world one
-geography scene routing per the brief's table, stand-ins and return scenes deleted, test blocks updated, a real cut shot
-(Warehouse → Bar). Polish list for stage D from the reports: Dock/Mothership/Underworld threshold shots stare at walls;
-the Underworld's abyss does not read (needs a camera pitch on a waypoint); the Mothership's `void_top` haze hook; the
-Balcony and Underworld under-exposed; no rain/sky anywhere; all guides procedural.
+### Branch heads (all pushed)
+| Branch | Worktree | Head | State |
+|---|---|---|---|
+| `feature/one-pc` | `MusicGame-onepc` | `021706fc` + this log | stage A complete (Ward, Hospital, fixes, A7 Bassment, the viewpoint fix, the wiring step). Full suite 160,453 checks; 2 order-dependent failures (`test_heralds_view` wall unit case, `test_transition_fallback` memory) that pass alone. **Stage A pause point: the owner plays; `main` only on the owner's word.** |
+| `feature/shared-contracts` | `MusicGame-contracts` | `f7762477` | A7, A8, geography (H1.6) + `commit_walk` + ruling 39, rulings 39/40 decided, rain (A9/H10) merged last. After the merge: weather 201 and story 48770 green; `run_`, `playtest`, `test_geography` were still running at the pause (`C:/Users/joesa/rw-audio-work/leadlogs/contracts_rain_*.log`): re-run them first thing. |
+| `feature/doom-layout-worlds` | `MusicGame-env` | `589099a5` | eight one-scene geography worlds (8 scenes, 32 hotspots) routed per the brief; `tests/test_doom_cuts.gd` proves Warehouse→Bar→Warehouse. doom 2851, cuts 27, geography 189, run_ 16027, playtest 2938, story 48770 green. Contains `docs/briefs/DOOM_POLISH_BRIEF.md`. Does NOT yet have rain. |
+| `feature/bedsit-raves` | `MusicGame-play` | `56a03f7a` | bedsit, Space rave with activities in the room, cloakroom, bar, card table (`replace`, ruling 40), spacewire, the race (merged last). After the race merge: race 1605, run_matrix 1755, space_rave 446 green; the rest of the play list not re-run since. |
 
-`feature/bedsit-raves` `8e438c54` (pushed): + the Space rave's activities staged in the room (spacewire) and A8b (the card
-table in the day room: cards/chips as things, dealer and players as actors, bet/twist/stick/get-up in the pad slots).
-All filters green. **Open owner decision**: A8b runs blackjack in `replace` mode (judging suspended while seated, no
-wobble/fall, the run cannot end at the table) against decisions B6/B7 (`rhythm`); the pad slots cannot be both the rhythm
-pads and the four card controls. Alternative if the owner keeps B6/B7: controls as in-world touches (deck = twist,
-chips = bet, dealer = stick, door = up) with the pads staying rhythm. Next on this stream: the race (Opus), the
-Magic/Dinos/Transport raves (no layouts yet), progression; the cloakroom queue reads semi-transparent (unexplained).
+### Paused agents (WIP commits pushed; nothing in `src/`; resume each with a FRESH Opus agent on the same worktree: brief + the notes below are its context)
+| Worktree | Branch | Head | Where it stopped | Resume with |
+|---|---|---|---|---|
+| `MusicGame-polish-a` | `wip/polish-a` | `9726fc8f` | Warehouse steps 1,2,4,5,6 done (steel half-wall, wet floor, rig, 0.5 m plate under the ref viewpoint, crowd on the near half, all three guides cropped from the painting, `tools/doom/art/make_warehouse_art.py`), stopped at step 3: p50 0.25 / contrast 0.40 after two light passes, still just under. Bar and Lounge: art built (stone, cobbles, copper mains; marble, rug, coffered ceiling; foreground stool/counter, sofa/palms cropped) but NOT shot, NOT seen in engine, docs stale; thresholds moved (Bar right 2.5 m, Lounge ahead 3.6 m) so rail paths and `test_doom_views` are UNCHECKED. No tests run at all. | 1 lift Warehouse contrast/median; 2 shoot Bar (`shoot_bar.py`, new `RW_KEEP=<dir>` for `frame_check.py`) and Lounge, compare to paintings; 3 run doom, doom_cuts, rail_paths, run_, playtest, story + `check_rail_paths.gd`; 4 rewrite the three scene docs. Loose ends: unused `legs_below` in `make_guides.py`; stage guide's coat below the cut; Floor guide's hand on nothing; Warehouse/Lounge rooms still much larger than the paintings. |
+| `MusicGame-polish-b` | `wip/polish-b` | `cc4ef476` | Dock only, between step 3 and 4: storm sky over the six open sectors, street 11 m longer north (ahead hold looks up the street), club passage to a lit door (left), right hold faces the furnace with the Underworld guide; 256 px wet tiles, furnace, bollards, pallets; lamp pools; all three guides cropped (`tools/doom/art/make_dock_crop.py`: Floor from the Dock painting, Mothership from the Booth painting, Underworld from `Rainy Dock of Three Paths-7.png`, seated behind crates). p50 0.22 → 0.22 (route_ahead 0.18; the painting itself is 0.14). `check_doom_map` OK. Not done: five differences not written down; floor gloss grainy mid-distance; no shots/doc; no tests. Balcony (p50 0.17) and Booth (0.23) untouched; Booth crop specs ready in the crop tool. | finish Dock exposure, reshoot, tests, `docs/doom/scenes/dock.md`; Balcony (moon sky + skyline, lower drop ceilings so the city shows, no crowd on the deck, alley at the stair foot, turn the cabin hold); then Booth. **Also**: once rain is merged into env, author `weather` into Dock/Balcony/Booth maps (`docs/engine/WEATHER.md`: map `weather {rain, wind, drips}`, sector `rain`/`wet`). |
+| `MusicGame-polish-c` | `wip/polish-c` | `166c612c` | Underworld steps 1–6 done: abyss 5 m deep and much wider, lava lit as emissive (lamps grid, ambient 0.55, cliff feet glow), basalt kerb instead of chains, red cloud sky, gong/drums/bone chimes in view, warmer basalt + lantern posts; thresholds face a lit tunnel decal / a lit far path; Floor guide cropped from the Underworld painting, Dock guide cropped from the Mothership painting, Mothership guide procedural (improved). doom 2851/0/0 SCRIPT ERROR; `check_doom_map` OK; p50 0.17 → 0.23 (route_left 0.19), contrast 0.35 < 0.4. A full reshoot was running at the stop: `docs/shots/doom/underworld/contact.jpg`, `walk_up.txt` committed PARTWAY; walk strip and pitch −14 preview unfinished; scene doc and `underworld_scene.py` docstring stale. Mothership: new art drawn only (rib lattice ×3, void cliff tile, haze band decal, vault sky; `ms_wall_rib.png` overwritten, not reimported), nothing wired. | wire the Mothership (rib variants per ring piece, oval decals out, `ms_void_cliff` on the void step, haze band decals, low green pool lamps, `ms_sky` vault, empty crowd, threshold holds back from the hatch walls, Dock guide via the Underworld crop helper), `--import`, reshoot both scenes, run all filters + `check_rail_paths.gd`, update both docs. **Hooks reported**: the run's choice hold emits no glance, so a choice viewpoint has no field for a downward pitch (the Underworld's lava); `void_top` equals the void's floor when the void is split into wedges, so the depth haze is off (haze decal band is the workaround). |
+| `MusicGame-raves` | `wip/play-raves` | `c6c8df29` | Shared `tools/story/rave_builder.py`, `rave_art.py`, `rave_people.py`; `build_space_rave.py` rebuilt on them with output unchanged; `make_bedsit.py` writes nodes/hotspots for every landed rave; `SpaceRaveHost` serves every theme; `tests/rave_theme_test.gd` shared body. **Magic complete** (test_magic_rave 555; space_rave 446, bedsit 187, cloakroom 3062, bar 362, activity_modes 149, playtest 3328, story 48896, all 0 SCRIPT ERROR). **Dinos complete** (test_dinos_rave 551; run_matrix 1862/0 after a setback fix in `make_bedsit.py`). **Transport NOT built** (dock tiles copied, trial rigs folder committed, nothing else). Other suites not re-run since Dinos. | FIRST merge `feature/bedsit-raves` into `wip/play-raves` (the race changed `make_bedsit.py` and `build_space_rave.py` after this agent forked: hangar real, `race.course`), regenerate, keep every theme's blocks in themes.json; then `build_transport_rave.py` (street forecourt→stage, cloakroom bay west, bar bay east, garage by the stage), RAVES/ORDER/LANDED entry, `tests/test_transport_rave.gd`, import, shoot, `play_bedsit.cmd --rave <any>` + LAUNCH.md, full test list. **Facts**: `BassKnobActivity` hard-codes the knob at world (0, −25.12) in a sector named `stage`, so every rave's stage is north; each rave's race entrance is a `<prefix>_race` placeholder node with a `hangar_view` pose (the race agent's `race_space` course serves all until per-theme courses: `tools/story/build_race.py --theme <x>`). |
 
-## Worktrees and agents
+### Lead's order of work on 9 November
+1. Re-run the paused suites: contracts `run_ playtest test_geography`; play `run_ story playtest cloakroom bar bedsit activity_modes minigame blackjack`. Count SCRIPT ERROR lines. Fix or report.
+2. Merge `feature/shared-contracts` (rain) into env and into play (`--no-ff`; expect no conflicts; nothing to regenerate). Push both.
+3. Relaunch the four agents (fresh Opus, same worktrees, the table above pasted into each brief with the polish/raves brief path). The raves agent merges `feature/bedsit-raves` into its branch first.
+4. Merge each polish branch into env when its filters are green: they touch disjoint scene files; `make_doom.py` untouched; `test_doom_views.gd` only inside their blocks; regenerate with `python tools/run/make_doom.py`; `--import`; doom/cuts/geography/run_/playtest/story; rail check. If `test_doom_views.gd` conflicts, rebuild from each side's blocks (never regex over markers).
+5. Merge the raves into play when green; regenerate the bedsit; `--import`; full play list.
+6. Bedsit progression check (brief section 10 against `tests/test_bedsit.gd`; per-rave flags, race results, facing, save version): a Sonnet task.
+7. Stage D round 2 (Opus, from the lead's own look at every polish sheet), the independent review (Opus, fresh context, gaps not fixes, each branch against its brief), the LONG_RUN_PLAN stage D verification list, draft PRs for `feature/doom-layout-worlds` and `feature/bedsit-raves` (kept separate, not merged), `docs/HANDOVER.md`.
+8. Stage E: the APK with the 61 tracks (never commit the packs). `main` only on the owner's word after the owner has played one-pc.
 
-| Worktree | Branch | State |
-|---|---|---|
-| `MusicGame-onepc` | `feature/one-pc` | integration, stage A |
-| `MusicGame-contracts` | `feature/shared-contracts` | integration, engine |
-| `MusicGame-env` | `feature/doom-layout-worlds` | integration, env |
-| `MusicGame-play` | `feature/bedsit-raves` | integration, gameplay |
-| `MusicGame-wiring` | `wip/wiring` | wiring running (Opus) |
-| `MusicGame-geo` | `wip/engine-geography` | geography worlds / H1.6 running (Opus) |
-| `MusicGame-env-balcony`, `-dock`, `-mothership`, `-underworld` | `wip/env-*` | wave 2 running (Sonnet) |
-| `MusicGame-spacewire` | `wip/play-spacewire` | running |
-| `MusicGame-cardtable` | `wip/play-cardtable` | A8b running (Opus) |
-| `MusicGame-engine`, `-props` | `wip/engine-choice`, `wip/engine-props` | A7, A8 merged |
-| `MusicGame-env-bar`, `-booth`, `-chill`, `-envwh`, `-envtools` | `wip/env-*` | merged |
-| `MusicGame-space`, `-cloakroom`, `-bar`, `-bedsit` | `wip/play-*` | merged |
-| `MusicGame-music`, `-import`, `-graph`, `-herald`, `-narr`, `-art`, `-docs` | stage A wip branches | merged, to remove |
+### Known gaps carried (for HANDOVER.md)
+All Doom/rave/race art is placeholder until polish lands (round 1 crops guides from the paintings where big enough; the rest procedural); exposure under the rule in every Doom scene so far (p50 0.22–0.25, contrast ≤ 0.40); no phone run; no sfx for cues; Gospel p5; A7's door readability; the Floor's four gates hidden from the booth in the route window (placement pass); 18 hidden herald samples and 5 unseen ways back pinned in `KNOWN_HIDDEN`/`KNOWN_BACK_UNSEEN`; race entry is a cut not a drive-in; race position not saved; cloakroom queue reads semi-transparent (unexplained); Mothership `void_top` haze hook; no downward-pitch field at a choice hold; `test_trial` prints one "Parse JSON failed" line (not a failure); two order-dependent failures in the one-pc full run.
 
-## Next action for the lead
-
-1. Merge the wiring step into `feature/one-pc`; full suite; push; stage A pause point (the owner plays).
-2. Merge geography (H1.6) into `feature/shared-contracts`, then into env and play; merge wave 2 into env (regenerate the
-   overlay each time); then an env agent rewires the eight Doom worlds as geography worlds (stand-ins deleted) and the
-   routing table of the brief becomes the real cuts.
-3. Merge spacewire and A8b into `feature/bedsit-raves`; then the race, the other three raves, progression.
-4. Stage D (Opus polish to ruling 36 on every scene, review, verification, draft PRs), stage E (APK with the 61 tracks).
+### Lessons that save time
+Resolve `make_doom.py`/`test_doom_views.gd` merges by rebuilding from each side's blocks, never by regex over conflict markers (twice burnt). Run `--import` in every fresh worktree and after merging new assets ("sheet not found" failures were un-imported sheets). The runner prints "0 failures" on a parse error: always count SCRIPT ERROR lines. `git clean -fq` stray untracked `.import`/`.uid` files before a merge that brings the same ones. The full one-pc suite takes about 25 minutes: background only. Python heredocs in Git Bash: write the file with the Write tool, not a quoted heredoc with Windows paths.
 
 ## Checkpoint history
 
@@ -95,3 +84,4 @@ Magic/Dinos/Transport raves (no layouts yet), progression; the cloakroom queue r
   (wiring, geography, four wave-2 scenes, spacewire, card table).
 - 8 Nov night: one-pc `d01bb628`; shared-contracts `97c6f53a` (geography); doom-layout-worlds: eight worlds; bedsit-raves
   `8e438c54` (spacewire, A8b). Running: wiring, geography ruling 39.
+- 8 Nov late night (run paused by the owner): one-pc 021706fc (wiring, full suite green); shared-contracts f7762477 (rain); doom-layout-worlds 589099a5 (eight geography worlds, cuts); bedsit-raves 56a03f7a (race). Paused mid-work and pushed: wip/polish-a 9726fc8f, wip/polish-b cc4ef476, wip/polish-c 166c612c, wip/play-raves c6c8df29.
