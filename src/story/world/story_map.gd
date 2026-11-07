@@ -914,6 +914,12 @@ func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dict
 ## projector's vertical field of view: the camera's own sector (depth 0) and the sectors beyond portals whose opening lies in view, up to `max_depth` portals deep.
 ## Returns {sector id: portal depth}. A generous margin keeps a dancer in the doorway from popping.
 func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_depth := 4) -> Dictionary:
+	if vis_mode == "clip":  # (the same answer for the crowd's walk and the geometry's: the window decides, not the depth; worked out once per pose)
+		var key := [cam, yaw, sec, aspect]
+		if key != _vis_key:
+			_vis_key = key
+			_vis_memo = _visible_clipped(cam, yaw, sec, aspect)
+		return _vis_memo
 	var out := {}
 	if not _sector_index.has(sec):
 		return out
@@ -938,6 +944,106 @@ func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_d
 					next.append(other)
 		frontier = next
 	return out
+
+
+const VIS_NEAR_FULL := 0.3  # metres: a portal this near the camera passes the whole window (standing in a doorway)
+const VIS_MAX_STEPS := 6000  # a bound on the walk (a map of 600 pieces walks a few hundred)
+var _portals_by_sector: Dictionary = {}  # sector id -> indices into portals()
+var _portal_open: PackedByteArray = PackedByteArray()  # per portal: 1 when it has an opening to see through (not a shut door)
+var _vis_key: Array = []
+var _vis_memo: Dictionary = {}
+
+
+func _portals_of(sid: String) -> Array:
+	if _portals_by_sector.is_empty():
+		var ps := portals()
+		for i in ps.size():
+			for k in ["a", "b"]:
+				var id := str(ps[i][k])
+				if not _portals_by_sector.has(id):
+					_portals_by_sector[id] = []
+				_portals_by_sector[id].append(i)
+			var sa := sector(str(ps[i]["a"]))
+			var sb := sector(str(ps[i]["b"]))
+			_portal_open.append(1 if minf(float(sa["ceiling"]), float(sb["ceiling"])) - maxf(float(sa["floor"]), float(sb["floor"])) >= 0.02 else 0)
+	return _portals_by_sector.get(sid, [])
+
+
+## The clipping portal walk (map visibility mode "clip", docs/story/HEIGHTS_AND_PATHS.md): breadth first from the camera's sector with the view window [-half, half]
+## (radians either side of the facing, in the ground plane); a portal is looked through only where its angular extent overlaps the window it is seen through, and the
+## sector beyond is walked with the overlap. A room behind a solid wall is never reached; an open hall cut into pieces is seen to its far end. Portals with no opening
+## stop the eye, a portal past `vis_far` (when set) is not looked through, the walk stops at `vis_depth` portals. Railings and `blocked` portals never stop the eye.
+func _visible_clipped(cam: Vector2, yaw: float, sec: String, aspect: float) -> Dictionary:
+	var out := {}
+	if not _sector_index.has(sec):
+		return out
+	out[sec] = 0
+	var half := atan(tan(deg_to_rad(StoryProjector.FOV_V) * 0.5) * aspect) + deg_to_rad(8.0)
+	var fwd := StoryProjector.forward(yaw)
+	var rgt := StoryProjector.right(yaw)
+	var ps := portals()
+	var walked := {sec: [Vector2(-half, half)]}  # sector -> the windows it has been walked with
+	var queue: Array = [[sec, -half, half, 0, -1]]
+	var head := 0
+	while head < queue.size() and head < VIS_MAX_STEPS:
+		var it: Array = queue[head]
+		head += 1
+		var cur := str(it[0])
+		var depth := int(it[3])
+		if depth >= vis_depth:
+			continue
+		for pi in _portals_of(cur):
+			if pi == int(it[4]):
+				continue
+			var p: Dictionary = ps[pi]
+			var other := str(p["b"]) if str(p["a"]) == cur else str(p["a"])
+			if _portal_open[pi] == 0:
+				continue  # a closed opening (a shut door)
+			var p0: Vector2 = p["p0"]
+			var p1: Vector2 = p["p1"]
+			var near := _dist_to_segment(cam, p0, p1)
+			if vis_far > 0.0 and near > vis_far:
+				continue
+			var lo := float(it[1])
+			var hi := float(it[2])
+			if near > VIS_NEAR_FULL:
+				var win := _portal_window(cam, fwd, rgt, p0, p1)
+				if win.x > win.y:
+					continue
+				lo = maxf(lo, win.x)
+				hi = minf(hi, win.y)
+				if hi - lo <= 1.0e-5:
+					continue
+			var seen: Array = walked.get(other, [])
+			var covered := false
+			for wv in seen:
+				if wv.x <= lo + 1.0e-6 and wv.y >= hi - 1.0e-6:
+					covered = true
+					break
+			if covered:
+				continue
+			seen.append(Vector2(lo, hi))
+			walked[other] = seen
+			if not out.has(other):
+				out[other] = depth + 1
+			queue.append([other, lo, hi, depth + 1, pi])
+	return out
+
+
+## The angular extent [x, y] (radians, right of the facing positive) of the segment p0 p1 seen from cam, clipped to the near plane; x > y when it lies behind the camera.
+static func _portal_window(cam: Vector2, fwd: Vector2, rgt: Vector2, p0: Vector2, p1: Vector2) -> Vector2:
+	var a := Vector2((p0 - cam).dot(rgt), (p0 - cam).dot(fwd))  # (right, depth)
+	var b := Vector2((p1 - cam).dot(rgt), (p1 - cam).dot(fwd))
+	var near := 0.05
+	if a.y < near and b.y < near:
+		return Vector2(1, -1)
+	if a.y < near:
+		a = a.lerp(b, (near - a.y) / (b.y - a.y))
+	elif b.y < near:
+		b = b.lerp(a, (near - b.y) / (a.y - b.y))
+	var ang_a := atan2(a.x, a.y)
+	var ang_b := atan2(b.x, b.y)
+	return Vector2(minf(ang_a, ang_b), maxf(ang_a, ang_b))
 
 
 func _portal_in_view(cam: Vector2, fwd: Vector2, rgt: Vector2, p0: Vector2, p1: Vector2, half: float) -> bool:

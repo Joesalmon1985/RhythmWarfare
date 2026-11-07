@@ -656,8 +656,11 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 ## which is what they show the moment they come back into view and are refreshed before the next draw).
 func set_visible_sectors(vis: Dictionary) -> void:
 	_vis = vis
-	for id in _sector_nodes:
-		(_sector_nodes[id]["node"] as MeshInstance3D).visible = vis.is_empty() or vis.has(id)
+	for id in _sector_nodes:  # (only the nodes whose state changes are touched: a map of hundreds of pieces walks this every frame the camera moves)
+		var on := vis.is_empty() or vis.has(id)
+		var mi: MeshInstance3D = _sector_nodes[id]["node"]
+		if mi.visible != on:
+			mi.visible = on
 
 
 func update(t: float, ctx: Dictionary) -> void:
