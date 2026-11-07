@@ -7044,6 +7044,54 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "underworld.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "underworld.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "underworld.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [
@@ -7135,6 +7183,66 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7208,6 +7316,53 @@
    "status": "existing",
    "to": "main/underworld.furnace",
    "via": "underworld.exit_furnace"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "underworld.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.court",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "underworld.court.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.court",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.pit",
+   "via": "underworld.court.enter_bassment"
   },
   {
    "condition": {
@@ -7398,6 +7553,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "underworld.furnace.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -7427,6 +7598,21 @@
    "status": "existing",
    "to": "main/underworld.pit",
    "via": "underworld.furnace.anvil"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.pit",
+   "via": "underworld.furnace.enter_gospel"
   },
   {
    "condition": {
@@ -7524,6 +7710,21 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.pit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.exit",
+   "via": "underworld.pit.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7585,6 +7786,22 @@
    "status": "existing",
    "to": "main/underworld.exit",
    "via": "underworld.pit.lava_bridge"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.pit",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "underworld.pit.enter_squadron"
   },
   {
    "condition": {
@@ -10636,14 +10853,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 702,
+   "edges": 716,
    "edges_by_kind": {
-    "quest_entry": 5,
+    "quest_entry": 12,
     "quest_return": 138,
-    "scene": 559
+    "scene": 566
    },
    "edges_by_status": {
-    "existing": 702
+    "existing": 716
    },
    "nodes": 146
   },

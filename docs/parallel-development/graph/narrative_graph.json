@@ -9647,7 +9647,7 @@
    "kind": "quest_entry",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "underworld.enter_bassment"
@@ -9663,7 +9663,7 @@
    "kind": "quest_entry",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "underworld.enter_ember"
@@ -9679,7 +9679,7 @@
    "kind": "quest_entry",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "underworld.enter_gospel"
@@ -9875,7 +9875,7 @@
    "kind": "quest_entry",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "underworld.enter_squadron"
@@ -9891,7 +9891,7 @@
    "link": "extra_entrance",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "underworld.court.enter_bassment"
@@ -10120,7 +10120,7 @@
    "link": "extra_entrance",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "underworld.furnace.enter_gospel"
@@ -10352,7 +10352,7 @@
    "link": "extra_entrance",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "underworld.pit.enter_squadron"
@@ -14342,8 +14342,8 @@
    },
    "edges_by_status": {
     "changed": 131,
-    "existing": 558,
-    "proposed": 268
+    "existing": 565,
+    "proposed": 261
    },
    "nodes": 146
   },

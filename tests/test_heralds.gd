@@ -31,19 +31,49 @@ func test_the_art_has_every_quest_with_a_full_loop_at_both_sizes() -> void:
 		assert_true(StoryHeralds.self_tex("dungeon", i, false) != null and StoryHeralds.self_tex("dungeon", i, true) != null, "the wizard's billboard frame %d, both ways" % i)
 
 
-func test_the_four_entrances_of_today_carry_their_quests_herald_and_every_block_is_good() -> void:
+func test_every_quest_entrance_carries_its_quests_herald_and_every_block_is_good() -> void:
 	var seen := {}
+	var by_world := {}  # world -> {quest: true}, from the herald blocks the hotspot tables carry
 	for h in _all_hotspots():
 		if not (h as Dictionary).has("herald"):
 			continue
 		var errs := StoryHeralds.validate(h["herald"], str(h["id"]))
 		assert_eq(errs, [], "%s: the herald block is good" % h["id"])
 		seen[str(h["id"])] = str(h["herald"]["quest"])
-	assert_eq(seen, ENTRANCES, "the Floor wizard, the balcony star, the booth radio, the bar's ember and the chill-out's wizard, each with its own quest's herald")
-	var route_of := {"dungeon": "1", "gospel": "path:gospel", "squadron": "path:squadron", "ember": "path:ember"}
+		if not by_world.has(str(h["world"])):
+			by_world[str(h["world"])] = {}
+		by_world[str(h["world"])][str(h["herald"]["quest"])] = true
+	# the Warehouse's five (the ones of the first herald work) are still there, each with its own quest; worlds that got entrances since add theirs (data-driven, not pinned)
+	for id in ENTRANCES:
+		assert_eq(seen.get(id, ""), ENTRANCES[id], "%s: the herald of its quest" % id)
+	# a herald is of the quest its entrance leads to: the path quests route to path:<quest>; the dungeon to the lap's lock ("1", the Floor's hatch) or to the Bassment ("bassment", ruling 32)
 	for h in _all_hotspots():
-		if (h as Dictionary).has("herald"):
-			assert_eq(str(h["on_success"].get("route", "")), route_of[str(h["herald"]["quest"])], "%s: the herald is of the quest the entrance leads to" % h["id"])
+		if not (h as Dictionary).has("herald"):
+			continue
+		var q := str(h["herald"]["quest"])
+		var route := str(h["on_success"].get("route", ""))
+		if q == "dungeon":
+			assert_true(route in ["1", "bassment"], "%s: a dungeon herald's entrance routes to 1 or bassment (it is %s)" % [h["id"], route])
+		else:
+			assert_eq(route, "path:" + q, "%s: the herald is of the quest the entrance leads to" % h["id"])
+	# every world that has entrances has one of each quest the graph lists for its location (content/narrative/graph.json "entrances"; "bassment" there is the herald's "dungeon")
+	var graph: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/narrative/graph.json"))
+	var worlds_of := {}
+	for loc in graph["locations"]:
+		worlds_of[str(loc["id"])] = loc.get("worlds", [])
+	var wanted := {}  # location -> {herald quest: true}
+	for e in graph["entrances"]:
+		if not wanted.has(str(e["location"])):
+			wanted[str(e["location"])] = {}
+		wanted[str(e["location"])]["dungeon" if str(e["quest"]) == "bassment" else str(e["quest"])] = true
+	for loc in wanted:
+		var have := {}
+		for w in worlds_of.get(loc, []):
+			have.merge(by_world.get(str(w), {}))
+		if have.is_empty():
+			continue  # no entrances authored for this location yet (hospital, ward, mothership at the time of writing)
+		for q in wanted[loc]:
+			assert_true(have.has(q), "%s has entrances, so it has one for the %s quest" % [loc, q])
 
 
 func test_validate_refuses_a_bad_block() -> void:
