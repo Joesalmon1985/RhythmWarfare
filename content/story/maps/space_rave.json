@@ -1,0 +1,3199 @@
+{
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "art": "mothership",
+ "start": "space_arrive",
+ "max_step": 0.5,
+ "void_drop": 3.0,
+ "visibility": {
+  "mode": "clip",
+  "depth": 48,
+  "far": 0
+ },
+ "geography": {
+  "source": "content/story/maps/doom_mothership.json",
+  "note": "the Mothership's ring (MAP11), approximate: twelve ring pieces round a void"
+ },
+ "textures": {
+  "floor_hex": "textures/floor_hex.png",
+  "floor_grate": "textures/floor_grate.png",
+  "floor_airlock": "textures/floor_airlock.png",
+  "floor_bridge": "textures/floor_bridge.png",
+  "floor_dais": "textures/floor_dais.png",
+  "floor_lounge": "textures/floor_lounge.png",
+  "ceil_hull": "textures/ceil_hull.png",
+  "wall_hull": "textures/wall_hull.png",
+  "trim": "textures/trim.png",
+  "wall_planet": "textures/wall_planet.png",
+  "wall_window": "textures/wall_window.png",
+  "wall_arch": "textures/wall_arch.png",
+  "wall_door": "textures/wall_door.png",
+  "wall_hatch": "textures/wall_hatch.png",
+  "wall_led": "textures/wall_led.png",
+  "wall_speaker": "textures/wall_speaker.png",
+  "thing_bar": "textures/thing_bar.png",
+  "thing_cabinet": "textures/thing_cabinet.png",
+  "thing_suit": "textures/thing_suit.png",
+  "thing_console": "textures/thing_console.png",
+  "thing_plant": "textures/thing_plant.png",
+  "thing_planet": "textures/thing_planet.png",
+  "sr_rail": "textures/sr_rail.png",
+  "sr_deck": "textures/sr_deck.png",
+  "sr_racer": "textures/sr_racer.png",
+  "sr_hatch": "textures/sr_hatch.png",
+  "sr_knob_0": "textures/sr_knob_0.png",
+  "sr_knob_1": "textures/sr_knob_1.png",
+  "sr_knob_2": "textures/sr_knob_2.png",
+  "sr_knob_3": "textures/sr_knob_3.png"
+ },
+ "sky": {
+  "tex": "textures/sky_space.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#0a0620",
+  "density": 0.012
+ },
+ "sectors": [
+  {
+   "id": "void",
+   "polygon": [
+    [
+     2.412,
+     9.0
+    ],
+    [
+     6.588,
+     6.588
+    ],
+    [
+     9.0,
+     2.412
+    ],
+    [
+     9.0,
+     -2.412
+    ],
+    [
+     6.588,
+     -6.588
+    ],
+    [
+     2.412,
+     -9.0
+    ],
+    [
+     -2.412,
+     -9.0
+    ],
+    [
+     -6.588,
+     -6.588
+    ],
+    [
+     -9.0,
+     -2.412
+    ],
+    [
+     -9.0,
+     2.412
+    ],
+    [
+     -6.588,
+     6.588
+    ],
+    [
+     -2.412,
+     9.0
+    ]
+   ],
+   "floor": -9.0,
+   "ceiling": 16.0,
+   "floor_tex": "floor_grate",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_hull",
+   "light": 0.28,
+   "tint": "#3a2a8a",
+   "room": "main",
+   "flags": [],
+   "void": true,
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "r0",
+   "polygon": [
+    [
+     -2.412,
+     9.0
+    ],
+    [
+     -4.555,
+     17.0
+    ],
+    [
+     4.555,
+     17.0
+    ],
+    [
+     2.412,
+     9.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6,
+   "tint": "#7fe8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r1",
+   "polygon": [
+    [
+     2.412,
+     9.0
+    ],
+    [
+     4.555,
+     17.0
+    ],
+    [
+     12.445,
+     12.445
+    ],
+    [
+     6.588,
+     6.588
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#8fb0ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r2",
+   "polygon": [
+    [
+     6.588,
+     6.588
+    ],
+    [
+     12.445,
+     12.445
+    ],
+    [
+     17.0,
+     4.555
+    ],
+    [
+     9.0,
+     2.412
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#a58cff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r3",
+   "polygon": [
+    [
+     9.0,
+     2.412
+    ],
+    [
+     17.0,
+     4.555
+    ],
+    [
+     17.0,
+     -4.555
+    ],
+    [
+     9.0,
+     -2.412
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#7fe8ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r4",
+   "polygon": [
+    [
+     9.0,
+     -2.412
+    ],
+    [
+     17.0,
+     -4.555
+    ],
+    [
+     12.445,
+     -12.445
+    ],
+    [
+     6.588,
+     -6.588
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#8fb0ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r5",
+   "polygon": [
+    [
+     6.588,
+     -6.588
+    ],
+    [
+     12.445,
+     -12.445
+    ],
+    [
+     4.555,
+     -17.0
+    ],
+    [
+     2.412,
+     -9.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#c08cff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r6",
+   "polygon": [
+    [
+     2.412,
+     -9.0
+    ],
+    [
+     4.555,
+     -17.0
+    ],
+    [
+     -4.555,
+     -17.0
+    ],
+    [
+     -2.412,
+     -9.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#b48cff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r7",
+   "polygon": [
+    [
+     -2.412,
+     -9.0
+    ],
+    [
+     -4.555,
+     -17.0
+    ],
+    [
+     -12.445,
+     -12.445
+    ],
+    [
+     -6.588,
+     -6.588
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#8fb0ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r8",
+   "polygon": [
+    [
+     -6.588,
+     -6.588
+    ],
+    [
+     -12.445,
+     -12.445
+    ],
+    [
+     -17.0,
+     -4.555
+    ],
+    [
+     -9.0,
+     -2.412
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#7fe8ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r9",
+   "polygon": [
+    [
+     -9.0,
+     -2.412
+    ],
+    [
+     -17.0,
+     -4.555
+    ],
+    [
+     -17.0,
+     4.555
+    ],
+    [
+     -9.0,
+     2.412
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#8fb0ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r10",
+   "polygon": [
+    [
+     -9.0,
+     2.412
+    ],
+    [
+     -17.0,
+     4.555
+    ],
+    [
+     -12.445,
+     12.445
+    ],
+    [
+     -6.588,
+     6.588
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#a58cff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "r11",
+   "polygon": [
+    [
+     -6.588,
+     6.588
+    ],
+    [
+     -12.445,
+     12.445
+    ],
+    [
+     -4.555,
+     17.0
+    ],
+    [
+     -2.412,
+     9.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_hex",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#7fe8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "trim",
+   "lip_tex": "trim"
+  },
+  {
+   "id": "airlock",
+   "polygon": [
+    [
+     -2.5,
+     17.0
+    ],
+    [
+     2.5,
+     17.0
+    ],
+    [
+     2.5,
+     22.0
+    ],
+    [
+     -2.5,
+     22.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "floor_airlock",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#7fe8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "bar",
+   "polygon": [
+    [
+     11.618,
+     -12.922
+    ],
+    [
+     5.382,
+     -16.522
+    ],
+    [
+     7.516,
+     -22.219
+    ],
+    [
+     15.484,
+     -17.619
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "floor_lounge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#ff7ad8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "cloak",
+   "polygon": [
+    [
+     -5.382,
+     -16.522
+    ],
+    [
+     -11.618,
+     -12.922
+    ],
+    [
+     -15.484,
+     -17.619
+    ],
+    [
+     -7.516,
+     -22.219
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "floor_lounge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#9fb8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "hangar",
+   "polygon": [
+    [
+     -12.822,
+     -11.791
+    ],
+    [
+     -16.622,
+     -5.209
+    ],
+    [
+     -23.718,
+     -7.92
+    ],
+    [
+     -18.718,
+     -16.58
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "floor_airlock",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.6,
+   "tint": "#ffb066",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "ap6_a",
+   "polygon": [
+    [
+     4.4,
+     -17.0
+    ],
+    [
+     -4.4,
+     -17.0
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     4.96,
+     -19.2
+    ]
+   ],
+   "floor": 0.3,
+   "ceiling": 7.5,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.55,
+   "tint": "#b890ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "trim"
+  },
+  {
+   "id": "ap6_b",
+   "polygon": [
+    [
+     4.96,
+     -19.2
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     5.52,
+     -21.4
+    ]
+   ],
+   "floor": 0.6,
+   "ceiling": 7.5,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.58,
+   "tint": "#b890ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "trim"
+  },
+  {
+   "id": "stage",
+   "polygon": [
+    [
+     5.52,
+     -21.4
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     -7.2,
+     -28.0
+    ],
+    [
+     7.2,
+     -28.0
+    ]
+   ],
+   "floor": 0.9,
+   "ceiling": 8.5,
+   "floor_tex": "floor_dais",
+   "ceil_tex": "ceil_hull",
+   "wall_tex": "wall_hull",
+   "light": 0.62,
+   "tint": "#c8a0ff",
+   "room": "main",
+   "flags": [
+    "stage"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "mix",
+     "point"
+    ],
+    "dancing": [
+     "mix",
+     "dance",
+     "point",
+     "wave"
+    ],
+    "hype": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ]
+   },
+   "step_tex": "trim"
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    2.412,
+    9.0
+   ],
+   "to": [
+    4.555,
+    17.0
+   ],
+   "sector": "r0",
+   "portal": "r1"
+  },
+  {
+   "from": [
+    -2.412,
+    9.0
+   ],
+   "to": [
+    2.412,
+    9.0
+   ],
+   "sector": "r0",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    6.588,
+    6.588
+   ],
+   "to": [
+    12.445,
+    12.445
+   ],
+   "sector": "r1",
+   "portal": "r2"
+  },
+  {
+   "from": [
+    2.412,
+    9.0
+   ],
+   "to": [
+    6.588,
+    6.588
+   ],
+   "sector": "r1",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    9.0,
+    2.412
+   ],
+   "to": [
+    17.0,
+    4.555
+   ],
+   "sector": "r2",
+   "portal": "r3"
+  },
+  {
+   "from": [
+    6.588,
+    6.588
+   ],
+   "to": [
+    9.0,
+    2.412
+   ],
+   "sector": "r2",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    9.0,
+    -2.412
+   ],
+   "to": [
+    17.0,
+    -4.555
+   ],
+   "sector": "r3",
+   "portal": "r4"
+  },
+  {
+   "from": [
+    9.0,
+    2.412
+   ],
+   "to": [
+    9.0,
+    -2.412
+   ],
+   "sector": "r3",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    6.588,
+    -6.588
+   ],
+   "to": [
+    12.445,
+    -12.445
+   ],
+   "sector": "r4",
+   "portal": "r5"
+  },
+  {
+   "from": [
+    9.0,
+    -2.412
+   ],
+   "to": [
+    6.588,
+    -6.588
+   ],
+   "sector": "r4",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    2.412,
+    -9.0
+   ],
+   "to": [
+    4.555,
+    -17.0
+   ],
+   "sector": "r5",
+   "portal": "r6"
+  },
+  {
+   "from": [
+    6.588,
+    -6.588
+   ],
+   "to": [
+    2.412,
+    -9.0
+   ],
+   "sector": "r5",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -2.412,
+    -9.0
+   ],
+   "to": [
+    -4.555,
+    -17.0
+   ],
+   "sector": "r6",
+   "portal": "r7"
+  },
+  {
+   "from": [
+    2.412,
+    -9.0
+   ],
+   "to": [
+    -2.412,
+    -9.0
+   ],
+   "sector": "r6",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -6.588,
+    -6.588
+   ],
+   "to": [
+    -12.445,
+    -12.445
+   ],
+   "sector": "r7",
+   "portal": "r8"
+  },
+  {
+   "from": [
+    -2.412,
+    -9.0
+   ],
+   "to": [
+    -6.588,
+    -6.588
+   ],
+   "sector": "r7",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -9.0,
+    -2.412
+   ],
+   "to": [
+    -17.0,
+    -4.555
+   ],
+   "sector": "r8",
+   "portal": "r9"
+  },
+  {
+   "from": [
+    -6.588,
+    -6.588
+   ],
+   "to": [
+    -9.0,
+    -2.412
+   ],
+   "sector": "r8",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -9.0,
+    2.412
+   ],
+   "to": [
+    -17.0,
+    4.555
+   ],
+   "sector": "r9",
+   "portal": "r10"
+  },
+  {
+   "from": [
+    -9.0,
+    -2.412
+   ],
+   "to": [
+    -9.0,
+    2.412
+   ],
+   "sector": "r9",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -6.588,
+    6.588
+   ],
+   "to": [
+    -12.445,
+    12.445
+   ],
+   "sector": "r10",
+   "portal": "r11"
+  },
+  {
+   "from": [
+    -9.0,
+    2.412
+   ],
+   "to": [
+    -6.588,
+    6.588
+   ],
+   "sector": "r10",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -2.412,
+    9.0
+   ],
+   "to": [
+    -4.555,
+    17.0
+   ],
+   "sector": "r11",
+   "portal": "r0"
+  },
+  {
+   "from": [
+    -6.588,
+    6.588
+   ],
+   "to": [
+    -2.412,
+    9.0
+   ],
+   "sector": "r11",
+   "portal": "void",
+   "kind": "railing",
+   "tex": "sr_rail",
+   "height": 1.1
+  },
+  {
+   "from": [
+    -2.5,
+    17.0
+   ],
+   "to": [
+    2.5,
+    17.0
+   ],
+   "sector": "r0",
+   "portal": "airlock"
+  },
+  {
+   "from": [
+    11.618,
+    -12.922
+   ],
+   "to": [
+    5.382,
+    -16.522
+   ],
+   "sector": "r5",
+   "portal": "bar"
+  },
+  {
+   "from": [
+    -5.382,
+    -16.522
+   ],
+   "to": [
+    -11.618,
+    -12.922
+   ],
+   "sector": "r7",
+   "portal": "cloak"
+  },
+  {
+   "from": [
+    -12.822,
+    -11.791
+   ],
+   "to": [
+    -16.622,
+    -5.209
+   ],
+   "sector": "r8",
+   "portal": "hangar"
+  },
+  {
+   "from": [
+    4.4,
+    -17.0
+   ],
+   "to": [
+    -4.4,
+    -17.0
+   ],
+   "sector": "r6",
+   "portal": "ap6_a"
+  },
+  {
+   "from": [
+    4.96,
+    -19.2
+   ],
+   "to": [
+    -4.96,
+    -19.2
+   ],
+   "sector": "ap6_a",
+   "portal": "ap6_b"
+  },
+  {
+   "from": [
+    5.52,
+    -21.4
+   ],
+   "to": [
+    -5.52,
+    -21.4
+   ],
+   "sector": "ap6_b",
+   "portal": "stage"
+  }
+ ],
+ "homes": [
+  {
+   "actor": "a00",
+   "sector": "r2",
+   "at": [
+    8.826,
+    6.712
+   ]
+  },
+  {
+   "actor": "a01",
+   "sector": "r2",
+   "at": [
+    13.21,
+    8.32
+   ]
+  },
+  {
+   "actor": "a02",
+   "sector": "r3",
+   "at": [
+    11.0,
+    1.4
+   ]
+  },
+  {
+   "actor": "a03",
+   "sector": "r3",
+   "at": [
+    13.6,
+    -1.2
+   ]
+  },
+  {
+   "actor": "a04",
+   "sector": "r4",
+   "at": [
+    11.178,
+    -7.839
+   ]
+  },
+  {
+   "actor": "a05",
+   "sector": "r4",
+   "at": [
+    13.81,
+    -7.28
+   ]
+  },
+  {
+   "actor": "a06",
+   "sector": "r5",
+   "at": [
+    6.712,
+    -8.826
+   ]
+  },
+  {
+   "actor": "a07",
+   "sector": "r5",
+   "at": [
+    8.32,
+    -13.21
+   ]
+  },
+  {
+   "actor": "a08",
+   "sector": "r6",
+   "at": [
+    1.4,
+    -11.0
+   ]
+  },
+  {
+   "actor": "a09",
+   "sector": "r6",
+   "at": [
+    -1.2,
+    -13.6
+   ]
+  },
+  {
+   "actor": "a10",
+   "sector": "r6",
+   "at": [
+    0.6,
+    -15.6
+   ]
+  },
+  {
+   "actor": "a11",
+   "sector": "r7",
+   "at": [
+    -7.839,
+    -11.178
+   ]
+  },
+  {
+   "actor": "a12",
+   "sector": "r7",
+   "at": [
+    -7.28,
+    -13.81
+   ]
+  },
+  {
+   "actor": "a13",
+   "sector": "r8",
+   "at": [
+    -8.826,
+    -6.712
+   ]
+  },
+  {
+   "actor": "a14",
+   "sector": "r8",
+   "at": [
+    -13.21,
+    -8.32
+   ]
+  },
+  {
+   "actor": "a15",
+   "sector": "r9",
+   "at": [
+    -11.0,
+    -1.4
+   ]
+  },
+  {
+   "actor": "a16",
+   "sector": "r9",
+   "at": [
+    -13.6,
+    1.2
+   ]
+  },
+  {
+   "actor": "a17",
+   "sector": "r10",
+   "at": [
+    -11.178,
+    7.839
+   ]
+  },
+  {
+   "actor": "a18",
+   "sector": "r10",
+   "at": [
+    -13.81,
+    7.28
+   ]
+  },
+  {
+   "actor": "dj",
+   "sector": "stage",
+   "at": [
+    -0.9,
+    -26.2
+   ]
+  },
+  {
+   "actor": "attendant",
+   "sector": "cloak",
+   "at": [
+    -10.45,
+    -18.1
+   ]
+  },
+  {
+   "actor": "bartender",
+   "sector": "bar",
+   "at": [
+    11.2,
+    -19.399
+   ]
+  },
+  {
+   "actor": "pilot",
+   "sector": "hangar",
+   "at": [
+    -18.767,
+    -8.295
+   ]
+  },
+  {
+   "actor": "q1",
+   "sector": "cloak",
+   "at": [
+    -8.074,
+    -16.585
+   ]
+  },
+  {
+   "actor": "q2",
+   "sector": "cloak",
+   "at": [
+    -7.718,
+    -17.368
+   ]
+  },
+  {
+   "actor": "q3",
+   "sector": "cloak",
+   "at": [
+    -10.399,
+    -15.012
+   ]
+  },
+  {
+   "actor": "b1",
+   "sector": "bar",
+   "at": [
+    11.159,
+    -15.728
+   ]
+  },
+  {
+   "actor": "b2",
+   "sector": "bar",
+   "at": [
+    7.755,
+    -17.231
+   ]
+  },
+  {
+   "actor": "s1",
+   "sector": "ap6_a",
+   "at": [
+    3.0,
+    -18.0
+   ]
+  },
+  {
+   "actor": "s2",
+   "sector": "stage",
+   "at": [
+    4.6,
+    -24.0
+   ]
+  },
+  {
+   "actor": "s3",
+   "sector": "stage",
+   "at": [
+    -4.8,
+    -24.0
+   ]
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "waypoints": [
+  {
+   "id": "space_arrive",
+   "at": [
+    0.0,
+    20.4
+   ],
+   "yaw": 0,
+   "sector": "airlock"
+  },
+  {
+   "id": "hub_view",
+   "at": [
+    0.0,
+    14.2
+   ],
+   "yaw": 0,
+   "sector": "r0",
+   "choice_view": true
+  },
+  {
+   "id": "rv0",
+   "at": [
+    0.0,
+    13.3
+   ],
+   "yaw": 0,
+   "sector": "r0"
+  },
+  {
+   "id": "rv1",
+   "at": [
+    6.65,
+    11.518
+   ],
+   "yaw": 30,
+   "sector": "r1"
+  },
+  {
+   "id": "rv2",
+   "at": [
+    11.518,
+    6.65
+   ],
+   "yaw": 60,
+   "sector": "r2"
+  },
+  {
+   "id": "rv3",
+   "at": [
+    13.3,
+    0.0
+   ],
+   "yaw": 90,
+   "sector": "r3"
+  },
+  {
+   "id": "rv4",
+   "at": [
+    11.518,
+    -6.65
+   ],
+   "yaw": 120,
+   "sector": "r4"
+  },
+  {
+   "id": "rv5",
+   "at": [
+    6.65,
+    -11.518
+   ],
+   "yaw": 150,
+   "sector": "r5"
+  },
+  {
+   "id": "rv6",
+   "at": [
+    0.0,
+    -13.3
+   ],
+   "yaw": 180,
+   "sector": "r6"
+  },
+  {
+   "id": "rv7",
+   "at": [
+    -6.65,
+    -11.518
+   ],
+   "yaw": -150,
+   "sector": "r7"
+  },
+  {
+   "id": "rv8",
+   "at": [
+    -11.518,
+    -6.65
+   ],
+   "yaw": -120,
+   "sector": "r8"
+  },
+  {
+   "id": "rv9",
+   "at": [
+    -13.3,
+    -0.0
+   ],
+   "yaw": -90,
+   "sector": "r9"
+  },
+  {
+   "id": "rv10",
+   "at": [
+    -11.518,
+    6.65
+   ],
+   "yaw": -60,
+   "sector": "r10"
+  },
+  {
+   "id": "rv11",
+   "at": [
+    -6.65,
+    11.518
+   ],
+   "yaw": -30,
+   "sector": "r11"
+  },
+  {
+   "id": "stage_foot",
+   "at": [
+    0.0,
+    -15.2
+   ],
+   "yaw": 0,
+   "sector": "r6"
+  },
+  {
+   "id": "stage_steps",
+   "at": [
+    0.0,
+    -20.3
+   ],
+   "yaw": 0,
+   "sector": "ap6_b"
+  },
+  {
+   "id": "deck_view",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "yaw": 0,
+   "sector": "stage"
+  },
+  {
+   "id": "cloak_door",
+   "at": [
+    -7.6,
+    -13.164
+   ],
+   "yaw": 30,
+   "sector": "r7"
+  },
+  {
+   "id": "cloak_view",
+   "at": [
+    -10.0,
+    -17.321
+   ],
+   "yaw": 30,
+   "sector": "cloak"
+  },
+  {
+   "id": "bar_door",
+   "at": [
+    7.6,
+    -13.164
+   ],
+   "yaw": -30,
+   "sector": "r5"
+  },
+  {
+   "id": "bar_view",
+   "at": [
+    10.0,
+    -17.321
+   ],
+   "yaw": -30,
+   "sector": "bar"
+  },
+  {
+   "id": "hangar_door",
+   "at": [
+    -13.164,
+    -7.6
+   ],
+   "yaw": 60,
+   "sector": "r8"
+  },
+  {
+   "id": "hangar_view",
+   "at": [
+    -18.187,
+    -10.5
+   ],
+   "yaw": 60,
+   "sector": "hangar"
+  },
+  {
+   "id": "home_door",
+   "at": [
+    0.0,
+    19.0
+   ],
+   "yaw": 180,
+   "sector": "airlock"
+  }
+ ],
+ "things": [
+  {
+   "id": "deck",
+   "kind": "billboard",
+   "sprite": "sr_deck",
+   "at": [
+    0.0,
+    -25.2
+   ],
+   "size": 1.05,
+   "anim": "none",
+   "y": 0.525
+  },
+  {
+   "id": "bass_knob",
+   "kind": "billboard",
+   "sprite": "sr_knob_0",
+   "at": [
+    0.0,
+    -25.12
+   ],
+   "size": 0.2,
+   "anim": "none",
+   "y": 0.84
+  },
+  {
+   "id": "stage_ball",
+   "kind": "billboard",
+   "sprite": "disco_ball",
+   "at": [
+    0.0,
+    -24.0
+   ],
+   "size": 1.4,
+   "anim": "rotate",
+   "y": 5.6
+  },
+  {
+   "id": "woofer_0",
+   "kind": "billboard",
+   "sprite": "woofer",
+   "at": [
+    4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "woofer_1",
+   "kind": "billboard",
+   "sprite": "woofer",
+   "at": [
+    -4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "stage_beams_l",
+   "kind": "billboard",
+   "sprite": "pylon_beams",
+   "at": [
+    4.4,
+    -25.8
+   ],
+   "size": 4.2,
+   "anim": "none",
+   "y": 3.0,
+   "piece": "pylon_beams"
+  },
+  {
+   "id": "stage_ring",
+   "kind": "billboard",
+   "sprite": "ring_lights",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "size": 2.6,
+   "anim": "none",
+   "y": 0.9,
+   "piece": "ring_lights"
+  },
+  {
+   "id": "stage_dome",
+   "kind": "billboard",
+   "sprite": "hologram_dome",
+   "at": [
+    0.0,
+    -26.4
+   ],
+   "size": 3.4,
+   "anim": "none",
+   "y": 2.6,
+   "piece": "hologram_dome"
+  },
+  {
+   "id": "fixture_0",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    2.0,
+    -24.4
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "fixture_1",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    -2.0,
+    -24.4
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "fixture_2",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    10.5,
+    -18.187
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "fixture_3",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    -10.5,
+    -18.187
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "fixture_4",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    -19.187,
+    -8.768
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "fixture_5",
+   "kind": "billboard",
+   "sprite": "fixture",
+   "at": [
+    -1.4,
+    18.5
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 5.0
+  },
+  {
+   "id": "glow_stage",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    -25.5
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "glow_bar",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    11.25,
+    -19.486
+   ],
+   "size": 2.2,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "glow_hangar",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -20.438,
+    -11.8
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "bar_counter",
+   "kind": "billboard",
+   "sprite": "thing_bar",
+   "at": [
+    10.3,
+    -17.84
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "bar_shelf_1",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    14.048,
+    -18.332
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_2",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    12.316,
+    -19.332
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_3",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    10.584,
+    -20.332
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_4",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    8.852,
+    -21.332
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "cloak_counter",
+   "kind": "billboard",
+   "sprite": "thing_bar",
+   "at": [
+    -9.7,
+    -16.801
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "y": 0.6
+  },
+  {
+   "id": "cloak_rail",
+   "kind": "billboard",
+   "sprite": "thing_suit",
+   "at": [
+    -10.8,
+    -18.706
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "coat_cabinet",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    -8.502,
+    -20.726
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "hangar_racer",
+   "kind": "billboard",
+   "sprite": "sr_racer",
+   "at": [
+    -20.611,
+    -11.9
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "hangar_console",
+   "kind": "billboard",
+   "sprite": "thing_console",
+   "at": [
+    -17.106,
+    -13.571
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "home_hatch",
+   "kind": "billboard",
+   "sprite": "sr_hatch",
+   "at": [
+    0.0,
+    19.9
+   ],
+   "size": 2.3,
+   "anim": "none",
+   "y": 1.15
+  },
+  {
+   "id": "plant_a",
+   "kind": "billboard",
+   "sprite": "thing_plant",
+   "at": [
+    -3.2,
+    12.0
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "plant_b",
+   "kind": "billboard",
+   "sprite": "thing_plant",
+   "at": [
+    15.0,
+    0.0
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "plant_c",
+   "kind": "billboard",
+   "sprite": "thing_plant",
+   "at": [
+    -15.0,
+    -0.0
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "ring_lamp_1",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    8.1,
+    14.03
+   ],
+   "size": 1.6,
+   "anim": "pulse",
+   "y": 2.8,
+   "blend": "add"
+  },
+  {
+   "id": "ring_lamp_3",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    16.2,
+    0.0
+   ],
+   "size": 1.6,
+   "anim": "pulse",
+   "y": 2.8,
+   "blend": "add"
+  },
+  {
+   "id": "ring_lamp_4",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    14.03,
+    -8.1
+   ],
+   "size": 1.6,
+   "anim": "pulse",
+   "y": 2.8,
+   "blend": "add"
+  },
+  {
+   "id": "ring_lamp_9",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -16.2,
+    -0.0
+   ],
+   "size": 1.6,
+   "anim": "pulse",
+   "y": 2.8,
+   "blend": "add"
+  },
+  {
+   "id": "ring_lamp_11",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -8.1,
+    14.03
+   ],
+   "size": 1.6,
+   "anim": "pulse",
+   "y": 2.8,
+   "blend": "add"
+  },
+  {
+   "id": "lt_void",
+   "kind": "light",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "y": 5.4,
+   "radius": 14.0,
+   "color": "#6a4cff",
+   "strength": 1.0
+  },
+  {
+   "id": "lt_hub",
+   "kind": "light",
+   "at": [
+    0.0,
+    14.0
+   ],
+   "y": 3.6,
+   "radius": 8.0,
+   "color": "#7fe8ff",
+   "strength": 1.1
+  },
+  {
+   "id": "lt_airlock",
+   "kind": "light",
+   "at": [
+    0.0,
+    20.0
+   ],
+   "y": 3.0,
+   "radius": 6.0,
+   "color": "#fff2c8",
+   "strength": 1.0
+  },
+  {
+   "id": "lt_stage_a",
+   "kind": "light",
+   "at": [
+    3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#ff4fc8",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_stage_b",
+   "kind": "light",
+   "at": [
+    -3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#7fe8ff",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_bar",
+   "kind": "light",
+   "at": [
+    10.5,
+    -18.187
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#ff7ad8",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_cloak",
+   "kind": "light",
+   "at": [
+    -10.5,
+    -18.187
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#b8c8ff",
+   "strength": 1.1
+  },
+  {
+   "id": "lt_hangar",
+   "kind": "light",
+   "at": [
+    -19.053,
+    -11.0
+   ],
+   "y": 3.6,
+   "radius": 8.0,
+   "color": "#ffb066",
+   "strength": 1.3
+  },
+  {
+   "id": "lt_planet_e",
+   "kind": "light",
+   "at": [
+    15.5,
+    0.0
+   ],
+   "y": 3.0,
+   "radius": 9.0,
+   "color": "#6fe4f4",
+   "strength": 1.0
+  },
+  {
+   "id": "lt_planet_w",
+   "kind": "light",
+   "at": [
+    -15.5,
+    -0.0
+   ],
+   "y": 3.0,
+   "radius": 9.0,
+   "color": "#8fa8ff",
+   "strength": 1.0
+  },
+  {
+   "id": "win_1_a",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    6.76,
+    15.709
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 30,
+   "emissive": true
+  },
+  {
+   "id": "win_1_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    10.398,
+    13.609
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 30,
+   "emissive": true
+  },
+  {
+   "id": "led_1",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    8.492,
+    14.709
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": 30,
+   "emissive": true
+  },
+  {
+   "id": "win_2_a",
+   "kind": "decal",
+   "sprite": "wall_planet",
+   "at": [
+    13.709,
+    10.225
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 60,
+   "emissive": true
+  },
+  {
+   "id": "win_2_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    15.809,
+    6.587
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 60,
+   "emissive": true
+  },
+  {
+   "id": "led_2",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    14.709,
+    8.493
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": 60,
+   "emissive": true
+  },
+  {
+   "id": "win_3_a",
+   "kind": "decal",
+   "sprite": "wall_planet",
+   "at": [
+    16.985,
+    2.0
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "win_3_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    16.985,
+    -2.2
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "led_3",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    16.985,
+    0.0
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "win_4_a",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    15.709,
+    -6.76
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 120,
+   "emissive": true
+  },
+  {
+   "id": "win_4_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    13.609,
+    -10.398
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": 120,
+   "emissive": true
+  },
+  {
+   "id": "led_4",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    14.709,
+    -8.492
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": 120,
+   "emissive": true
+  },
+  {
+   "id": "win_9_a",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -16.985,
+    -2.0
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "win_9_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -16.985,
+    2.2
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "led_9",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    -16.985,
+    -0.0
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "win_10_a",
+   "kind": "decal",
+   "sprite": "wall_planet",
+   "at": [
+    -15.709,
+    6.76
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -60,
+   "emissive": true
+  },
+  {
+   "id": "win_10_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -13.609,
+    10.398
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -60,
+   "emissive": true
+  },
+  {
+   "id": "led_10",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    -14.709,
+    8.493
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": -60,
+   "emissive": true
+  },
+  {
+   "id": "win_11_a",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -10.225,
+    13.709
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -30,
+   "emissive": true
+  },
+  {
+   "id": "win_11_b",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -6.587,
+    15.809
+   ],
+   "y": 1.1,
+   "size": 2.6,
+   "yaw": -30,
+   "emissive": true
+  },
+  {
+   "id": "led_11",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    -8.493,
+    14.709
+   ],
+   "y": 4.1,
+   "size": 0.6,
+   "yaw": -30,
+   "emissive": true
+  },
+  {
+   "id": "win_0_l",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    -3.9,
+    16.985
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 0,
+   "emissive": true
+  },
+  {
+   "id": "win_0_r",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    3.9,
+    16.985
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 0,
+   "emissive": true
+  },
+  {
+   "id": "stage_arch",
+   "kind": "decal",
+   "sprite": "wall_arch",
+   "at": [
+    0.0,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 4.6,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_l",
+   "kind": "decal",
+   "sprite": "wall_speaker",
+   "at": [
+    5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_r",
+   "kind": "decal",
+   "sprite": "wall_speaker",
+   "at": [
+    -5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "hangar_door",
+   "kind": "decal",
+   "sprite": "wall_door",
+   "at": [
+    -21.205,
+    -12.243
+   ],
+   "y": 0.0,
+   "size": 3.4,
+   "yaw": -120,
+   "emissive": true
+  },
+  {
+   "id": "hangar_warn",
+   "kind": "decal",
+   "sprite": "wall_hatch",
+   "at": [
+    -19.355,
+    -15.447
+   ],
+   "y": 0.0,
+   "size": 2.4,
+   "yaw": -120,
+   "emissive": true
+  },
+  {
+   "id": "hangar_glow",
+   "kind": "decal",
+   "sprite": "wall_arch",
+   "at": [
+    -23.055,
+    -9.038
+   ],
+   "y": 0.0,
+   "size": 2.4,
+   "yaw": -120,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_0",
+   "kind": "decal",
+   "sprite": "wall_hatch",
+   "at": [
+    -9.241,
+    -21.206
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -150,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_1",
+   "kind": "decal",
+   "sprite": "wall_hatch",
+   "at": [
+    -11.493,
+    -19.906
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -150,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_2",
+   "kind": "decal",
+   "sprite": "wall_hatch",
+   "at": [
+    -13.744,
+    -18.606
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -150,
+   "emissive": true
+  },
+  {
+   "id": "bar_screen",
+   "kind": "decal",
+   "sprite": "wall_led",
+   "at": [
+    11.492,
+    -19.906
+   ],
+   "y": 2.2,
+   "size": 0.9,
+   "yaw": 150,
+   "emissive": true
+  },
+  {
+   "id": "bar_window",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    14.091,
+    -18.406
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 150,
+   "emissive": true
+  },
+  {
+   "id": "bar_window_b",
+   "kind": "decal",
+   "sprite": "wall_planet",
+   "at": [
+    8.894,
+    -21.406
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 150,
+   "emissive": true
+  },
+  {
+   "id": "airlock_window",
+   "kind": "decal",
+   "sprite": "wall_window",
+   "at": [
+    0.0,
+    21.985
+   ],
+   "y": 1.6,
+   "size": 1.0,
+   "yaw": 0,
+   "emissive": true
+  }
+ ]
+}

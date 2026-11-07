@@ -198,6 +198,8 @@ func _unmount() -> void:
 
 ## The target under a touch: `local` is relative to the stage area's top-left in screen pixels, `area` the stage area's screen size. "" when there is no view or nothing is hit.
 func hit(local: Vector2, area: Vector2) -> String:
+	if view == null and play.has_method("rave_hit"):  # ruling 38: an activity with no view is touched in the room (a world region over its thing)
+		return str(play.call("rave_hit", local, area))
 	if view == null or not is_instance_valid(view) or not view.has_method("hit"):
 		return ""
 	view.set("screen_size", area)

@@ -1,0 +1,526 @@
+{
+ "world": "space_rave",
+ "hotspots": [
+  {
+   "id": "space_rave.stage",
+   "world": "space_rave",
+   "scene": "space_rave",
+   "map": "space_rave",
+   "anchor": {
+    "actor": "dj"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_stage"
+   },
+   "on_failure": {
+    "route": "space_stage"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "space_rave.cloakroom",
+   "world": "space_rave",
+   "scene": "space_rave",
+   "map": "space_rave",
+   "anchor": {
+    "actor": "attendant"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_cloakroom"
+   },
+   "on_failure": {
+    "route": "space_cloakroom"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "space_rave.bar",
+   "world": "space_rave",
+   "scene": "space_rave",
+   "map": "space_rave",
+   "anchor": {
+    "actor": "bartender"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_bar"
+   },
+   "on_failure": {
+    "route": "space_bar"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "space_rave.race",
+   "world": "space_rave",
+   "scene": "space_rave",
+   "map": "space_rave",
+   "anchor": {
+    "actor": "pilot"
+   },
+   "kind": "character",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_race"
+   },
+   "on_failure": {
+    "route": "space_race"
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "id": "space_rave.home",
+   "world": "space_rave",
+   "scene": "space_rave",
+   "map": "space_rave",
+   "anchor": {
+    "thing": "home_hatch"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "space_stage.deck",
+   "world": "space_rave",
+   "scene": "space_stage",
+   "map": "space_rave",
+   "anchor": {
+    "thing": "deck"
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "space_bass_fixed"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "bass_knob"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
+   "id": "space_stage.home",
+   "world": "space_rave",
+   "scene": "space_stage",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "deck_view"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "space_stage.back",
+   "world": "space_rave",
+   "scene": "space_stage",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "stage_foot"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_rave"
+   },
+   "on_failure": {
+    "route": "space_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "space_cloakroom.back",
+   "world": "space_rave",
+   "scene": "space_cloakroom",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "cloak_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_rave"
+   },
+   "on_failure": {
+    "route": "space_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "space_cloakroom.home",
+   "world": "space_rave",
+   "scene": "space_cloakroom",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "cloak_view"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "space_bar.back",
+   "world": "space_rave",
+   "scene": "space_bar",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "bar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_rave"
+   },
+   "on_failure": {
+    "route": "space_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "space_bar.home",
+   "world": "space_rave",
+   "scene": "space_bar",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "bar_view"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "space_race.back",
+   "world": "space_rave",
+   "scene": "space_race",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "hangar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_rave"
+   },
+   "on_failure": {
+    "route": "space_rave"
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "space_race.home",
+   "world": "space_rave",
+   "scene": "space_race",
+   "map": "space_rave",
+   "anchor": {
+    "waypoint": "hangar_view"
+   },
+   "kind": "exit",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit"
+   },
+   "on_failure": {
+    "route": "bedsit"
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

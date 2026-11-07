@@ -92,6 +92,7 @@ var _trial_g1 := -1.0  # the cue-free guard the walk to the hatch starts on
 var _trial_g2 := -1.0  # the guard the dungeon takes the pads on
 var _trial_direct := false
 var _stage_hidden := ""
+var rave_host := SpaceRaveHost.new()  # the Space rave's bass lock and stage change (src/bedsit/space_rave_host.gd; inert outside its scenes)
 var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
 var _mg: RunMinigameHost
 var card_table: RunCardTable  # the day room's card table in the room: its players follow the table's hotspot (docs/BLACKJACK_INTEGRATION.md, "The table in the room")
@@ -843,6 +844,7 @@ func _advance(t: float, audio_t: float) -> void:
 		_playtest_back()
 		return
 	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
+	_rave_step(t)
 	_mg.step(t)
 	_card_table_feed(t)
 	if trial_state == "":
@@ -1067,6 +1069,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var node: Dictionary = data.nodes[str(ev["node"])]
 	var world := str(node["map"])
 	var t0 := float(ev["t"])
+	_rave_enter(str(ev["node"]), t0)
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0, "world": str(node["world"]), "path": run_path})
 	_sel_t.clear()
 	_refused.clear()
@@ -1153,6 +1156,43 @@ func _on_track_event(ev: Dictionary) -> void:
 
 
 ## Hands one journey action {world, t0, action, args} to its world's stage and keeps it in the log.
+## The Space rave (SpaceRaveHost): a scene starts / every frame.
+func _rave_enter(node_id: String, t0: float) -> void:
+	rave_host.progress = Session.run_progress
+	rave_host.track_audio = audio.track if audio != null else null
+	rave_host.beat_s = engine.beat_s
+	rave_host.phase_t0_fn = func() -> float: return engine.phase_t0
+	rave_host.apply_fn = func(a: Dictionary) -> void:
+		a["world"] = str(data.nodes[node_id]["map"])
+		_journey_apply(a)
+	rave_host.enter(node_id, t0)
+
+
+func _rave_step(t: float) -> void:
+	if not rave_host.in_rave:
+		return
+	var act: MinigameActivity = minigames.activity if minigames.active() else null
+	rave_host.step(t, act.state() if act != null else {})
+	if act is BassKnobActivity and stages.has(active_world):  # the knob's frame in the room (its own map thing, posed)
+		if _knob_frames.is_empty():
+			for i in 4:
+				_knob_frames.append(load("res://assets/story/mothership/textures/sr_knob_%d.png" % i))
+		var w: StoryWorld = stages[active_world]["stage"].world
+		if w != null:
+			w.thing_pose["bass_knob"] = rave_host.knob_pose((act.things() as Array)[0], _knob_frames)
+
+
+var _knob_frames: Array = []
+
+
+## A touch in the room while a view-less activity is seated (the bass knob's world region).
+func rave_hit(local: Vector2, area: Vector2) -> String:
+	if not (minigames.activity is BassKnobActivity) or not stages.has(active_world):
+		return ""
+	var st: StoryStage = stages[active_world]["stage"]
+	return SpaceRaveHost.hit(local, area, st.screen_pose(st.player.pose_at(hud.now_t)))
+
+
 func _journey_apply(a: Dictionary) -> void:
 	journey_log.append(a)
 	var st: StoryStage = _build_stage(str(a["world"]))["stage"]

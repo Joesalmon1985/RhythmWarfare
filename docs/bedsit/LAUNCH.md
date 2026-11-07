@@ -94,3 +94,28 @@ thresholds are the strange part.
 Camera clearance: the walls are 2.0 m (east, west) and 2.5 m (north, south) from the camera, so the 2.5 m magnification rule of `docs/art/CAMERA_CLEARANCE.md` would flag the
 east and west facings (the room is not in that check's scene list). The 0.6 m rule the brief asks for holds with a wide margin; the art is drawn at 160 texels per metre to
 keep the magnification near 1.4x at 2 m.
+
+
+## The Space rave (package "space", branch `wip/play-space`)
+
+Brief sections 3 and 4. A real node now: `space_rave` replaces its placeholder (`routes.json` `landed`, `LANDED` in `tools/run/make_bedsit.py`; the other three raves are still placeholders).
+
+    tools\dev\play_bedsit.cmd --rave space             start inside the rave (RW_RUN_START=space_rave), the bass locked
+    tools\dev\play_bedsit.cmd --rave space --fixed     the same with the bass already fixed (RW_SPACE_BASS_FIXED=1)
+    python3 tools/story/build_space_rave.py             the map, story file, theme file and placeholder sprites
+    python3 tools/run/make_bedsit.py --bedsit           the path (nodes, hotspots/space_rave.json, music and track entries)
+    bash tools/dev/shoot_space.sh                       docs/shots/bedsit/space/space_contact.jpg
+
+- **Place**: `content/story/maps/space_rave.json`, the Mothership's ring (traced MAP11 in `doom_mothership.json`, copied without a merge from `feature/doom-layout-worlds`) rebuilt approximately: twelve ring
+  pieces round a 12-sided void 9 m down, railings on every void edge, void haze, `visibility: clip`. Piece 0 (south) is the hub with the airlock behind it (arrival, the way home), piece 6 the stage (a dais 0.9 m up two
+  0.3 m steps), 7 the cloakroom, 5 the bar, 8 the hangar (a big door, a racer glimpsed). Art: the Mothership's ribs, mint light, windows, planets, LED bars, speakers; placeholders drawn by
+  `build_space_rave.py` (`sr_rail`, `sr_deck`, `sr_knob_0..3`, `sr_hatch`, `sr_racer`).
+- **Scenes** (`content/paths/bedsit/run.json`, world `space_rave`): `space_rave` (hub: choice viewpoint `hub_view`, `hold_bars` 8, arrival `space_arrive`; choices are the DJ waving, the attendant, the bartender, the pilot and
+  the airlock hatch; relaxed, stays by default), `space_stage` (rail steps, then the deck; the deck hotspot runs the activity), and placeholders `space_cloakroom`, `space_bar`, `space_race` that loop back. The activity id
+  per station is in `content/raves/space.json` `activities` (the hook for the other agents: `cloakroom`, `bar`, `race`). The routes of contract 3 (via polylines with holds) are in that file's `routes`.
+- **Bass puzzle**: `SpaceRaveHost` (`src/bedsit/space_rave_host.gd`) locks `bass` on entry unless `bass_fixed`; `BassKnobActivity` (`content/minigames/bass_knob.json`, rhythm mode): two resisting touches, the third frees the knob;
+  the host then schedules `unlock_stem_at` for the next bar line (one-bar ramp) and, on the same line, the stage lights (`piece_on` of `pylon_beams`, `ring_lights`, `hologram_dome`) and the crowd (`crowd_cap` 100, quiet 25 before).
+  The flag `rave.space.bass_fixed` is set by the result and kept for the run. Per ruling 38 there is no close-up: the knob is the map thing `bass_knob` (frames by `thing_pose`) and the touch is a world region over its screen point (`SpaceRaveHost.hit`).
+- Lines touched outside the new files: `src/run/run_play.gd` (member `rave_host`; `_rave_enter` call at the top of `_on_phase_start`; `_rave_step` after `minigames.update`; the helpers `_rave_enter`, `_rave_step`, `rave_hit`),
+  `src/run/run_minigame_host.gd` (`hit`: a view-less activity asks `rave_hit`), `src/story/story_stage.gd` (`crowd_cap` and its action), `src/story/world/story_map.gd` (a marked void is exempt from the reachability check),
+  `tools/story/preview_map.gd` (screenshot env vars), `tests/test_bedsit.gd` (a landed rave is not a placeholder).

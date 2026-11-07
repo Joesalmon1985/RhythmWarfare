@@ -1,0 +1,423 @@
+{
+ "palettes": {
+  "low": [
+   "#2b3c9a",
+   "#1d8a9a"
+  ],
+  "cool": [
+   "#33ffd1",
+   "#6a7bff"
+  ],
+  "warm": [
+   "#ffb347",
+   "#ff4fc8"
+  ],
+  "rave": [
+   "#2ee8c4",
+   "#f04ad6",
+   "#7a5cff",
+   "#ffd23f"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "initial_energy": 45,
+ "sequence_bars": 2,
+ "id": "space_rave",
+ "title": "The Space Rave",
+ "chapter": 9,
+ "art": "mothership",
+ "music_pack": "res://songs/m10_last_light",
+ "music_packs": [
+  "res://songs/m10_last_light",
+  "res://songs/story_mothership_1",
+  "res://songs/story_mothership_2"
+ ],
+ "description": "A rave on the Mothership's ring (docs/briefs/BEDSIT_RAVES_BRIEF.md section 3): a path's world, not a Story Campaign chapter.",
+ "duration_bars": 8,
+ "intro": "",
+ "acts": [
+  {
+   "id": "I",
+   "title": "The Space Rave",
+   "start_bar": 1
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_ring",
+   "title": "The Ring",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "planet_window_glow"
+    }
+   ]
+  }
+ ],
+ "groups": {
+  "circle": [
+   "a00",
+   "a01",
+   "a02",
+   "a03",
+   "a04",
+   "a05",
+   "a06",
+   "a07",
+   "a08",
+   "a09",
+   "a10",
+   "a11",
+   "a12",
+   "a13",
+   "a14",
+   "a15",
+   "a16",
+   "a17",
+   "a18",
+   "dj",
+   "attendant",
+   "bartender",
+   "pilot",
+   "q1",
+   "q2",
+   "q3",
+   "b1",
+   "b2",
+   "s1",
+   "s2",
+   "s3"
+  ],
+  "all": [
+   "a00",
+   "a01",
+   "a02",
+   "a03",
+   "a04",
+   "a05",
+   "a06",
+   "a07",
+   "a08",
+   "a09",
+   "a10",
+   "a11",
+   "a12",
+   "a13",
+   "a14",
+   "a15",
+   "a16",
+   "a17",
+   "a18",
+   "dj",
+   "attendant",
+   "bartender",
+   "pilot",
+   "q1",
+   "q2",
+   "q3",
+   "b1",
+   "b2",
+   "s1",
+   "s2",
+   "s3"
+  ],
+  "early": []
+ },
+ "actors": [
+  {
+   "id": "a00",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 1
+  },
+  {
+   "id": "a01",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": -5
+  },
+  {
+   "id": "a02",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "a03",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "a04",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "a05",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "thresh": -3
+  },
+  {
+   "id": "a06",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "a07",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "a08",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "a09",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "core",
+   "thresh": -1
+  },
+  {
+   "id": "a10",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "a11",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "a12",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": -6
+  },
+  {
+   "id": "a13",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 1
+  },
+  {
+   "id": "a14",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": -5
+  },
+  {
+   "id": "a15",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "a16",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "a17",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "a18",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "thresh": -3
+  },
+  {
+   "id": "dj",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -20,
+   "glow": true
+  },
+  {
+   "id": "attendant",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -20,
+   "glow": false
+  },
+  {
+   "id": "bartender",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -20,
+   "glow": false
+  },
+  {
+   "id": "pilot",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -20,
+   "glow": false
+  },
+  {
+   "id": "q1",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "q2",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "q3",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "b1",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "b2",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "s1",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "s2",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "s3",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 5
+  }
+ ],
+ "silhouettes": [],
+ "endings": {
+  "galactic_headliner": {
+   "title": "Galactic Headliner",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "Every deck of the ship is dancing. The aliens carry you shoulder-high under the stars: the headliner of the galaxy."
+  },
+  "honoured_guest": {
+   "title": "Honoured Guest",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A warm welcome and a happy crowd. The aliens name you an honoured guest and promise to come and visit."
+  },
+  "beamed_home": {
+   "title": "Beamed Home",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The deck emptied politely. The aliens thank you, wave goodbye and beam you gently home."
+  }
+ },
+ "ending_order": [
+  "galactic_headliner",
+  "honoured_guest",
+  "beamed_home"
+ ]
+}

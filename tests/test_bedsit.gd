@@ -132,6 +132,9 @@ func test_the_raves_are_placeholders_that_resolve_to_the_bedsit() -> void:
 	assert_true(bool(routes["placeholder"]["active"]), "the placeholder flag is on until the raves land")
 	for f in RAVES:
 		var id: String = RAVES[f]
+		if bool((routes.get("landed", {}) as Dictionary).get(id, false)):  # a rave that has landed is a real node (tests/test_space_rave.gd)
+			assert_true(d.nodes.has(id) and not bool(d.nodes[id].get("placeholder", false)), "%s has landed" % id)
+			continue
 		assert_true(d.nodes.has(id), "%s exists as a placeholder node" % id)
 		var n: Dictionary = d.nodes[id]
 		assert_true(bool(n.get("placeholder", false)), "%s is marked placeholder" % id)

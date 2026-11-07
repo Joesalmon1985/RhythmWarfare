@@ -3,6 +3,7 @@ rem Launches the game at the bedsit (the new opening, docs/bedsit/LAUNCH.md) fro
 rem Works from PowerShell, cmd, or a double-click:
 rem     tools\dev\play_bedsit.cmd            the bedsit, facing north
 rem     tools\dev\play_bedsit.cmd E          look from the east (N, E, S or W): the camera stands at that viewpoint (RW_STORY_CAM), a development aid until the turn hook lands
+rem     tools\dev\play_bedsit.cmd --rave space   start inside the Space rave (RW_RUN_START=space_rave); add --fixed to start with the bass already fixed (RW_SPACE_BASS_FIXED=1)
 rem F3 shows the overlay line (compass letter and theme name). The save is the play copy of play_tracks.sh, never the real one.
 setlocal
 set "GITBASH=%ProgramFiles%\Git\bin\bash.exe"
@@ -14,6 +15,9 @@ if not exist "%GITBASH%" (
 )
 set "RW_BEDSIT=1"
 set "RW_RUN_PATH=bedsit"
+if /i "%~1"=="--rave" if /i "%~2"=="space" set "RW_RUN_START=space_rave"
+if /i "%~3"=="--fixed" set "RW_SPACE_BASS_FIXED=1"
+if /i "%~1"=="--fixed" set "RW_SPACE_BASS_FIXED=1"
 if /i "%~1"=="N" set "RW_STORY_CAM=bedsit_n"
 if /i "%~1"=="E" set "RW_STORY_CAM=bedsit_e"
 if /i "%~1"=="S" set "RW_STORY_CAM=bedsit_s"
