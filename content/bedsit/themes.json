@@ -53,5 +53,143 @@
   "magic": "res://content/raves/magic.json",
   "dinos": "res://content/raves/dinos.json",
   "transport": "res://content/raves/transport.json"
+ },
+ "cloakroom": {
+  "space": {
+   "symbols": [
+    "planet",
+    "rocket",
+    "star",
+    "comet"
+   ],
+   "attendant": {
+    "kind": "alien",
+    "body": "#5ec8f2",
+    "skin": "#a8e6ff",
+    "extra": "#e8503a"
+   },
+   "customers": [
+    {
+     "kind": "alien",
+     "body": "#4ad88a",
+     "skin": "#7fe8b0",
+     "extra": "#ffd93d"
+    },
+    {
+     "kind": "alien",
+     "body": "#a77fe8",
+     "skin": "#c9a8f8",
+     "extra": "#5ec8f2"
+    },
+    {
+     "kind": "alien",
+     "body": "#e8803a",
+     "skin": "#f8b08a",
+     "extra": "#ffffff"
+    }
+   ]
+  },
+  "magic": {
+   "symbols": [
+    "unicorn",
+    "wand",
+    "potion",
+    "crown"
+   ],
+   "attendant": {
+    "kind": "wizard",
+    "body": "#7a3fd0",
+    "skin": "#f1c9a5",
+    "extra": "#ffd93d"
+   },
+   "customers": [
+    {
+     "kind": "wizard",
+     "body": "#4a6fd8",
+     "skin": "#f1c9a5",
+     "extra": "#ffd93d"
+    },
+    {
+     "kind": "fairy",
+     "body": "#e45bd4",
+     "skin": "#f8d8c8",
+     "extra": "#a8e6ff"
+    },
+    {
+     "kind": "wizard",
+     "body": "#2fa86a",
+     "skin": "#d9a77f",
+     "extra": "#e8503a"
+    }
+   ]
+  },
+  "dinos": {
+   "symbols": [
+    "egg",
+    "claw",
+    "fern",
+    "skull"
+   ],
+   "attendant": {
+    "kind": "dino",
+    "body": "#a8c83f",
+    "skin": "#a8c83f",
+    "extra": "#e8503a"
+   },
+   "customers": [
+    {
+     "kind": "dino",
+     "body": "#5ec04a",
+     "skin": "#5ec04a",
+     "extra": "#ffd93d"
+    },
+    {
+     "kind": "dino",
+     "body": "#e88a3a",
+     "skin": "#e88a3a",
+     "extra": "#a23fe8"
+    },
+    {
+     "kind": "dino",
+     "body": "#3fa0c8",
+     "skin": "#3fa0c8",
+     "extra": "#e8503a"
+    }
+   ]
+  },
+  "transport": {
+   "symbols": [
+    "bus",
+    "bike",
+    "train",
+    "boat"
+   ],
+   "attendant": {
+    "kind": "commuter",
+    "body": "#2a6a4a",
+    "skin": "#f1c9a5",
+    "extra": "#ffd93d"
+   },
+   "customers": [
+    {
+     "kind": "commuter",
+     "body": "#3a8ad8",
+     "skin": "#f1c9a5",
+     "extra": "#e8503a"
+    },
+    {
+     "kind": "cyclist",
+     "body": "#e8c83a",
+     "skin": "#d9a77f",
+     "extra": "#3fe89a"
+    },
+    {
+     "kind": "commuter",
+     "body": "#d8503a",
+     "skin": "#8a5a3a",
+     "extra": "#ffffff"
+    }
+   ]
+  }
  }
 }

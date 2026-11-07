@@ -1,0 +1,26 @@
+{
+	"note": "The cloakroom's test scene map (ruling 38, CONTRACTS.md 10): one room, the camera at the origin facing -z (yaw 0), the static set as map pieces with the activity's prefix (cloak_*). The activity's dynamic things (cloak_coat_<j>, cloak_symbol_current, cloak_symbol_previous) are NOT here: CloakroomActivity.things() declares them, sprites in assets/story/cloak_test/sprites/. A rave places the same pieces at its cloak_counter spot.",
+	"units_per_m": 1,
+	"eye_height": 1.6,
+	"start": "cloak_view",
+	"sectors": [
+		{"id": "cloak", "polygon": [[-4.5, -3.5], [4.5, -3.5], [4.5, 2.0], [-4.5, 2.0]], "floor": 0, "ceiling": 3.0, "light": 0.55, "tint": "#d8c8ff", "room": "cloak_test", "flags": []}
+	],
+	"walls": [
+		{"from": [-4.5, -3.5], "to": [4.5, -3.5], "sector": "cloak", "tex": "", "portal": null},
+		{"from": [4.5, -3.5], "to": [4.5, 2.0], "sector": "cloak", "tex": "", "portal": null},
+		{"from": [4.5, 2.0], "to": [-4.5, 2.0], "sector": "cloak", "tex": "", "portal": null},
+		{"from": [-4.5, 2.0], "to": [-4.5, -3.5], "sector": "cloak", "tex": "", "portal": null}
+	],
+	"things": [
+		{"id": "cloak_counter", "kind": "sprite", "sprite": "cloak_counter", "at": [0.0, -2.0], "y": 0.0, "size": [4.0, 1.0], "sector": "cloak", "yaw": 0},
+		{"id": "cloak_rail", "kind": "sprite", "sprite": "cloak_rail", "at": [-2.55, -2.6], "y": 0.0, "size": [2.4, 1.9], "sector": "cloak", "yaw": 0},
+		{"id": "cloak_tag_board", "kind": "sprite", "sprite": "cloak_tag_board", "at": [0.0, -2.2], "y": 1.0, "size": [1.0, 1.0], "sector": "cloak", "yaw": 0}
+	],
+	"waypoints": [
+		{"id": "cloak_view", "at": [0.0, 0.0], "yaw": 0, "sector": "cloak", "view_pitch": -4},
+		{"id": "cloak_customer", "at": [1.8, -1.7], "yaw": 180, "sector": "cloak"},
+		{"id": "cloak_attendant", "at": [-0.8, -2.7], "yaw": 0, "sector": "cloak"}
+	],
+	"spots": {"cloak_counter": [0.0, -2.0], "cloak_queue": [2.7, -1.5], "guide_cloak": [-0.8, -2.7]}
+}
