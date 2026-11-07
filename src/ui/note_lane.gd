@@ -97,6 +97,8 @@ func visible_notes(now: float, pad_rects: Dictionary = {}) -> Array:
 		if end_dt <= -VISIBLE_AFTER_S:
 			continue
 		var state := _state_of(i, dt, end_dt)
+		if state == "withdrawn":  # (taken out of play while an activity owned the strip: never drawn)
+			continue
 		if state == "hit" and dt < 0.0:
 			continue
 		var pr: Rect2 = pad_rects[pad]

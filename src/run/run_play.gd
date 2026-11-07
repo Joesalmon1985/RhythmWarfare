@@ -35,6 +35,9 @@ var virtual_mode := false
 var trial_launcher: Callable  # called when the wizard is chosen and the block he waited for is passed (tests replace it)
 var hotspots: RunHotspots  # the scene's hotspots: the world is the menu
 var hotspot_log: Array = []  # [{kind: select | tap_miss | commit, t, ...}] for the tests and the walks
+var input_log: Array = []  # [{t, area: hud | strip | stage, owner (ContractShapes.tap_owner), target}] every tap the dispatcher routed (CONTRACTS.md 5, H5.5)
+var world_regions: Dictionary = {}  # the scene's four screen regions when it has them (the bedsit; {} none): {top|bottom|left|right: [x, y, w, h] fractions of the stage area}
+signal world_region_tapped(region: String, t: float)  # a tap in one of `world_regions` (the bedsit's turn, stay and leave)
 var tap_policy := "scripted"
 var _sel_t: Dictionary = {}  # hotspot id -> song time it was selected
 var _refused: Dictionary = {}  # hotspot id -> {t, reason, hotspot}: a choice that did not take a touch recoils for HotspotView.REFUSE_S
@@ -626,7 +629,7 @@ func _bot_step(t: float) -> void:
 	for i in range(maxi(notes.size() - 400, 0), notes.size()):
 		var n: Dictionary = notes[i]
 		if not _bot_pressed.has(i) and float(n["time"]) <= t:
-			_bot_pressed[i] = _bot_wants(n, i)
+			_bot_pressed[i] = _bot_wants(n, i) and not engine.judge.is_withdrawn(i) and not _mg.owns_strip()  # (a cue withdrawn while an activity owned the strip is no one's to play)
 			if _bot_pressed[i]:
 				engine.press(int(n["pad"]), float(n["time"]), int(n["pad"]))
 				pad_view.button_down[int(n["pad"])] = true
@@ -1004,6 +1007,7 @@ func _handle(events: Array) -> void:
 		match str(ev["kind"]):
 			"judge":
 				_on_judge_event(ev["event"], float(Time.get_ticks_msec()) / 1000.0)
+				minigames.on_judge(ev["event"], float(ev["t"]))  # minigames: an overlay activity (the race) hears the pads (H4.2)
 			"cues":
 				pad_view.refresh()
 				note_lane.refresh()
@@ -1022,6 +1026,7 @@ func _handle(events: Array) -> void:
 			"block_result":
 				_on_block_result(ev)
 				minigames.on_block_result(bool(ev["passed"]), float(ev["t"]))  # minigames
+				minigames.on_block(ev)  # minigames: an overlay activity hears the block results (H4.2)
 			"route_window":
 				if trial_state == "":
 					_open_routes(ev)
@@ -1897,10 +1902,50 @@ func _input(event: InputEvent) -> void:
 		return
 	_last_tap_ms = now
 	_last_tap_pos = pos
-	if trial_state == "in" and trial != null and trial.active:  # inside the Bassment the same touch is the dungeon's
-		trial.hotspot_tap(pos)
-	else:
-		hotspot_tap(pos)
+	dispatch_tap(pos)
+
+
+## The one tap dispatcher (CONTRACTS.md 5, hook H5.5): every tap that reaches the scene (a pad press the lane input took never does) has exactly one owner,
+## ContractShapes.tap_owner of its area (the pause button, the pad strip, the stage area), the seated activity's mode, the scene's world regions and the Bassment.
+## The strip is the activity's controls while a replace activity owns it (the pads are refused meanwhile, `_on_button_pressed`); the stage is the activity's view
+## or, for an overlay activity, its four regions; a world choice is never touched while an activity is seated. Returns the owner ("" for a tap no one owns).
+func dispatch_tap(pos: Vector2) -> String:
+	var t: float = hud.now_t if hud != null else 0.0
+	var area := _tap_area(pos)
+	var mode := minigames.input_mode(t) if minigames != null else -1
+	var trial_on := trial_state == "in" and trial != null and trial.active  # inside the Bassment the same touch is the dungeon's
+	var owner := ContractShapes.tap_owner(area, mode, not world_regions.is_empty() and mode < 0, trial_on)
+	var target := ""
+	match owner:
+		"trial":
+			trial.hotspot_tap(pos)
+		"activity_controls":
+			target = _mg.control_tap(pos, t)
+		"world_regions":
+			if mode == ActivityMode.Mode.OVERLAY:
+				target = _mg.region_tap(pos, t)
+			elif _stage_host != null:
+				var at := (pos - _stage_host.global_position) / _stage_host.size
+				target = ContractShapes.region_at(world_regions, at) if ContractShapes.regions(world_regions).is_empty() else ""
+				if target != "":
+					world_region_tapped.emit(target, t)
+		"activity_view", "hotspots":
+			target = hotspot_tap(pos)
+	input_log.append({"t": t, "area": area, "owner": owner, "target": target})
+	return owner
+
+
+## The area a tap falls in: "hud" (the pause button), "strip" (the pad strip, or a pad's grown rect), else "stage".
+func _tap_area(pos: Vector2) -> String:
+	if _pause_btn != null and _pause_btn.visible and _pause_btn.get_global_rect().has_point(pos):
+		return "hud"
+	if pad_view != null:
+		if pad_view.get_global_rect().has_point(pos):
+			return "strip"
+		for p in pad_view.button_rects():
+			if (pad_view.button_rects()[p] as Rect2).has_point(pos):
+				return "strip"
+	return "stage"
 
 
 func _on_hotspot_commit(ev: Dictionary) -> void:
@@ -2016,6 +2061,9 @@ func _on_judge_event(ev: Dictionary, wall: float) -> void:
 
 
 func _on_button_pressed(button: int, touch_id: int) -> void:
+	if _mg != null and _mg.owns_strip():  # a replace activity's controls own the strip: no pad is pressed (H5.6; the lane input is off too)
+		input_log.append({"t": hud.now_t, "area": "strip", "owner": "activity_controls", "target": "", "refused_pad": button})
+		return
 	if _ended or clock.state == SongClock.State.PAUSED:
 		return
 	live_engine().press(button, clock.judge_time(), touch_id)
