@@ -114,7 +114,7 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 	var on := RunData.load_default()
 	OS.set_environment("RW_DOOM_WORLDS", "")
 	assert_true(on.errors.is_empty(), "flag on: the run loads clean: %s" % str(on.errors))
-	for id in ["doom_warehouse", "doom_balcony", "doom_bar", "doom_lounge", "doom_warehouse.return", "warehouse"]:
+	for id in ["doom_warehouse", "doom_balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return", "warehouse"]:
 		assert_true(on.nodes.has(id), "flag on: scene %s" % id)
 	var hs: Array = on.hotspots.get("doom_warehouse", [])
 	assert_eq(hs.size(), 4, "the three guides and the stay hotspot")
@@ -122,12 +122,12 @@ func test_the_overlay_is_off_by_default_and_loads_clean_when_the_flag_is_set() -
 	for h in hs:
 		routes.append(str((h["on_success"] as Dictionary).get("route", "")))
 	routes.sort()
-	assert_eq(routes, ["doom_balcony", "doom_lounge", "doom_warehouse", "doom_warehouse.bar"], "ahead, left (the bar stand-in: the real Bar is its own world, reached from the return scene), right, and stay on the floor")
+	assert_eq(routes, ["doom_balcony", "doom_warehouse", "doom_warehouse.bar", "doom_warehouse.chill"], "ahead, left (the bar stand-in: the real Bar is the world doom_bar), right (the chill-out stand-in: the real lounge is the world doom_lounge), and stay on the floor")
 
 
 # --- the rail as polyline moves with holds, and the railing (docs/story/HEIGHTS_AND_PATHS.md) ---------------------------------------------------------------------------------
 
-const DOOM_NODES := ["doom_warehouse", "doom_balcony", "doom_warehouse.bar", "doom_lounge", "doom_warehouse.return"]  # the Warehouse world scenes (its map)
+const DOOM_NODES := ["doom_warehouse", "doom_balcony", "doom_warehouse.bar", "doom_warehouse.chill", "doom_warehouse.return"]  # the Warehouse world scenes (its map); the Booth, Bar and Lounge worlds are tested below
 const REVEAL_HOLD := 2.0
 
 
@@ -644,3 +644,220 @@ func test_the_bar_has_its_railing_visibility_and_step_keys_set() -> void:
 		if str(t.get("kind", "")) == "decal":
 			decals += 1
 	assert_true(lights >= 12 and decals >= 20, "practical lights (%d) and decals (%d) are authored" % [lights, decals])
+
+
+# --- THE CHILL-OUT LOUNGE (docs/doom/scenes/lounge.md): its own block, its own map (doom_lounge) and world (doom_lounge) ----------------------------------------------------
+# The octagonal hub on MAP08 Tricks and Traps: the reference viewpoint lg_ref on the south walkway, the Dock guide ahead (the rain street, N), the Bar guide left (NW arch), the Floor guide right
+# (NE blue passage). Same view test as the Warehouse's: the guides inside the 16:9 and 20:9 picture, apart, off the pad strip, tall enough; and, because a projection cannot see walls, a
+# sightline test from the camera to each guide against the solid walls.
+
+const LMAP_ID := "doom_lounge"
+const LGUIDES := ["lg_guide_dock", "lg_guide_bar", "lg_guide_floor"]
+const LTHRESHOLDS := ["lg_ahead_door", "lg_bar_door", "lg_floor_door"]
+const LHOLD_PLACES := ["lg_ref", "lg_west", "lg_north", "lg_east"]
+const LOUNGE_NODES := ["doom_lounge", "doom_lounge.dock", "doom_lounge.bar", "doom_lounge.floor", "doom_lounge.return"]
+
+
+func _lmap() -> StoryMap:
+	return StoryMap.load_chapter(LMAP_ID, true)
+
+
+func _lpose_at(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": LMAP_ID})
+	return p.pose_at(2.0)
+
+
+func test_lounge_map_loads_clean_with_every_waypoint_route_hold_and_the_wall_art() -> void:
+	var m := _lmap()
+	assert_true(m != null and m.errors.is_empty(), "the lounge map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % LMAP_ID))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "still flagged approximate")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["lg_ref"]) >= CHOICE_REF_HOLD, "the reference viewpoint holds at least 8 bars")
+	for id in LHOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s is a viewpoint with hold_bars" % id)
+	assert_true(float((_lpose_at(m, "lg_ref")["pos"] as Vector2).distance_to(m.waypoint("lg_ref")["at"])) < 0.05, "the camera stands at the reference viewpoint")
+	# the keys the Doom renderer wants, the exposure and the wall art
+	assert_eq(float(doc["max_step"]), 0.5, "max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "visibility mode clip")
+	assert_true(doc.has("fog") and float(doc["fog"]["density"]) > 0.0, "the map has its fog")
+	assert_true(m.decals.size() >= 20, "wall art: %d decals (studded panels, sconces, bottle shelf, record, bead curtains)" % m.decals.size())
+	var tex: Dictionary = doc["textures"]
+	for k in tex:
+		var path := str(tex[k])
+		if not path.begins_with("res://"):
+			path = "res://assets/story/%s/%s" % [str(doc["art"]), path]
+		assert_true(FileAccess.file_exists(path) or ResourceLoader.exists(path), "texture %s exists (%s)" % [k, path])
+	for who in ["dock", "bar", "floor"]:
+		for st in ["idle_0", "available_0", "available_4", "selected_1", "committed_1"]:
+			assert_true(tex.has("guide_%s_%s" % [who, st]), "guide %s has its %s sprite" % [who, st])
+	var steps_ok := true
+	var room := {}  # piece id -> the room's name (the authoring writes `room_name`)
+	for s in doc["sectors"]:
+		room[str(s["id"])] = str(s.get("room_name", ""))
+	for p in m.portals():
+		if str(room[str(p["a"])]) == "left_counter" or str(room[str(p["b"])]) == "left_counter":
+			continue  # (the bar counter is a 1.1 m island shut to walkers; the map loader wants it reachable, so one dead-end portal stays open: tools/doom/author_lounge.py barriers)
+		if not bool(p["blocked"]):
+			var fa := float(m.sector(str(p["a"]))["floor"])
+			var fb := float(m.sector(str(p["b"]))["floor"])
+			if absf(fa - fb) > 0.5 + 1.0e-6:
+				steps_ok = false
+	assert_true(steps_ok, "every portal a walker can use changes the floor by at most max_step")
+
+
+func test_lounge_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	var pose := _lpose_at(m, "lg_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in LGUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "%s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "%s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "%s %s: at least %d px tall at the reference viewpoint (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "%s %s: clear of the HUD's corner" % [asp, g])
+			print("  lounge %s %-14s rect %s" % [asp, g, str(r)])
+		for i in LGUIDES.size():
+			for j in range(i + 1, LGUIDES.size()):
+				assert_false((rects[LGUIDES[i]] as Rect2).intersects(rects[LGUIDES[j]]), "%s: %s and %s do not overlap" % [asp, LGUIDES[i], LGUIDES[j]])
+
+
+func test_lounge_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	var cam: Vector2 = m.waypoint("lg_ref")["at"]
+	for g in LGUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a step or a sofa: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "%s: the sightline from lg_ref stays clear of solid walls" % g)
+
+
+func test_lounge_no_guide_stands_too_near_a_place_the_camera_stands() -> void:
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	for g in LGUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			if str(wid) in LTHRESHOLDS:
+				assert_true((m.waypoints[wid]["at"] as Vector2).distance_to(at) >= 1.2, "%s is at least 1.2 m from the threshold %s" % [g, wid])
+			else:
+				assert_true((m.waypoints[wid]["at"] as Vector2).distance_to(at) >= 1.5, "%s is at least 1.5 m from %s" % [g, wid])
+
+
+func test_lounge_overlay_has_its_world_scenes_hotspots_and_the_floor_reaches_it_through_its_exit() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "flag on: the run loads clean: %s" % str(on.errors))
+	for id in LOUNGE_NODES:
+		assert_true(on.nodes.has(id), "flag on: scene %s" % id)
+		assert_eq(str(on.nodes[id]["map"]), LMAP_ID, "%s stands on the lounge map" % id)
+	assert_true(bool(on.nodes["doom_lounge"]["entry"]) and str(on.nodes["doom_lounge"]["world"]) == "doom_lounge", "doom_lounge is the entry scene of its world")
+	var hs: Array = on.hotspots.get("doom_lounge", [])
+	assert_eq(hs.size(), 4, "the three guides and the stay hotspot")
+	var routes := {}
+	for h in hs:
+		routes[str(h["id"])] = str((h["on_success"] as Dictionary).get("route", ""))
+	assert_eq(routes["doom_lounge.exit_dock"], "doom_lounge.dock", "ahead: the Dock")
+	assert_eq(routes["doom_lounge.exit_bar"], "doom_lounge.bar", "left: the Bar")
+	assert_eq(routes["doom_lounge.exit_floor"], "doom_lounge.floor", "right: the Floor")
+	assert_eq(routes["doom_lounge.exit_stay"], "doom_lounge", "bottom: stay")
+	var back := []
+	for e in on.nodes["doom_warehouse.return"]["next"]:
+		back.append(str(e["to"]))
+	assert_true(back.has("doom_lounge"), "the Warehouse's exit scene leads on to the lounge world")
+
+
+func test_lounge_rail_data_validates_and_every_route_is_a_via_polyline_with_holds() -> void:
+	var on := _doom_run()
+	for id in LOUNGE_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and typeof(routes[k]) == TYPE_DICTIONARY and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_true(typeof(routes[k].get("via")) == TYPE_ARRAY and not (routes[k]["via"] as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0 or k == "stumble", "%s: route %s holds at its end" % [id, k])
+		for p in rail["good"]:
+			assert_true(float(p.get("hold_bars", 0.0)) >= REVEAL_HOLD, "%s: good place %s holds at least %d bars" % [id, p["to"], int(REVEAL_HOLD)])
+	var good: Array = on.nodes["doom_lounge"]["rail"]["good"]
+	assert_eq(good.size(), 4, "the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "lg_ref", "the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) == 8.0, "lg_ref is a choice viewpoint holding 8 bars")
+	assert_true(float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "the choice viewpoint holds at least the whole choice window")
+	assert_true(on.nodes["doom_lounge"]["rail"]["routes"]["up"]["via"].size() >= 4, "ahead is a polyline of several legs")
+
+
+func test_lounge_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:
+	var on := _doom_run()
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	var seen := 0
+	for id in LOUNGE_NODES:
+		for mv in _moves_of(on.nodes[id]["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var w := m.waypoint(str(wid))
+				var sid := str(w["sector"])
+				seen += 1
+				assert_true(m.inside(w["at"], sid, StoryMap.WAYPOINT_MARGIN), "%s: %s lies inside its piece %s with the margin" % [id, wid, sid])
+				assert_false(m.is_void(sid), "%s: %s is not in a void" % [id, wid])
+				assert_true(reach.has(sid), "%s: %s stands in a piece a walker reaches" % [id, wid])
+				assert_true(float(m.sector(sid)["ceiling"]) - float(m.sector(sid)["floor"]) >= m.eye_height + 0.1, "%s: %s has room for the eye" % [id, wid])
+	assert_true(seen > 40, "the loop looked at %d waypoint uses" % seen)
+
+
+func test_lounge_check_rail_paths_reports_no_problem() -> void:
+	var on := _doom_run()
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	for id in LOUNGE_NODES:
+		var node: Dictionary = on.nodes[id]
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+	var named := 0
+	for mv in StoryRailCheck.rail_moves("doom_lounge", "lg_ref", on.nodes["doom_lounge"]["rail"]):
+		if str(mv["where"]).contains(" route "):
+			named += 1
+	assert_eq(named, 5, "the five routes (up, left, right, stumble, arrive) are checked as moves")

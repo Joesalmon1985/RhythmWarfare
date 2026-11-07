@@ -1,0 +1,14 @@
+MOVE lg_ahead_door via=5 length=24.1
+WALK ahead 0 t=0.00 @0.000:6.125:0.0:0.0:1.600 sector=0_2 ground=0.000 above=1.60 still=0.00
+WALK ahead 1 t=0.63 @0.554:6.213:-42.8:0.0:1.594 sector=0_2 ground=0.000 above=1.59 still=0.00
+WALK ahead 2 t=1.25 @2.074:6.453:-75.8:0.0:1.594 sector=0_2 ground=0.000 above=1.59 still=0.00
+WALK ahead 3 t=1.88 @3.760:5.159:-44.0:0.0:1.597 sector=0_8 ground=0.000 above=1.60 still=0.00
+WALK ahead 4 t=2.51 @5.661:3.046:-31.0:0.0:1.584 sector=0_3 ground=0.000 above=1.58 still=0.00
+WALK ahead 5 t=3.13 @6.464:0.079:-7.9:0.0:1.574 sector=0_3 ground=0.000 above=1.57 still=0.00
+WALK ahead 6 t=3.76 @6.333:-2.943:31.2:0.0:1.574 sector=0_7 ground=0.000 above=1.57 still=0.00
+WALK ahead 7 t=4.39 @3.903:-4.977:51.8:0.0:1.584 sector=0_4 ground=0.000 above=1.58 still=0.00
+WALK ahead 8 t=5.02 @1.484:-6.241:65.3:0.0:1.597 sector=0_4 ground=0.000 above=1.60 still=0.00
+WALK ahead 9 t=5.64 @0.000:-7.212:14.4:0.0:1.594 sector=0_4 ground=0.000 above=1.59 still=0.00
+WALK ahead 10 t=6.27 @0.000:-8.751:0.0:0.0:2.094 sector=16_0 ground=0.500 above=1.59 still=0.00
+WALK ahead 11 t=6.90 @0.000:-9.313:0.0:0.0:2.100 sector=16_0 ground=0.500 above=1.60 still=0.00
+HOLD lg_ahead_door 1.0 moved=0.0028 turned=0.000

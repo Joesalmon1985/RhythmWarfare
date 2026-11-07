@@ -34,7 +34,7 @@
    "temporary": false
   },
   {
-   "id": "doom_lounge",
+   "id": "doom_warehouse.chill",
    "arrangement": "warehouse_1",
    "slot": 3,
    "alternates": [
@@ -164,6 +164,61 @@
    ],
    "treatment": "none",
    "temporary": true
+  },
+  {
+   "id": "doom_lounge",
+   "arrangement": "warehouse_1",
+   "slot": 3,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_lounge.dock",
+   "arrangement": "warehouse_1",
+   "slot": 2,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_lounge.bar",
+   "arrangement": "warehouse_1",
+   "slot": 1,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_lounge.floor",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_lounge.return",
+   "arrangement": "warehouse_1",
+   "slot": 5,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

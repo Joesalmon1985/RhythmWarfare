@@ -66,17 +66,17 @@ def rail(arrive="wh_arrive"):
 DOOM_SCENES = [
     ("doom_warehouse", "floor", "The Dance Floor", True, False,
      [("doom_warehouse", "down", "Stay on the floor", True), ("doom_balcony", "up", "Up the stage steps to the balcony", False), ("doom_warehouse.bar", "left", "Into the bar", False),
-      ("doom_lounge", "right", "Into the chill-out", False)], 0),
+      ("doom_warehouse.chill", "right", "Into the chill-out", False)], 0),
     ("doom_balcony", "balcony", "The Balcony (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 2),
     ("doom_warehouse.bar", "bar", "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 1),
-    ("doom_lounge", "lounge", "The Chill-out (stand-in)", False, False, [("doom_warehouse.return", "up", "On", False)], 3),
+    ("doom_warehouse.chill", "chill", "The Chill-out (stand-in; the real scene is the world doom_lounge, reached from the return scene)", False, False, [("doom_warehouse.return", "up", "On", False)], 3),
     ("doom_warehouse.return", "return", "Back to the Floor", False, True,
-     [("doom_warehouse", "up", "Round again", True), ("doom_bar", "left", "On to the Copper Bar", False)], 5),
+     [("doom_warehouse", "up", "Round again", True), ("doom_bar", "left", "On to the Copper Bar", False), ("doom_lounge", "right", "On to the Chill-out lounge", False)], 5),
 ]
 GUIDE = {  # hotspot id suffix: (guide thing, route, sprite stem)
     "balcony": ("wh_guide_stage", "doom_balcony", "stage"),
     "bar": ("wh_guide_bar", "doom_warehouse.bar", "bar"),
-    "lounge": ("wh_guide_lounge", "doom_lounge", "lounge"),
+    "lounge": ("wh_guide_lounge", "doom_warehouse.chill", "lounge"),
 }
 
 
@@ -135,6 +135,16 @@ def write(helpers: dict | None = None) -> None:
     nodes += bar.nodes()
     music += bar.music()
     extra_hot["doom_bar"] = bar.hotspots(cin)
+    # --- the Chill-out Lounge (env-chill): its world, scenes, hotspots, cinematics, music and story, from tools/run/make_doom_lounge.py (docs/doom/scenes/lounge.md)
+    import make_doom_lounge
+    lounge = make_doom_lounge.contribute()
+    worlds += lounge["worlds"]
+    nodes += lounge["nodes"]
+    cin.update(lounge["cinematics"])
+    music += lounge["music"]
+    extra_hot.update(lounge["hotspots"])
+    for stem, doc in lounge["story"].items():
+        (OUT / (stem + ".json")).write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8", newline="\n")
     for wid, doc in extra_hot.items():
         (OUT / "hotspots" / ("%s.json" % wid)).write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     (OUT / "run.json").write_text(json.dumps({"worlds": worlds, "nodes": nodes, "cinematics": cin}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
