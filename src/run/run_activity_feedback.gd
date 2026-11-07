@@ -57,7 +57,7 @@ static func look(kind: String, age_beats: float, p_reduced := false) -> Dictiona
 			return {"alpha": 1.0 - clampf((u - 0.55) / 0.45, 0.0, 1.0), "scale": 1.0, "dx": sh, "radius": 0.0}
 		"glow":  # a swell to full then a fade
 			var sw := sin(clampf(u / 0.4, 0.0, 1.0) * PI * 0.5)
-			return {"alpha": (1.0 - clampf((u - 0.4) / 0.6, 0.0, 1.0)) * 0.75, "scale": 1.0, "dx": 0.0, "radius": 0.6 + 0.6 * sw}
+			return {"alpha": (1.0 - clampf((u - 0.4) / 0.6, 0.0, 1.0)) * 0.45, "scale": 1.0, "dx": 0.0, "radius": 0.6 + 0.6 * sw}
 	return {}
 
 

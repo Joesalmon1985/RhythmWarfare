@@ -386,3 +386,27 @@ func test_in_a_run_an_activity_without_a_view_stages_things_people_feedback_and_
 	var kinds: Array = host.mode_log.map(func(l: Dictionary) -> String: return str(l["kind"])).filter(func(k: String) -> bool: return k in ["morph_in", "controls_on", "controls_off", "morph_out"])
 	assert_eq(kinds, ["morph_in", "controls_on", "controls_off", "morph_out"], "the strip's life in order")
 	_free(d)
+
+
+## The shot's set-up (tools/engine/shoot_things.gd, docs/shots/engine/things/): two things and a directed barman in the Warehouse bar, seen from inside its door at 16:9 and
+## 20:9. Headless, so it checks the projected rects; the pixels are in the sheet.
+func test_the_shot_setup_frames_two_things_and_the_barman_at_both_aspects() -> void:
+	for sz: Vector2 in [Vector2(1280, 460), Vector2(1600, 460)]:
+		OS.set_environment("RW_STORY_CAM", "@7.3:3.1:-90:-4")
+		var stage := _stage(sz)
+		OS.set_environment("RW_STORY_CAM", "")
+		stage.people("b01", "raise_glass", 0.0, 0.0)
+		stage.set_things([{"id": "crate", "sprite": CRATE, "at": [10.6, 4.0], "sector": "bar", "size": [0.6, 0.6], "frame": 1},
+			{"id": "glass", "sprite": GLASS, "at": [10.4, 2.6], "sector": "bar", "size": [0.2, 0.3], "frame": 2, "y": 1.05, "anchor": "center"}])
+		stage.update(4.0, 60.0)
+		for id in ["crate", "glass"]:
+			var r: Variant = stage.thing_screen_rect(id)
+			assert_true(r != null and Rect2(Vector2.ZERO, sz).encloses(r), "%s %s: inside the stage strip (%s)" % [str(sz), id, str(r)])
+		assert_true((stage.thing_screen_rect("crate") as Rect2).size.y >= 48.0, "%s: the crate is at least 48 px tall" % str(sz))
+		var barman := stage.crowd if stage.crowd.actors.has("b01") else null
+		for rid in stage.crowds:
+			if (stage.crowds[rid] as StoryCrowd).actors.has("b01"):
+				barman = stage.crowds[rid]
+		assert_true(barman != null and ((barman as StoryCrowd).actors["b01"]["node"] as Node2D).visible, "%s: the directed barman is drawn" % str(sz))
+		assert_eq((barman as StoryCrowd).directing("b01", 4.0), "activity")
+		stage.free()
