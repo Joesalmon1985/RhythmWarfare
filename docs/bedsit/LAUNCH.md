@@ -135,3 +135,19 @@ Brief sections 3 and 4. A real node now: `space_rave` replaces its placeholder (
 - A finished activity sets `rave.space.<activity>_done`; `SpaceRaveHost` re-lights its pieces on every entry and sets the run flag `space_<activity>_done` that hides the activity hotspot.
 - Shots: `tools/engine/shoot_space_activities.gd` (two window sizes) and `tools/dev/space_activities_sheet.py`: `docs/shots/bedsit/space/activities.jpg`.
 - Not done: the hangar (`space_race`) is still a placeholder; `view_pitch` is not implemented by the engine (no waypoint pitch), none is used.
+
+
+## The street race (package "race", branch `wip/play-race`)
+
+Brief sections 8 to 10; the whole account is `docs/bedsit/RACE.md`.
+
+    tools\dev\play_bedsit.cmd --rave space     the hub; the pilot (south-west) leads to the hangar; touch the racer
+    tools\dev\play_bedsit.cmd --race space     start in the hangar (RW_RUN_START=space_race); touch the racer
+    python3 tools/story/build_race.py --theme space     the street map, story file, course file and placeholder art
+    python3 tools/run/make_bedsit.py --bedsit           the path (the hangar node and its race hotspot)
+    bash tools/dev/shoot_race.sh                        docs/shots/bedsit/race/contact.jpg
+
+- The hangar `space_race` is a real scene now: the route from the hub ends at `hangar_view` facing the racer; the hotspot `space_race.race` (the racer, window `any`) seats the
+  race on the next block start; it stays available after a race (replay), and needs none of the three tasks.
+- The race plays on the street stage `race_space` (cut on the seat's downbeat, no fade), pads judged, the four regions of the picture drive; afterwards the hangar is back,
+  `raves.space.race` (runs, wins, best) is saved, and the way back to the hub is selected.

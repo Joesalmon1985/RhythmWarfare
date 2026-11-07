@@ -47,7 +47,7 @@ def asphalt(t: dict, n=256) -> Cv:
     refl = px.noise(n, 10, 9, 2)
     for col, lo, hi in ((t["neon_a"], 0.0, 0.33), (t["neon_b"], 0.33, 0.66), (t["sodium"], 0.66, 1.0)):
         m = pud & (refl >= lo) & (refl < hi)
-        glint = m & (px.speckle(n, 0.22, 11 + int(lo * 10)) > 0)
+        glint = m & (px.speckle(n, 0.09, 11 + int(lo * 10)) > 0)
         c.a[m, :3] = (c.a[m, :3].astype(np.float32) * 0.55 + _hx("#101026").astype(np.float32) * 0.45).astype(np.uint8)
         c.a[glint, :3] = (_hx(col).astype(np.float32) * 0.75).astype(np.uint8)
     return c
@@ -136,9 +136,9 @@ def sky(t: dict, w=1024, h=256) -> Cv:
     neb = fnoise(h, w, 60, 51) * (1 - grad) * 1.2
     _stipple(c, np.clip(neb - 0.35, 0, 1) * 1.3, t["nebula"], 1.0)
     rng = np.random.RandomState(52)
-    for _ in range(420):
+    for _ in range(140):
         x, y = rng.randint(0, w), rng.randint(0, int(h * 0.6))
-        c.a[y, x, :3] = _hx("#ffffff" if rng.rand() < 0.3 else "#b8c4ff")
+        c.a[y, x, :3] = _hx("#d8dcff" if rng.rand() < 0.3 else "#6a6a9a")
     # the Mothership: a long saucer with a ring of lights
     mx, my, mw = 300, 64, 220
     c.paint(c.ell(mx - mw // 2, my - 18, mx + mw // 2, my + 18), ramp("#120c22", "#231a3e", "#3a2c60", "#5a4890"), c.dome(mx, my - 6, mw // 2, 18, 0.45, 0.6), edge=True)
@@ -348,32 +348,34 @@ def cones(t: dict, frame: int) -> Cv:
 
 def dash(t: dict) -> Cv:
     """The car's bonnet and dash from the driver's low eye, one row per state: steady, leaning left, leaning right, braking (the brake lamp on the dash), jolted (a crack of
-    sparks at the bonnet's edge). The lean is the car body's, drawn in the frame; the camera never rolls."""
-    cw, ch = 400, 104
+    sparks at the bonnet's edge). The lean is the car body's, drawn in the frame; the camera never rolls. Cells are 448 x 56 (drawn about 3.4 x 0.42 m)."""
+    cw, ch = 448, 56
+    X = lambda x: int(round(x * cw / 400.0))
+    Y = lambda y: int(round(y * ch / 104.0))
     sheet = Cv(cw, ch * 5)
     for row in range(5):
         f = Cv(cw, ch)
         tilt = {1: -5, 2: 5}.get(row, 0)
-        hood = [(0, ch), (0, 50 + tilt), (60, 26 + tilt // 2), (140, 14), (260, 14), (340, 26 - tilt // 2), (cw, 50 - tilt), (cw, ch)]
-        f.paint(f.poly(hood), ramp(*t["hood"]), f.lit((0, 14, cw, ch), 0.55, 0.55), edge=True)
-        f.paint(f.poly([(150, 18), (250, 18), (262, 40), (138, 40)]), ramp("#0a0a12", "#1a1a26", "#2a2c40"), f.lit((138, 18, 262, 40)), edge=True)  # the air scoop
+        hood = [(0, 104), (0, 50 + tilt), (60, 26 + tilt // 2), (140, 14), (260, 14), (340, 26 - tilt // 2), (400, 50 - tilt), (400, 104)]
+        f.paint(f.poly([(X(x), Y(y)) for x, y in hood]), ramp(*t["hood"]), f.lit((0, Y(14), cw, ch), 0.55, 0.55), edge=True)
+        f.paint(f.poly([(X(150), Y(18)), (X(250), Y(18)), (X(262), Y(40)), (X(138), Y(40))]), ramp("#0a0a12", "#1a1a26", "#2a2c40"), f.lit((X(138), Y(18), X(262), Y(40))), edge=True)
         for side in (-1, 1):  # the hood's crease catching the street light
-            x0 = 200 + side * 70
-            f.a[24:ch, x0:x0 + 2, :3] = _hx(t["hood"][3])
-        f.paint(f.rect(0, 78, cw, ch), ramp("#06060c", "#10101a", "#1c1c2a"), f.lit((0, 78, cw, ch)), edge=False)  # the dash's lip
-        f.flat(f.rect(0, 76, cw, 79), t["neon_b"])
+            x0 = X(200 + side * 70)
+            f.a[Y(24):ch, x0:x0 + 2, :3] = _hx(t["hood"][3])
+        f.paint(f.rect(0, Y(78), cw, ch), ramp("#06060c", "#10101a", "#1c1c2a"), f.lit((0, Y(78), cw, ch)), edge=False)  # the dash's lip
+        f.flat(f.rect(0, Y(76), cw, Y(76) + 2), t["neon_b"])
         if row == 3:
-            f.flat(f.rect(186, 84, 214, 96), "#ff2a2a")
-            _glow(f, 200, 90, 26, "#ff2a2a", 1.6, 0.7)
+            f.flat(f.rect(X(186), Y(84), X(214), Y(98)), "#ff2a2a")
+            _glow(f, X(200), Y(91), 22, "#ff2a2a", 1.6, 0.7)
         else:
-            f.flat(f.rect(186, 84, 214, 96), "#3a0a0a")
+            f.flat(f.rect(X(186), Y(84), X(214), Y(98)), "#3a0a0a")
         if row == 4:
             rng = np.random.RandomState(9)
             for _ in range(80):
-                x, y = int(rng.rand() * cw), int(14 + rng.rand() * 30)
+                x, y = int(rng.rand() * cw), int(Y(14) + rng.rand() * Y(30))
                 f.a[y, x, :3] = _hx("#ffe080" if rng.rand() < 0.5 else "#ffffff")
                 f.a[y, x, 3] = 255
-            f.flat(f.lines([(90, 30), (120, 44), (110, 60), (140, 74)], 2), "#0a0a10")
+            f.flat(f.lines([(X(90), Y(30)), (X(120), Y(44)), (X(110), Y(60)), (X(140), Y(74))], 2), "#0a0a10")
         sheet.stamp(f, 0, row * ch)
     return sheet
 
