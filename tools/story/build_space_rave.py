@@ -291,12 +291,12 @@ def build_map() -> dict:
     bb("glow_stage", "glow", 180, 25.5, 0.0, 3.0, y=1.4, anim="pulse", blend="add")
     bb("glow_bar", "glow", 150, 22.5, 0.0, 2.2, y=1.4, anim="pulse", blend="add")
     bb("glow_hangar", "glow", 240, 23.6, 0.0, 3.0, y=1.4, anim="pulse", blend="add")
-    bb("bar_counter", "thing_bar", 150, 21.4, 0.0, 1.3, y=0.65)
-    bb("bar_shelf", "thing_cabinet", 150, 22.8, -2.6, 1.8, y=0.9)
-    bb("bar_shelf_b", "thing_cabinet", 150, 22.8, 2.6, 1.8, y=0.9)
-    bb("coat_rack_a", "thing_suit", 210, 20.3, -2.2, 1.7, y=0.85)
-    bb("coat_rack_b", "thing_suit", 210, 20.3, 2.2, 1.7, y=0.85)
-    bb("coat_cabinet", "thing_cabinet", 210, 21.8, 0.0, 1.8, y=0.9)
+    bb("bar_counter", "thing_bar", 150, 20.6, 0.0, 1.3, y=0.65)
+    for i, s_ in enumerate((-3.0, -1.0, 1.0, 3.0)):  # the bar's static set (contract 10): the shelf, four bays, glasses lit by piece_on later
+        bb("bar_shelf_%d" % (i + 1), "thing_cabinet", 150, 22.9, s_, 1.8, y=0.9)
+    bb("cloak_counter", "thing_bar", 210, 19.4, 0.0, 1.2, y=0.6)   # the cloakroom's counter (contract 10) and its coat rail
+    bb("cloak_rail", "thing_suit", 210, 21.6, 0.0, 1.8, y=0.9)
+    bb("coat_cabinet", "thing_cabinet", 210, 22.2, -3.0, 1.8, y=0.9)
     bb("hangar_racer", "sr_racer", 240, 23.8, 0.0, 1.5, y=0.75)
     bb("hangar_console", "thing_console", 240, 21.6, -3.2, 1.3, y=0.65)
     bb("home_hatch", "sr_hatch", 0, 19.9, 0.0, 2.3, y=1.15)

@@ -40,7 +40,13 @@ FACING = {
     "S": ("magic", "magic_rave", "bedsit_s", "threshold_s", 180, "the wardrobe door ajar with iridescent light leaking out, a unicorn figure on the shelf, fairy lights"),
     "W": ("transport", "transport_rave", "bedsit_w", "threshold_w", 90, "the door with a bus timetable pinned to it, a toy car, a blinking indicator light, orange street light under the door"),
 }
-PLACEHOLDER_RAVES = {FACING[f][1]: f for f in FACINGS}  # scene id -> facing it leaves from (resolve to the bedsit)
+LANDED = {"space_rave": "N"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_space_rave.py)
+PLACEHOLDER_RAVES = {FACING[f][1]: f for f in FACINGS if FACING[f][1] not in LANDED}  # scene id -> facing it leaves from (resolve to the bedsit)
+SPACE_STATIONS = {  # activity scene -> (title, home waypoint, doorway waypoint, activity id in content/raves/space.json "activities")
+    "space_cloakroom": ("Cloakroom", "cloak_view", "cloak_door", "cloakroom"),
+    "space_bar": ("Bar", "bar_view", "bar_door", "bar"),
+    "space_race": ("Hangar", "hangar_view", "hangar_door", "race"),
+}
 
 
 def place(home: str) -> dict:
@@ -58,13 +64,44 @@ def place(home: str) -> dict:
     }
 
 
+def srail(home: str, good: list, exits: dict, arrive: str = "") -> dict:
+    r = {"good": good, "bad": [{"to": home, "role": "dancer", "style": "walk", "bars": 2}], "glances": [{"by": 0, "pitch": 0, "bars": 2}], "strolls": [{"fwd": 0.0, "bars": 2}], "exits": exits}
+    if arrive:
+        r["arrive"] = arrive
+    return r
+
+
+def space_nodes() -> list:
+    """The Space rave (content/story/maps/space_rave.json): the hub (a choice viewpoint holding 8 bars: the stage, the cloakroom, the bar, the hangar and the way home), the stage (the deck with the
+    bass knob), and a placeholder node per activity that loops back to the hub (other agents build those as minigames: the activity id is in content/raves/space.json `activities`)."""
+    base = {"world": "space_rave", "role": "dancer", "relaxed": True, "treatment": "none"}
+    hub_next = [{"to": "bedsit", "dir": "up", "label": "Home through the airlock"}, {"to": "space_stage", "dir": "n", "label": "Up to the stage"}, {"to": "space_cloakroom", "dir": "w", "label": "The cloakroom"},
+                {"to": "space_bar", "dir": "e", "label": "The bar"}, {"to": "space_race", "dir": "s", "label": "The hangar: a race"}]
+    hub = dict(base, id="space_rave", scene="hub", title="The Space Rave", entry=True, exit_scene=True, blurb="The Mothership's ring round a void. A DJ waves from the stage; the cloakroom, the bar and the hangar are across the ring.",
+               next=hub_next, theme="space",
+               place={"waypoint": "hub_view", "rail": srail("hub_view", [{"to": "hub_view", "role": "dancer", "style": "walk", "bars": 3, "choice": True, "hold_bars": 8}],
+                                                              {"n": "stage_foot", "w": "cloak_door", "e": "bar_door", "s": "hangar_door", "up": "home_door"}, arrive="space_arrive")})
+    stage = dict(base, id="space_stage", scene="stage", title="The Stage", entry=False, exit_scene=True, blurb="The dais at the north of the ring: two steps up to the DJ deck. The bass knob is stuck.",
+                 next=[{"to": "space_rave", "dir": "up", "label": "Back to the ring", "loop": True}, {"to": "bedsit", "dir": "out", "label": "Home"}], theme="space",
+                 place={"waypoint": "stage_foot", "rail": srail("stage_foot", [
+                     {"to": "stage_steps", "role": "dancer", "style": "walk", "bars": 2, "hold_bars": 1},
+                     {"to": "deck_view", "role": "on_stage", "style": "walk", "bars": 2, "hold_bars": 4}], {"up": "stage_foot", "out": "stage_foot"})})
+    out = [hub, stage]
+    for sid, (title, home, door, act_id) in SPACE_STATIONS.items():
+        out.append(dict(base, id=sid, scene=sid, title="PLACEHOLDER: " + title, entry=False, exit_scene=True, placeholder=True, placeholder_for={"theme": "space", "activity": act_id}, theme="space",
+                        blurb="A stand-in for the %s activity (id '%s' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring." % (title.lower(), act_id),
+                        next=[{"to": "space_rave", "dir": "up", "label": "Back to the ring", "loop": True}, {"to": "bedsit", "dir": "out", "label": "Home"}],
+                        place={"waypoint": home, "rail": srail(home, [{"to": home, "role": "dancer", "style": "walk", "bars": 2}], {"up": door, "out": door})}))
+    return out
+
+
 def run_json() -> dict:
     main_timing = {"bpm": 174, "phase_beats": 64, "block_beats": 16, "cue_span_beats": 12.0, "decision_beat": 12.5, "fade_beats": 2.0}
     nodes = []
     bedsit_next = [{"to": FACING[f][1], "dir": f.lower(), "label": "Through the %s wall" % {"N": "north", "E": "east", "S": "south", "W": "west"}[f]} for f in FACINGS]
     bedsit_next.append({"to": "bedsit.end", "dir": "out", "label": "Out of the bedsit (development exit to the Warehouse)"})
     bedsit_node = {
-        "id": "bedsit", "world": "bedsit", "scene": "room", "title": "The Bedsit", "entry": True, "exit_scene": False, "role": "dancer",
+        "id": "bedsit", "world": "bedsit", "scene": "room", "title": "The Bedsit", "entry": True, "exit_scene": True, "role": "dancer",
         "relaxed": True,  # H1.7 (engine hook, not built on this branch): the bedsit never drains energy or forces departure
         "blurb": "Your room. Four walls, four ways out: the window, the desk, the wardrobe, the door.",
         "next": bedsit_next,
@@ -93,6 +130,7 @@ def run_json() -> dict:
                      {"to": "bedsit.end", "dir": "out", "label": "Out of the bedsit (development exit to the Warehouse)"}],
             "place": {"waypoint": FACING[f][2], "rail": {**place(FACING[f][2])["rail"], "exits": {"up": FACING[f][3], "out": "threshold_s"}}},
         })
+    nodes.extend(space_nodes())
     nodes.append({
         "id": "bedsit.end", "world": "bedsit", "scene": "end", "title": "Out of the bedsit", "entry": False, "exit_scene": False, "ending": "leave", "role": "dancer",
         "blurb": "The development way out: back to the Warehouse.",
@@ -105,7 +143,8 @@ def run_json() -> dict:
                  "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd."},
         "timing": main_timing,
         "start_node": "bedsit",
-        "worlds": [{"id": "bedsit", "title": "The Bedsit", "map": "bedsit", "story": "res://content/story/bedsit.json", "depth": 1, "blurb": "One room, four walls, four raves."}],
+        "worlds": [{"id": "bedsit", "title": "The Bedsit", "map": "bedsit", "story": "res://content/story/bedsit.json", "depth": 1, "blurb": "One room, four walls, four raves."},
+                   {"id": "space_rave", "title": "The Space Rave", "map": "space_rave", "story": "res://content/story/space_rave.json", "depth": 2, "blurb": "The Mothership's ring round a void: a stage, a cloakroom, a bar and a hangar."}],
         "nodes": nodes,
         "cinematics": {},
     }
@@ -142,6 +181,37 @@ def hotspots_json() -> dict:
     return {"world": "bedsit", "hotspots": rows}
 
 
+def space_hotspots() -> list:
+    def row(hid, scene, anchor, kind, route="", default=False, acting=None, available=None, window="final", success=None):
+        h = {"id": hid, "world": "space_rave", "scene": scene, "map": "space_rave", "anchor": anchor, "kind": kind, "radius_m": 1.2, "min_px": 88,
+             "available": available or {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False},
+             "look": {"available": "beckon", "selected": "ring", "committed": "flash"}, "challenge": None,
+             "on_success": success if success is not None else {"route": route}, "on_failure": {"route": route} if route else {}, "default": default, "repeatable": True}
+        if window != "final":
+            h["window"] = window
+        if acting:
+            h["acting"] = acting
+        return h
+
+    def act(a, face="happy"):
+        return {"available": {"act": a, "face": face, "look_at": "camera"}, "selected": {"act": "nod", "face": face, "look_at": "camera"},
+                "committed": {"act": "point", "face": face, "look_at": "camera", "beats": 1}}
+
+    rows = [row("space_rave.stage", "space_rave", {"actor": "dj"}, "character", "space_stage", acting=act("wave")),
+            row("space_rave.cloakroom", "space_rave", {"actor": "attendant"}, "character", "space_cloakroom", acting=act("beckon")),
+            row("space_rave.bar", "space_rave", {"actor": "bartender"}, "character", "space_bar", acting=act("beckon")),
+            row("space_rave.race", "space_rave", {"actor": "pilot"}, "character", "space_race", acting=act("beckon")),
+            row("space_rave.home", "space_rave", {"thing": "home_hatch"}, "exit", "bedsit", default=True)]
+    rows.append(row("space_stage.deck", "space_stage", {"thing": "deck"}, "object", window="any", success={"activity": "bass_knob"},
+                    available={"flags_all": [], "flags_none": ["space_bass_fixed"], "energy_min": 0, "once": False}))
+    rows.append(row("space_stage.home", "space_stage", {"waypoint": "deck_view"}, "exit", "bedsit"))
+    rows.append(row("space_stage.back", "space_stage", {"waypoint": "stage_foot"}, "exit", "space_rave", default=True))
+    for sid, (title, home, door, act_id) in SPACE_STATIONS.items():
+        rows.append(row("%s.back" % sid, sid, {"waypoint": door}, "exit", "space_rave", default=True))
+        rows.append(row("%s.home" % sid, sid, {"waypoint": home}, "exit", "bedsit"))
+    return rows
+
+
 def themes_json() -> dict:
     return {
         "version": 1, "scene_id": "bedsit", "map": "bedsit", "start_facing": "N",
@@ -160,6 +230,7 @@ def routes_json() -> dict:
         "note": "Where the top region goes, per facing (brief 2). `scene` is the rave's scene id. While placeholder.active is true each of those ids is a PLACEHOLDER node of content/paths/bedsit/run.json that resolves to the bedsit itself. "
                 "TO LAND THE REAL RAVES: set placeholder.active to false here, and delete the four nodes with \"placeholder\": true from run.json (or regenerate it from tools/run/make_bedsit.py after replacing PLACEHOLDER_RAVES).",
         "placeholder": {"active": True, "resolves_to": "bedsit", "node_flag": "placeholder"},
+        "landed": {FACING[f][1]: LANDED.get(FACING[f][1]) == f for f in FACINGS},
         "routes": {f: {"theme": FACING[f][0], "scene": FACING[f][1], "scene_contract_id": "rave." + FACING[f][0], "threshold": FACING[f][3]} for f in FACINGS},
     }
 
@@ -199,6 +270,8 @@ def track_scenes_entry() -> None:
     p = ROOT / "content" / "run" / "track_scenes.json"
     d = json.loads(p.read_text(encoding="utf-8"))
     d["paths"]["bedsit"] = {"bedsit": {"track": TRACK_ID, "note": "the bedsit's own track: the Chase & Status remix of Valley of the Shadows by Origin Unknown, a relaxed scene"}}
+    for n in ("space_rave", "space_stage"):  # the Space rave plays the same track; its bass stem is locked until the knob is freed (src/bedsit/space_rave_host.gd)
+        d["paths"]["bedsit"][n] = {"track": TRACK_ID, "note": "the opening rave track; the bass stem is locked on entry until the bass knob is freed"}
     p.write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
 
 
@@ -208,9 +281,17 @@ def main(argv: list) -> int:
         return 0
     write(PATH_DIR / "run.json", run_json())
     write(PATH_DIR / "hotspots" / "bedsit.json", hotspots_json())
+    write(PATH_DIR / "hotspots" / "space_rave.json", {"world": "space_rave", "hotspots": space_hotspots()})
     mp = PATH_DIR / "music.json"
     if not mp.exists():
         write(mp, music_json())
+    else:  # the space nodes' entries are added to the existing file, nothing else in it changes
+        md = json.loads(mp.read_text(encoding="utf-8"))
+        have = {n["id"] for n in md["nodes"]}
+        for n in space_nodes():
+            if n["id"] not in have:
+                md["nodes"].append({"id": n["id"], "audio": "bedsit_room", "chart": "bedsit_room", "treatment": "none", "temporary": False})
+        write(mp, md)
     write(ROOT / "content" / "story" / "bedsit.json", story_json())
     write(BEDSIT_DIR / "themes.json", themes_json())
     write(BEDSIT_DIR / "routes.json", routes_json())

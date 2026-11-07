@@ -2379,68 +2379,92 @@
    "kind": "billboard",
    "sprite": "thing_bar",
    "at": [
-    10.7,
-    -18.533
+    10.3,
+    -17.84
    ],
    "size": 1.3,
    "anim": "none",
    "y": 0.65
   },
   {
-   "id": "bar_shelf",
+   "id": "bar_shelf_1",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
-    13.652,
-    -18.445
+    14.048,
+    -18.332
    ],
    "size": 1.8,
    "anim": "none",
    "y": 0.9
   },
   {
-   "id": "bar_shelf_b",
+   "id": "bar_shelf_2",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
-    9.148,
-    -21.045
+    12.316,
+    -19.332
    ],
    "size": 1.8,
    "anim": "none",
    "y": 0.9
   },
   {
-   "id": "coat_rack_a",
+   "id": "bar_shelf_3",
    "kind": "billboard",
-   "sprite": "thing_suit",
+   "sprite": "thing_cabinet",
    "at": [
-    -8.245,
-    -18.68
+    10.584,
+    -20.332
    ],
-   "size": 1.7,
+   "size": 1.8,
    "anim": "none",
-   "y": 0.85
+   "y": 0.9
   },
   {
-   "id": "coat_rack_b",
+   "id": "bar_shelf_4",
+   "kind": "billboard",
+   "sprite": "thing_cabinet",
+   "at": [
+    8.852,
+    -21.332
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "cloak_counter",
+   "kind": "billboard",
+   "sprite": "thing_bar",
+   "at": [
+    -9.7,
+    -16.801
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "y": 0.6
+  },
+  {
+   "id": "cloak_rail",
    "kind": "billboard",
    "sprite": "thing_suit",
    "at": [
-    -12.055,
-    -16.48
+    -10.8,
+    -18.706
    ],
-   "size": 1.7,
+   "size": 1.8,
    "anim": "none",
-   "y": 0.85
+   "y": 0.9
   },
   {
    "id": "coat_cabinet",
    "kind": "billboard",
    "sprite": "thing_cabinet",
    "at": [
-    -10.9,
-    -18.879
+    -8.502,
+    -20.726
    ],
    "size": 1.8,
    "anim": "none",

@@ -6,6 +6,12 @@
   "resolves_to": "bedsit",
   "node_flag": "placeholder"
  },
+ "landed": {
+  "space_rave": true,
+  "dino_rave": false,
+  "magic_rave": false,
+  "transport_rave": false
+ },
  "routes": {
   "N": {
    "theme": "space",

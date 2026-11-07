@@ -55,6 +55,34 @@
    "chart": "bedsit_room",
    "treatment": "none",
    "temporary": false
+  },
+  {
+   "id": "space_stage",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "space_cloakroom",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "space_bar",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "space_race",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

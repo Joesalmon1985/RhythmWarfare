@@ -25,6 +25,14 @@
    "story": "res://content/story/bedsit.json",
    "depth": 1,
    "blurb": "One room, four walls, four raves."
+  },
+  {
+   "id": "space_rave",
+   "title": "The Space Rave",
+   "map": "space_rave",
+   "story": "res://content/story/space_rave.json",
+   "depth": 2,
+   "blurb": "The Mothership's ring round a void: a stage, a cloakroom, a bar and a hangar."
   }
  ],
  "nodes": [
@@ -34,7 +42,7 @@
    "scene": "room",
    "title": "The Bedsit",
    "entry": true,
-   "exit_scene": false,
+   "exit_scene": true,
    "role": "dancer",
    "relaxed": true,
    "blurb": "Your room. Four walls, four ways out: the window, the desk, the wardrobe, the door.",
@@ -170,74 +178,6 @@
       "e": "threshold_e",
       "s": "threshold_s",
       "w": "threshold_w",
-      "up": "threshold_n",
-      "out": "threshold_s"
-     }
-    }
-   }
-  },
-  {
-   "id": "space_rave",
-   "world": "bedsit",
-   "scene": "space_rave",
-   "title": "PLACEHOLDER: the space rave",
-   "entry": false,
-   "exit_scene": false,
-   "role": "dancer",
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "space",
-    "facing": "N"
-   },
-   "relaxed": true,
-   "blurb": "A stand-in for the space rave, which does not exist yet: it is the bedsit again, still facing N. See content/bedsit/routes.json.",
-   "next": [
-    {
-     "to": "bedsit",
-     "dir": "up",
-     "label": "Back to the bedsit",
-     "loop": true
-    },
-    {
-     "to": "bedsit.end",
-     "dir": "out",
-     "label": "Out of the bedsit (development exit to the Warehouse)"
-    }
-   ],
-   "place": {
-    "waypoint": "bedsit_n",
-    "rail": {
-     "good": [
-      {
-       "to": "bedsit_n",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 2
-      }
-     ],
-     "bad": [
-      {
-       "to": "bedsit_n",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 2
-      }
-     ],
-     "arrive": "bedsit_n",
-     "glances": [
-      {
-       "by": 0,
-       "pitch": 0,
-       "bars": 2
-      }
-     ],
-     "strolls": [
-      {
-       "fwd": 0.0,
-       "bars": 2
-      }
-     ],
-     "exits": {
       "up": "threshold_n",
       "out": "threshold_s"
      }
@@ -444,6 +384,369 @@
      "exits": {
       "up": "threshold_w",
       "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_rave",
+   "scene": "hub",
+   "title": "The Space Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "The Mothership's ring round a void. A DJ waves from the stage; the cloakroom, the bar and the hangar are across the ring.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the airlock"
+    },
+    {
+     "to": "space_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "space_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "space_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "space_race",
+     "dir": "s",
+     "label": "The hangar: a race"
+    }
+   ],
+   "theme": "space",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "space_arrive"
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The dais at the north of the ring: two steps up to the DJ deck. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "space",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "stage_foot",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_cloakroom",
+   "scene": "space_cloakroom",
+   "title": "PLACEHOLDER: Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "space",
+    "activity": "cloakroom"
+   },
+   "theme": "space",
+   "blurb": "A stand-in for the cloakroom activity (id 'cloakroom' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_view",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_bar",
+   "scene": "space_bar",
+   "title": "PLACEHOLDER: Bar",
+   "entry": false,
+   "exit_scene": true,
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "space",
+    "activity": "bar"
+   },
+   "theme": "space",
+   "blurb": "A stand-in for the bar activity (id 'bar' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_view",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_race",
+   "scene": "space_race",
+   "title": "PLACEHOLDER: Hangar",
+   "entry": false,
+   "exit_scene": true,
+   "placeholder": true,
+   "placeholder_for": {
+    "theme": "space",
+    "activity": "race"
+   },
+   "theme": "space",
+   "blurb": "A stand-in for the hangar activity (id 'race' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
      }
     }
    }

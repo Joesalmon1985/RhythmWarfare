@@ -25,6 +25,7 @@ var lines := 0  # internal resolution lines for the low-res world (0: the defaul
 var high_contrast := false
 var palette := "low"
 var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
+var crowd_cap := 100.0  # the energy the crowd shows is at most this (action crowd_cap: the Space rave's crowd stands about until the bass is back)
 var _pieces: Dictionary = {}  # id -> {on_t, off_t, pulse_t, bars}
 var _ambient: Dictionary = {}  # ids of the extra rooms' own pieces
 var energy := 45.0
@@ -371,7 +372,7 @@ func update(t: float, p_energy: float) -> void:
 		c.reduced = reduced
 		c.lit_id = c.hero_id() if is_active("spot_hero", t) or is_active("spot_circle", t) else ""
 		c.set_time(t)
-		c.update(t, p_energy)
+		c.update(t, minf(p_energy, crowd_cap))
 	_order_crowds()
 	var ppl: StoryPeople = (crowds["main"] as StoryCrowd).people if crowds.has("main") else null
 	if ppl != null:
@@ -734,6 +735,8 @@ func apply(a: Dictionary) -> void:
 				player.apply_action(a)
 				if act == "player_move":
 					_enter_room(str(args.get("to", "")), args)
+		"crowd_cap":
+			crowd_cap = float(args.get("cap", 100.0))
 		"piece_on":
 			var st: Dictionary = _pieces.get(str(args["piece"]), {})
 			st["on_t"] = t0
