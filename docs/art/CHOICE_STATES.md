@@ -126,3 +126,15 @@ symbol, tinted by the state. A thing of the map takes a `light` multiplier throu
 **Touch targets.** Unchanged API (`HotspotView.layout(..., rects)`, `hit`, `touch_rect_of`): the art's projected bounds (a drawn door, a gate, a person, a thing)
 plus at most 24 px, at least 88 px, inside the picture. A quest gate's target is the gate's bounds; a return door's the door's. An entry with nothing drawn keeps
 its 88 px circle. With RINGS off an anchor out of the picture is not laid out.
+
+## Shots (`docs/shots/art/a7/`)
+
+`<16x9|20x9>_<before|after>_<shot>.jpg`, 800 px wide: the Warehouse Floor's opening and route window (`dungeon_floor_start`, `dungeon_floor_route`), Hell's hub
+(`uw_gospel_start`, `uw_gospel_route`) from `tools/story/shoot_heralds.sh`, and the Gospel's Galilee shore (`gospel__galilee__a14`, `__win`) from
+`tools/run/shoot_returns.sh`. "Before" is this branch with `RINGS` set to true for the shoot (the old look), so the quest paths' return door, whose lamp steps
+were taken out of its data, is missing from the before shots.
+
+Read by eye: every ring, ripple, glow pool, corner beacon and quest mark is gone at both aspects; the Hell gates read as lit doorways in their quest colours with
+their heralds; the Warehouse doors and the Galilee sign stand as before. The states read weakly from the opening's distance: the practical lamp (0.34 m) is a few
+pixels, the floor spill is faint, and door_1 (ajar, available) against door_2 (open, selected) is a small difference at 6 m and more. In Galilee the return door
+stands directly behind Simon (its spot in `tools/run/returns_common.py`), so he hides it.
