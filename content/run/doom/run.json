@@ -47,45 +47,52 @@
     "rail": {
      "good": [
       {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "route": [
-        "wh_fence"
-       ],
-       "hold_bars": 4
-      },
-      {
        "to": "wh_plinths",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_plinths"
+       "via": [
+        "wh_v_bar_e1",
+        "wh_v_bar_mid",
+        "wh_v_bar_e2"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
       },
       {
        "to": "wh_platform",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_platform"
+       "via": [
+        "wh_v_gate_w_out",
+        "wh_v_gate_w_in",
+        "wh_v_court_n",
+        "wh_ped_foot"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
+      },
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wh_ped_foot"
+       ],
+       "hold_bars": 2
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_fence",
-        "wh_ref"
+       "via": [
+        "wh_v_court_sw",
+        "wh_v_gate_s",
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 8
+       "hold_bars": 8,
+       "choice": true
       }
      ],
      "bad": [
@@ -93,19 +100,13 @@
        "to": "wh_ref_back",
        "role": "queasy",
        "style": "walk",
-       "bars": 2,
-       "route": [
-        "wh_ref_back"
-       ]
+       "bars": 2
       },
       {
        "to": "wh_sw_corner",
        "role": "queasy",
        "style": "stagger",
-       "bars": 3,
-       "route": [
-        "wh_sw_corner"
-       ]
+       "bars": 3
       }
      ],
      "arrive": "wh_arrive",
@@ -116,19 +117,56 @@
       "down": "wh_ref"
      },
      "routes": {
-      "up": [
-       "wh_stage_approach",
-       "wh_stage_steps",
-       "wh_stage_top"
-      ],
-      "left": [
-       "wh_bar_approach",
-       "wh_bar_door"
-      ],
-      "right": [
-       "wh_lounge_approach",
-       "wh_lounge_door"
-      ]
+      "up": {
+       "to": "wh_stage_top",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wh_v_lounge_w",
+        "wh_v_gate_s",
+        "wh_stage_approach",
+        "wh_stage_steps"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wh_bar_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_bar_approach"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wh_lounge_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_lounge_approach"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wh_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wh_ref_back",
+        "wh_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "wh_arrive"
+      }
      },
      "glances": [
       {
@@ -175,45 +213,52 @@
     "rail": {
      "good": [
       {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "route": [
-        "wh_fence"
-       ],
-       "hold_bars": 4
-      },
-      {
        "to": "wh_plinths",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_plinths"
+       "via": [
+        "wh_v_bar_e1",
+        "wh_v_bar_mid",
+        "wh_v_bar_e2"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
       },
       {
        "to": "wh_platform",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_platform"
+       "via": [
+        "wh_v_gate_w_out",
+        "wh_v_gate_w_in",
+        "wh_v_court_n",
+        "wh_ped_foot"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
+      },
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wh_ped_foot"
+       ],
+       "hold_bars": 2
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_fence",
-        "wh_ref"
+       "via": [
+        "wh_v_court_sw",
+        "wh_v_gate_s",
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 8
+       "hold_bars": 8,
+       "choice": true
       }
      ],
      "bad": [
@@ -221,19 +266,13 @@
        "to": "wh_ref_back",
        "role": "queasy",
        "style": "walk",
-       "bars": 2,
-       "route": [
-        "wh_ref_back"
-       ]
+       "bars": 2
       },
       {
        "to": "wh_sw_corner",
        "role": "queasy",
        "style": "stagger",
-       "bars": 3,
-       "route": [
-        "wh_sw_corner"
-       ]
+       "bars": 3
       }
      ],
      "arrive": "wh_arrive",
@@ -244,19 +283,56 @@
       "down": "wh_ref"
      },
      "routes": {
-      "up": [
-       "wh_stage_approach",
-       "wh_stage_steps",
-       "wh_stage_top"
-      ],
-      "left": [
-       "wh_bar_approach",
-       "wh_bar_door"
-      ],
-      "right": [
-       "wh_lounge_approach",
-       "wh_lounge_door"
-      ]
+      "up": {
+       "to": "wh_stage_top",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wh_v_lounge_w",
+        "wh_v_gate_s",
+        "wh_stage_approach",
+        "wh_stage_steps"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wh_bar_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_bar_approach"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wh_lounge_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_lounge_approach"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wh_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wh_ref_back",
+        "wh_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "wh_arrive"
+      }
      },
      "glances": [
       {
@@ -303,45 +379,52 @@
     "rail": {
      "good": [
       {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "route": [
-        "wh_fence"
-       ],
-       "hold_bars": 4
-      },
-      {
        "to": "wh_plinths",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_plinths"
+       "via": [
+        "wh_v_bar_e1",
+        "wh_v_bar_mid",
+        "wh_v_bar_e2"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
       },
       {
        "to": "wh_platform",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_platform"
+       "via": [
+        "wh_v_gate_w_out",
+        "wh_v_gate_w_in",
+        "wh_v_court_n",
+        "wh_ped_foot"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
+      },
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wh_ped_foot"
+       ],
+       "hold_bars": 2
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_fence",
-        "wh_ref"
+       "via": [
+        "wh_v_court_sw",
+        "wh_v_gate_s",
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 8
+       "hold_bars": 8,
+       "choice": true
       }
      ],
      "bad": [
@@ -349,19 +432,13 @@
        "to": "wh_ref_back",
        "role": "queasy",
        "style": "walk",
-       "bars": 2,
-       "route": [
-        "wh_ref_back"
-       ]
+       "bars": 2
       },
       {
        "to": "wh_sw_corner",
        "role": "queasy",
        "style": "stagger",
-       "bars": 3,
-       "route": [
-        "wh_sw_corner"
-       ]
+       "bars": 3
       }
      ],
      "arrive": "wh_arrive",
@@ -372,19 +449,56 @@
       "down": "wh_ref"
      },
      "routes": {
-      "up": [
-       "wh_stage_approach",
-       "wh_stage_steps",
-       "wh_stage_top"
-      ],
-      "left": [
-       "wh_bar_approach",
-       "wh_bar_door"
-      ],
-      "right": [
-       "wh_lounge_approach",
-       "wh_lounge_door"
-      ]
+      "up": {
+       "to": "wh_stage_top",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wh_v_lounge_w",
+        "wh_v_gate_s",
+        "wh_stage_approach",
+        "wh_stage_steps"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wh_bar_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_bar_approach"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wh_lounge_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_lounge_approach"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wh_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wh_ref_back",
+        "wh_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "wh_arrive"
+      }
      },
      "glances": [
       {
@@ -431,45 +545,52 @@
     "rail": {
      "good": [
       {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "route": [
-        "wh_fence"
-       ],
-       "hold_bars": 4
-      },
-      {
        "to": "wh_plinths",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_plinths"
+       "via": [
+        "wh_v_bar_e1",
+        "wh_v_bar_mid",
+        "wh_v_bar_e2"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
       },
       {
        "to": "wh_platform",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_platform"
+       "via": [
+        "wh_v_gate_w_out",
+        "wh_v_gate_w_in",
+        "wh_v_court_n",
+        "wh_ped_foot"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
+      },
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wh_ped_foot"
+       ],
+       "hold_bars": 2
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_fence",
-        "wh_ref"
+       "via": [
+        "wh_v_court_sw",
+        "wh_v_gate_s",
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 8
+       "hold_bars": 8,
+       "choice": true
       }
      ],
      "bad": [
@@ -477,19 +598,13 @@
        "to": "wh_ref_back",
        "role": "queasy",
        "style": "walk",
-       "bars": 2,
-       "route": [
-        "wh_ref_back"
-       ]
+       "bars": 2
       },
       {
        "to": "wh_sw_corner",
        "role": "queasy",
        "style": "stagger",
-       "bars": 3,
-       "route": [
-        "wh_sw_corner"
-       ]
+       "bars": 3
       }
      ],
      "arrive": "wh_arrive",
@@ -500,19 +615,56 @@
       "down": "wh_ref"
      },
      "routes": {
-      "up": [
-       "wh_stage_approach",
-       "wh_stage_steps",
-       "wh_stage_top"
-      ],
-      "left": [
-       "wh_bar_approach",
-       "wh_bar_door"
-      ],
-      "right": [
-       "wh_lounge_approach",
-       "wh_lounge_door"
-      ]
+      "up": {
+       "to": "wh_stage_top",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wh_v_lounge_w",
+        "wh_v_gate_s",
+        "wh_stage_approach",
+        "wh_stage_steps"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wh_bar_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_bar_approach"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wh_lounge_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_lounge_approach"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wh_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wh_ref_back",
+        "wh_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "wh_arrive"
+      }
      },
      "glances": [
       {
@@ -566,45 +718,52 @@
     "rail": {
      "good": [
       {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "route": [
-        "wh_fence"
-       ],
-       "hold_bars": 4
-      },
-      {
        "to": "wh_plinths",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_plinths"
+       "via": [
+        "wh_v_bar_e1",
+        "wh_v_bar_mid",
+        "wh_v_bar_e2"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
       },
       {
        "to": "wh_platform",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_platform"
+       "via": [
+        "wh_v_gate_w_out",
+        "wh_v_gate_w_in",
+        "wh_v_court_n",
+        "wh_ped_foot"
        ],
-       "hold_bars": 4
+       "hold_bars": 2
+      },
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wh_ped_foot"
+       ],
+       "hold_bars": 2
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
-       "route": [
-        "wh_fence",
-        "wh_ref"
+       "via": [
+        "wh_v_court_sw",
+        "wh_v_gate_s",
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 8
+       "hold_bars": 8,
+       "choice": true
       }
      ],
      "bad": [
@@ -612,19 +771,13 @@
        "to": "wh_ref_back",
        "role": "queasy",
        "style": "walk",
-       "bars": 2,
-       "route": [
-        "wh_ref_back"
-       ]
+       "bars": 2
       },
       {
        "to": "wh_sw_corner",
        "role": "queasy",
        "style": "stagger",
-       "bars": 3,
-       "route": [
-        "wh_sw_corner"
-       ]
+       "bars": 3
       }
      ],
      "arrive": "wh_arrive",
@@ -635,19 +788,56 @@
       "down": "wh_ref"
      },
      "routes": {
-      "up": [
-       "wh_stage_approach",
-       "wh_stage_steps",
-       "wh_stage_top"
-      ],
-      "left": [
-       "wh_bar_approach",
-       "wh_bar_door"
-      ],
-      "right": [
-       "wh_lounge_approach",
-       "wh_lounge_door"
-      ]
+      "up": {
+       "to": "wh_stage_top",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wh_v_lounge_w",
+        "wh_v_gate_s",
+        "wh_stage_approach",
+        "wh_stage_steps"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wh_bar_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_bar_approach"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wh_lounge_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wh_lounge_approach"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wh_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wh_ref_back",
+        "wh_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "wh_arrive"
+      }
      },
      "glances": [
       {

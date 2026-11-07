@@ -7,9 +7,10 @@ render_trace.py) and writes tools/doom/trace/warehouse_pilot.json, which convert
 All in Doom units (y up). What it does to the render's trace (nothing else changes):
   * the inner courtyard keeps the render's guessed +32: its ledge over the ring is a 1 m solid wall all round (the railing wall; impassable lines), with two GATES, each a 0.5 m step island;
   * two stair strips climb the central pedestal's south side (the pedestal is the lit cube; 16 -> 28 -> 40 -> 64);
-  * the STAGE: a platform island in the courtyard (+68) with two steps on its east side, about 16 m from the reference viewpoint;
+  * the STAGE: a platform island in the courtyard (+68) with two steps on its WEST side (the side the walk from the south gate comes up), about 16 m from the reference viewpoint;
   * the BAR and the LOUNGE: rooms cut out of the stone ring, each with three solid walls (8 units thick, void between the room and the ring) and a 5 m opening towards the
-    reference viewpoint, floor +24 / +12, 4 m ceiling.
+    reference viewpoint, floor +16 (a 0.5 m step: max_step) / +12, 4 m ceiling; the lounge's north wall stands at y -586 so the walkway between it and the railing is 1.7 m wide;
+  * the four speaker plinths are lowered to +48 (0.5 m over the floor: a step a walker can take, so the routes may cross them).
   * the edge splitting that gates, stairs and rooms need is done here (a linedef is cut where a new vertex lies on it).
 All of it is INVENTED from the concept image, not read from the render or the WAD: it is added to `uncertain`.
 """
@@ -28,10 +29,10 @@ def rect(x0, y0, x1, y1):
 
 # name, ring (counter-clockwise), floor, ceiling, light, floor_tex, ceil_tex, parent sector name, options: hole (the parent's cut-out, counter-clockwise, rooms only)
 ISLANDS = [
-    ("bar", rect(-740, -400, -570, -200), 24, 128, 150, "FLOOR5_1", "CEIL3_5", "stone_ring", {"hole": rect(-748, -400, -562, -192), "room": True}),
-    ("lounge", rect(-540, -740, -400, -570), 12, 128, 140, "FLOOR5_1", "CEIL3_5", "stone_ring", {"hole": rect(-540, -748, -392, -562), "room": True}),
-    ("stage_step_a", rect(-146, -180, -122, -120), 44, 320, 200, "STEP1", "CEIL3_5", "courtyard", {}),
-    ("stage_step_b", rect(-170, -180, -146, -120), 56, 320, 215, "STEP1", "CEIL3_5", "courtyard", {}),
+    ("bar", rect(-740, -400, -570, -200), 16, 128, 150, "FLOOR5_1", "CEIL3_5", "stone_ring", {"hole": rect(-748, -400, -562, -192), "room": True}),
+    ("lounge", rect(-540, -740, -400, -586), 12, 128, 140, "FLOOR5_1", "CEIL3_5", "stone_ring", {"hole": rect(-540, -748, -392, -578), "room": True}),
+    ("stage_step_a", rect(-378, -180, -354, -120), 44, 320, 200, "STEP1", "CEIL3_5", "courtyard", {}),
+    ("stage_step_b", rect(-354, -180, -330, -120), 56, 320, 215, "STEP1", "CEIL3_5", "courtyard", {}),
     ("stage", rect(-330, -205, -170, -85), 68, 320, 240, "FLOOR0_1", "CEIL3_5", "courtyard", {}),
     ("ped_step_a", rect(30, -107, 110, -83), 40, 320, 230, "STEP1", "CEIL3_5", "courtyard", {}),
     ("ped_step_b", rect(30, -83, 110, -59), 52, 320, 240, "STEP1", "CEIL3_5", "courtyard", {}),
@@ -47,6 +48,8 @@ def main():
     names = t["sector_names"]
     V = [tuple(v) for v in t["vertices"]]
     L, SD, SEC = t["linedefs"], t["sidedefs"], t["sectors"]
+    for i in range(4):  # the speaker plinths: knee-high steel boxes, 0.5 m over the floor (the render's guess was +80, 1.5 m: a drop nobody could step off)
+        SEC[i]["floor"] = 48
     court = names.index("courtyard")
     ring_i = names.index("stone_ring")
 

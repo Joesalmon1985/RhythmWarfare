@@ -3,6 +3,7 @@
 # waypoint (RW_STORY_CAM=<waypoint>, the real run scene, HUD and pads on, so overlaps show), and the stay loop on the real rail camera at song times.
 #   bash tools/doom/shoot_scene.sh --scene doom_warehouse [out_dir]      default out_dir docs/shots/doom/warehouse
 #   RW_SHOTS=<regex> only the shots whose name matches.   GODOT: the Godot binary or tools/dev/godot.sh.
+# RW_WALK=1 adds the walk strips (python3 tools/doom/shoot_scene.py walk <out_dir>).
 # Then a contact sheet: python3 tools/doom/shoot_scene.py <out_dir>   (run by this script at the end), and python3 tools/shrink_shots.py <out_dir>.
 set -eu
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -53,3 +54,4 @@ for asp in 16x9 20x9; do
 done
 rm -rf "$TMP"
 python3 "$ROOT/tools/doom/shoot_scene.py" "$OUT" || true
+[ -z "${RW_WALK:-}" ] || python3 "$ROOT/tools/doom/shoot_scene.py" walk "$OUT" || true   # RW_WALK=1: also the camera-path strips of the ahead route and the stay loop (walk_ahead.jpg, walk_stay.jpg)

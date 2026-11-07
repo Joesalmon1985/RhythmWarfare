@@ -379,8 +379,8 @@ func update(t: float, p_energy: float) -> void:
 	queue_redraw()
 
 
-## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
-## at an absolute ground point (any sector). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
+## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>[:<eye y>]]
+## at an absolute ground point (any sector; the eye at the sector's floor plus the eye height unless an absolute eye y is given: tools/doom/shoot_scene.py walk). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
 var _cam_override: String = OS.get_environment("RW_STORY_CAM")
 
 
@@ -400,6 +400,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	var yaw := 0.0
 	var pitch := 0.0
 	var sec := ""
+	var eye_y := NAN
 	if _cam_override.begins_with("actor:"):  # RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]]: the camera stands that far from the person (their current place), on the side the rail's camera stands, facing them
 		var q := _cam_override.substr(6).split(":")
 		var found: Variant = _person_pos(q[0])
@@ -454,6 +455,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 		at = Vector2(float(q[0]), float(q[1]))
 		yaw = float(q[2])
 		pitch = float(q[3]) if q.size() > 3 else 0.0
+		eye_y = float(q[4]) if q.size() > 4 else NAN
 		sec = map.sector_at(at)
 	else:
 		var parts := _cam_override.split(",")
@@ -473,7 +475,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	out["ground"] = ground
 	out["yaw"] = yaw
 	out["pitch"] = pitch
-	out["cam"] = Vector3(at.x, ground + map.eye_height, at.y)
+	out["cam"] = Vector3(at.x, ground + map.eye_height if is_nan(eye_y) else eye_y, at.y)
 	out["roll"] = 0.0
 	out["moving"] = false
 	var room := map.room_of(sec)
