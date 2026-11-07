@@ -180,3 +180,20 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     pad-strip controls' morph; the card table (blackjack), built earlier as a 2D close-up layer, is converted
     to the same staging in its own package (A8b) rather than kept as an exception.
 
+
+39. **A geography guide's tap is the decision; the walk is the leg the scene authored** (8 November, lead).
+    In a Doom-geography world (contract 1, H1.6: one scene per world, routes straight to the other worlds'
+    entry scenes) the choice viewpoint holds still through the window as ruling 35 asks, but the first tap
+    on a guide whose route leads to another world commits at the tap's own beat: that guide goes committed,
+    the others declined, later taps in the window are ignored, and the threshold walk starts then along the
+    route's authored polyline with its hold at the doorway (2 to 4 bars; cut to end on the boundary when the
+    tap comes late). An untouched window keeps the default at the lock and the 3-beat walk. The tap commit
+    is a success whatever the rhythm (as a quest entrance, ruling 15); the window hold gives way to the walk
+    (StoryPlayer.end_window_holds). Built on wip/engine-geography; tests/test_geography.gd.
+
+40. **Open (owner): the card table's mode.** A8b runs blackjack in `replace` mode (judging suspended while
+    seated, no wobble or fall, the run cannot end at the table, getting up finishes on the resume boundary),
+    because under ruling 38 the pad slots carry the four card controls and cannot also be the rhythm pads.
+    That overrides the owner's decisions B6/B7 (`rhythm`: the pads keep you on the chair). The alternative
+    that keeps B6/B7 is controls as in-world touches (the deck = twist, the chips = bet, the dealer = stick,
+    the door = up) with the pads staying rhythm. The lead merged A8b as built and asks the owner.
