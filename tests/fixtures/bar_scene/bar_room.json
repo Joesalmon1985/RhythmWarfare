@@ -1,0 +1,202 @@
+{
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "palette_weight": 0.0,
+ "start": "bar_view",
+ "textures": {
+  "wall_bar": "textures/wall_bar.png",
+  "floor_bar": "textures/floor_bar.png",
+  "ceil_bar": "textures/ceil_bar.png"
+ },
+ "sectors": [
+  {
+   "id": "bar_room",
+   "polygon": [
+    [
+     -3,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     -3,
+     4
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 3.0,
+   "floor_tex": "floor_bar",
+   "ceil_tex": "ceil_bar",
+   "wall_tex": "wall_bar",
+   "light": 0.55,
+   "tint": "#ffc890",
+   "room": "bar"
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -3,
+    0
+   ],
+   "to": [
+    3,
+    0
+   ],
+   "sector": "bar_room",
+   "tex": "wall_bar",
+   "portal": null
+  },
+  {
+   "from": [
+    3,
+    0
+   ],
+   "to": [
+    3,
+    4
+   ],
+   "sector": "bar_room",
+   "tex": "wall_bar",
+   "portal": null
+  },
+  {
+   "from": [
+    3,
+    4
+   ],
+   "to": [
+    -3,
+    4
+   ],
+   "sector": "bar_room",
+   "tex": "wall_bar",
+   "portal": null
+  },
+  {
+   "from": [
+    -3,
+    4
+   ],
+   "to": [
+    -3,
+    0
+   ],
+   "sector": "bar_room",
+   "tex": "wall_bar",
+   "portal": null
+  }
+ ],
+ "things": [
+  {
+   "id": "bar_counter",
+   "kind": "billboard",
+   "sprite": "bar_counter",
+   "piece": "bar_counter",
+   "at": [
+    0.0,
+    2.3
+   ],
+   "y": 0.55,
+   "size": 1.1,
+   "anim": "none"
+  },
+  {
+   "id": "bar_back_shelf",
+   "kind": "billboard",
+   "sprite": "bar_shelf_board",
+   "piece": "bar_back_shelf",
+   "at": [
+    0.0,
+    3.85
+   ],
+   "y": 1.55,
+   "size": 0.12,
+   "anim": "none"
+  },
+  {
+   "id": "bar_shelf_0",
+   "kind": "billboard",
+   "sprite": "bar_shelf_glass",
+   "piece": "bar_shelf_0",
+   "at": [
+    -1.5,
+    3.8
+   ],
+   "y": 1.85,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "bar_shelf_1",
+   "kind": "billboard",
+   "sprite": "bar_shelf_glass",
+   "piece": "bar_shelf_1",
+   "at": [
+    -0.5,
+    3.8
+   ],
+   "y": 1.85,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "bar_shelf_2",
+   "kind": "billboard",
+   "sprite": "bar_shelf_glass",
+   "piece": "bar_shelf_2",
+   "at": [
+    0.5,
+    3.8
+   ],
+   "y": 1.85,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "bar_shelf_3",
+   "kind": "billboard",
+   "sprite": "bar_shelf_glass",
+   "piece": "bar_shelf_3",
+   "at": [
+    1.5,
+    3.8
+   ],
+   "y": 1.85,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "bar_light",
+   "kind": "light",
+   "at": [
+    0.0,
+    2.2
+   ],
+   "y": 2.4,
+   "radius": 5.0,
+   "color": "#ffd9a0",
+   "strength": 1.2
+  }
+ ],
+ "homes": [],
+ "waypoints": [
+  {
+   "id": "bar_view",
+   "at": [
+    0.0,
+    0.5
+   ],
+   "yaw": 180,
+   "sector": "bar_room",
+   "choice_view": true
+  }
+ ],
+ "note": "Test scene map of the bar (ruling 38): the counter and the back shelf are pieces (bar_*), the glass, the order bubble, the customer and the bartender are dynamic things and crowd actors the activity directs. Customer stands at (-1.2, 1.4), bartender at (0.6, 2.9); the camera holds at bar_view facing +z."
+}

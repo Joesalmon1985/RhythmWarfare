@@ -54,6 +54,7 @@
   "dinos": "res://content/raves/dinos.json",
   "transport": "res://content/raves/transport.json"
  },
+<<<<<<< HEAD
  "cloakroom": {
   "space": {
    "symbols": [
@@ -86,10 +87,90 @@
      "body": "#e8803a",
      "skin": "#f8b08a",
      "extra": "#ffffff"
+=======
+ "bar": {
+  "space": {
+   "ingredients": [
+    {
+     "id": "nebula_syrup",
+     "color": "#8a4fd6",
+     "shape": "swirl"
+    },
+    {
+     "id": "comet_ice",
+     "color": "#f4fbff",
+     "shape": "comet"
+    },
+    {
+     "id": "star_dust",
+     "color": "#ffd84a",
+     "shape": "star"
+    },
+    {
+     "id": "moon_milk",
+     "color": "#a8c8ff",
+     "shape": "crescent"
+    }
+   ],
+   "recipes": [
+    [
+     "nebula_syrup",
+     "comet_ice"
+    ],
+    [
+     "star_dust",
+     "moon_milk"
+    ],
+    [
+     "comet_ice",
+     "star_dust"
+    ],
+    [
+     "moon_milk",
+     "nebula_syrup"
+    ],
+    [
+     "nebula_syrup",
+     "star_dust",
+     "moon_milk"
+    ],
+    [
+     "comet_ice",
+     "moon_milk",
+     "star_dust"
+    ],
+    [
+     "star_dust",
+     "nebula_syrup",
+     "comet_ice"
+    ],
+    [
+     "moon_milk",
+     "comet_ice",
+     "nebula_syrup"
+    ]
+   ],
+   "customers": [
+    {
+     "id": "green_alien",
+     "body": "#6fcf7f",
+     "kind": "antenna"
+    },
+    {
+     "id": "blue_alien",
+     "body": "#6fa8e8",
+     "kind": "antenna"
+    },
+    {
+     "id": "pink_alien",
+     "body": "#e87fb8",
+     "kind": "antenna"
+>>>>>>> wip/play-bar
     }
    ]
   },
   "magic": {
+<<<<<<< HEAD
    "symbols": [
     "unicorn",
     "wand",
@@ -120,10 +201,88 @@
      "body": "#2fa86a",
      "skin": "#d9a77f",
      "extra": "#e8503a"
+=======
+   "ingredients": [
+    {
+     "id": "rainbow_nectar",
+     "color": "#ff7ac8",
+     "shape": "rainbow"
+    },
+    {
+     "id": "unicorn_foam",
+     "color": "#fff0fa",
+     "shape": "cloud"
+    },
+    {
+     "id": "glitter_sugar",
+     "color": "#ffe27a",
+     "shape": "gem"
+    },
+    {
+     "id": "dragonfruit",
+     "color": "#e8368f",
+     "shape": "spiky"
+    }
+   ],
+   "recipes": [
+    [
+     "rainbow_nectar",
+     "unicorn_foam"
+    ],
+    [
+     "glitter_sugar",
+     "dragonfruit"
+    ],
+    [
+     "unicorn_foam",
+     "glitter_sugar"
+    ],
+    [
+     "dragonfruit",
+     "rainbow_nectar"
+    ],
+    [
+     "rainbow_nectar",
+     "glitter_sugar",
+     "dragonfruit"
+    ],
+    [
+     "unicorn_foam",
+     "dragonfruit",
+     "glitter_sugar"
+    ],
+    [
+     "glitter_sugar",
+     "rainbow_nectar",
+     "unicorn_foam"
+    ],
+    [
+     "dragonfruit",
+     "unicorn_foam",
+     "rainbow_nectar"
+    ]
+   ],
+   "customers": [
+    {
+     "id": "wizard_blue",
+     "body": "#6a7be8",
+     "kind": "hat"
+    },
+    {
+     "id": "witch_green",
+     "body": "#6fcf7f",
+     "kind": "hat"
+    },
+    {
+     "id": "sprite_pink",
+     "body": "#e87fb8",
+     "kind": "hat"
+>>>>>>> wip/play-bar
     }
    ]
   },
   "dinos": {
+<<<<<<< HEAD
    "symbols": [
     "egg",
     "claw",
@@ -154,10 +313,88 @@
      "body": "#3fa0c8",
      "skin": "#3fa0c8",
      "extra": "#e8503a"
+=======
+   "ingredients": [
+    {
+     "id": "fern_juice",
+     "color": "#4fc760",
+     "shape": "leaf"
+    },
+    {
+     "id": "lava_sauce",
+     "color": "#ff5a2a",
+     "shape": "flame"
+    },
+    {
+     "id": "amber_resin",
+     "color": "#ffb52e",
+     "shape": "hex"
+    },
+    {
+     "id": "egg_cream",
+     "color": "#fff1d0",
+     "shape": "egg"
+    }
+   ],
+   "recipes": [
+    [
+     "fern_juice",
+     "lava_sauce"
+    ],
+    [
+     "amber_resin",
+     "egg_cream"
+    ],
+    [
+     "lava_sauce",
+     "amber_resin"
+    ],
+    [
+     "egg_cream",
+     "fern_juice"
+    ],
+    [
+     "fern_juice",
+     "amber_resin",
+     "egg_cream"
+    ],
+    [
+     "lava_sauce",
+     "egg_cream",
+     "amber_resin"
+    ],
+    [
+     "amber_resin",
+     "fern_juice",
+     "lava_sauce"
+    ],
+    [
+     "egg_cream",
+     "lava_sauce",
+     "fern_juice"
+    ]
+   ],
+   "customers": [
+    {
+     "id": "raptor_green",
+     "body": "#6fbf5a",
+     "kind": "crest"
+    },
+    {
+     "id": "trike_orange",
+     "body": "#e89a4f",
+     "kind": "crest"
+    },
+    {
+     "id": "stego_purple",
+     "body": "#a77fe0",
+     "kind": "crest"
+>>>>>>> wip/play-bar
     }
    ]
   },
   "transport": {
+<<<<<<< HEAD
    "symbols": [
     "bus",
     "bike",
@@ -188,6 +425,83 @@
      "body": "#d8503a",
      "skin": "#8a5a3a",
      "extra": "#ffffff"
+=======
+   "ingredients": [
+    {
+     "id": "diesel_cola",
+     "color": "#6b3a1e",
+     "shape": "can"
+    },
+    {
+     "id": "tyre_liquorice",
+     "color": "#2a2a33",
+     "shape": "ring"
+    },
+    {
+     "id": "road_salt",
+     "color": "#e8e8ea",
+     "shape": "shaker"
+    },
+    {
+     "id": "headlamp_lemon",
+     "color": "#ffe84a",
+     "shape": "lemon"
+    }
+   ],
+   "recipes": [
+    [
+     "diesel_cola",
+     "tyre_liquorice"
+    ],
+    [
+     "road_salt",
+     "headlamp_lemon"
+    ],
+    [
+     "tyre_liquorice",
+     "road_salt"
+    ],
+    [
+     "headlamp_lemon",
+     "diesel_cola"
+    ],
+    [
+     "diesel_cola",
+     "road_salt",
+     "headlamp_lemon"
+    ],
+    [
+     "tyre_liquorice",
+     "headlamp_lemon",
+     "road_salt"
+    ],
+    [
+     "road_salt",
+     "diesel_cola",
+     "tyre_liquorice"
+    ],
+    [
+     "headlamp_lemon",
+     "tyre_liquorice",
+     "diesel_cola"
+    ]
+   ],
+   "customers": [
+    {
+     "id": "driver_red",
+     "body": "#e8604f",
+     "kind": "cap"
+    },
+    {
+     "id": "driver_blue",
+     "body": "#4f8fe8",
+     "kind": "cap"
+    },
+    {
+     "id": "driver_yellow",
+     "body": "#e8c84f",
+     "kind": "cap"
+>>>>>>> wip/play-bar
     }
    ]
   }
