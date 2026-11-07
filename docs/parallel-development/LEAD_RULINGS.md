@@ -162,3 +162,21 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     agent built it. The remaining hooks H1 to H9 in CONTRACTS.md are lead-owned engine work, built by the
     engine agents in the order the pilots need them: H5 (suspend/resume, tap owner, controls layer), H6
     (save), H3 (holds), H1 (threshold walk, relaxed node), H7 (song-time unlock), H4, H8, H9.
+38. **One world, one HUD (owner, 8 November).** Every minigame and activity (the cloakroom, the bar, the
+    bass knob, the race's start and finish, the card table, anything later) takes place in the same 2.5D world
+    the rhythm game is played in, and the transition between the two is seamless: no scene change, no fade, no
+    separate screen, no close-up card or panel laid over the room. The camera walks to the activity's spot
+    along the rail and holds there (ruling 35a); the room keeps rendering with its crowd, lights, haze and
+    music; the activity's things (the counter, the coat rail and coats, the glasses and the shelf, the deck and
+    its knob, the customers and the attendant) are objects in the room, drawn by the stage at their depth,
+    in the room's light and tint, with the pixel density of the style guide, and their state (a coat handed
+    over, a glass filling, a knob freed, a customer's reaction) is shown by those objects' frames and motion
+    (ruling 35b). The HUD is the run's own HUD throughout: the same meter, pips and pause button; the pad
+    strip is where the activity's controls appear, in the pads' own slots, morphing in at the bar boundary
+    the activity starts on and back into pads at the boundary it ends on (contract 5), drawn in the pads' frame
+    style with pictograms and no words. The only canvas-layer drawing an activity may add is in that strip and
+    small in-world feedback attached to its objects (a tick or cross that flashes on the tag, a glow on the
+    counter). Contract 10 carries this; engine package A8 (Opus) builds the dynamic props API (H8.1) and the
+    pad-strip controls' morph; the card table (blackjack), built earlier as a 2D close-up layer, is converted
+    to the same staging in its own package (A8b) rather than kept as an exception.
+
