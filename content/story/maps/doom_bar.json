@@ -5,6 +5,10 @@
  "start": "doom_start",
  "textures": {
   "bar_brick": "textures/bar_brick.png",
+  "bar_brick_b": "textures/bar_brick_b.png",
+  "bar_brick_c": "textures/bar_brick_c.png",
+  "bar_p_stool": "textures/bar_p_stool.png",
+  "bar_p_counter": "textures/bar_p_counter.png",
   "bar_brick_lit": "textures/bar_brick_lit.png",
   "bar_cobble": "textures/bar_cobble.png",
   "bar_planks": "textures/bar_planks.png",
@@ -135,7 +139,7 @@
    "ceiling": 3.25,
    "floor_tex": "bar_cobble",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_b",
    "light": 1.0,
    "tint": "#e0dcf3",
    "room": "main",
@@ -168,7 +172,7 @@
    "ceiling": 3.0,
    "floor_tex": "bar_cobble",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_c",
    "light": 1.0,
    "tint": "#d7ddff",
    "room": "main",
@@ -234,7 +238,7 @@
    "ceiling": 3.6875,
    "floor_tex": "bar_step",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_b",
    "light": 1.0,
    "tint": "#ece7f8",
    "room": "main",
@@ -267,7 +271,7 @@
    "ceiling": 3.90625,
    "floor_tex": "bar_step",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_c",
    "light": 1.0,
    "tint": "#ece7f8",
    "room": "main",
@@ -333,7 +337,7 @@
    "ceiling": 4.1875,
    "floor_tex": "bar_planks",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_b",
    "light": 1.0,
    "tint": "#e4f8fa",
    "room": "main",
@@ -366,7 +370,7 @@
    "ceiling": 4.1875,
    "floor_tex": "bar_copper",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_c",
    "light": 1.0,
    "tint": "#ffeedd",
    "room": "main",
@@ -1657,6 +1661,30 @@
    "anim": "none"
   },
   {
+   "id": "bar_fg_stool",
+   "kind": "billboard",
+   "sprite": "bar_p_stool",
+   "at": [
+    0.45,
+    -1.3
+   ],
+   "y": 0.38,
+   "size": 0.75,
+   "anim": "none"
+  },
+  {
+   "id": "bar_fg_counter",
+   "kind": "billboard",
+   "sprite": "bar_p_counter",
+   "at": [
+    1.05,
+    -1.1
+   ],
+   "y": 0.62,
+   "size": 1.25,
+   "anim": "none"
+  },
+  {
    "id": "bar_d_tapestry_w",
    "kind": "decal",
    "sprite": "bar_tapestry",
@@ -2316,11 +2344,11 @@
   {
    "id": "wb_chill_door",
    "at": [
-    3.2,
+    2.1,
     -4.3
    ],
-   "yaw": -37.6,
-   "sector": "19_0"
+   "yaw": -58.2,
+   "sector": "10_0"
   },
   {
    "id": "wb_ref_back",

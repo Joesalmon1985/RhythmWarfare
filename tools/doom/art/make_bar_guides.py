@@ -73,6 +73,13 @@ def draw_guide(who, state, i):
         dj.polygon([(shx - 27, shy - 2), (shx - 7, shy - 2), (hx - 5, hipy + 8), (hx - 22, hipy + 8)], fill=255)
         dj.polygon([(shx + 27, shy - 2), (shx + 7, shy - 2), (hx + 5, hipy + 8), (hx + 22, hipy + 8)], fill=255)
         c.paint(mj, g["jacket"], seed=3)
+        if who == "booth":  # lapels turned back, a zip line, the black top's neckline (the painting's orange bomber over black)
+            ml, dl = c.mask()
+            dl.polygon([(shx - 8, shy - 2), (shx - 16, shy - 2), (shx - 9, shy + 22)], fill=255)
+            dl.polygon([(shx + 8, shy - 2), (shx + 16, shy - 2), (shx + 9, shy + 22)], fill=255)
+            c.paint(ml, "#f6b060")
+            c.rgb[shy + 4:hipy + 6, int(hx) - 7] = hexc("#c8c8d0")
+            c.rgb[shy + 4:hipy + 6, int(hx) + 6] = hexc("#c8c8d0")
     sleeve = g["skin"] if who == "floor" else g["jacket"]
     shL, shR = (shx - 24, shy + 4), (shx + 24, shy + 4)
     for sd, sh, ang in ((-1, shL, p["la"]), (1, shR, p["ra"])):
@@ -109,10 +116,12 @@ def draw_guide(who, state, i):
         d.chord([hxx - 19, 22, hxx + 19, 62], 180, 360, fill=255)
         d.rectangle([hxx - 19, 40, hxx - 15, 62], fill=255)
         d.rectangle([hxx + 15, 40, hxx + 19, 62], fill=255)
-    else:  # booth: a short teal crop
-        d.chord([hxx - 18, 24, hxx + 18, 60], 180, 360, fill=255)
-        d.polygon([(hxx - 18, 42), (hxx - 8, 36), (hxx + 20, 38), (hxx + 18, 44)], fill=255)
-    c.paint(m, g["hair"], seed=13)
+    else:  # booth: a teal bob to the jaw with a side fringe (stage D: the painting's cut, not a cap)
+        d.chord([hxx - 20, 22, hxx + 20, 62], 180, 360, fill=255)
+        d.polygon([(hxx - 20, 42), (hxx - 21, 64), (hxx - 14, 66), (hxx - 13, 44)], fill=255)
+        d.polygon([(hxx + 13, 44), (hxx + 14, 66), (hxx + 21, 64), (hxx + 20, 42)], fill=255)
+        d.polygon([(hxx - 18, 42), (hxx - 6, 34), (hxx + 20, 40), (hxx + 16, 48), (hxx - 2, 44)], fill=255)
+    c.paint(m, g["hair"], seed=13, sparkle=["#7ff0e0", "#138078"] if who == "booth" else None)
     if who == "booth":  # headphones: a band over the head, cups at the ears
         m, d = c.mask()
         d.arc([hxx - 21, 22, hxx + 21, 66], 190, 350, fill=255, width=4)
@@ -137,7 +146,7 @@ def draw_guide(who, state, i):
     sm = int(round(3 * p["smile"]))
     lip = (190, 40, 100) if who == "floor" else (150, 40, 52)
     for k in range(-5, 6):
-        yy = ey + 14 + int(round(sm * (k / 5.0) ** 2))
+        yy = ey + 14 + (int(round(sm * (1 - (k / 5.0) ** 2))) if who == "booth" else int(round(sm * (k / 5.0) ** 2)))  # (booth, stage D: corners up, a smile)
         img[yy:yy + 1, int(hxx) + k] = lip
     if p["smile"] > 0.7:
         img[ey + 13:ey + 14, int(hxx) - 3:int(hxx) + 4] = (252, 248, 240)
@@ -151,6 +160,19 @@ def draw_guide(who, state, i):
     return c.image()
 
 
+BAR_PAINTING = "doom_worlds/Copper Basement Bar, Three Hidden Routes-3.png"
+CROPS = {  # stage D polish (ruling 36): guides the paintings show 180 px tall or more are cut from them (tools/doom/art/make_guides.py crop_guide)
+    # the Floor guide stands full length in this painting (420 px, crown to feet): her own picture, leaning on nothing (the post she leans on is left out)
+    "floor": dict(src=BAR_PAINTING, top=238, chin=0, cut=660, centre_x=200, door_left=True,
+                  poly=[(169, 239), (136, 270), (115, 320), (107, 387), (111, 437), (107, 462), (140, 470), (169, 470), (177, 537), (182, 603), (177, 655), (223, 659), (244, 645),
+                        (257, 603), (265, 537), (244, 470), (227, 412), (223, 382), (236, 345), (265, 345), (298, 341), (313, 330), (302, 316), (282, 324), (240, 320), (215, 307),
+                        (207, 287), (202, 257), (190, 239)],
+                  hand=(278, 310, 316, 346, 255, 316)),
+    # the Chill-out guide (mustard cardigan, glasses, cushion) is the same man as the Warehouse's lounge guide: the same crop (Midnight dance hall painting, 480 px), turning right
+    "chill": dict(mg.CROPS["lounge"], door_left=False),
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(os.path.dirname(SHEET), exist_ok=True)
@@ -158,9 +180,10 @@ def main():
     sheet = Image.new("RGBA", (cols * W, 3 * H), (14, 12, 34, 255))
     for r, who in enumerate(GUIDES):
         x = 0
+        cropped = mg.crop_guide(CROPS[who]) if who in CROPS else None
         for state, n in mg.FRAMES.items():
             for i in range(n):
-                im = draw_guide(who, state, i)
+                im = cropped[(state, i)] if cropped else draw_guide(who, state, i)
                 im.save(os.path.join(OUT, "guide_%s_%s_%d.png" % (who, state, i)))
                 sheet.alpha_composite(im, (x * W, r * H))
                 x += 1

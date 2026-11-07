@@ -49,7 +49,7 @@ WAYPOINTS = [
     ("wb_stairs_foot", (0.1, 5.4), (0.1, 10.0), 0, "ahead, leg 1: the foot of the four stairs, the booth above"),
     ("wb_booth_door", (0.1, 9.3), (0.2, 11.4), 0, "THRESHOLD ahead: on the booth landing before the desk; the world transition happens here"),
     ("wb_floor_door", (-5.8, 1.4), (-8.0, 1.4), 0, "THRESHOLD left: in the way to the Floor, before its blue door"),
-    ("wb_chill_door", (3.2, 4.3), (4.2, 5.6), 0, "THRESHOLD right: over the crossing, at the Chill-out nook's step"),
+    ("wb_chill_door", (2.5, 4.3), (4.2, 5.6), 0, "THRESHOLD right: on the crossing, a step back from the Chill-out guide (stage D: the pads clear his waist)"),
     ("wb_ref_back", (0.6, -2.3), (0.1, 5.0), 0, "recovery: a stumble back into the passage's end"),
     ("wb_sw_corner", (-1.2, -2.1), (0.1, 5.0), 0, "recovery: against the west wall"),
     # via points
@@ -83,7 +83,7 @@ for k in ("bridge_1", "bridge_2"):
     STYLE[k] = ("bar_grate", "bar_quay", "bar_ceiling", "#c8b0a0", "bar_quay")
 for k in ("bar_w", "bar_back", "bar_e", "bar_front"):
     STYLE[k] = ("bar_planks", "bar_brick_lit", "bar_ceiling", "#ffc080", "bar_step")
-OWN_TEX = ["bar_brick", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
+OWN_TEX = ["bar_brick", "bar_brick_b", "bar_brick_c", "bar_p_stool", "bar_p_counter", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
            "bar_pendant", "bar_lantern", "bar_crate", "bar_crate_tall", "bar_jug", "bar_stool", "bar_taps", "bar_bottles", "bar_bottles_b", "bar_glass", "bar_pipe_col", "bar_sofa",
            "bar_tapestry", "bar_poster_a", "bar_poster_b", "bar_sign_booth", "bar_sign_floor", "bar_sign_chill", "bar_shelf", "bar_ivy", "bar_pipe_h", "bar_rack", "bar_window", "bar_door_floor",
            "bar_curtain"]
@@ -118,7 +118,10 @@ THINGS = [  # extra dressing, billboards: id, sprite, point (m), y (centre above
     ("bar_col_a", "bar_pipe_col", (-1.62, 3.75), 1.6, 3.2), ("bar_crate_a", "bar_crate_tall", (-1.15, 3.95), 0.55, 1.1), ("bar_crate_b", "bar_crate", (-0.75, 3.95), 0.3, 0.6),
     ("bar_jug_c", "bar_jug", (-1.15, 3.95), 1.32, 0.45), ("bar_col_b", "bar_pipe_col", (1.3, 0.1), 1.6, 3.2), ("bar_crate_c", "bar_crate", (1.0, -2.5), 0.3, 0.6),
     ("bar_sofa", "bar_sofa", (5.9, 5.9), 0.5, 1.0),
+    # the painting's foreground (stage D polish): its red velvet stool and the end of its copper counter with the whisky glass, cut from the painting, at the passage's east side
+    ("bar_fg_stool", "bar_p_stool", (0.45, 1.3), 0.38, 0.75), ("bar_fg_counter", "bar_p_counter", (1.05, 1.1), 0.62, 1.25),
 ]
+BRICKS = ["bar_brick", "bar_brick_b", "bar_brick_c"]  # the stone wall's three variants, one per piece (a hash of its id): no long wall repeats one tile
 LIGHTS = [  # id, point (m), y, radius, colour, strength: warm practical lamps (pendants, lanterns) against cool depths (teal water, blue way, violet passage)
     ("bar_lt_counter", (4.8, 1.9), 2.6, 6.5, "#ffa84a", 1.8), ("bar_lt_front", (3.4, 2.9), 3.0, 5.0, "#ffb860", 1.4),
     ("bar_lt_lounge", (5.0, 5.5), 2.8, 6.0, "#ffb860", 1.6), ("bar_lt_lounge2", (6.2, 7.2), 2.6, 4.5, "#ff9a50", 1.2),
@@ -182,6 +185,8 @@ def main():
     for s in d["sectors"]:
         s["name"] = names[int(s["doom_sector"])]
         f, w, c, tint, step = STYLE[s["name"]]
+        if w == "bar_brick":
+            w = BRICKS[sum(ord(ch) * (i + 1) for i, ch in enumerate(str(s["id"]))) % len(BRICKS)]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, _lift(tint), step
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)

@@ -69,7 +69,8 @@ style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtai
 OWN_TEX = ["wall_stone", "wall_marble", "wall_sofa", "wall_curtain", "wall_wood", "wall_copper", "wall_table", "wall_street", "wall_blue", "wall_beam",
            "floor_marble", "floor_rug_red", "floor_rug_cream", "floor_rug_orange", "floor_sofa", "floor_table", "floor_wood", "floor_street", "floor_blue", "floor_curtain",
            "ceil_beam", "ceil_street", "thing_plant", "thing_lamp", "thing_vase", "thing_cushion", "thing_cushion_b",
-           "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads"]
+           "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads", "wall_stone_b", "wall_stone_c", "lg_p_sofa", "lg_p_palm_l", "lg_p_palm_r"]
+STONES = ["wall_stone", "wall_stone_b", "wall_stone_c"]  # the stone's three variants, one per piece (a hash of its id): no wall repeats one tile
 GUIDE_OWN = {"dock": OWN, "floor": OWN, "bar": SHARED}  # where each guide's sprite set lives
 
 # id, doom point, look-at doom point, hold_bars (0 = a moving place), what it is
@@ -81,9 +82,9 @@ WAYPOINTS = [
     ("lg_west", (-196, -50), (150, 0), 2, "reveal: the west walkway, the pit and its sofas across to the blue passage"),
     ("lg_north", (0, 200), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
     ("lg_east", (196, 45), (-175, 175), 2, "reveal: the east walkway looking back across the pit to the Bar arch"),
-    ("lg_ahead_door", W("n", 0, 58), (0, 330), 0, "THRESHOLD ahead (Dock): up the two steps, in the street at the foot of the Dock guide; the world transition happens here"),
+    ("lg_ahead_door", W("n", 0, -6), (0, 330), 0, "THRESHOLD ahead (Dock): at the foot of the steps, 3.2 m before the Dock guide (stage D: held a step back so the pads do not cover him); the world transition happens here"),
     ("lg_bar_door", W("nw", 0, 22), (-220, 262), 0, "THRESHOLD left (Bar): inside the arch, before the Bar guide"),
-    ("lg_floor_door", W("ne", 0, 22), (233, 205), 0, "THRESHOLD right (Floor): inside the blue passage, before the Floor guide"),
+    ("lg_floor_door", W("ne", 0, 2), (233, 205), 0, "THRESHOLD right (Floor): at the blue passage's mouth, a step back from the Floor guide (stage D)"),
     # via points: the ring round the pit (octagon of inradius 196), and the way in at each door
     ("lg_v_ene", (196, 81), (81, 196), 0, "via: the walkway, east-north-east corner"),
     ("lg_v_nne", (81, 196), (-81, 196), 0, "via: north-north-east"),
@@ -116,6 +117,9 @@ THINGS = [  # id, sprite, doom point, y centre above the sector's floor, size (h
     ("lg_lamp_table", "thing_lamp", (0, 0), 0.34, 0.7), ("lg_vase", "thing_vase", (16, 10), 0.4, 0.8),
     ("lg_cushion_a", "thing_cushion", (-34, 106), 0.36, 0.55), ("lg_cushion_b", "thing_cushion_b", (-14, 108), 0.34, 0.5),
     ("lg_cushion_c", "thing_cushion_b", (50, -104), 0.34, 0.5), ("lg_cushion_d", "thing_cushion", (-50, -102), 0.36, 0.55),
+    # the painting's foreground (stage D polish), cut from it: the near sofa with the patterned cushion 1.4 m before the reference viewpoint (on the pit's step ring, -0.375 m:
+    # its top is 0.9 m over the walkway) and the two palms at the frame's edges
+    ("lg_fg_sofa", "lg_p_sofa", (0, -150), 0.82, 0.9), ("lg_fg_palm_l", "lg_p_palm_l", (-52, -145), 1.15, 1.6), ("lg_fg_palm_r", "lg_p_palm_r", (56, -148), 1.25, 1.8),
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the hub, a cool pool beyond each doorway: grey-blue rain, amber bar, cobalt passage)
     ("lg_lt_table", (0, 0), 1.6, 9.0, "#ffa43c", 1.8), ("lg_lt_dome", (0, 0), 5.2, 15.0, "#ffb860", 1.1),
@@ -181,6 +185,8 @@ def main():
     for s in d["sectors"]:
         nm = names[int(s["doom_sector"])]
         f, w, c, tint, step, lip, light = S[nm]
+        if w == "wall_stone":
+            w = STONES[sum(ord(ch) * (i + 1) for i, ch in enumerate(str(s["id"]))) % len(STONES)]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"] = f, w, c, lift(tint)
         s["step_tex"], s["lip_tex"] = step, lip
         s["room"] = "main"
