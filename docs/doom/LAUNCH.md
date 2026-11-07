@@ -63,3 +63,16 @@ No state-driven guides beyond what the existing choice staging does (sprite per 
 | Tests | `--filter doom_views` (the booth block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_booth` |
 
 Details: `docs/doom/scenes/booth.md`.
+
+## The Balcony (scene `doom_balcony`, env-balcony block)
+
+| What | How |
+| --- | --- |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_balcony` (world `doom_balcony`; routes: stay on the roof (default), `doom_balcony.mothership` ahead, `doom_balcony.floor` left, `doom_balcony.booth` right: stand-ins that lead to `doom_balcony.return`). The Warehouse's own stand-in is now `doom_warehouse.balcony`. |
+| Rebuild the geometry | `python -I tools/doom/trace/balcony_scene.py && python -I tools/doom/convert.py --scene balcony --trace tools/doom/trace/balcony_pilot.json && python -I tools/doom/author_balcony.py` |
+| Rebuild the art and guides | `python -I tools/doom/art/make_balcony_art.py` (calls `make_balcony_guides.py`), then `godot --headless --import` |
+| Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_balcony.py`) |
+| Shots | `python3 tools/doom/shoot_balcony.py` (`docs/shots/doom/balcony/contact.jpg`, `walk_strip.jpg`) |
+| Tests | `--filter doom_views` (the balcony block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_balcony` |
+
+Details: `docs/doom/scenes/balcony.md`.
