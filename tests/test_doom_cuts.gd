@@ -77,9 +77,9 @@ func test_warehouse_to_bar_and_back_to_the_floor_on_the_run_scene() -> void:
 	assert_eq(scene.engine.selected_route(), "doom_bar", "the scripted tap is on the Bar's guide (left)")
 	_run_to(scene, 63.9 * B)
 	var w1 := _walks(scene, "doom_warehouse")
-	assert_eq(w1.size(), 1, "the lock handler walked to the Warehouse's left threshold")
+	assert_eq(w1.size(), 1, "one threshold walk to the Warehouse's left threshold")
 	if w1.size() == 1:
-		assert_near(float(w1[0]["t0"]), 61.0 * B, 0.01, "from beat 61")
+		assert_near(float(w1[0]["t0"]), 52.0 * B, 0.01, "from the scripted tap at beat 52 (ruling 39: the tap is the decision)")
 		assert_eq(str(w1[0]["args"]["to"]), str(wh_rail["exits"]["left"]), "to the threshold wh_bar_door")
 		assert_eq(w1[0]["args"]["via"], wh_rail["routes"]["left"]["via"], "along the Warehouse's left polyline")
 	var wh: StoryStage = scene.stages["doom_warehouse"]["stage"]
@@ -97,9 +97,9 @@ func test_warehouse_to_bar_and_back_to_the_floor_on_the_run_scene() -> void:
 	_run_to(scene, 127.9 * B)
 	assert_eq(scene.engine.selected_route(), "doom_warehouse", "the scripted tap is on the Floor's guide (left)")
 	var w2 := _walks(scene, "doom_bar")
-	assert_eq(w2.size(), 1, "the lock handler walked to the Bar's left threshold")
+	assert_eq(w2.size(), 1, "one threshold walk to the Bar's left threshold")
 	if w2.size() == 1:
-		assert_near(float(w2[0]["t0"]), 125.0 * B, 0.01, "from beat 61 of the Bar's phase")
+		assert_near(float(w2[0]["t0"]), 116.0 * B, 0.01, "from the scripted tap at beat 52 of the Bar's phase")
 		assert_eq(str(w2[0]["args"]["to"]), str(bar_rail["exits"]["left"]), "to the threshold wb_floor_door")
 		assert_eq(w2[0]["args"]["via"], bar_rail["routes"]["left"]["via"], "along the Bar's left polyline")
 	assert_true(_near(bar, 128.0 * B, "wb_floor_door") < 0.05, "at the Bar's threshold on the boundary (%f m)" % _near(bar, 128.0 * B, "wb_floor_door"))
