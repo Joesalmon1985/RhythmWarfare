@@ -87,7 +87,16 @@
   {"id": "ledge_rope", "at": [-7.4, -5.3], "yaw": 189, "sector": "ledge"},
   {"id": "pit_floor", "at": [1, -6], "yaw": 138, "sector": "shaft"},
   {"id": "rope_foot", "at": [-4.0, -0.3], "yaw": 138, "sector": "shaft"},
-  {"id": "pit_bottom", "at": [2.5, -3.5], "yaw": 120, "sector": "shaft"}
+  {"id": "pit_bottom", "at": [2.5, -3.5], "yaw": 120, "sector": "shaft"},
+  {
+   "id": "way_up_35",
+   "at": [
+    1.0,
+    3.0
+   ],
+   "yaw": 0,
+   "sector": "rim"
+  }
  ],
  "animated": [
   {"tex": "water", "mode": "swap", "frames": ["water", "water_1", "water_2", "water_3"], "rate": 3, "bright": 0.5, "amount": 0.2},
