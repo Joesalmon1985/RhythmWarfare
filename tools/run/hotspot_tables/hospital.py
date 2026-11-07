@@ -65,8 +65,8 @@ ob("hospital.exit", "mic", T("mic_band"), "glow",
 w = "hospital"
 GATES = [
     ("ember", "ember", (1.9,3.5), (0.7,3.0), "path:ember", "an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember)", "the ember gutters out (-4)"),
-    ("bassment", "dungeon", (4.1,4.3), (2.8,4.2), "bassment", "a violet gate, the wizard pointing down: the Bassment (route bassment)", "the gate sinks out of sight (-4)"),
-    ("gospel", "gospel", (4.1,2.4), (2.8,2.7), "path:gospel", "a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", "the star gate flickers out (-4)"),
+    ("bassment", "dungeon", (3.3,4.5), (4.6,4.5), "bassment", "a violet gate, the wizard pointing down: the Bassment (route bassment)", "the gate sinks out of sight (-4)"),
+    ("gospel", "gospel", (3.4,2.7), (4.3,3.7), "path:gospel", "a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", "the star gate flickers out (-4)"),
     ("squadron", "squadron", (1.5,1.7), (0.4,2.4), "path:squadron", "a green gate, the Gunner pointing: the Mission Count path (route path:squadron)", "the radio gate gutters out (-4)"),
 ]
 for _n, _q, _g, _h, _route, _ok, _bad in GATES:
@@ -81,10 +81,10 @@ for _n, _q, _g, _h, _route, _ok, _bad in GATES:
 # Extra entrances in the side scenes (graph extra_routes), so each offers a quest beside its mainline exit.
 EXTRAS = [
     ("hospital.dayroom", "enter_bassment", "dungeon", (23.5, -5.2), (22.3, -4.2), "bassment", "a violet gate by the sofa, the wizard pointing down: the Bassment (route bassment)", "the gate sinks out of sight (-4)"),
-    ("hospital.cafeteria", "enter_gospel", "gospel", (40.0, -2.6), (38.8, -1.8), "path:gospel", "a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", "the star gate flickers out (-4)"),
-    ("hospital.garden", "enter_squadron", "squadron", (55.0, -3.5), (53.8, -2.6), "path:squadron", "a green gate on the lawn, the Gunner pointing: the Mission Count path (route path:squadron)", "the radio gate gutters out (-4)"),
-    ("hospital_late.cafe", "enter_ember", "ember", (44.8, -2.8), (43.6, -2.0), "path:ember", "an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember)", "the ember gutters out (-4)"),
-    ("hospital_late.quiet", "enter_bassment", "dungeon", (13.8, 13.1), (14.6, 11.7), "bassment", "a violet gate at the quiet room's far end, the wizard pointing down: the Bassment (route bassment)", "the gate sinks out of sight (-4)"),
+    ("hospital.cafeteria", "enter_gospel", "gospel", (44.6, -1.4), (45.7, -0.2), "path:gospel", "a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", "the star gate flickers out (-4)"),
+    ("hospital.garden", "enter_squadron", "squadron", (52.0, -3.2), (53.2, -2.3), "path:squadron", "a green gate on the lawn, the Gunner pointing: the Mission Count path (route path:squadron)", "the radio gate gutters out (-4)"),
+    ("hospital_late.cafe", "enter_ember", "ember", (44.8, 3.6), (43.5, 4.4), "path:ember", "an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember)", "the ember gutters out (-4)"),
+    ("hospital_late.quiet", "enter_bassment", "dungeon", (14.7, 6.8), (13.7, 7.9), "bassment", "a violet gate at the quiet room's far end, the wizard pointing down: the Bassment (route bassment)", "the gate sinks out of sight (-4)"),
 ]
 for _scene, _n, _q, _g, _h, _route, _ok, _bad in EXTRAS:
     _portal = sc(_scene, _n, P(_g[0], 1.0, _g[1]), "pulse", out(route=_route), out(energy=-4), s_text=_ok, f_text=_bad)

@@ -55,10 +55,15 @@ gospel_star    warehouse.balcony  wh_saw_floor   -7.5:1.4:90:6     up
 squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
-# N2.4 Hospital Ward (hospital, hospital_late): the ward's four gates, then one per side scene (close camera x:z:yaw:pitch)
-hw_bassment    hospital           -              -0.3:-0.3:-70:2   -
-hw_gospel      hospital           -              -1.5:0.9:-73:2    -
-hw_ember       hospital           -              -0.5:1.5:-111:2   -
-hw_squadron    hospital           -              -1.5:2.5:-117:2   -
+# N2.4 Hospital Ward (hospital, hospital_late): the ward's four gates (one routed run shows all four: the other three are close shots), then one per side scene (close camera x:z:yaw:pitch)
+hw_ember       hospital             -   -2.2:1.2:-120:2   right,right,up,up,right,up,up,left
+hw_bassment    hospital             -   0.0:1.8:-125:2    -
+hw_gospel      hospital             -   -0.2:0.5:-119:2   -
+hw_squadron    hospital             -   -2.5:0.2:-118:2   -
+hw_day_bass    hospital.dayroom     -   21.0:-3.2:-53:2   right,right,up,up,right,up,up,left,up,left
+hw_cafe_gospel hospital.cafeteria   -   41.5:2.5:-48:2    right,right,up,up,right,up,up,left,up,right
+hw_garden_squad hospital.garden     -   51.0:0.5:-44:2    right,right,up,up,right,up,up,left,up,left,up
+hw_late_ember  hospital_late.cafe   -   40.5:1.0:-129:2   right,right,up,up,right,up,up,left,up,left,up,up,left,left
+hw_quiet_bass  hospital_late.quiet  -   14.2:10.5:0:2     right,right,up,up,right,up,up,left,up,left,up,up,left,right
 LIST
 rm -rf "$TMP"

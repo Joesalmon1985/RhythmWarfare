@@ -90,6 +90,11 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | hospital | hospital | enter_bassment | secret | a violet gate, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
 | hospital | hospital | enter_gospel | secret | a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel) | the star gate flickers out (-4) | always | verified |
 | hospital | hospital | enter_squadron | secret | a green gate, the Gunner pointing: the Mission Count path (route path:squadron) | the radio gate gutters out (-4) | always | verified |
+| hospital | hospital.dayroom | dayroom.enter_bassment | secret | a violet gate by the sofa, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
+| hospital | hospital.cafeteria | cafeteria.enter_gospel | secret | a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel) | the star gate flickers out (-4) | always | verified |
+| hospital | hospital.garden | garden.enter_squadron | secret | a green gate on the lawn, the Gunner pointing: the Mission Count path (route path:squadron) | the radio gate gutters out (-4) | always | verified |
+| hospital_late | hospital_late.cafe | cafe.enter_ember | secret | an orange gate, Bram holding up the ember in its glass: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
+| hospital_late | hospital_late.quiet | quiet.enter_bassment | secret | a violet gate at the quiet room's far end, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
 | ward | ward | exit_art (default) | exit | route ward.art | same door, staggering (-5 energy) | always | verified |
 | ward | ward | exit_dorm | exit | route ward.dorm | same door, staggering (-5 energy) | always | verified |
 | ward | ward | orderly | character | the orderly lets it pass (+4) | taken to the treatment room (-9) | always | verified |
