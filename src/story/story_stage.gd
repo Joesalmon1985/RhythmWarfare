@@ -166,6 +166,11 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	for id in crowds:
 		(crowds[id] as StoryCrowd).tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 		(crowds[id] as StoryCrowd).light_fn = _figure_light
+	if world.dynamic != null:  # an activity's things stand with the crowd (H8.1): same overlay, same light, one sort
+		world.dynamic.light_fn = _figure_light
+		world.dynamic.high_contrast = high_contrast
+		_overlay.add_child(world.dynamic)
+		world.dynamic.set_things(_things)
 	var ppl: StoryPeople = (crowds["main"] as StoryCrowd).people
 	if ppl != null:
 		ppl.set_fog(Color.html(str(map.fog.get("color", "#08051a"))).darkened(0.35))
@@ -363,9 +368,13 @@ func update(t: float, p_energy: float) -> void:
 				world.set_atmosphere(map.sector(_vis_sec))
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
+		if world_active and world.dynamic != null:
+			world.dynamic.set_camera(ppose, size, _vis)
 	_sec_light = {}
 	if world_active:  # the world first: the figures are lit by this frame's light
 		_update_world(t, p_energy, pose)
+		if world.dynamic != null:
+			world.dynamic.update(t)
 	for id in crowds:  # every room's crowd lives on; only the camera decides what is seen
 		var c: StoryCrowd = crowds[id]
 		c.reduced = reduced
@@ -498,8 +507,13 @@ func _person_pos(id: String) -> Variant:
 func _order_crowds() -> void:
 	var keys: Array = []
 	var nodes: Array = []
+	var lists: Array = []
 	for id in crowds:
-		for it in (crowds[id] as StoryCrowd).sort_items:
+		lists.append((crowds[id] as StoryCrowd).sort_items)
+	if world_active and world.dynamic != null:
+		lists.append(world.dynamic.sort_items)  # the activity's things (H8.1) sort with the people
+	for l: Array in lists:
+		for it in l:
 			nodes.append(it[1])
 			keys.append((int(it[0]) << 12) | (nodes.size() - 1))
 	keys.sort()
@@ -814,3 +828,56 @@ func on_sequence(result: Dictionary, t0: float) -> void:
 	if _pulses.size() > 6:
 		_pulses.pop_front()
 	_pulses.append({"t0": t0, "passed": bool(result["passed"])})
+
+
+# --- world-staged activities (CONTRACTS.md 10, ruling 38) ----------------------------------------------------------------------------
+
+var _things: Array = []  # the activity's things last set (kept for a world built later)
+
+
+## H8.1 pass-through: the activity's dynamic things now (StoryWorld.set_dynamic_things; [] clears). Without a world (a headless stage without nodes) the list is kept.
+func set_things(arr: Array) -> void:
+	_things = arr
+	if world_active and world != null:
+		world.set_dynamic_things(arr)
+
+
+## A named crowd actor of any room plays an activity state from `t0` for `dur` seconds (0: until told otherwise): StoryCrowd.person (the per-activity states and
+## their fallbacks, StoryCrowd.ACTIVITY_STATES). Returns the resolution {state, face, fallback, sheet_state} ({} when no crowd here has that actor).
+func people(id: String, state: String, t0: float, dur: float = 0.0) -> Dictionary:
+	for rid in crowds:
+		var c: StoryCrowd = crowds[rid]
+		if c.actors.has(id):
+			return c.person(id, state, t0, dur)
+	if not _warned_people.has(id):  # an activity's actor this scene does not cast (customer_7 in a small room): a no-op, said once
+		_warned_people[id] = true
+		push_warning("StoryStage.people: no actor '%s' in %s (ignored)" % [id, data.id if data != null else "?"])
+	return {}
+
+
+var _warned_people: Dictionary = {}
+
+
+## Where thing `id` (a dynamic thing, a map thing or a piece) is on screen in this stage's own coordinates (the stage area's pixels, origin its top-left): the centre of its
+## drawn rect; null when it is not drawn. StoryWorld.thing_screen_point gives the same point in the low-res viewport's pixels (where the host draws feedback).
+func thing_screen_point(id: String) -> Variant:
+	var r: Variant = thing_screen_rect(id)
+	return (r as Rect2).get_center() if r != null else null
+
+
+## The rect thing `id` is drawn in, in the stage's own coordinates (null when it is not drawn). A world_regions tap target is this rect.
+func thing_screen_rect(id: String) -> Variant:
+	if not world_active or world == null or lowres == null:
+		return null
+	var r: Variant = world.thing_screen_rect(id)
+	if r == null:
+		return null
+	var k := lowres_scale()
+	return Rect2((r as Rect2).position * k, (r as Rect2).size * k)
+
+
+## Stage pixels per low-res pixel (x, y): the low-res picture is stretched over the whole stage.
+func lowres_scale() -> Vector2:
+	if lowres == null or lowres.sub.size.x <= 0 or lowres.sub.size.y <= 0:
+		return Vector2.ONE
+	return size / Vector2(lowres.sub.size)

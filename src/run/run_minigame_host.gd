@@ -15,9 +15,14 @@ extends RefCounted
 ##   stage area's top-left in screen pixels; "" for nothing). The view is a full-rect Control on canvas layer 3 inside the stage's low-res viewport, mouse_filter ignore.
 ##
 ## Modes (CONTRACTS.md 4 and 5, hook H5.4): while a REPLACE activity owns the pad strip (MinigameController.owns_strip: from the seat to a lead-in before the resume
-## boundary) its `controls()` stand in the strip as a RunActivityInput "controls" layer (2 or 4 large buttons in the pads' rects), the pads and the note lane are hidden
-## and the lane input is cleared and off; all three come back when the strip is handed back. While an OVERLAY activity is seated a "regions" layer gives the four
+## boundary) its `controls()` stand in the strip as a RunActivityInput "controls" layer: drawn by the pads themselves in their own slots (StoryPadView.slot_fn), morphing
+## in over the beat before the seat and back over the beat after the strip is handed back (CONTRACTS.md 10); while the controls own it the note lane is hidden and the
+## lane input is cleared and off; both come back when the strip is handed back. While an OVERLAY activity is seated a "regions" layer gives the four
 ## screen regions of the stage area (top, bottom, left, right): a tap there reaches the activity as `tap("region:<name>")`. RunPlay's dispatcher asks `control_tap` / `region_tap`.
+
+## World-staged activities (CONTRACTS.md 10, ruling 38): the activity is handed `port` (a RunWorldPort, ctx["world"] in `setup`, through MinigameController.world_port) and
+## stages itself with it: its things (`set_things`, or a `things()` method read every frame while it is seated) reach the active world's stage, its people the room's crowd
+## (`people`), its feedback marks this host's feedback layer in the low-res viewport (`feedback`), its pieces the stage's piece switches. `make_view()` may return null.
 
 const DOOR_STOP_M := 2.6  # how far short of a door the camera stops after getting up toward it: the door, its light and the far half of its floor ring stay in the picture (52 degree view, eye 1.6 m up)
 
@@ -34,13 +39,20 @@ var controls_layer: RunActivityInput = null  # replace mode: the activity's cont
 var regions_layer: RunActivityInput = null  # overlay mode: the four screen regions
 var _strip_saved := {}  # the pads' and the note lane's visibility before the controls stood in
 var _result_applied := false
-var mode_log: Array = []  # [{kind: controls_on | controls_off | regions_on | regions_off | control | region, t, ...}]
+var mode_log: Array = []  # [{kind: controls_on | controls_off | morph_in | morph_out | regions_on | regions_off | control | region | people | feedback | things_off, t, ...}]
+var port: RunWorldPort  # the activity's world (CONTRACTS.md 10)
+var feedback_layer: RunActivityFeedback = null  # the feedback marks, in the active stage's low-res viewport (made at the first feedback)
+var _fb_stage: StoryStage = null  # the stage the feedback layer stands in
+var _things_stage: StoryStage = null  # the stage the activity's things were last pushed to (null: none pushed)
+var _port_things: Array = []  # the list the activity last gave through `port.set_things`
+var _strip_owned := false  # the controls owned the strip last frame (the note lane and the lane input follow it)
 
 const DEFAULT_REGIONS := {"top": [0.25, 0.0, 0.5, 0.42], "bottom": [0.25, 0.72, 0.5, 0.28], "left": [0.0, 0.0, 0.22, 1.0], "right": [0.78, 0.0, 0.22, 1.0]}  # CONTRACTS.md 5 (fixture input_ownership.json)
 
 
 func _init(p_play: Control) -> void:
 	play = p_play
+	port = RunWorldPort.new(self)
 	var spec := OS.get_environment("RW_MINIGAME_TAPS")
 	for part in spec.split(",", false):
 		var bits := part.strip_edges().split("@")
@@ -51,6 +63,8 @@ func _init(p_play: Control) -> void:
 ## Every frame after `minigames.update(t)`.
 func step(t: float) -> void:
 	var mg: MinigameController = play.minigames
+	if mg.world_port == null:
+		mg.world_port = port
 	play.hud.silent = mg.active()
 	if mg.activity != null and mg.activity != _viewed:
 		_viewed = mg.activity
@@ -62,6 +76,9 @@ func step(t: float) -> void:
 				var ok := mg.tap(str(s["target"]), t)
 				play.hotspot_log.append({"kind": "minigame_tap", "t": t, "target": str(s["target"]), "ok": ok, "scripted": true})
 	_step_layers(t)
+	_step_things(t)
+	if feedback_layer != null:
+		feedback_layer.prune(t)
 	if mg.done_t >= 0.0 and not _result_applied:  # (read once, when the activity is done: the flags are saved then, not at the boundary)
 		_result_applied = true
 		apply_result(mg.last_result, str(mg.request_info.get("theme", "")))
@@ -77,10 +94,19 @@ func step(t: float) -> void:
 ## The controls layer while the activity owns the strip, the regions layer while an overlay activity is seated.
 func _step_layers(t: float) -> void:
 	var mg: MinigameController = play.minigames
-	var want_controls := mg.owns_strip(t)
-	if want_controls and controls_layer == null:
+	var want_layer := wants_controls_layer(mg, t, play.engine.beat_s)
+	if want_layer and controls_layer == null:
 		_show_controls(t)
-	elif not want_controls and controls_layer != null:
+	if controls_layer != null:
+		controls_layer.t_in = mg.seat_t
+		controls_layer.t_out = handback_t(mg)
+		var own := mg.owns_strip(t)
+		controls_layer.owning = own
+		if own and not _strip_owned:
+			_take_strip(t)
+		elif not own and _strip_owned:
+			_give_strip(t)
+	if not want_layer and controls_layer != null:
 		_hide_controls(t)
 	var want_regions := mg.mode == ActivityMode.Mode.OVERLAY and mg.state in ["active", "leaving"]
 	if want_regions and regions_layer == null:
@@ -107,6 +133,23 @@ func _add_layer(l: Control) -> void:
 		play.move_child(l, play.hud.get_index())
 
 
+## Whether the controls layer stands now (a replace activity: from a beat before the seat until a beat after the strip is handed back; the morph needs it either side).
+static func wants_controls_layer(mg: MinigameController, t: float, beat_s: float) -> bool:
+	if mg.mode != ActivityMode.Mode.REPLACE or mg.activity == null or mg.state == "":
+		return false
+	if mg.owns_strip(t):
+		return true
+	var b := beat_s * RunActivityInput.MORPH_BEATS
+	if mg.state == "entering":
+		return t >= mg.seat_t - b
+	return t < handback_t(mg) + b
+
+
+## The song time the strip goes back to the pads (a lead-in before the resume boundary); INF while not known yet.
+static func handback_t(mg: MinigameController) -> float:
+	return mg.resume_t - mg.lead_in_s if mg.state == "resuming" and mg.resume_t >= 0.0 else INF
+
+
 func _show_controls(t: float) -> void:
 	var mg: MinigameController = play.minigames
 	var specs: Array = mg.activity.controls() if mg.activity != null else []
@@ -117,30 +160,52 @@ func _show_controls(t: float) -> void:
 		var d: Dictionary = c if typeof(c) == TYPE_DICTIONARY else {"id": str(c)}
 		controls_layer.ids.append(str(d.get("id", "")))
 		controls_layer.labels.append(str(d.get("label", d.get("id", ""))))
+		controls_layer.specs.append(d)
 	var n := controls_layer.ids.size()
 	var pv: Control = play.pad_view
 	controls_layer.rects_fn = func() -> Array: return RunActivityInput.control_rects(pv.call("button_rects"), n)
+	controls_layer.pad_view = pv
+	controls_layer.beat_s = play.engine.beat_s
+	controls_layer.now_fn = func() -> float: return play.hud.now_t
+	controls_layer.t_in = mg.seat_t
+	controls_layer.t_out = handback_t(mg)
+	if "slot_fn" in pv:
+		pv.set("slot_fn", controls_layer.slot)
 	_add_layer(controls_layer)
-	_strip_saved = {"pads": play.pad_view.visible, "notes": play.note_lane.visible}
+	mode_log.append({"kind": "morph_in", "t": t, "ids": controls_layer.ids.duplicate(), "at": mg.seat_t})
+
+
+func _hide_controls(t: float) -> void:
+	if _strip_owned:
+		_give_strip(t)
+	if "slot_fn" in play.pad_view:
+		play.pad_view.set("slot_fn", Callable())
+	controls_layer.queue_free()
+	controls_layer = null
+	mode_log.append({"kind": "morph_out", "t": t})
+
+
+## The controls take the strip's taps: the note lane goes (no cue is charted meanwhile) and the lane input is cleared and off. The pads stay drawn: they show the controls.
+func _take_strip(t: float) -> void:
+	_strip_owned = true
+	_strip_saved = {"notes": play.note_lane.visible}
 	play.lane_input.clear()
 	play.lane_input.enabled = false
-	play.pad_view.visible = false
 	play.note_lane.visible = false
 	mode_log.append({"kind": "controls_on", "t": t, "ids": controls_layer.ids.duplicate()})
 
 
-func _hide_controls(t: float) -> void:
-	controls_layer.queue_free()
-	controls_layer = null
-	play.pad_view.visible = bool(_strip_saved.get("pads", true))
+func _give_strip(t: float) -> void:
+	_strip_owned = false
 	play.note_lane.visible = bool(_strip_saved.get("notes", true))
 	play.lane_input.enabled = true
 	mode_log.append({"kind": "controls_off", "t": t})
 
 
-## The activity's controls own the pad strip now (the pads are refused: RunPlay `_on_button_pressed`).
+## The activity's controls own the pad strip now (the pads are refused: RunPlay `_on_button_pressed`). The layer stands a beat longer either side for the morph, but
+## owns no tap then.
 func owns_strip() -> bool:
-	return controls_layer != null
+	return controls_layer != null and controls_layer.owning
 
 
 ## A tap in the pad strip while the controls own it: the control under it is pressed (the activity's `tap(id)`). Returns the id ("" for a gap).
@@ -377,3 +442,89 @@ func holds_rail() -> bool:
 
 func _run_ending() -> bool:
 	return play._ended or play.engine.over or play.engine.energy <= 0.0
+
+
+# --- world-staged activities (CONTRACTS.md 10, ruling 38) ----------------------------------------------------------------------------
+
+## The stage of the active world (null when none is built).
+func active_stage() -> StoryStage:
+	if play.stages.has(play.active_world):
+		return play.stages[play.active_world]["stage"]
+	return null
+
+
+## Every frame: while the activity is seated (active, leaving, or done and waiting for the resume boundary) its things reach the active stage, from its `things()` when it
+## has one, else from the last `port.set_things`; once it is gone the stage gets [] (once).
+func _step_things(t: float) -> void:
+	var mg: MinigameController = play.minigames
+	var st := active_stage()
+	var seated := mg.activity != null and mg.state in ["active", "leaving", "resuming"]
+	if seated and st != null:
+		var arr: Array = mg.activity.call("things") if mg.activity.has_method("things") else _port_things
+		if _things_stage != null and _things_stage != st:
+			_things_stage.set_things([])
+		st.set_things(arr)
+		_things_stage = st
+	elif _things_stage != null:
+		_things_stage.set_things([])
+		_things_stage = null
+		_port_things = []
+		mode_log.append({"kind": "things_off", "t": t})
+
+
+## RunWorldPort: the activity's things now (an activity without `things()` pushes them this way).
+func set_things(arr: Array) -> void:
+	_port_things = arr.duplicate(true)
+
+
+## RunWorldPort: a named actor of the room plays `state` (StoryStage.people; an unknown actor is a no-op with a warning).
+func people(id: String, state: String, t0: float, dur: float = 0.0) -> void:
+	var st := active_stage()
+	var r: Dictionary = st.people(id, state, t0, dur) if st != null else {}
+	mode_log.append({"kind": "people", "t": t0, "id": id, "state": state, "dur": dur, "played": str(r.get("state", "")), "fallback": bool(r.get("fallback", false))})
+
+
+## RunWorldPort: a feedback mark (tick, cross or glow) at thing `thing`'s screen point from song time `t` (RunActivityFeedback). Drawn in the active stage's low-res
+## viewport, over the crowd; an unknown kind is ignored with a warning.
+func feedback(thing: String, kind: String, t: float) -> void:
+	if kind not in RunActivityFeedback.KINDS:
+		push_warning("RunMinigameHost.feedback: unknown kind '%s' (tick, cross, glow)" % kind)
+		return
+	var st := active_stage()
+	if st == null:
+		return
+	if feedback_layer == null or not is_instance_valid(feedback_layer) or _fb_stage != st:
+		_make_feedback_layer(st)
+	if feedback_layer != null:
+		feedback_layer.entries.append({"thing": thing, "kind": kind, "t": t})
+	mode_log.append({"kind": "feedback", "t": t, "thing": thing, "mark": kind})
+
+
+func _make_feedback_layer(st: StoryStage) -> void:
+	if feedback_layer != null and is_instance_valid(feedback_layer):
+		var old: Node = feedback_layer.get_parent()
+		feedback_layer.queue_free()
+		if old != null and old is CanvasLayer:
+			old.queue_free()
+	feedback_layer = null
+	_fb_stage = st
+	var fb := RunActivityFeedback.new()
+	fb.name = "ActivityFeedback"
+	fb.beat_s = play.engine.beat_s
+	fb.reduced = Session.reduced_effects
+	fb.now_fn = func() -> float: return play.hud.now_t
+	fb.point_fn = func(id: String) -> Variant: return st.world.thing_screen_point(id) if st.world != null else null
+	fb.size_fn = func(id: String) -> float:
+		var r: Variant = st.world.thing_screen_rect(id) if st.world != null else null
+		return (r as Rect2).size.y if r != null else 0.0
+	if st.lowres != null:
+		var l := st.lowres.add_overlay(fb, "ActivityFeedback")
+		l.layer = 4  # over the crowd and the things (1) and a view's layer (3)
+	feedback_layer = fb
+
+
+## RunWorldPort: a piece switch of the active stage ({t0, action: piece_on | piece_off | piece_pulse, args: {piece, bars?}}).
+func stage_action(a: Dictionary) -> void:
+	var st := active_stage()
+	if st != null:
+		st.apply(a)
