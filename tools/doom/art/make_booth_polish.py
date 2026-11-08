@@ -62,7 +62,7 @@ def wall_foam():
             v = np.clip(0.25 + 0.6 * (1 - np.abs(rib - 0.35) * 2.2), 0, 1)
             v = v + (dk.vnoise(T, T, int(rng.integers(1 << 30)), ((8, 0.5), (32, 0.5))) - 0.5) * 0.25
             sel = (yy >= py) & (yy < py + 64) & (xx >= px) & (xx < px + 64)
-            arr[sel] = dk.ramp(np.clip(v[sel], 0, 1)[None, :], ("#141408", "#262612", "#3a3a1c", "#52522a", "#6e6c3a"), cell=2)[0]
+            arr[sel] = dk.ramp(np.clip(v[sel], 0, 1)[None, :], ("#0c0c04", "#22220e", "#3a3a1c", "#5a5a2e", "#8a8648"), cell=2)[0]
     for k in range(0, T, 64):
         arr[k:k + 2, :] = dk.hexa("#0a0a06")
         arr[:, k:k + 2] = dk.hexa("#0a0a06")
@@ -125,7 +125,7 @@ def shutter_open():
 
 def wall_dock():
     """The dock annex and the balcony walls: corrugated steel cladding (vertical ribs lit on one side), rust runs, rain streaks."""
-    arr = dk.ramp(dk.vnoise(T, T, 651, ((4, 0.5), (16, 0.5))) * 0.5 + 0.25, ("#1a1410", "#2e241a", "#443424", "#5c4630", "#7a5c3c"), cell=2)
+    arr = dk.ramp(dk.vnoise(T, T, 651, ((4, 0.5), (16, 0.5))) * 0.5 + 0.25, ("#120e0a", "#2a2018", "#443424", "#64503a", "#94724c"), cell=2)
     yy, xx = np.indices((T, T))
     rib = (xx % 16) / 16.0
     arr *= (0.75 + 0.45 * np.clip(1 - np.abs(rib - 0.3) * 3, 0, 1))[..., None]

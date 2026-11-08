@@ -297,7 +297,7 @@ def main():
     barriers(d, names)
     d["sky"] = dict(SKY)
     d["weather"] = {"rain": WEATHER["rain"], "wind": WEATHER["wind"], "drips": [dict(x) for x in WEATHER["drips"]]}
-    d["fog"] = {"color": "#2a1618", "density": 0.018}
+    d["fog"] = {"color": "#1a0e10", "density": 0.018}
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("bt_")]

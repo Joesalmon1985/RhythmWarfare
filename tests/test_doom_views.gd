@@ -479,7 +479,7 @@ func test_booth_railing_visibility_decals_and_the_art_are_in_the_map() -> void:
 			desk += 1
 		elif str(w["tex"]) == "bt_window":
 			window += 1
-	assert_true(desk >= 1, "booth: the desk's edge carries the railing (%d)" % desk)
+	assert_eq(desk, 0, "booth: stage D polish: the desk stands on the floor as the painting's big foreground desk, no handrail before it (%d)" % desk)
 	assert_true(window >= 1, "booth: the window onto the balcony is the mesh railing (%d)" % window)
 	var decals := 0
 	var lit := 0

@@ -1,14 +1,14 @@
-MOVE dk_under via=3 length=18.5
+MOVE dk_under via=3 length=16.4
 WALK right 0 t=0.00 @1.000:-1.500:5.4:0.0:1.850 sector=0_0 ground=0.250 above=1.60 still=0.00
-WALK right 1 t=0.63 @1.284:-1.825:-14.7:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
-WALK right 2 t=1.25 @2.063:-2.714:-40.1:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
-WALK right 3 t=1.88 @3.226:-4.044:-41.0:0.0:1.847 sector=0_0 ground=0.250 above=1.60 still=0.00
-WALK right 4 t=2.51 @4.613:-5.722:-33.2:0.0:1.584 sector=3_0 ground=0.000 above=1.58 still=0.00
-WALK right 5 t=3.13 @5.721:-7.889:-27.1:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
-WALK right 6 t=3.76 @6.947:-10.000:-61.1:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
-WALK right 7 t=4.39 @9.295:-10.155:-57.8:0.0:1.584 sector=4_0 ground=0.000 above=1.58 still=0.00
-WALK right 8 t=5.02 @10.435:-12.017:-32.8:0.0:1.597 sector=4_0 ground=0.000 above=1.60 still=0.00
-WALK right 9 t=5.64 @11.357:-13.524:-51.6:0.0:1.594 sector=4_0 ground=0.000 above=1.59 still=0.00
-WALK right 10 t=6.27 @11.975:-14.532:-77.1:0.0:1.594 sector=4_0 ground=0.000 above=1.59 still=0.00
-WALK right 11 t=6.90 @12.200:-14.900:-90.0:0.0:1.600 sector=4_0 ground=0.000 above=1.60 still=0.00
+WALK right 1 t=0.63 @1.252:-1.788:-14.7:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK right 2 t=1.25 @1.943:-2.578:-40.1:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK right 3 t=1.88 @2.976:-3.758:-41.2:0.0:1.847 sector=0_0 ground=0.250 above=1.60 still=0.00
+WALK right 4 t=2.51 @4.252:-5.217:-35.5:0.0:1.584 sector=3_0 ground=0.000 above=1.58 still=0.00
+WALK right 5 t=3.13 @5.312:-7.089:-27.8:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
+WALK right 6 t=3.76 @6.329:-9.078:-31.4:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
+WALK right 7 t=4.39 @7.596:-10.796:-31.4:0.0:1.584 sector=6_0 ground=0.000 above=1.58 still=0.00
+WALK right 8 t=5.02 @8.379:-12.401:-14.6:0.0:1.597 sector=6_0 ground=0.000 above=1.60 still=0.00
+WALK right 9 t=5.64 @8.338:-13.968:-42.1:0.0:1.594 sector=6_0 ground=0.000 above=1.59 still=0.00
+WALK right 10 t=6.27 @8.310:-15.017:-97.6:0.0:1.594 sector=6_0 ground=0.000 above=1.59 still=0.00
+WALK right 11 t=6.90 @8.300:-15.400:-125.5:0.0:1.600 sector=6_0 ground=0.000 above=1.60 still=0.00
 HOLD dk_under 1.0 moved=0.0028 turned=0.000
