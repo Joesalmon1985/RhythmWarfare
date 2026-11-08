@@ -16,6 +16,7 @@ const PATH := "res://content/run/track_scenes.json"
 const FORMAT := "rhythm_warfare.track_scenes.v1"
 const MAIN_KEY := "main"
 const PACKS_USER_DIR := "user://track_packs"
+const PACKS_BUNDLED_DIR := "res://track_packs"  # Stage E: the re-encoded packs the Android export carries (tools/audio_import/build_android_packs.py; Git ignores the folder)
 const ENTRY_KEYS := ["track", "entry", "chart", "start_bar", "laps", "doors_from_lap", "lead_in_bars", "max_laps", "alternates", "note"]
 const DEFAULT_KEYS := ["entry", "lead_in_bars", "doors_from_lap", "chart", "max_laps", "note"]
 
@@ -51,13 +52,15 @@ static func _under_test_runner() -> bool:
 	return s is Script and (s as Script).resource_path == "res://tests/run_tests.gd"
 
 
-## The folder the packs are looked up in, absolute.
+## The folder the packs are looked up in, absolute: RW_TRACKS_DIR, else user://track_packs, else (when that folder is absent) the bundled res://track_packs.
 static func packs_root() -> String:
 	var d := packs_dir_override
 	if d == "":
 		d = OS.get_environment("RW_TRACKS_DIR")
 	if d == "":
 		d = PACKS_USER_DIR
+		if not DirAccess.dir_exists_absolute(PACKS_USER_DIR) and DirAccess.dir_exists_absolute(PACKS_BUNDLED_DIR):
+			d = PACKS_BUNDLED_DIR  # no packs pushed by hand: the ones inside the build
 	return ProjectSettings.globalize_path(d) if d.begins_with("res://") or d.begins_with("user://") else d
 
 
