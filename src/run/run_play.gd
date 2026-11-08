@@ -918,6 +918,7 @@ func summary() -> Dictionary:
 	var moves := 0
 	var looks := 0
 	var walks := 0
+	var holds := 0  # a choice viewpoint's window: the camera stands still (player_hold) instead of the block's glance (ruling 35a, RunJourney._block_result)
 	for a in journey_log:
 		match str(a["action"]):
 			"player_move":
@@ -926,12 +927,14 @@ func summary() -> Dictionary:
 				looks += 1
 			"player_walk":
 				walks += 1
+			"player_hold":
+				holds += 1
 	var worlds_seen: Array = []
 	for p in phase_log:
 		var wid := str(p.get("world", data.nodes[str(p["node"])]["world"] if data.nodes.has(str(p["node"])) else ""))
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
-	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "holds": holds, "strolls": walks, "worlds": stages.keys(),
 		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size(), "tracks": track_log}
 
 
