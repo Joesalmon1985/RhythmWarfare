@@ -104,7 +104,7 @@ VARIANTS = {"WALLS": ["wh_steel_a", "wh_brick_a", "wh_steel_b", "wh_brick_b", "w
 OWN_TILES = ["wh_walk", "wh_grate", "wh_dance", "wh_boards", "wh_stage_boards", "wh_carpet", "wh_steel_a", "wh_steel_b", "wh_steel_c", "wh_brick_a", "wh_brick_b", "wh_brick_c",
              "wh_bar_brick", "wh_velvet", "wh_roof", "wh_ceil_bar", "wh_ceil_lounge", "wh_trim", "wh_speaker", "wh_cube"]
 PROPS = ["wh_p_banner", "wh_p_banner_b", "wh_p_speaker", "wh_p_backbar", "wh_p_counter", "wh_p_lamp_cu", "wh_p_lamp_lg", "wh_p_pelmet", "wh_p_case", "wh_p_window", "wh_p_beam",
-         "wh_p_case2", "wh_p_plant", "wh_p_sofa"]
+         "wh_p_case2", "wh_p_plant", "wh_p_sofa", "wh_p_pendant", "wh_p_sconce"]
 BORROWED = ["thing_truss_tower"]
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.9, 0.75, 2.5  # exposure (docs/doom/scenes/warehouse.md): the Doom lights are low for this renderer; A1's night-interior median is 0.25 to 0.38
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
@@ -113,16 +113,25 @@ GUIDES = {  # id suffix: doom point, size (height m), lamp point
     "bar": ((-600, -300), 2.2, (-600, -250)),
     "lounge": ((-465, -604), 2.2, (-440, -604)),
 }
+# stage D exposure pass: the painting's caged wall lanterns along the hall's walls (here the faces of the 3 m terrace riser round the walkway), each a small emissive
+# billboard 0.25 m off the wall with an amber wall-wash light (SCONCE_LIGHTS): warm practicals against the cobalt, as the painting's far wall has them
+SCONCES = [(-735, -300), (-735, 120), (-735, 520), (-300, -735), (120, -735), (520, -735), (-300, 735), (120, 735), (520, 735), (735, -300), (735, 120), (735, 520)]
 THINGS = [  # extra dressing: id, sprite, doom point, y (centre over the floor), size (height m), extra keys (blend, emissive)
     # over the floor (the painting's rig): two hanging speaker stacks, treble-clef banners at the hall's far sides, four spotlight shafts (additive), the truss towers
     ("wh_spk_a", "wh_p_speaker", (-120, 60), 6.4, 2.6, {}), ("wh_spk_b", "wh_p_speaker", (180, -170), 6.4, 2.6, {}),
     ("wh_banner_a", "wh_p_banner", (-360, 560), 5.6, 3.4, {}), ("wh_banner_b", "wh_p_banner_b", (560, -380), 5.6, 3.4, {}), ("wh_banner_c", "wh_p_banner", (300, 600), 5.6, 3.4, {}),
     ("wh_beam_a", "wh_p_beam", (-250, 120), 4.8, 8.0, {"blend": "add"}), ("wh_beam_b", "wh_p_beam", (-20, -60), 4.8, 8.0, {"blend": "add"}),
     ("wh_beam_c", "wh_p_beam", (200, 230), 4.8, 8.0, {"blend": "add"}), ("wh_beam_d", "wh_p_beam", (260, -20), 4.8, 8.0, {"blend": "add"}),
+    # stage D exposure pass: more of the painting's shafts (it has six or more over the floor), so every view across the floor has one
+    ("wh_beam_e", "wh_p_beam", (150, -380), 4.8, 8.0, {"blend": "add"}), ("wh_beam_f", "wh_p_beam", (420, -330), 4.8, 8.0, {"blend": "add"}),
+    ("wh_beam_g", "wh_p_beam", (-380, 360), 4.8, 8.0, {"blend": "add"}), ("wh_beam_h", "wh_p_beam", (380, 420), 4.8, 8.0, {"blend": "add"}),
+    ("wh_beam_i", "wh_p_beam", (-120, 420), 4.8, 8.0, {"blend": "add"}),
     ("wh_truss_a", "thing_truss_tower", (-720, 720), 2.5, 5.0, {}), ("wh_truss_b", "thing_truss_tower", (720, -720), 2.5, 5.0, {}),
     ("wh_truss_c", "thing_truss_tower", (730, 540), 2.5, 5.0, {}),
     # the stage: the window onto the night city behind the guide (a backdrop billboard: there is no wall there)
     ("wh_window", "wh_p_window", (-230, -120), 3.1, 3.2, {"emissive": True}),
+    ("wh_pend_stage_a", "wh_p_pendant", (-330, -250), 3.9, 1.0, {"emissive": True}), ("wh_pend_stage_b", "wh_p_pendant", (-330, -130), 3.9, 1.0, {"emissive": True}),
+    ("wh_pend_bar_in", "wh_p_pendant", (-680, -260), 3.0, 0.8, {"emissive": True}),
     # the bar: counter in front of the guide (two halves), the copper lamp over him, the flight cases and a plant on the walkway at its mouth
     ("wh_counter_a", "wh_p_counter", (-622, -335), 0.65, 1.3, {}), ("wh_counter_b", "wh_p_counter", (-588, -337), 0.65, 1.3, {}),
     ("wh_pend_copper", "wh_p_lamp_cu", (-606, -300), 3.0, 0.9, {"emissive": True}), ("wh_case_a", "wh_p_case", (-700, -440), 0.55, 1.1, {}),
@@ -130,10 +139,15 @@ THINGS = [  # extra dressing: id, sprite, doom point, y (centre over the floor),
     # the lounge: the lamp beside the guide, the oxblood sofa behind him, a plant at its mouth
     ("wh_stdlamp_lounge", "wh_p_lamp_lg", (-440, -625), 0.85, 1.7, {"emissive": True}), ("wh_sofa", "wh_p_sofa", (-430, -700), 0.5, 0.95, {}),
     ("wh_plant_lounge", "wh_p_plant", (-530, -728), 0.75, 1.5, {}),
-]
+    # stage D exposure pass: the painting's hanging pendants over the walkway (emissive, each with its amber pool below: WALK_PENDANTS)
+] + [("wh_sconce_%d" % i, "wh_p_sconce", at, 2.3, 1.1, {"emissive": True}) for i, at in enumerate(SCONCES)] + [("wh_pend_%d" % i, "wh_p_pendant", at, 3.4, 1.0, {"emissive": True}) for i, at in enumerate(((-640, -470), (-470, -545), (-660, -120), (-120, -660), (-660, 260), (260, -660), (-660, 620), (620, -660)))]
+WET = {  # stage D: the painting's wet floor (the weather engine's gloss, a dry map: the practicals' highlights smeared on the floor toward the eye)
+    "stone_ring": 0.75, "plate": 0.75, "gate_step_s": 0.6, "gate_step_w": 0.6, "courtyard": 0.55, "terrace": 0.5,
+}
 DECALS = [  # on a wall: id, sprite, doom point (within 0.35 m of a wall of its sector), y (bottom edge), height m, emissive
     ("wh_backbar_a", "wh_p_backbar", (-690, -206), 1.0, 1.7, True), ("wh_backbar_b", "wh_p_backbar", (-620, -206), 1.0, 1.7, True),
     ("wh_pelmet", "wh_p_pelmet", (-406, -662), 2.2, 1.6, False),
+    ("wh_sconce_bar", "wh_p_sconce", (-562, -300), 1.8, 1.0, True),  # stage D: the caged lantern on the bar's outer wall, facing the walkway
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength   (cobalt over the floor and the walkway, amber in the bar and the lounge, a cool pool on the stage)
     ("wh_lt_floor", (0, 0), 6.0, 16.0, "#4a72ff", 1.6), ("wh_lt_cube", (66, 22), 3.2, 5.0, "#ff4b6e", 1.4),
@@ -148,7 +162,13 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (cobalt over the flo
     ("wh_lt_plinth_sw", (-330, -330), 0.7, 5.0, "#ffa040", 2.0), ("wh_lt_plinth_nw", (-330, 330), 0.7, 5.0, "#ffa040", 2.0),
     ("wh_lt_plinth_se", (330, -330), 0.7, 5.0, "#ffa040", 2.0), ("wh_lt_plinth_ne", (330, 330), 0.7, 5.0, "#ffa040", 2.0),
     ("wh_lt_walk_w", (-640, -470), 3.0, 5.5, "#ffb860", 1.6), ("wh_lt_walk_s", (-470, -540), 3.0, 5.5, "#ffb860", 1.6),
-]
+    # stage D exposure pass: an amber pool under every walkway pendant (the painting's warm pools on the wet steel against the cobalt hall) and the bar's wall lantern
+    ("wh_lt_pend_w2", (-660, -120), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s2", (-120, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_pend_w3", (-660, 260), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s3", (260, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_pend_w4", (-660, 620), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s4", (620, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_sconce_bar", (-575, -300), 2.0, 3.5, "#ffa040", 1.4),
+] + [("wh_lt_sconce_%d" % i, (x - 30 * (x > 0) + 30 * (x < 0) if abs(x) == 735 else x, y - 30 * (y > 0) + 30 * (y < 0) if abs(y) == 735 else y), 2.3, 5.0, "#ffa848", 1.8)
+     for i, (x, y) in enumerate(SCONCES)]
 
 
 def barriers(d):
@@ -240,6 +260,10 @@ def main():
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"] = f, w, c, lift(tint)
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        if nm in WET:
+            s["wet"] = WET[nm]
+        else:
+            s.pop("wet", None)
     for s in d["sectors"]:
         for k in ("floor_tex", "wall_tex", "ceil_tex"):
             used[s[k]] = True
@@ -264,7 +288,7 @@ def main():
     d["visibility"] = {"mode": "clip", "depth": 48, "far": 0}  # 72 pieces: the portal walk that narrows its window at every portal (the flood's 7 portals is too few for an open hall)
     barriers(d)
     d["sky"] = {}
-    d["fog"] = {"color": "#2f48ac", "density": 0.021}
+    d["fog"] = {"color": "#3654b8", "density": 0.021}
     d["palette_weight"] = 1.0
     # waypoints
     keep = [w for w in d["waypoints"] if not w["id"].startswith("wh_")]

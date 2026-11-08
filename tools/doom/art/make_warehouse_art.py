@@ -84,7 +84,7 @@ def sheen(img, wet, cols, thresh=0.62, seed=0):
 def tile_walk():
     """The steel-plated walkway: 1 m plates with seams and rivets, a diamond tread, wet: cobalt reflections streaked toward the floor and puddle gloss."""
     yy, xx = grid()
-    v = 0.36 + (noise(N, N, 3, 16) - 0.5) * 0.25 + (noise(N, N, 4, 3) - 0.5) * 0.12
+    v = 0.44 + (noise(N, N, 3, 16) - 0.5) * 0.25 + (noise(N, N, 4, 3) - 0.5) * 0.12
     tread = ((xx + yy) % 12 < 2) | ((xx - yy) % 12 < 2)
     v += np.where(tread, 0.07, 0.0)
     seam = (xx % 128 < 2) | (yy % 128 < 2)
@@ -124,7 +124,7 @@ def tile_grate():
 def tile_dance():
     """The dance floor: dark wet tiles with blue LED dots (the painting's glowing discs) and their pools reflected in the wet."""
     yy, xx = grid()
-    v = 0.16 + (noise(N, N, 21, 16) - 0.5) * 0.18
+    v = 0.22 + (noise(N, N, 21, 16) - 0.5) * 0.18
     v[(xx % 64 < 2) | (yy % 64 < 2)] = 0.02
     img = ramp(v, COBALT[:4], 0.9)
     rng = np.random.default_rng(22)
@@ -133,10 +133,10 @@ def tile_dance():
             jx, jy = cx + int(rng.integers(-3, 4)), cy + int(rng.integers(-3, 4))
             b = 0.55 + rng.random() * 0.45
             d = np.hypot(xx - jx, (yy - jy) * 1.2)
-            pool = (d < 11) & (BAYER[yy % 4, xx % 4] < (1 - d / 11.0) * b)
+            pool = (d < 13) & (BAYER[yy % 4, xx % 4] < (1 - d / 13.0) * b)
             img[pool] = hexc("#2440c8")
-            img[(d < 6) & (BAYER[yy % 4, xx % 4] < b)] = hexc("#3f66f0")
-            img[(d < 3.2)] = hexc("#7fa0ff")
+            img[(d < 7) & (BAYER[yy % 4, xx % 4] < b)] = hexc("#3f66f0")
+            img[(d < 4.2)] = hexc("#7fa0ff")
             img[(d < 1.5)] = hexc("#c8d8ff")
     wet = noise(N, N, 23, 32, 2)
     return sheen(img, wet, ["#16258a", "#3f66f0"], 0.66)
@@ -183,7 +183,7 @@ def tile_steel_wall(seed):
     pw = [64, 128, 85][seed % 3]
     for py in range(0, N, 128):
         for px in range(0, N, pw):
-            b = 0.32 + rng.random() * 0.18
+            b = 0.38 + rng.random() * 0.18
             ly, lx = yy[py:py + 128, px:px + pw] - py, xx[py:py + 128, px:px + pw] - px
             v[py:py + 128, px:px + pw] = b + 0.14 * (1 - ly / 128.0) * (1 - lx / max(1, pw)) + 0.02
     v += (noise(N, N, seed, 4) - 0.5) * 0.16
@@ -391,10 +391,10 @@ def spr_beam(w=160, h=256):
     d = np.abs(xx - w / 2) / half
     a = np.clip(1 - d, 0, 1) ** 1.5 * (0.25 + 0.75 * (1 - yy / h) ** 0.6)
     rgb = np.zeros((h, w, 3), np.uint8)
-    rgb[:] = hexc("#4a6cff")
+    rgb[:] = hexc("#6a8cff")
     mote = (noise(h, w, 121, 2) > 0.8) & (d < 0.8)
     rgb[mote] = hexc("#c8d8ff")
-    out = np.dstack([rgb, (np.clip(a * 1.2, 0, 1) * 255).astype(np.uint8)])
+    out = np.dstack([rgb, (np.clip(a * 1.6, 0, 1) * 255).astype(np.uint8)])
     return out
 
 
@@ -478,6 +478,9 @@ PROPS = {  # name: (function or painting cut args)
     "wh_p_lamp_lg": dict(box=(1496, 328, 1568, 438), poly=[(1515, 330), (1550, 330), (1566, 375), (1542, 381), (1540, 436), (1522, 436), (1520, 381), (1498, 375)]),
     "wh_p_pelmet": dict(box=(1436, 165, 1672, 330)),
     "wh_p_case": dict(box=(0, 700, 145, 941), poly=[(0, 708), (132, 708), (144, 720), (144, 941), (0, 941)]),
+    # stage D exposure pass: the painting's practicals, emissive in the map: the hanging pendant over the walkway and the caged wall lantern (with its glow on the wall)
+    "wh_p_pendant": dict(box=(820, 100, 870, 170), poly=[(842, 100), (847, 100), (847, 126), (858, 132), (862, 150), (869, 160), (868, 169), (821, 169), (821, 160), (828, 150), (832, 132), (842, 126)], keep_dark=70),
+    "wh_p_sconce": dict(box=(1280, 310, 1322, 348)),
 }
 
 
