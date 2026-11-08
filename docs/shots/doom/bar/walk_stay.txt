@@ -1,7 +1,7 @@
 MOVE wb_bridge via=1 length=6.1
 WALK stay 0 t=1.84 @0.297:-1.079:-7.1:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
 WALK stay 1 t=3.68 @0.664:-4.011:-34.9:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00
-WALK stay 2 t=5.52 @2.000:-4.300:0.0:0.0:1.600 sector=10_0 ground=0.000 above=1.60 still=0.00
+WALK stay 2 t=5.52 @2.000:-4.300:-21.3:0.0:1.600 sector=10_0 ground=0.000 above=1.60 still=0.00
 HOLD wb_bridge 2.0 moved=0.0028 turned=0.000
 MOVE wb_counter via=2 length=4.7
 WALK stay 3 t=10.11 @0.781:-4.300:149.6:0.0:1.588 sector=0_0 ground=0.000 above=1.59 still=0.00

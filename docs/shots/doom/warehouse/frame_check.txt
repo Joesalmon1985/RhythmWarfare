@@ -1,19 +1,19 @@
 shot                      p5   p50   p95   sat   crush  blown  target
-approach_bar_a          0.13  0.26  0.55  0.47    0.0%   0.1%  ok
-approach_bar_b          0.11  0.25  0.50  0.43    0.0%   0.1%  off
-approach_lounge_a       0.12  0.24  0.46  0.56    0.0%   0.1%  off
-approach_lounge_b       0.11  0.24  0.48  0.56    0.0%   0.1%  off
-approach_stage_a        0.11  0.24  0.51  0.63    0.0%   0.1%  off
-approach_stage_b        0.10  0.27  0.61  0.56    0.0%   0.1%  ok
-approach_stage_c        0.11  0.25  0.46  0.58    0.0%   0.1%  off
-arrive_corridor         0.12  0.25  0.52  0.52    0.0%   0.1%  off
-ref                     0.13  0.25  0.51  0.53    0.0%   0.1%  off
-reveal_fence            0.11  0.24  0.39  0.63    0.0%   0.0%  off
-reveal_platform         0.10  0.27  0.52  0.62    0.0%   0.1%  ok
-reveal_plinths          0.12  0.24  0.60  0.57    0.0%   0.1%  off
-stay_1                  0.13  0.28  0.52  0.60    0.0%   0.2%  off
-stay_2                  0.11  0.27  0.44  0.61    0.0%   0.3%  off
-stay_3                  0.13  0.26  0.52  0.53    0.0%   0.1%  off
-stay_4                  0.13  0.26  0.57  0.55    0.0%   0.4%  ok
-stumble                 0.13  0.25  0.47  0.52    0.0%   0.1%  off
-ALL                     0.12  0.25  0.51  0.56    0.0%   0.1%  contrast p95-p5 0.40
+approach_bar_a          0.13  0.27  0.59  0.45    0.0%   0.1%  ok
+approach_bar_b          0.12  0.26  0.50  0.41    0.0%   0.1%  off
+approach_lounge_a       0.12  0.26  0.54  0.53    0.0%   0.1%  ok
+approach_lounge_b       0.11  0.25  0.55  0.53    0.0%   0.1%  ok
+approach_stage_a        0.13  0.27  0.64  0.60    0.0%   0.1%  ok
+approach_stage_b        0.11  0.29  0.68  0.53    0.0%   0.1%  ok
+approach_stage_c        0.13  0.27  0.48  0.56    0.0%   0.1%  off
+arrive_corridor         0.13  0.27  0.57  0.50    0.0%   0.1%  ok
+ref                     0.13  0.27  0.60  0.51    0.0%   0.1%  ok
+reveal_fence            0.12  0.26  0.66  0.59    0.0%   0.1%  ok
+reveal_platform         0.11  0.31  0.74  0.54    0.0%   0.3%  ok
+reveal_plinths          0.13  0.25  0.69  0.55    0.0%   0.1%  ok
+stay_1                  0.14  0.34  0.77  0.52    0.0%   0.7%  ok
+stay_2                  0.12  0.28  0.47  0.58    0.0%   0.3%  off
+stay_3                  0.13  0.28  0.62  0.51    0.0%   0.6%  ok
+stay_4                  0.14  0.28  0.70  0.52    0.0%   0.9%  ok
+stumble                 0.14  0.28  0.52  0.50    0.0%   0.1%  off
+ALL                     0.13  0.27  0.64  0.52    0.0%   0.2%  contrast p95-p5 0.51
