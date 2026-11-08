@@ -221,3 +221,10 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     cuts after the drop on long legs. Scenes should author legs short enough that the swap lands near the drop where
     the painting allows; `check_rail_paths.gd` prints each leg's pace and bars (WALKOFF lines). If the owner prefers
     the cut always on the drop, the alternative is a mid-leg cut at the boundary with the doorway hold dropped.
+
+43. **The rail check measures the worst case (lead, 9 November; the owner may overrule).** The engine starts a paced
+    walk-out from the place the rail stands on at the tap (`rail.place()`: home, or the good or bad place reached by
+    the blocks passed), not from the `"choice": true` viewpoint. `check_rail_paths.gd` therefore measures every
+    walk-out from every place the rail can stand on and reports the longest leg (`WALKOFF ... from <place> (worst case of
+    <n> rail places; choice place <wp>)`); its bars, pace and the > 8 bars warning use that worst case. A scene whose
+    home or bad-place leg is too long adds a hold or shortens the leg; the check is not softened to the choice place.
