@@ -126,7 +126,8 @@ ActivityResult  = {activity_id, completed: bool, score: int, flags_to_set: [Stri
                    race?: {won: bool, position: int, time_s: float}}
 ```
 Modes: cloakroom and bar `replace` (2 and 4 controls), race `overlay`, the bass knob `rhythm` (proposal: it is short; the knob is a target in the
-stage view like the blackjack table's; owner may prefer `replace`), blackjack stays `rhythm` (no `mode` key).
+stage view like the blackjack table's), blackjack `replace` since A8b (ruling 40, owner 8 November: while seated the pad
+slots are the four card controls and judging is suspended; getting up finishes on the resume boundary).
 
 Entry (all modes): hotspot outcome `{"activity": id}` commits (`run_play.gd:1927`) -> host builds ActivityRequest -> `MinigameController.request(id,
 t_commit, t_seat, exits)` (`minigame_controller.gd:80`; `t_seat` = the next block start) -> `engine.hold = true` (`:103`).
@@ -325,8 +326,8 @@ An activity is played in the room it is found in, through the stage, with the ru
 - **Tests**: an activity's state machine is tested without the stage (things()/frames as data); the view test
   shoots the scene at three moments with the things in place and checks each thing's screen rectangle is inside
   the stage strip and at least 48 px tall (as `test_doom_views` does for guides).
-- **The card table** (blackjack) is converted to this contract in package A8b; until then it is the one
-  exception, named in every report that mentions it.
+- **The card table** (blackjack) is converted to this contract by package A8b (merged on `feature/bedsit-raves`): cards, deck and
+  chips as dynamic things, the dealer and players as crowd actors, bet/twist/stick/get-up in the pad slots, `replace` mode (ruling 40).
 
 **Built (package A8, wip/engine-props).** The real signatures; the activity side's guide is `docs/engine/WORLD_THINGS.md`.
 
@@ -417,6 +418,17 @@ Needed, not built:
 - H8.3 the cockpit as a low-res overlay layer (`StoryLowRes.add_overlay`) under the activity view.
 - H8.4 `run_play.gd:420` `_show_world`: an activity may ask for another map's stage at `t_seat` and back at exit (race), prebuilt in a guard.
 - H9.1 `hotspot_view.gd` and `choice_staging.gd`: draw states from ChoiceThing data, no ring (package A7).
+- H10 weather (rain scenes: Booth, Dock, Balcony, the Lounge's street; rulings 36, 38). **BUILT** (package A9, wip/engine-rain); guide `docs/engine/WEATHER.md`,
+  tests `tests/test_weather.gd`, sheet `docs/shots/engine/weather/rain_sheet.jpg`:
+  ```
+  map  "weather": {"rain": 0..1, "wind": -60..60 (degrees of slant, + leans toward +x), "drips": [{"at": [x, z], "h": metres above the floor}]}   (StoryMap.weather; errors on bad values)
+  sector "rain": true | false   (true: rain under a roof; false: an open sector kept dry; absent: open = ceil_tex "sky" or "*_sky")
+  sector "wet": 0..1            (the floor gloss; absent: the map's rain on open sectors, 0 elsewhere)
+  StoryMap.rain_open(sid) -> bool, wet_of(sid) -> float, has_weather() -> bool, sky_ceiling(sector) (static)
+  StoryStage.weather: StoryWeather   built beside fx3d only when map.has_weather() (a dry map gets no node), updated in _update_world on song time
+  StoryWeather.update(t, camera, sector_light, vis)   rain_mm / drip_mm / gloss_mm (one MultiMesh each), rain_at(p), streak_pos(i, t, lo), draw_calls()
+  ```
+  Cost at the Dock (640 x 231 low-res, rain 1): +3 draw calls, +886 primitives, weather.update ~8 us CPU on the dev PC; phone GPU time not measured.
 
 ## What is not settled (for the lead or the owner)
 
