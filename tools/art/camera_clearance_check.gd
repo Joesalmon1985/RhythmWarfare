@@ -38,8 +38,8 @@ const EXCEPTIONS := {
 ## (RunRail.ambient), so nine consecutive phases give every combination a scene can meet in a run (the run's own first scene is phase 1).
 const PHASES := [2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-static var _walls: Dictionary = {}  # map id -> {sector id -> [wall]}
 static var _maps: Dictionary = {}
+const WALLS_META := &"cc_walls_by_sector"  # {sector id -> [wall]}, cached on the map itself: two maps may share an id (the tests' "box" maps), so an id-keyed cache leaked one test's walls into another
 
 
 # --- the rays --------------------------------------------------------------------------------------------------------------------------------
@@ -51,15 +51,15 @@ static func map_of(id: String) -> StoryMap:
 
 
 static func walls_of(m: StoryMap) -> Dictionary:
-	if not _walls.has(m.id):
+	if not m.has_meta(WALLS_META):
 		var by := {}
 		for w in m.resolved_walls():
 			var sid := str(w["sector"])
 			if not by.has(sid):
 				by[sid] = []
 			by[sid].append(w)
-		_walls[m.id] = by
-	return _walls[m.id]
+		m.set_meta(WALLS_META, by)
+	return m.get_meta(WALLS_META)
 
 
 ## Distance along the ray (origin, unit dir) to segment a-b, or INF.
