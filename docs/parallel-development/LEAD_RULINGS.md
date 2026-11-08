@@ -212,3 +212,12 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     bar length), clamped to 2..8 bars; the doorway hold and the cut are unchanged; the music keeps playing. A leg
     longer than 8 bars allows at 3 m/s (about 33 m at 174 bpm) is the scene's fault: shorten it or add a hold.
     The review found 2–4 bar walks over 17–28 m legs (5–7 m/s), which read as a sprint in a 2.5D world.
+
+    **42b (lead, 9 November, after the engine package; the owner may overrule after playing).** From a tap at beat 50
+    only about 3.5 bars remain before the phase boundary, so a paced walk over a leg longer than about 14.5 m cannot
+    reach its doorway by the drop. Accepted for the first playable: the next phase and its music start on time; the
+    player keeps walking in the old world at walking pace; the world swap happens when the hold ends, on a whole beat,
+    never later than beat 32 of the next phase; the arrival is done before that scene's window. The picture therefore
+    cuts after the drop on long legs. Scenes should author legs short enough that the swap lands near the drop where
+    the painting allows; `check_rail_paths.gd` prints each leg's pace and bars (WALKOFF lines). If the owner prefers
+    the cut always on the drop, the alternative is a mid-leg cut at the boundary with the doorway hold dropped.

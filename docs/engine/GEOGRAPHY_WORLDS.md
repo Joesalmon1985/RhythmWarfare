@@ -23,7 +23,7 @@ The scene (a `nodes` entry):
   - a choice viewpoint (a `good`/`bad` place with `"choice": true`, `hold_bars >= 3`) may author `pitch`: degrees, negative looks down, within +-35,
     default 0. The camera holds that pitch, still, through the whole choice window and lets it go with the walk-off (below). Use it where the
     viewpoint looks down at its feature (a lava lake, a sunken sofa); the facing is still the waypoint's `yaw`. Unauthored, nothing changes.
-  - `routes {up|left|right: move}`: each move is `{to, via?: [waypoints], bars, hold_bars?: >= 0, style?, role?}`. `bars` must be above 0; the walk clamps it to 2..4 bars, then to the time left before the boundary.
+  - `routes {up|left|right: move}`: each move is `{to, via?: [waypoints], bars, hold_bars?: >= 0, style?, role?}`. `bars` must be above 0; the walk clamps it to 2..4 bars, then to the time left before the boundary. A walk-out from a tap takes more when the leg needs it (ruling 42, below).
     `to` is the threshold, normally the same waypoint as `exits[dir]`. `stumble` and `arrive` keys are allowed. `down` has no move.
 
 All waypoints (`to`, `from`, `via`) must exist in the world's map. A `thresholds {to: waypoint}` dict on the node is
@@ -64,9 +64,31 @@ An example follows. Its waypoint names are made up for illustration; a working f
      before the window opens commits as the window opens. Later taps in the same window are ignored. The choice
      viewpoint's hold gives way to the walk (`StoryPlayer.end_window_holds`), and the rail takes no more steps. A held `pitch`
      eases back to level over the beat after the tap.
+   - **The walk-out is at a walking pace (ruling 42).** From the tap the leg is measured from the rail's place (the choice
+     viewpoint) through the move's `via` to its `to`: the sum of the straight segments (`RunRail.leg_length`). It takes
+     `bars = ceil(length / 3 m/s / bar length)`, clamped to 2..8 (`RunRail.walk_off_bars`; at 174 bpm a bar is 1.379 s, so
+     24 m is 6 bars, 5 m is 2, 40 m is 8 at 3.6 m/s). If the authored bars (clamped 2..4) already walk the leg at 3 m/s or
+     less, nothing changes: the authored bars, the hold, the shortening against the boundary, the swap on the downbeat.
+     Otherwise the leg keeps its paced bars and its `hold_bars` even past the boundary: the next phase starts on time and its
+     music plays while the player still walks in the world being left. The world swap waits: the passage frame shuts over the
+     2 beats before the hold ends, and the swap is on the next whole beat after walk and hold (the hold runs on to it, less than
+     a beat more). The destination's arrival (the cut to `rail.arrive`, the walk home) is then exactly as on a boundary, timed
+     from that swap (`RunJourney.cut_t` / `swap_t`, `RunPlay` shows the new stage then and offers none of its hotspots before).
+     The swap is never later than beat 32 of the next phase (`RunJourney.CUT_LATEST_BEAT`): the arrival walk (at most 3 bars)
+     is over before that scene's block-2 decision (beat 44.75), which walks it to its choice viewpoint for the next window
+     (beat 49), so the walk-out never collides with the next window. A commit is always before the boundary, so 8 bars always
+     fit by beat 32; only the hold is cut short for a tap after beat 60. Until the arrival is over the new scene's rail takes no
+     step (its log says `arriving`), block 0's glance and stroll are left out, and so is a herald's look that would start before it.
+     The run prints `RUN walk-off <node> <from> -> <to>: leg <m> m, <bars> bars (<m/s> m/s, at most 3.0), hold <bars> bars, the cut
+     <beats> beats after the boundary | the cut on the boundary` and keeps the entry in `RunJourney.walk_offs`.
+     A leg that would need more than 8 bars at 3 m/s (about 33 m at 174 bpm) is the scene's fault: shorten it or add a hold.
+     `tools/story/check_rail_paths.gd` prints every walk-out's pace (`  WALKOFF <dir> <from> -> <to>: <m> m, <bars> bars at
+     <bpm> bpm, <m/s> m/s`) and flags those (`  WARN walk-off ... needs <n> bars at 3.0 m/s, more than 8 ...`). Fixture:
+     `tests/fixtures/walk_pace` (one hall map, legs of 24, 5, 40 and 7 m), tests in `tests/test_geography.gd`.
    - An untouched default walks from the lock at beat 61 (3 beats before the downbeat): `RunPlay._update_passage`
-     calls `RunJourney.threshold_leave`.
-3. From beat 62 the passage frame shuts to the doorway. On the downbeat the stage swaps to the destination's map.
+     calls `RunJourney.threshold_leave`. It is no walk-out from a tap: 3 beats, the swap on the downbeat, as before.
+3. From beat 62 the passage frame shuts to the doorway. On the downbeat the stage swaps to the destination's map (or,
+   after a walk-out that runs on past it, as its hold ends: above).
 4. The destination's `rail.arrival` cuts to its `rail.arrive` and walks home. The frame opens again.
 
 The stay (`down`, nothing chosen) keeps the scene: there is no walk and no frame. Returning to a world that was

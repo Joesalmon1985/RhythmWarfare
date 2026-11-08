@@ -164,3 +164,27 @@ static func check_rail(map: StoryMap, node_id: String, home: String, rail: Dicti
 	for mv in rail_moves(node_id, home, rail):
 		errors.append_array(check_move(map, str(mv["from"]), mv["args"], str(mv["where"])))
 	return errors
+
+
+## The walk-outs of run scene `n` (a run.json node; `place` its place block, `world_of` node id -> world, `bpm` the run's tempo), LEAD_RULINGS 42: every route of rail.routes whose
+## `next` entry leads to another world, measured from the scene's choice viewpoint (else its home) along its authored leg (RunRail.leg_length), with the bars it gets (the authored
+## bars clamped 2 to 4, or more when they would walk it faster than RunRail.WALK_PACE_MAX: RunRail.walk_off_bars, at most 8) and the pace, and `warn` when it would need more than
+## RunRail.WALK_OFF_BARS_MAX bars at that pace (the scene's fault): [{dir, from, to, length (-1 unknown), bars, pace, need, warn}].
+static func walk_offs(map: StoryMap, n: Dictionary, place: Dictionary, world_of: Dictionary, bpm: float) -> Array:
+	var out: Array = []
+	var rail: Dictionary = place.get("rail", {})
+	var routes: Dictionary = rail.get("routes", {}) if typeof(rail.get("routes")) == TYPE_DICTIONARY else {}
+	var from := RunRail.walk_off_from(rail, str(place.get("waypoint", "")))
+	var bar := 4.0 * 60.0 / bpm
+	for e in n.get("next", []):
+		var dir := str(e.get("dir", ""))
+		if dir == "down" or not routes.has(dir) or typeof(routes[dir]) != TYPE_DICTIONARY or str(world_of.get(str(e.get("to", "")), "")) == str(n.get("world", "")):
+			continue
+		var mv: Dictionary = routes[dir]
+		var length := RunRail.leg_length(map, from, mv)
+		var b := clampf(float(mv.get("bars", 3.0)), RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX)
+		if length > RunRail.WALK_PACE_MAX * b * bar + 1.0e-6:
+			b = maxf(b, RunRail.walk_off_bars(length, bar))
+		var need := RunRail.walk_off_bars_needed(length, bar) if length >= 0.0 else 0.0
+		out.append({"dir": dir, "from": from, "to": str(mv.get("to", "")), "length": length, "bars": b, "pace": length / (b * bar) if length >= 0.0 else 0.0, "need": need, "warn": need > RunRail.WALK_OFF_BARS_MAX})
+	return out

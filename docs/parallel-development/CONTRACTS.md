@@ -53,6 +53,14 @@ Fixture: `scene_entry.json`. Tests: `test_scene_entry_and_exit_shapes`.
   tap and walks from there (`RunEngine.tap_commit` -> `hotspot_commit` -> `RunPlay._on_hotspot_commit` -> `RunJourney.commit_walk`); an untouched default walks from the lock, beat 61
   (`RunPlay._update_passage` -> `RunJourney.threshold_leave`). Either walk follows the move's `via` polyline over its `bars` (clamped 2..4), cut to
   end by the boundary, with its `hold_bars` only when there is time; the pads keep playing. Then the passage frame shuts, the stage swaps on the downbeat, and the destination's `rail.arrival` cuts to its `rail.arrive` and walks home.
+- **Walk-outs at a walking pace (built, ruling 42)**: the walk from the tap takes as long as its leg needs at no more than 3 m/s:
+  `bars = ceil(length / 3 / bar_length_s)`, clamped 2..8 (`RunRail.walk_off_bars`), the length being the straight segments from the rail's place at
+  the tap (the choice viewpoint) through `via` to the threshold (`RunRail.leg_length`). A leg the authored bars (2..4) already walk at 3 m/s is unchanged.
+  A longer one keeps its bars and its doorway hold past the boundary: the next phase and its music start on time, the passage frame and the stage swap wait
+  for the hold to end on the next whole beat (`RunJourney.cut_t` -> `swap_t`; `RunPlay` defers `_show_world` and the destination's hotspots), and the
+  arrival runs from that swap as from a boundary. The swap is at the latest beat 32 of the next phase (`RunJourney.CUT_LATEST_BEAT`), so the arrival is over
+  before that scene's block-2 decision and its choice window (beat 49); the new scene's rail takes no step until then. The lock's untouched default (3 beats)
+  is unchanged. A leg needing more than 8 bars (about 33 m at 174 bpm) is the scene's fault; `tools/story/check_rail_paths.gd` warns on it.
   Shape for a generator: `docs/engine/GEOGRAPHY_WORLDS.md`.
 - The bedsit must not be left by the rhythm (brief 2): its node's default destination is `{}` ("stay", port `set_default`) and it has no
   `on_miss`. Depletion would still end the run: hook H1.7.

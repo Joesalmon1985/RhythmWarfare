@@ -137,6 +137,12 @@ A `player_move` (and a rail place of `content/run/run.json` / `content/paths/*/r
 | `choice` | (rail places) a choice viewpoint: it must hold at least `RunRail.CHOICE_HOLD_BARS` = 3 bars, the whole choice window |
 | `pitch` | (choice viewpoints only) a steady pitch held through the choice window: degrees, negative looks down, within +-35, default 0 (CONTRACTS.md 3) |
 
+A route out of a geography world (`rail.routes[dir]`, docs/engine/GEOGRAPHY_WORLDS.md) walked from a choice tap goes at a walking pace
+(LEAD_RULINGS 42): its leg, from the choice viewpoint through `via` to `to`, takes `ceil(length / 3 m/s / bar length)` bars, 2 to 8,
+whatever its authored `bars` (they only set the least); the doorway `hold_bars` follows it. Author legs of about 33 m or less at 174 bpm
+(8 bars at 3 m/s); `tools/story/check_rail_paths.gd` prints each walk-out's length, bars and pace and warns on a longer one, which walks
+faster than 3 m/s and is the scene's to fix (shorten it or add a hold).
+
 What the player does with a polyline move (StoryPlayer):
 
 * Each leg is traced (`StoryMap.trace_segment`); the walk goes through the via points at a constant share of the eased move, the move still
