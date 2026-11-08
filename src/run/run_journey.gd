@@ -111,9 +111,6 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 	door_target = ""
 	leaving = false
 	var looks := herald_looks(id, t0, engine)
-<<<<<<< HEAD
-	out.append_array(_without_glance(_ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
-=======
 	if arriving_until > t0:  # (still walking out, then arriving: block 0's glance and stroll, and the heralds' looks that start before the arrival is over, are left out)
 		looks = looks.filter(func(a: Dictionary) -> bool: return float(a["t0"]) >= arriving_until)
 		var bb := float(engine.timing("block_beats"))
@@ -121,8 +118,7 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 			if t0 + (float(blk) * bb + HERALD_LOOK_FROM) * engine.beat_s < arriving_until:
 				_herald_blocks.erase(blk)
 	else:
-		out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
->>>>>>> wip/engine-walk-pace
+		out.append_array(_without_glance(_ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
 	out.append_array(looks)
 	node_id = id
 	world = w
