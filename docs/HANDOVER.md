@@ -1,15 +1,186 @@
-# Rhythm Warfare: handover
+# Rhythm Warfare: handover (rewritten 9 November 2026, end of the long run)
 
-**A new agent, or a new machine: start with `docs/PICKUP.md`** (state, setup, files not in git, branch map, prioritised pickup list, how to work with the owner).
+This is the single current handover. Everything above the line "Older material" is the long run of 7 to 9 November 2026 (stage A to E of `docs/parallel-development/LONG_RUN_PLAN.md`). Everything below that line is the earlier handover (Part A of 5 November: the three paths and the acting system; Part B of 3 November: the defense campaign and loadout), kept for the code that still lives in the repository. Where this part and the older material disagree, this part wins. Where `docs/parallel-development/RUN_LOG.md` and any older doc disagree, RUN_LOG wins and the older doc is stale.
 
-State on 5 November 2026, after Stage 6 of `docs/THREE_PATHS_AND_FACES_PLAN.md` (the acting system on every world, the sister-run engine, and the three paths: The Life of Jesus, The Mission Count, The Ember Road).
-This is the single current handover. Part A is the newest work (read it first); Part B is the earlier defense-campaign state of 3 November 2026, kept as it was (its commands and caveats still apply to that code, which is still in the repository).
-Read this, then `README.md` (layout and commands), `docs/CONTINUOUS_RUN.md` (the run, paths, portals, acting, the silent HUD), `docs/paths/{gospel,squadron,ember}.md` (one note per path), `docs/STORY_ART.md` and `docs/MUSIC_HANDOFF.md`
-(the owner's shopping list). **For playtesting use the home screen's Debug / Playtest (A11, `docs/DEBUG_MODE.md`).** Everything is on `main` at https://github.com/Joesalmon1985/RhythmWarfare.
+Read next, in this order: `docs/parallel-development/RUN_LOG.md` (the whole run, newest at the bottom; its "START HERE" and "STOPPED HERE" sections are the resume points), `docs/parallel-development/LEAD_RULINGS.md` (rulings; 42, 42b and 43 are in the log or on `feature/shared-contracts`, see section 5), `docs/PICKUP.md` (setup, files not in Git), then the branch's own launch file (section 2).
 
-**In one paragraph.** Three adventures branch off the Warehouse club and are played on the same four pads: a house-music Gospel story (17 scenes, 124 BPM), a dubstep story about a bomber crew trapped by an absurd regulation (14 scenes, 140 BPM, on the
-owner's own loops) and a psytrance story about a small carrier bearing a cursed ember across a dangerous land (15 scenes, 145 BPM). In all eight worlds the people's faces and acts carry the story and nothing is written during play. Everything was built and
-checked by an agent on a desktop with a virtual clock and a dummy audio driver: **nobody has played it by hand, on a phone, or listened to it.** The next thing that matters is the owner's phone run and ears.
+**In one paragraph.** The campaign (Warehouse hub, Hospital, Mental Hospital, Spaceship, Hell, the three sister paths, the Bassment) is finished as stage A and lives on `feature/one-pc`. Beside it, kept apart on purpose, are two new playable things: eight Doom-geography worlds you walk while the rhythm game plays (`feature/doom-layout-worlds`), and a bedsit opening that leads to four raves, each with a cloakroom, a bar, a bass knob and a street race (`feature/bedsit-raves`). A fourth branch, `feature/shared-contracts`, holds the engine work both of them need. All of it was built and checked by agents with a virtual clock and a dummy audio driver. **No human has played any of it by hand, nothing has run on a phone, and nobody has listened to the music choices.** The next thing that matters is the owner playing `feature/one-pc`, then auditioning the Doom music.
+
+## 1. Where things are (first screen)
+
+| Branch | What it is | Worktree | Head | State |
+| --- | --- | --- | --- | --- |
+| `feature/one-pc` | The integration branch the owner plays. Stage A: the whole campaign, hub entrances, ways back, heralds and lit gates, the DJ-style transitions over the 61 tracks, art packages, camera clearance, the A7 Bassment, the viewpoint fix, the wiring step, the APK work. | `MusicGame-onepc` | `<lead fills>` | Stage A complete and green. Last recorded full suite: 160,445 checks, 0 failures, 0 SCRIPT ERROR (at `c341280a`, after the one-pc fixes). Waiting for the owner to play it. |
+| `feature/shared-contracts` | Engine contracts both feature branches merge from: hold pitch and split voids, walk pace (rulings 42 and 42b), observe-once, the rail check's worst case (ruling 43), the herald-look fix for the card table, rain, geography worlds. | `MusicGame-contracts` | `<lead fills>` | Last recorded in RUN_LOG: `363e7a21` (the herald-look fix cherry-picked onto `5af6aef6`, which was green; the list for `363e7a21` was running). |
+| `feature/doom-layout-worlds` | Eight one-scene Doom-geography worlds (Warehouse/Floor, Copper Bar, Chill-out Lounge, DJ Booth, Loading Dock, Balcony, Mothership, Underworld), round 1 polish, per-world music, the cuts test under ruling 42b. | `MusicGame-env` | `<lead fills>` | Last recorded in RUN_LOG: `43015e61` (polish C round 2 merged; its list and rail check were running). Round 2 polish A and B were still working when the lead stopped and RUN_LOG records no merge of them: `<lead fills>`. Not recorded as merged into env: contracts `5af6aef6` (rail-check worst case) and `363e7a21` (herald-look fix); observe-once is in (`dad67ad5`). |
+| `feature/bedsit-raves` | The bedsit opening, four raves (Space, Magic, Dinos, Transport), the card table in the room, the street races, play round 2 (touch turns, tappable way out). | `MusicGame-play` | `<lead fills>` | Last recorded in RUN_LOG: `b815ab45` (contracts `363e7a21` merged; the full list was running). Before that `0be1589d` had the only red: the blackjack view, now fixed by `75721c3c`. |
+
+Two more branches matter. `main` is untouched by the run: **it moves only on the owner's word, after the owner has played `feature/one-pc`.** The agents' `wip/` branches are checkpoint branches; the lead merges them, `--no-ff`.
+
+**The two feature branches are kept SEPARATE from `feature/one-pc` by plan.** They are not merged into it, and not into `main`. They get draft pull requests whose bodies must disclose the reviewers' lists and every placeholder (section 4). RUN_LOG records no draft PR created yet: `<lead fills>`. Both feature branches merge *from* `feature/shared-contracts`, never the other way round (the herald-look fix went onto contracts by cherry-pick for that reason).
+
+Push policy, unchanged: integration branches are pushed after every verified merge, `wip/` branches at checkpoints, nothing to `main` until the owner says, no force-push. Agents never push or merge. Never in Git: the 61 recordings and every track pack, any WAD (`*.wad` and `/doom II wads/` are in `.gitignore`), the Doom renders, the APK and `build/`.
+
+The older `docs/doom/LAUNCH.md` and `docs/bedsit/LAUNCH.md` live only on their feature branches (not on `feature/one-pc`). Read them with `git show feature/doom-layout-worlds:docs/doom/LAUNCH.md` and `git show feature/bedsit-raves:docs/bedsit/LAUNCH.md`. The Doom one is partly stale (see section 5). `docs/doom/MUSIC.md` and the per-scene notes `docs/doom/scenes/*.md` are on the Doom branch too.
+
+## 2. How to play each
+
+All commands are for PowerShell. Each `.cmd` finds Git's bash itself, uses a play copy of the save in `rw-audio-work\play_userdata` (never the real save) and needs the track packs (`RW_TRACKS_DIR`, else `rw-audio-work\packs`). Each worktree has its own scripts, so run the one in the worktree of the branch you want.
+
+**The campaign, stage A (`feature/one-pc`)**
+
+```
+& "C:\Users\joesa\Documents\Cursor\MusicGame-onepc\tools\dev\play_tracks.cmd" --run
+```
+
+Without `--run` it opens at the main menu. Expect the Warehouse club as the hub with its entrances and ways back, the quests, the transitions between the recorded tracks. Not heard by anyone.
+
+**The Doom worlds (`feature/doom-layout-worlds`)**
+
+```
+& "C:\Users\joesa\Documents\Cursor\MusicGame-env\tools\dev\play_doom_worlds.cmd"
+& "C:\Users\joesa\Documents\Cursor\MusicGame-env\tools\dev\play_doom_worlds.cmd" --scene doom_bar
+```
+
+The first starts in the Warehouse (`doom_warehouse`); `--scene doom_<id>` starts in any of the eight (`doom_warehouse`, `doom_bar`, `doom_lounge`, `doom_booth`, `doom_dock`, `doom_balcony`, `doom_mothership`, `doom_underworld`). It sets `RW_DOOM_WORLDS=1` and `RW_RUN_START`. Without the flag the game is the legacy campaign, untouched. Expect: you walk a first-person rail through one painted world while the rhythm game plays; three guides stand for ahead, left and right; touching one commits at the tap, walks the leg to the doorway at walking pace, shuts the frame and swaps to the next world (rulings 39, 42, 42b). The routing table is in `docs/doom/LAUNCH.md`. Each world now plays its own recorded track (section 4, music).
+
+**The bedsit and raves (`feature/bedsit-raves`)**
+
+```
+& "C:\Users\joesa\Documents\Cursor\MusicGame-play\tools\dev\play_bedsit.cmd"
+& "C:\Users\joesa\Documents\Cursor\MusicGame-play\tools\dev\play_bedsit.cmd" --rave space
+& "C:\Users\joesa\Documents\Cursor\MusicGame-play\tools\dev\play_bedsit.cmd" --race space
+```
+
+Forms in the script: no argument = the bedsit facing north; `N`, `E`, `S` or `W` = start facing that way (a development aid); `--dev-keys` = number keys pick any choice on show; `--rave space|magic|dinos|transport` = start inside that rave (add `--fixed` for the bass already fixed); `--race space|magic|dinos|transport` = start in that rave's hangar, then touch the racer. F3 shows an overlay line ending `compass <f> theme <name>`. Touch or click: the left fifth turns left, the right fifth turns right, the bottom middle stays, the top middle leaves by the threshold you face, the middle of the picture is the room (the way out, once open). Arrow keys are the same four regions. The shortest path to the ending (Space rave, three activities, home, turn west, touch the door) is written tap by tap in `docs/bedsit/LAUNCH.md`, "The player's path to the ending".
+
+**What has NOT been played by a human.** Nothing has been played on a phone. The bedsit by touch exists only in tests (`tests/test_bedsit_play.gd`, 177 checks at the time of the report) and in a virtual run (`tools/dev/bedsit_virtual_run.gd`: right, right, top into Magic, home, the facing checked in the save); only the Magic path was driven end to end, and the way-out test sets the flags directly. The Doom worlds were seen only in headless shots and virtual runs (`docs/shots/doom/`); 7 cuts were run headless and were right, but 16 of the 24 cuts have never run on the run scene. The raves' activities are tested in all four raves, never played on a screen. Nobody has listened to the bass unlock, the Doom music picks, the races, or the APK's re-encoded stems.
+
+## 3. Tests and tools
+
+**The suite.** From a worktree root, in Git Bash:
+
+```
+bash tools/test.sh                      # the whole suite; runs --import first; also the Python content tests
+bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tests/run_tests.gd -- --filter <name>
+```
+
+The full one-pc suite takes about 25 minutes (RUN_LOG): run it in the background. The old "10 to 15 minutes" and "about 1 min" in the older material are stale.
+
+**Always `--import` first** in a fresh worktree and after merging new assets: `bash tools/dev/godot.sh --headless --path . --import`. Failures of the kind "sheet not found" were un-imported sheets. New `class_name` scripts also need it.
+
+**The SCRIPT ERROR counting rule.** The runner prints "0 failures" when a test dies of a parse error. A green result means: 0 failures AND zero lines containing `SCRIPT ERROR` in the log. Count them every time. The expected noise is a few deliberate lines: `test_trial` prints one "Parse JSON failed" (not a failure), the Ogg/JSON error lines are deliberate test inputs, and the story filter exits 139 (a segfault at shutdown AFTER "checks, 0 failures" and the RID-leak lines) on at least one worktree (section 4).
+
+**Filter lists the lead used.** Contracts: `choice_pitch split_void test_geography weather heralds camera story_player rail_paths story run_ playtest track transition`. Env: `doom doom_cuts doom_views choice_pitch split_void heralds camera rail_paths test_geography weather track transition run_ playtest story`, plus the rail check. Play: `bedsit space_rave magic_rave dinos_rave transport_rave race run_matrix cloakroom bar activity_modes minigame blackjack weather test_geography choice_pitch heralds camera story_player rail_paths run_ playtest story`. Counts change with every merge; read the newest in RUN_LOG and do not trust any number copied here.
+
+**The per-worktree godot.sh lock.** `tools/dev/godot.sh` gives each worktree its own `user://` folder (so worktrees can run at once) and a lock: inside one worktree, one Godot at a time. A lock whose owner has died is cleared. A waiter gives up after `RW_GODOT_WAIT` seconds (default 3600) with exit 75. **A virtual run with `RW_RUN_UNTIL_PHASE` does not quit after it prints its summary** (the suites' runner is unaffected): it kept the `MusicGame-envmusic` lock for three hours on 9 November and blocked another agent until the lead ended the process. After such a run, find and stop the Godot process yourself. `RW_GODOT_SHARED=1` goes back to one machine-wide lock and the real user folder.
+
+**The rail check.** `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/story/check_rail_paths.gd -- res://content/run/doom/run.json` checks the Doom run (gated: 8 scenes, 0 problems at the last record). With no arguments it checks the whole main run (not gated by any suite). It now also prints one `WALKOFF` line per leg with its length, bars and pace, `WARN` when a leg needs more than 8 bars, and takes `--bpm=`. Under ruling 43 it measures from every place the rail can stand on and reports the longest ("worst case of n rail places; choice place ..."); a test asserts its metres equal the engine's longest leg within 0.05 m. An earlier version measured from the choice place or home and under-reported (Warehouse to Bar leg: 5.5 m from `wh_ref`, 20.9 m from `wh_fence`, the place the engine measures from); RUN_LOG's older WALKOFF figures predate the fix. The Doom scenes are to be re-measured when the polish batch lands.
+
+**Generators.** Run these after a merge that touches their inputs, then `--import`, then the suites.
+- `python tools/run/make_doom.py` regenerates the Doom overlay (`content/run/doom/`). `python tools/run/make_scenes.py --doom` does it as part of the normal generation. Per-scene rebuild lines are in `docs/doom/LAUNCH.md`.
+- `python3 tools/run/make_bedsit.py --bedsit` regenerates the bedsit path, themes and routes; it keeps the blocks `tools/story/build_*_rave.py` write.
+- `python tools/run/make_hotspots.py` regenerates the hotspot content and `docs/VISUAL_COVERAGE.md`.
+- **If a merge conflicts in generated content** (`content/paths/bedsit/run.json`, `hotspots/{magic,dino,transport}_rave.json`, `docs/shots`): take either side and rerun the generator. Never hand-merge it.
+- `python tools/audio_import/build_android_packs.py` builds the phone bundle (next item).
+
+**The APK and the track packs.** Stage E is done up to the phone. `build_android_packs.py` re-encodes the 61 packs (4.6 GB on disk; Ogg about 500 kbps plus 684 MB of previews and reports) with ffmpeg libvorbis `-q:a 4`, 48 kHz stereo, lengths identical, into a 1,027 MB bundle in the git-ignored `/track_packs/` (each stem with an `importer="keep"` `.import`). The Android preset includes `track_packs/*/track.json`. `RunTrackScenes.packs_root` falls back to `res://track_packs` when `RW_TRACKS_DIR` is unset and `user://track_packs` is absent; the bundled path stays `res://` (fix `fa43278c`). The full debug APK is `MusicGame-apk/build/android/RhythmWarfare-debug.apk`, 1,225,141,764 bytes, export exit 0, 256 stems and 61 `track.json` listed in the zip; `tests/test_run_tracks_bundled.gd` has 4 checks and prints a counted SKIP where there is no bundle. Export command, from a worktree root after `--import`: `"C:/Users/joesa/Downloads/Godot_v4.5.1-stable_win64.exe/Godot_v4.5.1-stable_win64_console.exe" --headless --path . --export-debug "Android" build/android/RhythmWarfare-debug.apk`. The plan and the measurements are `docs/APK_61_TRACKS.md`. **Never commit the packs, the bundle or the APK.** Not done: nothing installed or run on a phone (latency, memory, load time, whether stems load from the APK's `assets`), `-q:a 4` not auditioned, no release keystore. This APK is built from the stage A work; whether it should carry the two feature branches is the owner's call.
+
+## 4. Known limits, honestly (one list per branch)
+
+Sources: the lead's "Known gaps carried", the two independent reviews, the lead's own looks at the polish sheets, all in RUN_LOG.
+
+### `feature/one-pc`
+
+- **Whole-run rail check: 84 scenes, 533 problems, exit 1.** All pre-existing; none come from the walk pacing. Gospel scenes report 44 each ("the eye is in the ceiling of bank_night" along the jordan moves), night_one warehouse 11, balcony 6, booth 7, underworld 3/2/2/6, ward.exit 2, ward_late 3, stub.end 7. No suite gates this check for the main run. An owner or next-run item, not fixed in the run.
+- The Floor's four gates are hidden from the booth in the route window (a placement pass is owed). 18 hidden herald samples and 5 unseen ways back are pinned in `KNOWN_HIDDEN` and `KNOWN_BACK_UNSEEN`.
+- Legacy people are below ruling 36's standard (package A2, the people re-bake, not done). Gospel p5 over the exposure rule. A7's door readability. No sound cues. Nobody has listened to the transitions or any track.
+- `hospital_late` and `ward_late` loop with no ending: the owner's 6 November decision, declared in `content/narrative/graph.json` (`late_loops_have_no_ending`).
+- Housekeeping: 21 merged local branches; the MIDI zip is undecided (the owner's call); the coverage audit was not re-run; `test_trial` prints one "Parse JSON failed" line.
+- Reviewer's verdict on one-pc: "not yet hand-to-a-friend", chiefly for the missing human play and this handover. Its red items (heralds order dependence, the walk's "245 glances for 252 blocks", the silent skip, the late loops) were fixed in `c341280a`; the walk bug was real (`RunJourney._herald_blocks` never cleared on `lap_start`).
+- The old handover's claim "everything is on main" is stale.
+
+### `feature/shared-contracts`
+
+- Engine hooks not built: a per-void "glow, no haze" key. Today the engine's haze over a connected void darkens what should glow (lava goes dark red, the pool dark violet); the Underworld and Mothership work round it with a shore piece at the pit floor's level.
+- Ruling 42b is a design change the owner may overrule: on a long leg the picture cuts after the drop (section 5).
+- The story filter exits 139 at shutdown after "48770 checks, 0 failures" on the `MusicGame-envmusic` worktree; not checked on other branches or worktrees.
+- A virtual run with `RW_RUN_UNTIL_PHASE` never quits (section 3). The fourth `doom_lounge` entry in that run's summary is very likely that stop logging the next scene's `track_start` before the summary; not verified on Doom content.
+- No shipped map has a void; `void_top` over split voids is tested on fixtures only.
+
+### `feature/doom-layout-worlds`
+
+- **Every scene is a placeholder against its painting (ruling 36).** Reviewers' counts before round 2 (at `5029fba1`), shots inside the exposure rule: wh 13/17, bar 4/21, lounge 4/13, booth 1/8, dock 4/8, balcony 0/8, underworld 8/8, mothership 8/8. Polish C round 2 reports both of its scenes 8/8. A and B round 2 results are not recorded. The review said: playable, all eight worlds load and cut, not at the painting bar for Balcony, Mothership, Booth, Lounge.
+- **Geography is approximate.** There is no map data: the supplied `doom2.wad` is an IWAD with no geometry (3,342 lumps) and a complete `DOOM2.WAD` is still wanted. Six maps were invented from the paintings, two traced from the ian-albert renders; all carry `doom.approximate`. If a WAD arrives the converter takes it.
+- Carried items by scene (lead's looks, round 2): **Underworld** reads as a lava canyon under a red sky, but the lava is a yellow-orange river not a lake; the basalt is warm brown-grey vertical stripes that still visibly repeat, not near-black; `hold_cave` and `route_left` are still blue-grey corridors off the palette; the Mothership guide is procedural. **Mothership** reads as a bone ring walk over a glowing pool, but the bone is violet-tinted not cream, the pool is a corner not a lake, the arches are flat decals, the Booth guide is procedural. **Bar** (round 1 look): the Floor passage is a flat blue rectangle that two holds stare at; the booth is a grey locker wall. **Lounge**: the sunken sofa pit (the painting's subject) is in no shot (26 degrees under the eye line; the downward-pitch hook now exists, use it, or raise the pit); the walls are gold cubes where the painting has coffered panelling; the Floor threshold is a bright blue striped box. **Warehouse**: much better lit, still a huge blue void around a small crowd; the room is far larger than the painting. **Dock**: the skyline is a repeating lit-window tile; passage `hold_door`/`route_left` is a flat blue LED corridor; the furnace hold is the best shot. **Balcony**: the weakest; a flat brick box. **Booth**: the desk and hatch read; the Mothership chamber beyond the hatch is a garish violet box. Not done in round 1: Lounge has no coffer or ribs; Booth guide is a placeholder; stage guide 64 px; bar channel water and gloss faint. A and B round 2 may have changed some of these; their reports were not recorded.
+- **Guides.** The smallest guide at any reference viewpoint is 62 px (Mothership), the smallest gap 191 px, no ring, beacon or marker anywhere, every sheet 256 px. 4 of 24 guides were procedural at the review. **Procedural guides are placeholders and are named so.**
+- **Cuts.** `tests/test_doom_cuts.gd` proves Warehouse to Bar to Floor (46 checks after ruling 42b). 16 of 24 cuts never run on the run scene, so a cut sweep tool and one cut per scene are owed. Under ruling 42b the picture cuts after the drop on a long leg.
+- **Music is picked by title, not by ear.** Floor: Valley of the Shadows (Chase & Status remix); Bar: Warm Roller "Memory"; Lounge: In The Clouds; Booth: T-2000; Dock: Shostakovich; Balcony: Zephyr; Mothership: Phantasm; Underworld: Night Train. The picks came from titles, tempos and section structure read from each `track.json`. **The owner is to audition them and swap rows**: one line in `content/run/track_scenes.json` plus the row in `docs/doom/MUSIC.md`. A real track-to-track blend was seen in a two-cut virtual run (`doom_warehouse` to `doom_bar` to `doom_lounge`).
+- Not covered: no selected or committed guide-state capture in any shot set; no wall-sightline test in the wh/bar/booth blocks; pause, restart and stumble are untested in Doom worlds; Dock `route_ahead` holds on an empty street; the Lounge sofa needs the downward pitch hook; the rooms are still much larger than the paintings.
+- `docs/doom/LAUNCH.md` is stale: it sends the pilot to other worktrees (`MusicGame-envwh`, `MusicGame-env-bar`, `MusicGame-env-chill`) and its "known limits" are of 7 November. Its refresh is on the lead's list and not recorded as done. `cuts/warehouse_to_bar.jpg` predates the polish. No WAD or Doom texture is in Git.
+- The Doom branch does not have the rail-check worst case (ruling 43) or the herald-look fix; the Doom scenes are to be re-measured.
+
+### `feature/bedsit-raves`
+
+- **Placeholders.** The Magic, Dinos and Transport art, props and people are procedural placeholders; the manifests say so (`"placeholder": true`) and `tests/rave_theme_test.gd` asserts it. People are the Mothership's alien rigs recoloured, below ruling 36 (hi-vis with a hard hat for Transport, pastel with a horn for Magic, scaled colours for Dinos). The Space rave's people are the ring's alien rigs.
+- **Races.** Every rave has a race scene (Space, Magic "The Moonlit Lane", Dinos "The Lava Ledge", Transport "The Wet Rally Street") on Space's rules and numbers, at Space's cell size not the 256 px class, with no race sounds. Entry to the race is a cut, not a drive-in; the race position is not saved. Race records persist across new runs as a career record (not in the brief; kept). The lead saw the Transport contact sheet only; the races agent looked at Magic and Dinos.
+- **The way out shares the Transport door.** In the west facing the top of the door (fanlight, timetable) is the Transport threshold and the middle of the door is `bedsit.way_out` (ruling 41). The way out has no touch target from the other three facings. It is shown and touchable only after one rave's three activities.
+- **Only the Magic path was driven end to end**, and the way-out test sets the flags directly. Nothing was played by a human. Not seen on a screen at all: the touch turns.
+- Review items (Play round 2 fixed 1, 2, 3, 5 in part, 10, 12): (1) the bedsit could not turn by touch, (2) the way out was untappable, (3) coming home always faced north, (5) people recoloured rigs; labels were added but art is still placeholder; bar customers are now themed. Still open: (6) the cloakroom queue reads semi-transparent, unexplained (clear in `docs/shots/bedsit/transport/activities.jpg`); (7) no sound cues; (8) the bass unlock was never listened to; (9) race entry a cut, position unsaved; (11) no phone.
+- The Bar and cloakroom, the card table: the card table runs in `replace` mode (ruling 40), the bar and cloakroom likewise. The ward card walk has `hold=4`.
+- Progression gaps from the read-only check (9 November): no test that the opening finishes after one rave (since added: `tests/test_bedsit_opening_end.gd`, 66 checks); the activities were exercised in no non-Space theme until the raves landed (now covered by the theme tests).
+- The four raves borrow the Mothership, Chill-out, Underworld and Dock geographies; the hotspot content is regenerated, never hand-edited.
+
+## 5. Rulings in force, 35 to 43
+
+Full text: `docs/parallel-development/LEAD_RULINGS.md` (35 to 41 on every branch that carries the file; 42 and 42b on `feature/shared-contracts`; 43 in RUN_LOG only, "Rail-check agent" entry). 41, 42, 42b and 43 are the lead's and open to the owner's overrule.
+
+35. The owner, 7 November: more moments with the camera stationary (the rail arrives at a choice viewpoint and holds for the window); the red and green rings go: the artwork and its animation show a choice's state, never a uniform symbol over the world.
+36. The owner, 7 November: the concept paintings (`art/reference/doom_worlds/` and `art/reference/standard/`) are the art bar; sprites are drawn like the Floor guide crop (about 230 px tall, 256 px sheets, dithered, readable costume, a face); placeholders are called placeholders in every report.
+37. Decisions on the contracts' open questions: the bass knob runs in rhythm mode; leaving the bedsit goes at the next block boundary; race wins carry across runs; race energy loss never ends the run; save VERSION 3 (loader takes 2 and 3); the opening is its own path `content/paths/bedsit`; the race is an activity with a stage swap; the stem lock in `stem_transport.gd` accepted.
+38. The owner, 8 November: every minigame happens in the same 2.5D world with the run's HUD, seamless, no separate screen; the pad strip carries the controls; the card table was converted (A8b).
+39. A geography guide's tap is the decision: in a Doom world the first tap on a guide commits at that beat and the authored walk starts then; an untouched window keeps the default.
+40. The owner, 8 November: the card table stays in `replace` mode as built (judging suspended while seated); B6 and B7 are superseded for it.
+41. The lead, 9 November: the bedsit's way out opens once any ONE rave's three activities are done; a visit alone does not open it; once open it stays open.
+42. The lead, 9 November: walk-outs take as long as the leg needs at no more than 3 m/s (bars = ceil(length / 3 m/s / bar), clamped 2 to 8); a longer leg is the scene's fault.
+42b. The lead, 9 November: when the paced walk outlasts the phase boundary the music starts on time and the world swap waits for the hold's end, on a beat, never later than beat 32 of the next phase; the picture cuts after the drop on long legs. The alternative, a mid-leg cut on the drop, is open to the owner.
+43. The lead, 9 November: the rail check measures the worst case over all rail places the rail can stand on (the engine really can start there); a scene with a long bad-place leg gets a warning and must add a hold or shorten the leg.
+
+Ruling 38 and 40 supersede part of the older material below (the A14 to A16 rings and the 2D card table); 35 supersedes the rings.
+
+## 6. Lessons for the next lead (from RUN_LOG)
+
+- **Never `git commit -a` after a merge.** With unmerged paths it stages the conflict markers as resolved: `aeb4a827` on contracts shipped markers in `run_journey.gd` and was fixed forward in `5253d336`. After every merge run `git diff --name-only --diff-filter=U` and `grep -rl '^<<<<<<< ' src tests tools` before committing.
+- **One merge per command**, so a conflict stops the chain.
+- **`--import` after merging assets**, and in every fresh worktree. `git clean -fq` stray untracked `.import` and `.uid` files before a merge that brings the same ones.
+- **Resolve `make_doom.py` and `test_doom_views.gd` merges by rebuilding from each side's blocks**, never by regex over conflict markers (burnt twice). Write Python patch scripts to files, not heredocs with Windows paths or apostrophes in Git Bash (the older material says the same).
+- **Count SCRIPT ERROR lines** in every log (section 3).
+- **Agents never push or merge**; the lead pushes. Agents commit a "WIP checkpoint" on their `wip/` branches at least hourly. When the 5-hour limit cuts agents off, resume them by message (their transcripts are kept) rather than restarting; at most four at once.
+- **Models:** Sonnet by default (generators, scene data, tests, docs, checks); Opus for shared engine work and visual polish; the lead for merges, rulings, the independent review set-up and judging the sheets. A Sonnet agent ran out of turns repeatedly under machine load (the music package): the lead finished its verification.
+- **Look at every sheet beside its painting** (ruling 36) before accepting a polish merge; the agents' own pass numbers are not enough. Polish C found the choice window was not happening at the reference viewpoint in the real run (the rail moves one place per passed block), and that the whole Underworld was lilac corridors in round 1.
+- **Compare tool and engine.** The rail check under-reported legs until it was compared with the engine's own log line; check a check against the thing it checks.
+- **A bisect belongs in a scratch worktree.** The blackjack regression was found by bisecting `329d6aa6`, `b3c784d6`, `0be1589d`; the contracts merge was the cause, not play round 2.
+- **A virtual run with `RW_RUN_UNTIL_PHASE` holds the lock** until you stop it.
+- **A merge conflict on generated bedsit content**: take either side, rerun `make_bedsit.py --bedsit`.
+- **Agent reports are claims.** Spot-check against the log (the reviewers' spot-checks matched RUN_LOG exactly, which is why the numbers here can be trusted).
+
+## 7. What to do next (the lead's ordered list, with what RUN_LOG records)
+
+1. Fix or confirm the blackjack view on play (fixed by `75721c3c`; confirm the full play list on `b815ab45` and push).
+2. Merge `wip/env-cuts-pace` into env: done (`d5535f65`).
+3. Merge the round 2 polish A and B into env one at a time (`grep` for markers after each; `python tools/run/make_doom.py`; `--import`; the env list; the rail check); look at every contact sheet beside its painting and record the verdict. Polish C is merged (`43015e61`). Re-measure the Doom legs under the rail check's worst case.
+4. Merge contracts into env (walk pace after `eace4db9`, rail check `5af6aef6`, herald-look `363e7a21`) and re-run.
+5. Stage D close: draft PRs for the two feature branches (bodies disclose section 4 and every placeholder), refresh `docs/doom/LAUNCH.md`, copy RUN_LOG to the branches, update memory.
+6. The owner: play `feature/one-pc`; audition `docs/doom/MUSIC.md`; rule on 41, 42, 42b and 43; decide the MIDI zip; say when `main` moves.
+7. Later: a phone run; ears on the `-q:a 4` stems; a complete `DOOM2.WAD`; the per-void "glow, no haze" key; drawn art for the raves and the guides.
+
+`<lead fills>`: the four head hashes, whether polish A/B round 2 merged into env, whether the draft PRs exist, and any state after `b815ab45` and `43015e61`.
+
+---
+
+# Older material
+
+Everything below was written on 3 and 5 November and is kept for the code it describes. The parts that the run superseded are marked "superseded" where they were cut or where a banner says so. Superseded in part: A14, A15 and A16 describe the red and green rings and the 2D card table (rulings 35, 38 and 40 replace both); the repo-size and export figures are of 5 November and 31 October.
 
 # Part A: the three paths and the acting system
 
@@ -33,19 +204,12 @@ How the stage 1 to 2 details differ from the plan, in the order they were writte
 
 ### Verified (5 November 2026, this PC, Godot 4.5.1 console, Windows 11; the final whole-project run of Stage 6)
 
-| Check | Result |
-| --- | --- |
-| `bash tools/test.sh` (Godot suite + Python content tests) | **73,712 checks, 0 failures** (Godot suite, exit code 0) and **181 Python content tests OK**. The output also carries expected noise: 73 Godot 'non-equal opposite anchors' warnings from the trial tests, the corrupt-save test's `Parse JSON failed`, a negative test's `story map missing`, an unknown-civilian fallback warning and Godot's leak notice at shutdown (4 resources in use); none is a failure |
-| `python3 tools/run/check_hotspots.py` (main run) | 0 errors, 5 warnings (route-lock chart differences, as before); 36 of 36 scenes reached, 52 routes taken, 93 flags settable, portals into the paths: ember, gospel, squadron |
-| `python3 tools/run/check_hotspots.py --path gospel` / `squadron` / `ember` | gospel 0 errors, 15 warnings, 17 of 17 scenes reached, both endings (`road`, `tomb`) left by `run:warehouse`; squadron 0 errors, 1 warning, 14 of 14, ending `free`; ember 0 errors, 19 warnings, 15 of 15, endings `kept`, `quenched`. Every warning is the route lock (a route whose chart pack differs from the default route's); `stub` 0 and 0 |
-| `bash tools/run/walk_run.sh --path gospel` / `squadron` / `ember` (real scenes, virtual clock, isolated save, dummy audio) | all three `run walk-through: OK`: gospel 7 walks (`perfect`, `sloppy`, `none`, `road_end`, `branch_a`, `branch_b`, `branch_c`), **17 of 17 scenes visited**; squadron 5 walks (`perfect`, `sloppy`, `none`, `loop`, `clause`), **14 of 14**; ember 6 walks (`perfect`, `sloppy`, `none`, `kept`, `taken`, `lantern`), **15 of 15**; no ERROR or SCRIPT line in any. The main run's own `walk_run.sh` (36 scenes) was not re-run in Stage 6 (the suite's run-scene tests and the matrix cover it) |
-| `python3 tools/story/check_assets.py` | OK (night_one, mothership, underworld, hospital, mental_hospital, airfield, city, harbour, manifest check) |
-| other | `make_path_placeholders.py ember --force` into a scratch folder reproduced the committed WAV and `pack.json` bytes (deterministic); `tools/content/music_handoff.py` regenerated `docs/MUSIC_HANDOFF.md` |
+Superseded and cut: the 5 November table of results (73,712 checks and the per-path check_hotspots and walk_run results). Current counts are in `docs/parallel-development/RUN_LOG.md`; the commands that produced them are still valid (A7).
 
 What the tests cover for the paths: `tests/test_run_paths.gd` (rates, relaxed rules, wrong-tempo pack refused, portals both ways, save migration, the handoff in both directions with `beat_s` before and after, the phase on the downbeat, cue times on the new grid,
 the clock swap, the real scene entering the stub through the balcony and leaving by its ending), `test_gospel.gd`, `test_run_squadron.gd`, `test_run_ember.gd` (data, flags, cast, pieces, `hide`, acting in five states, the real scene through the real portal, every
 ending), the per-path policy matrix in `test_run_matrix.gd` (each path under every tap policy and four skills), `test_story_acts.gd` (every directed person is baked in exactly the acts the data uses), `test_run_hud_silent.gd`, and the Python content tests
-(placeholders, importer, gospel, directed actors). The history of test counts: 67,513 (1b), 67,690 (1c), 71,389 (1d), 72,444 (Gospel), 73,056 (Ember), 73,647 (Squadron), 73,712 now.
+(placeholders, importer, gospel, directed actors). (The 5 November history of test counts is superseded and cut.)
 
 Also verified earlier and not repeated now (still valid, nothing it covers has changed): the handoff recording (`docs/shots/run/path_handoff_check.txt`: beat grids 174 -> 124 -> 174 BPM, the new grid's first downbeat +2.9 ms from the old drums in, -6.5 ms out, every block fitting its stage
 gains); the prebuild of a path's first stage in a cue-free guard (75 ms to 250 ms per map, none behind the closed frame); the balcony star opening the Gospel for real; the booth radio entering Squadron at 174 -> 140 and leaving at 140 -> 174; shots of every scene of
