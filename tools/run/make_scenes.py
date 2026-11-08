@@ -91,14 +91,15 @@ NEW_THINGS = {
 # Occluders (drawn over the crowd when nearer than a dancer): id, texture name, texture file, (x, z) of the feet, width, height. A texture file starting with `res://` is loaded as it stands
 # (the blackjack table's art lives in assets/minigames/blackjack/, drawn by tools/minigames/make_world_table.py).
 NEW_OCCLUDERS = {
-    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.3), 3.2, 2.79)],
+    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table_empty.png", (2.4, 3.3), 3.2, 2.79)],
 }
 # The card table must read from across the day room (docs/BLACKJACK_INTEGRATION.md, "The table in the room"): no crowd home inside the table's clearing, which is a disc round
 # the table and the sight lines to it from the room's home waypoint and the chair's waypoint, on past the table by `behind` metres so nobody stands right behind the players
 # (the hull of those two points, the table's ends and those ends carried on along the sight lines, widened by `margin`, so the walk between the two points is clear too). A home inside it moves to the nearest free spot of its sector (clear of the clearing, the other homes and the waypoints, and not
 # right in front of the camera). The same numbers are checked by tests/test_blackjack_integration.gd.
 CLEARINGS = {
-    "mental_hospital": {"sector": "dayroom", "table": (2.4, 3.0), "radius": 1.6, "half": 1.25, "margin": 0.35, "behind": 1.5, "views": ("day_centre", "day_cards")},
+    "mental_hospital": {"sector": "dayroom", "table": (2.4, 3.0), "radius": 1.6, "half": 1.25, "margin": 0.35, "behind": 1.5, "views": ("day_centre", "day_cards"),
+                        "keep": ("cards_dealer", "cards_a", "cards_b")},  # the table's own players (package A8b: crowd actors at the table) stand in it
 }
 NEW_LIGHTS = {  # id, (x, z), y, radius, color, strength
     "night_one": [("lt_crack", (2.5, 10.7), 1.2, 3.2, "#ff5a28", 1.3), ("lt_ship_beam", (0.0, 15.5), 1.5, 4.5, "#7ff0ff", 1.2), ("lt_wizard_floor", (-5.0, 7.0), 1.6, 3.0, "#8060ff", 0.9),
@@ -676,7 +677,7 @@ def clear_homes() -> None:
         moved = 0
         for aid in sorted(homes):
             h = next(x for x in doc["homes"] if x["actor"] == aid)
-            if h["sector"] != cl["sector"] or not in_clearing(homes[aid], cl, wps):
+            if h["sector"] != cl["sector"] or aid in cl.get("keep", ()) or not in_clearing(homes[aid], cl, wps):
                 continue
             at = homes[aid]
             best = None

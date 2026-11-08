@@ -948,7 +948,7 @@ func _check_reachability() -> void:
 		return
 	var seen := reachable_from(str(waypoints[start_id]["sector"]))
 	for s in sectors:
-		if not seen.has(s["id"]):
+		if not seen.has(s["id"]) and not bool(s.get("void", false)):  # (a marked void is a pit nobody stands in, closed by its railings)
 			errors.append("sector %s cannot be reached from the start waypoint through portals" % s["id"])
 
 

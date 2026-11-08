@@ -94,8 +94,11 @@ var _trial_g1 := -1.0  # the cue-free guard the walk to the hatch starts on
 var _trial_g2 := -1.0  # the guard the dungeon takes the pads on
 var _trial_direct := false
 var _stage_hidden := ""
+var bedsit := BedsitRoom.new()  # the bedsit's four regions, its facing and its way out while it is the scene (src/bedsit/bedsit_room.gd; inert elsewhere)
+var rave_host := SpaceRaveHost.new()  # the Space rave's bass lock and stage change (src/bedsit/space_rave_host.gd; inert outside its scenes)
 var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
 var _mg: RunMinigameHost
+var race_host: RaceStageHost  # the street race's stage swap (src/minigames/race/race_stage_host.gd; inert outside a race)
 var card_table: RunCardTable  # the day room's card table in the room: its players follow the table's hotspot (docs/BLACKJACK_INTEGRATION.md, "The table in the room")
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 var run_path := ""  # the path being played ("" = the main run); `data`, `engine`, `hotspots` and `journey` are always the active run's
@@ -123,6 +126,8 @@ static var data_for_test: RunData = null
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var want_path := OS.get_environment("RW_RUN_PATH") if OS.get_environment("RW_RUN_PATH") != "" else Session.run_start_path
+	if want_path == "" and BedsitNav.enabled():  # RW_BEDSIT=1 starts the new opening (content/paths/bedsit, docs/bedsit/LAUNCH.md); off by default, RW_RUN_PATH still wins
+		want_path = BedsitNav.PATH_ID
 	Session.run_start_path = ""
 	playtest = PlaytestMode.consume_launch()
 	data = data_for_test if data_for_test != null else (RunData.load_path(want_path) if want_path != "" else RunData.load_default())
@@ -159,6 +164,8 @@ func _ready() -> void:
 	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
 	minigames.load_registry()
 	_mg = RunMinigameHost.new(self)
+	bedsit.scene = self
+	race_host = RaceStageHost.new(self)
 	if not virtual_mode:  # (the audio before the first scene: a track scene's stems are decoded now, before the countdown, and the engine asks the audio whether a track is ready)
 		audio = RunAudio.new()
 		add_child(audio)
@@ -848,6 +855,8 @@ func _advance(t: float, audio_t: float) -> void:
 		_playtest_back()
 		return
 	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
+	race_host.step(t)  # the race's street stage (before the host walks the camera home)
+	_rave_step(t)
 	_mg.step(t)
 	_card_table_feed(t)
 	if trial_state == "":
@@ -867,7 +876,7 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "":
 		_prebuild_in_guard(t)
 	if _debug_label.visible:
-		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug() + _route_debug()
+		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug() + _route_debug() + _bedsit_debug()
 	if _until_phase > 0 and engine.scene_index() > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.scene_index(), engine.node_id, engine.energy])
@@ -1083,6 +1092,8 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var node: Dictionary = data.nodes[str(ev["node"])]
 	var world := str(node["map"])
 	var t0 := float(ev["t"])
+	_rave_enter(str(ev["node"]), t0)
+	bedsit.enter(str(ev["node"]), t0)  # (after the rave host, which opens the way out; after the journey's own actions: the camera faces the saved facing)
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0, "world": str(node["world"]), "path": run_path})
 	_sel_t.clear()
 	_refused.clear()
@@ -1109,11 +1120,11 @@ func _on_phase_start(ev: Dictionary) -> void:
 	if world_changed and _passage_swap < 0.0:
 		_passage_swap = t_show  # the route changed in the last two beats: the frame opens from shut on the new world
 	_swap_world = ""
-	if t_show > t0 and world != active_world:
+	if t_show > t0 and world != active_world and not race_host.owns_stage():  # (the race's street stays on through the race scene's phase starts)
 		_build_stage(world)
 		_swap_world = world
 		_swap_world_t = t_show
-	elif world != active_world:
+	elif world != active_world and not race_host.owns_stage():
 		_show_world(world)
 	_run_world = world_key
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
@@ -1175,6 +1186,37 @@ func _on_track_event(ev: Dictionary) -> void:
 
 
 ## Hands one journey action {world, t0, action, args} to its world's stage and keeps it in the log.
+## The Space rave (SpaceRaveHost): a scene starts / every frame.
+func _rave_enter(node_id: String, t0: float) -> void:
+	rave_host.progress = Session.run_progress
+	rave_host.track_audio = audio.track if audio != null else null
+	rave_host.beat_s = engine.beat_s
+	rave_host.phase_t0_fn = func() -> float: return engine.phase_t0
+	rave_host.apply_fn = func(a: Dictionary) -> void:
+		a["world"] = str(data.nodes[node_id]["map"])
+		_journey_apply(a)
+	rave_host.enter(node_id, t0)
+
+
+func _rave_step(t: float) -> void:
+	if not rave_host.in_rave:
+		return
+	var act: MinigameActivity = minigames.activity if minigames.active() else null
+	rave_host.step(t, act.state() if act != null else {})
+
+
+## A touch in the room while a view-less activity is seated (the bass knob's world region): over the knob thing's screen rect (ruling 38).
+func rave_hit(local: Vector2, area: Vector2) -> String:
+	if not (minigames.activity is BassKnobActivity) or not stages.has(active_world):
+		return ""
+	var st: StoryStage = stages[active_world]["stage"]
+	var r: Variant = st.thing_screen_rect("bass_knob")
+	if r != null and st.size.x > 0.0 and st.size.y > 0.0:  # (stage px to the area's)
+		var k := Vector2(area.x / st.size.x, area.y / st.size.y)
+		r = Rect2((r as Rect2).position * k, (r as Rect2).size * k)
+	return SpaceRaveHost.hit_rect(local, r)
+
+
 func _journey_apply(a: Dictionary) -> void:
 	journey_log.append(a)
 	var st: StoryStage = _build_stage(str(a["world"]))["stage"]
@@ -1349,10 +1391,20 @@ func _close_routes(_ev: Dictionary) -> void:
 	hud.route_hint = ""
 
 
-func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 8 pick the choices on show, in order (INTERACTION_DESIGN.md 2.6: up to eight choices)
+## Desktop: 1 to 8 pick the choices on show, in order (INTERACTION_DESIGN.md 2.6: up to eight choices). In the bedsit the number keys are off (they would pick any threshold,
+## whatever the facing) unless RW_DEV_KEYS=1 (a development aid); the arrow keys there are the four regions (left, right, down = stay, up = the threshold), through the dispatcher.
+const BEDSIT_KEYS := {KEY_LEFT: "left", KEY_RIGHT: "right", KEY_DOWN: "bottom", KEY_UP: "top"}
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
 	if hotspots == null or not (event is InputEventKey) or not event.pressed or event.echo or trial_state != "":
 		return
 	var kc := (event as InputEventKey).keycode
+	if bedsit.active and BEDSIT_KEYS.has(kc):
+		dispatch_region(str(BEDSIT_KEYS[kc]))
+		return
+	if bedsit.active and OS.get_environment("RW_DEV_KEYS") != "1":
+		return
 	if kc >= KEY_1 and kc <= KEY_8:
 		var shown := hotspots.shown(engine.block, selection_open())
 		if kc - KEY_1 < shown.size():
@@ -1371,6 +1423,8 @@ func hotspot_items() -> Array:
 	var now: float = hud.now_t
 	for h in hotspots.shown(engine.block, selection_open()):
 		var id := str(h["id"])
+		if not bedsit.shows(id):  # (the bedsit: only the threshold of the facing is on show)
+			continue
 		var sel := id == hotspots.selected
 		var it := {"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0, "t_commit": _t_commit_of(h),
 			"finished": HotspotContract.finished_look(h, hotspots.has_flag)}  # a portal whose path has been finished (plan D10)
@@ -1406,8 +1460,7 @@ func _card_table_feed(t: float) -> void:
 		if str(l["kind"]) == "commit" and hotspots != null and RunCardTable.is_table(hotspots.get_hotspot(str(l["hotspot"]))):
 			last = {"t": float(l["t"]), "success": bool(l["success"])}
 			break
-	var snap: Dictionary = minigames.activity.state() if minigames.activity != null else {}
-	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s, RunCardTable.closeup_of(snap, t, engine.beat_s)), t)
+	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s), t)  # (A8b: no close-up to give way to; seated, the activity directs the players)
 
 
 ## Song time of the decision that will judge a selection of `h`: its window's next decision beat. A final-window choice commits at the lock of the next departure boundary (the port's
@@ -1767,6 +1820,11 @@ func _trial_route_sync() -> void:
 	route_log.append({"kind": "bassment_passage", "t": hud.now_t, "passage": p, "result": res, "state": router.state.to_dict()})
 
 
+## The F3 line's bedsit part: the compass letter and the theme the facing leads to; "" outside the bedsit path (src/bedsit/bedsit_nav.gd).
+func _bedsit_debug() -> String:
+	return BedsitNav.debug_line(Session.run_progress.data, run_path == BedsitNav.PATH_ID)
+
+
 ## The F3 line's route part (NARRATIVE_GRAPH.md 7.1, the developer overlay line): location, quest and checkpoint.
 func _route_debug() -> String:
 	if router == null:
@@ -1956,13 +2014,28 @@ func dispatch_tap(pos: Vector2) -> String:
 				target = _mg.region_tap(pos, t)
 			elif _stage_host != null:
 				var at := (pos - _stage_host.global_position) / _stage_host.size
-				target = ContractShapes.region_at(world_regions, at) if ContractShapes.regions(world_regions).is_empty() else ""
-				if target != "":
+				if bedsit.active:  # the bedsit (BedsitRoom.tap): left/right turn, bottom stays, top is the facing's threshold, the gap between them is the room (the way out)
+					target = bedsit.tap(at, pos, t)
+				else:
+					target = ContractShapes.region_at(world_regions, at) if ContractShapes.regions(world_regions).is_empty() else ""
+				if target in ContractShapes.REGIONS:
 					world_region_tapped.emit(target, t)
 		"activity_view", "hotspots":
 			target = hotspot_tap(pos)
 	input_log.append({"t": t, "area": area, "owner": owner, "target": target})
 	return owner
+
+
+## A region named without a point (a desktop arrow key in the bedsit): the same owner and the same handling as a tap in it, logged as area "key".
+func dispatch_region(region: String) -> String:
+	var t: float = hud.now_t if hud != null else 0.0
+	if world_regions.is_empty() or region not in ContractShapes.REGIONS or minigames.input_mode(t) >= 0:
+		return ""
+	if bedsit.active:
+		bedsit.region_tapped(region, t)
+	world_region_tapped.emit(region, t)
+	input_log.append({"t": t, "area": "key", "owner": "world_regions", "target": region})
+	return "world_regions"
 
 
 ## The area a tap falls in: "hud" (the pause button), "strip" (the pad strip, or a pad's grown rect), else "stage".
@@ -2041,7 +2114,7 @@ func _hotspot_cinematic(out: Dictionary, t: float, claim_to := "") -> void:
 ## What the camera holds in the picture for the hotspot window of `node_id` (RunJourney.face_fn): the window's hotspots as points [x, z, 1 for the default, height], which StoryPlayer's `face`
 ## look frames from wherever the rail is (StoryPlayer.best_facing); [] when there is nothing to frame.
 func _window_face(node_id: String, _place: String) -> Array:
-	if hotspots == null or not stages.has(active_world) or node_id != engine.node_id:
+	if hotspots == null or not stages.has(active_world) or node_id != engine.node_id or bedsit.active:  # (the bedsit's camera is its facing: it never turns to frame the choices)
 		return []
 	var st: StoryStage = stages[active_world]["stage"]
 	if st.map == null:

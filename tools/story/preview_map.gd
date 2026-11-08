@@ -101,7 +101,12 @@ func _process(delta: float) -> void:
 			pos = np
 	var pose := {"cam": Vector3(pos.x, eye, pos.y), "yaw": yaw, "roll": 0.0}
 	lowres.apply_pose(pose)
-	world.update(t, {"bpm": 174.0, "palette": PALETTES[palette], "energy": 70.0, "flicker": false, "strobe": 0.0, "woofer_pump": true})
+	var pieces := {}
+	for pid in OS.get_environment("RW_PREVIEW_PIECES").split(",", false):  # screenshot aid: RW_PREVIEW_PIECES=a,b shows those set pieces
+		pieces[pid] = {"visible": true, "alpha": 1.0, "pulse": 0.0}
+	if OS.has_environment("RW_PREVIEW_KNOB"):  # screenshot aid: RW_PREVIEW_KNOB=0..3 poses the Space rave's bass knob thing on that frame
+		world.thing_pose["bass_knob"] = {"tex": load("%s%d.png" % [OS.get_environment("RW_PREVIEW_KNOB_PREFIX") if OS.has_environment("RW_PREVIEW_KNOB_PREFIX") else "res://assets/story/mothership/textures/sr_knob_", int(OS.get_environment("RW_PREVIEW_KNOB"))])}
+	world.update(t, {"bpm": 174.0, "palette": PALETTES[palette], "energy": 70.0, "flicker": false, "strobe": 0.0, "woofer_pump": true, "pieces": pieces})
 	label.text = "%s  sector %s  pos (%.2f, %.2f) yaw %.0f  eye %.2f   internal %s  tris %d  fps %d" % [map.id, map.sector_at(pos), pos.x, pos.y, yaw, eye, lowres.sub.size, world.triangle_count, Engine.get_frames_per_second()]
 
 

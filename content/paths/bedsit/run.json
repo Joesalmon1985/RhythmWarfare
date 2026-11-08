@@ -1,0 +1,1714 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "bedsit",
+  "title": "The Bedsit",
+  "entry_from": "bedsit.start",
+  "returns_to": "warehouse",
+  "dev": true,
+  "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd.",
+  "ending_gate": {
+   "flag": "bedsit_way_out",
+   "by": "activities",
+   "note": "ruling 41: the way out opens once any one rave's three activities are done (SpaceRaveHost.opening_done); tests/test_bedsit_opening_end.gd proves it"
+  }
+ },
+ "timing": {
+  "bpm": 174,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "start_node": "bedsit",
+ "worlds": [
+  {
+   "id": "bedsit",
+   "title": "The Bedsit",
+   "map": "bedsit",
+   "story": "res://content/story/bedsit.json",
+   "depth": 1,
+   "blurb": "One room, four walls, four raves."
+  },
+  {
+   "id": "space_rave",
+   "title": "The Space Rave",
+   "map": "space_rave",
+   "story": "res://content/story/space_rave.json",
+   "depth": 2,
+   "blurb": "The Mothership's ring round a void: a stage, a cloakroom, a bar and a hangar."
+  },
+  {
+   "id": "magic_rave",
+   "title": "The Magic Rave",
+   "map": "magic_rave",
+   "story": "res://content/story/magic_rave.json",
+   "depth": 2,
+   "blurb": "An octagonal lounge of stepped tiers round a sunken dance well: a stage, a cloakroom, a bar and a carriage house."
+  },
+  {
+   "id": "dino_rave",
+   "title": "The Dinosaur Rave",
+   "map": "dino_rave",
+   "story": "res://content/story/dino_rave.json",
+   "depth": 2,
+   "blurb": "A basalt ledge over a lava gulf, a causeway to the stage and two islands: a stage, a cloakroom, a bar and a ranger garage."
+  },
+  {
+   "id": "transport_rave",
+   "title": "The Transport Rave",
+   "map": "transport_rave",
+   "story": "res://content/story/transport_rave.json",
+   "depth": 2,
+   "blurb": "A wet street forecourt, a pair of tracks and a depot hall: a stage, a cloakroom, a bar and a garage."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "bedsit",
+   "world": "bedsit",
+   "scene": "room",
+   "title": "The Bedsit",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "relaxed": true,
+   "blurb": "Your room. Four walls, four ways out: the window, the desk, the wardrobe, the door.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "n",
+     "label": "Through the north wall"
+    },
+    {
+     "to": "dino_rave",
+     "dir": "e",
+     "label": "Through the east wall"
+    },
+    {
+     "to": "magic_rave",
+     "dir": "s",
+     "label": "Through the south wall"
+    },
+    {
+     "to": "transport_rave",
+     "dir": "w",
+     "label": "Through the west wall"
+    },
+    {
+     "to": "bedsit.end",
+     "dir": "out",
+     "label": "Out of the bedsit (development exit to the Warehouse)"
+    }
+   ],
+   "bedsit": {
+    "state_key": "bedsit_facing",
+    "start_facing": "N",
+    "themes": "res://content/bedsit/themes.json",
+    "routes": "res://content/bedsit/routes.json",
+    "viewpoint": {
+     "waypoint": "bedsit_n",
+     "choice_view": true,
+     "hold_bars": 4,
+     "turn_bars": 1
+    },
+    "regions": {
+     "left": {
+      "action": "turn",
+      "dir": -1,
+      "label": "turn 90 degrees left"
+     },
+     "right": {
+      "action": "turn",
+      "dir": 1,
+      "label": "turn 90 degrees right"
+     },
+     "bottom": {
+      "action": "stay",
+      "dir": 0,
+      "label": "stay facing the same way"
+     },
+     "top": {
+      "action": "leave",
+      "label": "leave for the rave of the current facing"
+     }
+    },
+    "facings": {
+     "N": {
+      "yaw": 0,
+      "waypoint": "bedsit_n",
+      "threshold": "threshold_n",
+      "theme": "space",
+      "route": "space_rave",
+      "shows": "the window onto the night sky, a glow behind the rooftops, a model rocket on the sill, a star mobile"
+     },
+     "E": {
+      "yaw": -90,
+      "waypoint": "bedsit_e",
+      "threshold": "threshold_e",
+      "theme": "dinos",
+      "route": "dino_rave",
+      "shows": "a jungle poster whose middle has become a real opening, a plastic dinosaur on the desk, a fern"
+     },
+     "S": {
+      "yaw": 180,
+      "waypoint": "bedsit_s",
+      "threshold": "threshold_s",
+      "theme": "magic",
+      "route": "magic_rave",
+      "shows": "the wardrobe door ajar with iridescent light leaking out, a unicorn figure on the shelf, fairy lights"
+     },
+     "W": {
+      "yaw": 90,
+      "waypoint": "bedsit_w",
+      "threshold": "threshold_w",
+      "theme": "transport",
+      "route": "transport_rave",
+      "shows": "the door with a bus timetable pinned to it, a toy car, a blinking indicator light, orange street light under the door"
+     }
+    }
+   },
+   "place": {
+    "waypoint": "bedsit_n",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_n",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_n",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "threshold_n",
+      "e": "threshold_e",
+      "s": "threshold_s",
+      "w": "threshold_w",
+      "up": "threshold_n",
+      "out": "threshold_s"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_rave",
+   "scene": "hub",
+   "title": "The Space Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "The Mothership's ring round a void. A DJ waves from the stage; the cloakroom, the bar and the hangar are across the ring.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the airlock"
+    },
+    {
+     "to": "space_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "space_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "space_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "space_race",
+     "dir": "s",
+     "label": "The hangar: a race"
+    }
+   ],
+   "theme": "space",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "space_arrive"
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The dais at the north of the ring: two steps up to the DJ deck. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "space",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The coat check in the ring's west alcove: a counter, a rail of coats and an attendant who wants the right coat for each symbol.",
+   "theme": "space",
+   "activity": "cloakroom",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_door",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_bar",
+   "scene": "bar",
+   "title": "Bar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks.",
+   "theme": "space",
+   "activity": "bar",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "space_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "space_race",
+   "scene": "hangar",
+   "title": "Hangar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The hangar in the ring's south-west alcove: a hover racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
+   "theme": "space",
+   "activity": "race",
+   "next": [
+    {
+     "to": "space_rave",
+     "dir": "up",
+     "label": "Back to the ring",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "magic_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "magic_rave",
+   "scene": "hub",
+   "title": "The Magic Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "An enchanted lounge: stepped rings of moss and velvet going down to a sunken dance well. A unicorn DJ waves from the stage; the cloakroom, the bar and the carriage house are round the walls.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the door"
+    },
+    {
+     "to": "magic_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "magic_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "magic_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "magic_race",
+     "dir": "s",
+     "label": "The carriage house: a race"
+    }
+   ],
+   "theme": "magic",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "magic_arrive"
+    }
+   }
+  },
+  {
+   "world": "magic_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "magic_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The dais at the north of the lounge: two steps up to the DJ deck. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "magic_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "magic",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "magic_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "magic_cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The coat check in the lounge's north-west alcove: a counter, a rail of capes and an attendant who wants the right cape for each symbol.",
+   "theme": "magic",
+   "activity": "cloakroom",
+   "next": [
+    {
+     "to": "magic_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_door",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "magic_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "magic_bar",
+   "scene": "bar",
+   "title": "Bar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The bar in the lounge's north-east alcove: a cauldron counter, a back shelf of potions and a bartender who remembers the drinks.",
+   "theme": "magic",
+   "activity": "bar",
+   "next": [
+    {
+     "to": "magic_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "magic_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "magic_race",
+   "scene": "hangar",
+   "title": "Carriage house",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The carriage house off the lounge's south side: an enchanted racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
+   "theme": "magic",
+   "activity": "race",
+   "next": [
+    {
+     "to": "magic_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_rave",
+   "scene": "hub",
+   "title": "The Dinosaur Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "A rave over the lava: a basalt ledge, a long railed causeway to the stage and two islands off it. A dinosaur DJ waves from the stage; the cloakroom cave, the tent bar and the ranger garage are across the lava.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the door"
+    },
+    {
+     "to": "dino_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "dino_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "dino_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "dino_race",
+     "dir": "s",
+     "label": "The ranger garage: a race"
+    }
+   ],
+   "theme": "dinos",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "dino_arrive"
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The dais at the end of the causeway: two steps up to the DJ deck under a ribcage arch. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "dinos",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The coat check in a cave on the west island: a stone desk, a rack of hides and an attendant who wants the right hide for each symbol.",
+   "theme": "dinos",
+   "activity": "cloakroom",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_door",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_bar",
+   "scene": "bar",
+   "title": "Bar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks.",
+   "theme": "dinos",
+   "activity": "bar",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "dino_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "dino_race",
+   "scene": "hangar",
+   "title": "Ranger garage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The ranger garage off the ledge: an off-road racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
+   "theme": "dinos",
+   "activity": "race",
+   "next": [
+    {
+     "to": "dino_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "transport_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "transport_rave",
+   "scene": "hub",
+   "title": "The Transport Rave",
+   "entry": true,
+   "exit_scene": true,
+   "blurb": "A rave in a railway depot off a wet street: across the tracks the hall opens under its roof. A DJ waves from the loading dock; the left-luggage bay, the ticket-office bar and the garage are round the hall.",
+   "next": [
+    {
+     "to": "bedsit",
+     "dir": "up",
+     "label": "Home through the door"
+    },
+    {
+     "to": "transport_stage",
+     "dir": "n",
+     "label": "Up to the stage"
+    },
+    {
+     "to": "transport_cloakroom",
+     "dir": "w",
+     "label": "The cloakroom"
+    },
+    {
+     "to": "transport_bar",
+     "dir": "e",
+     "label": "The bar"
+    },
+    {
+     "to": "transport_race",
+     "dir": "s",
+     "label": "The garage: a race"
+    }
+   ],
+   "theme": "transport",
+   "place": {
+    "waypoint": "hub_view",
+    "rail": {
+     "good": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "choice": true,
+       "hold_bars": 8
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "n": "stage_foot",
+      "w": "cloak_door",
+      "e": "bar_door",
+      "s": "hangar_door",
+      "up": "home_door"
+     },
+     "arrive": "transport_arrive"
+    }
+   }
+  },
+  {
+   "world": "transport_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "transport_stage",
+   "scene": "stage",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The loading dock at the north of the hall: two steps up to the DJ deck under a locomotive's face. The bass knob is stuck.",
+   "next": [
+    {
+     "to": "transport_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "theme": "transport",
+   "place": {
+    "waypoint": "stage_foot",
+    "rail": {
+     "good": [
+      {
+       "to": "stage_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1
+      },
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_view",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 4
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stage_foot",
+      "out": "stage_foot"
+     }
+    }
+   }
+  },
+  {
+   "world": "transport_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "transport_cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The coat check in the left-luggage bay off the hall's west wall: a desk, a rail of hi-vis vests and an attendant who wants the right vest for each symbol.",
+   "theme": "transport",
+   "activity": "cloakroom",
+   "next": [
+    {
+     "to": "transport_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "cloak_door",
+    "rail": {
+     "good": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "cloak_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cloak_door",
+      "out": "cloak_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "transport_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "transport_bar",
+   "scene": "bar",
+   "title": "Bar",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The bar in the ticket office off the hall's east wall: a ticket counter, a shelf of lockers and a bartender who remembers the drinks.",
+   "theme": "transport",
+   "activity": "bar",
+   "next": [
+    {
+     "to": "transport_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "bar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_hold",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bar_door",
+      "out": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "world": "transport_rave",
+   "role": "dancer",
+   "relaxed": true,
+   "treatment": "none",
+   "id": "transport_race",
+   "scene": "hangar",
+   "title": "Garage",
+   "entry": false,
+   "exit_scene": true,
+   "blurb": "The garage beside the stage: a rally hatchback and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
+   "theme": "transport",
+   "activity": "race",
+   "next": [
+    {
+     "to": "transport_rave",
+     "dir": "up",
+     "label": "Back to the rave",
+     "loop": true
+    },
+    {
+     "to": "bedsit",
+     "dir": "out",
+     "label": "Home"
+    }
+   ],
+   "place": {
+    "waypoint": "hangar_door",
+    "rail": {
+     "good": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "bad": [
+      {
+       "to": "hangar_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 10
+      }
+     ],
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hangar_door",
+      "out": "hangar_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "bedsit.end",
+   "world": "bedsit",
+   "scene": "end",
+   "title": "Out of the bedsit",
+   "entry": false,
+   "exit_scene": false,
+   "ending": "leave",
+   "role": "dancer",
+   "blurb": "The development way out: back to the Warehouse.",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "Back to the Warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "bedsit_s",
+    "rail": {
+     "good": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "bad": [
+      {
+       "to": "bedsit_s",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bedsit_s",
+     "glances": [
+      {
+       "by": 0,
+       "pitch": 0,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "threshold_s"
+     }
+    }
+   }
+  }
+ ],
+ "cinematics": {}
+}

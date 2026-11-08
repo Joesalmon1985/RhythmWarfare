@@ -1,13 +1,16 @@
 extends TestCase
 ## Blackjack inside the real run scene on the virtual clock (docs/BLACKJACK_INTEGRATION.md sections 0, 5 and 6): the day room's `ward.cards` hotspot, the real BlackjackActivity, the real wallet
-## (an isolated RunProgress, so the player's save is never touched). Play is driven with `scene.minigames.tap(...)` (the same call a touch on the view makes) or RW_MINIGAME_TAPS, and read back from
-## the activity's snapshot, the controller's log, the scene's logs and the wallet, so every test passes with or without the close-up view. RW_MINIGAME_SEED fixes the cards.
+## (an isolated RunProgress, so the player's save is never touched). Play is driven with `scene.minigames.tap(...)` (the same call a press of a control in the pad slots makes) or
+## RW_MINIGAME_TAPS, and read back from the activity's snapshot, its things on the active stage (package A8b: the table is staged in the room, ruling 38, contract 10; no canvas
+## view), the controller's log, the scene's logs and the wallet. RW_MINIGAME_SEED fixes the cards. The table runs in replace mode: judging is suspended while seated and
+## comes back on the resume boundary, so getting up ends on that boundary (`_UP_BEATS` covers it).
 
 const BEAT := 60.0 / 174.0
 const STEP := 1.0 / 30.0
 const TMP_SAVE := "user://test_blackjack_integration_save.json"
 const CFG := "res://content/minigames/blackjack.json"
 const QUIET := ["", "sitting", "leaving", "falling"]
+const _UP_BEATS := 40.0  # getting up: the leaving (3 beats), then the resume boundary (at least 4 beats on, at most about two blocks)
 
 var _saved: RunProgress
 
@@ -117,6 +120,7 @@ func _frame(scene: Node, ctx: Dictionary, step := STEP) -> void:
 	if not (phase in QUIET):
 		if int(s["pile"]["pence"]) != w.balance_pence() or int(s["bet"]["pence"]) != w.held_pence():
 			ctx["viol"].append("%s at %.2f: pile %d balance %d bet %d held %d" % [phase, t, int(s["pile"]["pence"]), w.balance_pence(), int(s["bet"]["pence"]), w.held_pence()])
+		_check_things(scene, s, t, ctx)
 	if not bool(ctx.get("play", true)):
 		return
 	var tg: Array = s["targets"]
@@ -154,6 +158,45 @@ func _frame(scene: Node, ctx: Dictionary, step := STEP) -> void:
 				var ex := _expected(s)
 				ctx["hands"].append({"result": ex["result"], "snap_result": s["seats"]["player"]["result"], "payout": ex["payout"], "bal_before": ctx["bal_before"], "bal_after": w.balance_pence(),
 					"held_after": w.held_pence(), "player": _cards_key(s, "player"), "dealer": _cards_key(s, "dealer"), "hand": int(s["hand"])})
+
+
+## The table as the room draws it (A8b): the active stage's dynamic things are the activity's; the player's stack is the wallet's balance and the bet pile the held stake (their
+## frames); every card dealt and on the table is a thing on the felt of the day room, face up as the game says once it has landed; no canvas view is mounted.
+func _check_things(scene: Node, s: Dictionary, t: float, ctx: Dictionary) -> void:
+	var w := _wallet()
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var on: Array = st.world.dynamic.things if st.world != null else []
+	var by := {}
+	for x: Dictionary in on:
+		by[str(x["id"])] = x
+	if scene._mg.view != null:
+		ctx["viol"].append("a canvas view is mounted at %.2f" % t)
+	var me: Dictionary = by.get("bj_chips_player", {})
+	var bet: Dictionary = by.get("bj_bet", {})
+	if me.is_empty() or int(me["frame"]) != BlackjackActivity.chip_frame(w.balance_pence(), 0):
+		ctx["viol"].append("%s at %.2f: the player's stack %s is not the wallet's %d" % [str(s["phase"]), t, str(me.get("frame", "none")), w.balance_pence()])
+	if bet.is_empty() or int(bet["frame"]) != BlackjackActivity.chip_frame(w.held_pence(), 3):
+		ctx["viol"].append("%s at %.2f: the bet pile %s is not the stake %d" % [str(s["phase"]), t, str(bet.get("frame", "none")), w.held_pence()])
+	for seat: String in BlackjackActivity.SEATS:
+		var cards: Array = s["seats"][seat]["cards"]
+		for i in cards.size():
+			var c: Dictionary = cards[i]
+			if float(c["t_land"]) > t - STEP or float(c["t_clear"]) >= 0.0:
+				continue
+			var x: Dictionary = by.get(BlackjackActivity.card_id(seat, i), {})
+			if x.is_empty():
+				ctx["viol"].append("%s's card %d (on the table since %.2f) is no thing in the room at %.2f" % [seat, i, float(c["t_land"]), t])
+			elif str(x["sector"]) != "dayroom" or int(x["frame"]) != BlackjackActivity.card_frame(c, bool(c["face_up"])):
+				ctx["viol"].append("%s's card %d: frame %d sector %s at %.2f" % [seat, i, int(x["frame"]), str(x["sector"]), t])
+	ctx["frames"] = int(ctx.get("frames", 0)) + 1
+
+
+## The pad strip's slot `k` (0 left .. 3 right): the pads' rects in order across the strip.
+func _slot(scene: Node, k: int) -> Rect2:
+	var rects: Dictionary = scene.pad_view.button_rects()
+	var keys := rects.keys()
+	keys.sort_custom(func(a: Variant, b: Variant) -> bool: return (rects[a] as Rect2).position.x < (rects[b] as Rect2).position.x)
+	return rects[keys[k]]
 
 
 func _live(s: Dictionary, seat: String) -> Array:
@@ -370,7 +413,7 @@ func test_the_run_stays_in_the_day_room_across_phase_boundaries_while_seated() -
 	_run_to(scene, down + BEAT)
 	var jlog0: int = scene.journey_log.size()
 	var rail0: int = scene.journey.log.size()
-	var notes0: int = scene.engine.level.notes.size()
+	var en0: float = scene.engine.energy
 	var t_end := down + 3.0 * 64.0 * BEAT + 8.0 * BEAT
 	while float(scene._vt) < t_end:
 		_run_to(scene, float(scene._vt) + 0.5)
@@ -387,15 +430,23 @@ func test_the_run_stays_in_the_day_room_across_phase_boundaries_while_seated() -
 			assert_near(float(starts[i]["t"]) - float(starts[i - 1]["t"]), 64.0 * BEAT, 1e-6, "phase starts are exactly 64 beats apart")
 	assert_near(float(starts[0]["t"]) - down, 64.0 * BEAT, 1e-6, "the first boundary after the seat is a whole phase later")
 	assert_eq(_events(scene, "hotspot_commit").size(), commits0, "no hotspot committed while seated")
-	assert_eq(scene.journey_log.size(), jlog0, "no journey action while seated")
+	var moved: Array = (scene.journey_log as Array).slice(jlog0).filter(func(a: Dictionary) -> bool: return str(a["action"]) != "player_look")
+	assert_eq(moved, [], "no journey action while seated (the held pitch's looks only)")
+	var looks: Array = (scene.journey_log as Array).slice(jlog0)
+	assert_true(looks.size() >= 3 and looks.all(func(a: Dictionary) -> bool: return is_equal_approx(float(a["args"]["pitch"]), -14.0)), "the camera holds its pitch down to the felt (%d looks)" % looks.size())
 	assert_eq(scene.journey.log.size(), rail0, "the rail took no step")
-	assert_true(scene.engine.level.notes.size() > notes0 + 30, "cues keep being charted")
+	var notes: Array = scene.engine.level.notes
+	var live := 0
+	for i in notes.size():
+		var tn := float(notes[i]["time"])
+		if tn > down + 1e-6 and tn < t_end and not scene.engine.judge.is_withdrawn(i):
+			live += 1
+	assert_eq(live, 0, "no cue to play while seated (replace mode: none charted, the ones charted before the seat withdrawn)")
 	var blocks := fresh.filter(func(e: Dictionary) -> bool: return str(e["kind"]) == "block_result")
 	assert_true(blocks.size() >= 12, "block results keep arriving (%d)" % blocks.size())
-	assert_true(blocks.any(func(e: Dictionary) -> bool: return bool(e["passed"])) and blocks.any(func(e: Dictionary) -> bool: return not bool(e["passed"])), "the bot's hits and misses are both judged")
-	var en: Array = blocks.map(func(e: Dictionary) -> float: return float(e["energy"]))
-	assert_true(en.max() - en.min() > 1.0, "energy keeps changing (%s)" % str(en))
-	assert_eq(_mg(scene).state, "active", "never fell: passes and misses alternate")
+	assert_true(blocks.all(func(e: Dictionary) -> bool: return bool(e.get("suspended", false))), "every one of them suspended: neutral")
+	assert_near(scene.engine.energy, en0, 1e-6, "the energy stands still while seated")
+	assert_eq(_mg(scene).state, "active", "still seated")
 	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "the second phase is the day room again")
 	_free(d)
 
@@ -419,70 +470,44 @@ func test_the_pads_never_change_the_cards_or_the_money() -> void:
 	assert_eq((a["hands"] as Array).size(), 3)
 	assert_eq(a["viol"], [])
 	assert_eq(b["viol"], [])
-	assert_eq(int(b["wobble"]), 0, "the missing run never wobbled (no two misses in a row)")
+	assert_eq(int(b["wobble"]), 0, "the missing run never wobbled (judging is suspended while seated)")
 	assert_eq(b["state"], "active")
 	assert_eq(a["hands"], b["hands"], "identical cards, results and money hand by hand")
 	assert_eq(a["balance"], b["balance"], "identical balance")
 
 
-# ---- 7: wobble and fall --------------------------------------------------------------------------------------------------------------------
+# ---- 7: no wobble and no fall: the pads are the table's controls ----------------------------------------------------------------------------------
 
-func test_two_failed_blocks_wobble_a_pass_steadies_and_three_make_the_player_fall() -> void:
-	var d := _scene(_pattern("00" + "1" + "000" + "0".repeat(20)))
+func test_misses_while_seated_neither_wobble_nor_drop_the_player_and_the_strip_is_the_tables() -> void:
+	var d := _scene(_pattern("0".repeat(40)))
 	var scene: Node = d["scene"]
-	scene.engine.energy = 100.0
 	var down := _sit(scene)
 	var mg := _mg(scene)
-	var w := _wallet()
+	var host: RunMinigameHost = scene._mg
+	assert_true(host.owns_strip(), "seated: the controls own the pad strip")
+	assert_eq(host.controls_layer.ids, ["bet", "deck", "hand", "exit"], "four controls in the pads' slots")
+	assert_eq(host.controls_layer.specs.map(func(c: Dictionary) -> String: return str(c["pictogram"])), ["chip", "card_draw", "flat_hand", "door"])
+	assert_false(scene.lane_input.enabled, "the lane input is off")
+	assert_true(scene.pad_view.visible, "the pads stay drawn: they show the controls")
 	var ctx := _ctx("stick")
-	ctx["max_hands"] = 1
-	var seen: Array = []  # [passed, wobble level after] per block result since the seat
-	var counted := 0
-	var fell := false
-	var bal_pre := 0
-	var held_pre := 0
-	var staked := false
-	var after_hand := 0
-	var guard := 0
-	while mg.state != "" and guard < 6000:
-		guard += 1
-		var in_hand: bool = not staked and (ctx["hands"] as Array).size() >= 1 and _phase(scene) == "await_bet"
-		if in_hand:
-			ctx["play"] = false
-			assert_true(mg.tap("bet", scene._vt), "the second hand's stake is placed")
-			staked = true
-			after_hand = int((ctx["hands"] as Array)[0]["bal_after"])
-			assert_eq(w.balance_pence(), after_hand - 500, "second stake held")
-		bal_pre = w.balance_pence()
-		held_pre = w.held_pence()
-		_frame(scene, ctx)
-		var results := _events(scene, "block_result").filter(func(e: Dictionary) -> bool: return float(e["t"]) >= down)
-		while counted < results.size():
-			var lvl := int(_snap(scene).get("wobble", {}).get("level", -1)) if mg.state != "" else -1
-			seen.append([bool(results[counted]["passed"]), lvl, mg.state])
-			counted += 1
-		if mg.state == "" and not fell:
-			fell = true
-			assert_eq(w.held_pence(), 0, "the hold is released")
-			assert_eq(w.balance_pence() + w.held_pence(), bal_pre + held_pre, "balance and held are conserved across the fall")
-			assert_eq(w.balance_pence(), after_hand, "the live stake came back exactly once: earlier results kept, the second stake refunded")
-	assert_true(fell, "the player fell")
+	assert_true(_until(scene, ctx, func() -> bool: return float(scene._vt) > down + 3.0 * 64.0 * BEAT, 3.0 * 64.0 + 2.0))
+	assert_eq(mg.state, "active", "never fell: the misses are not judged")
+	assert_eq(_log(scene, "wobble"), [], "never wobbled")
+	assert_eq(_log(scene, "interrupt"), [], "never interrupted")
 	assert_eq(ctx["viol"], [])
-	assert_true(seen.size() >= 6, "six block results since the seat (%s)" % str(seen))
-	assert_eq(seen[0].slice(0, 2), [false, 0], "one miss: steady")
-	assert_eq(seen[1].slice(0, 2), [false, 1], "two misses in a row: wobble level 1")
-	assert_eq(seen[2].slice(0, 2), [true, 0], "a pass: back to 0")
-	assert_eq(seen[3].slice(0, 2), [false, 0])
-	assert_eq(seen[4].slice(0, 2), [false, 1])
-	assert_false(bool(seen[5][0]), "the third miss in a row")
-	assert_eq(_log(scene, "interrupt").map(func(e: Dictionary) -> String: return str(e["reason"])), ["fall"], "one interrupt, a fall")
-	assert_eq(_log(scene, "finished").map(func(e: Dictionary) -> String: return str(e["reason"])), ["fall"])
-	assert_false(scene.engine.hold, "the hold is released")
-	assert_false(scene.hud.silent)
-	assert_true(_events(scene, "run_over").is_empty(), "the run is not over merely because of the fall")
-	_run_to(scene, float(scene._vt) + 70.0 * BEAT)
-	assert_true(_nodes(scene).size() > 3, "later phases are routed")
-	assert_true(_nodes(scene).has("ward.art"), "the adventure carries on by the default exit: %s" % str(_nodes(scene)))
+	assert_true((ctx["hands"] as Array).size() >= 3, "hands were played meanwhile")
+	assert_true(int(ctx.get("frames", 0)) > 1000, "the things were checked every frame (%d)" % int(ctx.get("frames", 0)))
+	assert_true(_events(scene, "run_over").is_empty())
+	# a press of the bet control in the strip reaches the table
+	ctx["max_hands"] = (ctx["hands"] as Array).size() + (1 if bool(ctx.get("hand_open", false)) else 0)  # (no new bet: the hand under way is finished)
+	assert_true(_until(scene, ctx, func() -> bool: return _phase(scene) == "await_bet", 60.0), "the dealer waits for a bet")
+	var w := _wallet()
+	var before := w.balance_pence()
+	var pad0: Rect2 = _slot(scene, 0)
+	ctx["play"] = false
+	assert_eq(scene.dispatch_tap(pad0.get_center()), "activity_controls")
+	assert_eq(w.held_pence(), 500, "the chip in the first slot bets")
+	assert_eq(w.balance_pence(), before - 500)
 	_free(d)
 
 
@@ -506,12 +531,14 @@ func test_leaving_keeps_the_wallet_forfeits_a_live_hand_and_the_table_can_be_sat
 	assert_eq(_phase(scene), "leaving")
 	var t_leave: float = scene._vt
 	ctx["play"] = false
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", _UP_BEATS), "left")
 	assert_eq(_log(scene, "finished").map(func(e: Dictionary) -> String: return str(e["reason"])), ["left"])
 	assert_eq(w.balance_pence(), kept, "leaving between hands keeps the wallet")
 	assert_eq(w.held_pence(), 0)
 	assert_false(scene.engine.hold)
 	var back: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_walk" and float(a["t0"]) >= t_leave and str((a["args"] as Dictionary).get("to", "")) == "day_door_a")
+	var res: Dictionary = _log(scene, "resume")[0]
+	assert_true(float(res["at"]) - float(res["t"]) >= 4.0 * BEAT - 1e-6, "the strip goes back to the pads a lead-in before the resume boundary")
 	assert_false(back.is_empty(), "the camera walks toward the default exit's door (the bare exit is the default door)")
 	assert_eq(float(back[0]["args"]["bars"]), 2.0)
 	assert_true(scene.engine.phase_beat_at(scene._vt) < 48.0, "still before the final window of this phase")
@@ -535,7 +562,7 @@ func test_leaving_keeps_the_wallet_forfeits_a_live_hand_and_the_table_can_be_sat
 	assert_true(mg.tap("exit", scene._vt), "leaving during the player's turn")
 	assert_eq(w.held_pence(), 0, "the stake is settled at once")
 	assert_eq(w.balance_pence(), kept - 500, "and forfeited, not refunded")
-	assert_true(_until(scene, ctx2, func() -> bool: return mg.state == "", 8.0))
+	assert_true(_until(scene, ctx2, func() -> bool: return mg.state == "", _UP_BEATS))
 	assert_eq(w.balance_pence(), kept - 500)
 	assert_eq(_log(scene, "finished").map(func(e: Dictionary) -> String: return str(e["reason"])), ["left", "left"])
 	assert_eq(ctx2["viol"], [])
@@ -593,12 +620,13 @@ func test_rapid_repeated_taps_change_money_only_by_the_rules() -> void:
 	ctx["play"] = false
 	assert_true(_until(scene, ctx, func() -> bool: return _phase(scene) == "await_bet", 20.0))
 	var trail: Array = [[w.balance_pence(), w.held_pence()]]
+	ctx["stake_steps"] = 4
 	var oks := 0
-	for i in 5:  # the same target five times in one frame
+	for i in 5:  # the same target five times in one frame: the bet and three steps up (all of the 20 pounds), the fifth refused
 		if mg.tap("bet", scene._vt):
 			oks += 1
-	assert_eq(oks, 1, "only the first of five bets is taken")
-	assert_eq([w.balance_pence(), w.held_pence()], [1500, 500])
+	assert_eq(oks, 4, "a bet and three steps; the fifth press is refused")
+	assert_eq([w.balance_pence(), w.held_pence()], [0, 2000])
 	# every target every frame, junk too, until the hand is settled
 	var settled := false
 	var frames := 0
@@ -614,11 +642,11 @@ func test_rapid_repeated_taps_change_money_only_by_the_rules() -> void:
 		settled = str(s["phase"]) == "settling" and str(s["seats"]["player"]["result"]) != ""
 		if settled:
 			var ex := _expected(s)
-			assert_eq(w.balance_pence(), 1500 + int(ex["payout"]), "settled by the rules for a %s" % str(ex["result"]))
+			assert_eq(w.balance_pence(), int(ex["payout"]) * 4, "settled by the rules for a %s on the whole 20 pounds" % str(ex["result"]))
 	assert_true(settled)
 	assert_eq(trail[0], [2000, 0])
-	assert_eq(trail[1], [1500, 500])
-	assert_eq(trail.size(), 3, "exactly one hold and one settlement: %s" % str(trail))
+	assert_eq(trail[1], [0, 2000])
+	assert_eq(trail.size(), 3, "exactly one stake and one settlement: %s" % str(trail))
 	assert_eq(w.held_pence(), 0)
 	assert_eq(ctx["viol"], [])
 	var total_after := w.balance_pence()
@@ -626,7 +654,7 @@ func test_rapid_repeated_taps_change_money_only_by_the_rules() -> void:
 	for i in 4:
 		mg.tap("exit", scene._vt)
 	assert_eq(_log(scene, "tap").filter(func(e: Dictionary) -> bool: return str(e["target"]) == "exit" and bool(e["ok"])).size(), 1, "one exit was taken")
-	_run_to(scene, float(scene._vt) + 5.0 * BEAT)
+	_run_to(scene, float(scene._vt) + _UP_BEATS * BEAT)
 	assert_eq(w.balance_pence(), total_after)
 	assert_eq(mg.state, "")
 	_free(d)
@@ -647,8 +675,10 @@ func test_the_run_ending_at_the_table_refunds_a_live_stake_once() -> void:
 	assert_true(_until(scene, ctx, func() -> bool: return _phase(scene) == "player_turn", 30.0))
 	assert_eq([w.balance_pence(), w.held_pence()], [1500, 500], "a live stake")
 	scene.engine.energy = 1.0
-	assert_true(_until(scene, ctx, func() -> bool: return not _events(scene, "run_over").is_empty() or mg.state == "", 80.0), "the crowd left")
-	assert_false(_events(scene, "run_over").is_empty(), "the run is over")
+	_until(scene, ctx, func() -> bool: return false, 70.0)
+	assert_true(_events(scene, "run_over").is_empty() and mg.state == "active", "seated, nothing is judged: the energy cannot run out at the table")
+	mg.on_run_over(scene._vt)  # (what RunPlay does with a run_over event)
+	mg.on_run_over(scene._vt)
 	assert_eq(_log(scene, "interrupt").map(func(e: Dictionary) -> String: return str(e["reason"])), ["run_over"], "interrupted once, by the run ending")
 	assert_eq([w.balance_pence(), w.held_pence()], [2000, 0], "the stake was refunded, once")
 	assert_eq(ctx["viol"], [])
@@ -679,7 +709,7 @@ func _scripted(step: float) -> Dictionary:
 	var scene: Node = d["scene"]
 	_to_beat_step(scene, 50.0, step)
 	scene.hotspot_select("ward.cards")
-	_run_to(scene, scene.engine.t_of(64.0) + 48.0 * BEAT, step)
+	_run_to(scene, scene.engine.t_of(64.0) + 80.0 * BEAT, step)
 	var log := (_mg(scene).log as Array).map(func(e: Dictionary) -> String: return "%s:%s:%s" % [str(e["kind"]), str(e.get("target", e.get("reason", ""))), str(e.get("ok", ""))])
 	var times := (_mg(scene).log as Array).map(func(e: Dictionary) -> float: return float(e["t"]))
 	var out := {"log": log, "times": times, "balance": _wallet().balance_pence(), "held": _wallet().held_pence(), "started": _mg(scene).started}
@@ -831,7 +861,7 @@ func test_after_getting_up_mid_phase_the_table_is_on_show_again() -> void:
 	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
 	var ctx := _ctx("stick")
 	ctx["play"] = false
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", _UP_BEATS), "left")
 	assert_true(scene.engine.phase_beat_at(scene._vt) < 64.0 and scene.engine.phase_n == 1, "still inside the phase")
 	var ids: Array = (scene.hotspot_items() as Array).map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
 	assert_contains(ids, "ward.cards", "on show again straight away")
@@ -950,7 +980,7 @@ func test_getting_up_in_the_phase_the_player_sat_down_in_still_walks_to_the_door
 	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
 	var ctx := _ctx("stick")
 	ctx["play"] = false
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", _UP_BEATS), "left")
 	assert_true(scene.engine.phase_n == 1 and scene.engine.phase_beat_at(scene._vt) < 50.0, "still inside the first phase, well before the door")
 	_to_beat(scene, 62.0)
 	assert_eq(scene.journey.door_target, "ward.art", "the door walk starts at beat 61 although the player sat down in this phase")
@@ -973,7 +1003,7 @@ func test_getting_up_after_the_route_lock_of_a_held_phase_keeps_the_run_in_the_d
 	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
 	var ctx := _ctx("stick")
 	ctx["play"] = false
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", _UP_BEATS), "left")
 	assert_eq(scene.journey.door_target, "", "no door walk: the route was locked to the day room")
 	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "the next phase is the day room again")
 	_free(d)
@@ -996,7 +1026,7 @@ func _leave_by(scene: Node, target: String) -> float:
 	assert_true(mg.tap(target, t), "%s taken" % target)
 	var ctx := _ctx("stick")
 	ctx["play"] = false
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "up after %s" % target)
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", _UP_BEATS), "up after %s" % target)
 	return t
 
 
@@ -1018,17 +1048,13 @@ func test_the_rooms_exits_are_doors_at_the_table_each_its_own_target() -> void:
 	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["dir"])), ["right", "up", "link"])
 	assert_true(str(ex[0]["tint"]) != "" and str(ex[1]["tint"]) != "", "the destinations' colours come from the map")
 	assert_true(str(ex[0]["tint"]) != str(ex[1]["tint"]), "and differ")
-	# the view draws a door for each and hit-tests it
-	var view: Control = scene._mg.view
-	assert_true(view is BlackjackView, "the table's view is mounted")
-	var rects: Dictionary = view.target_rects()
-	assert_true(rects.has("exit:ward.art") and rects.has("exit:ward.dorm"), "both doors are live")
-	var host: Control = scene._stage_host
-	var cv: Vector2 = view.size
-	for id in ["exit:ward.art", "exit:ward.dorm"]:
-		var c: Vector2 = (rects[id] as Rect2).get_center()
-		var local := Vector2(c.x * host.size.x / cv.x, c.y * host.size.y / cv.y)
-		assert_eq(scene._mg.hit(local, host.size), id, "a touch on the %s door hits it" % id)
+	# no view: the get-up control in the fourth slot is the default door (the other door is touched in the room once up)
+	assert_true(scene._mg.view == null, "no canvas view")
+	assert_eq(scene._mg.hit(Vector2(100, 100), scene._stage_host.size), "", "the stage has no table targets")
+	var pad3: Rect2 = _slot(scene, 3)
+	assert_eq(scene.dispatch_tap(pad3.get_center()), "activity_controls")
+	assert_eq(_phase(scene), "leaving", "the door in the fourth slot gets the player up")
+	assert_eq(_snap(scene)["leave_route"], "ward.art", "by the default door")
 	_free(d)
 
 
@@ -1086,7 +1112,7 @@ func test_the_bare_exit_tap_is_the_default_door() -> void:
 	var d := _scene("perfect", 7, "exit@4")
 	var scene: Node = d["scene"]
 	_sit_early(scene)
-	_to_beat(scene, 24.0)
+	_to_beat(scene, 33.0)  # (got up at beat 23; replace mode: up on the resume boundary, beat 32)
 	assert_eq(_mg(scene).state, "", "up after the scripted bare exit")
 	assert_eq(_mg(scene).last_route, "ward.art", "the default exit's route")
 	assert_eq(scene._mg.pending_exit, "ward.exit_art")
@@ -1129,14 +1155,15 @@ func test_touching_the_table_again_seats_the_player_and_the_pending_door_is_gone
 	_sit_early(scene)
 	_to_beat(scene, 20.0)
 	_leave_by(scene, "exit:ward.dorm")
-	_to_beat(scene, 26.0)
+	_run_to(scene, float(scene._vt) + BEAT)
 	assert_eq(scene._mg.pending_exit, "ward.exit_dorm")
-	assert_true(scene.hotspot_select("ward.cards"), "the table again, in block 1")
-	_to_beat(scene, 27.0)
+	var blk: int = scene.engine.block
+	assert_true(scene.hotspot_select("ward.cards"), "the table again, in block %d" % blk)
+	_run_to(scene, float(scene._vt) + BEAT)
 	assert_eq(scene._mg.pending_exit, "", "replaced by the touch")
 	assert_true((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_dropped" and e["why"] == "replaced"))
-	_to_beat(scene, 33.0)
-	assert_eq(_mg(scene).state, "active", "seated again at the end of block 1")
+	_to_beat(scene, float((blk + 1) * 16) + 1.0)
+	assert_eq(_mg(scene).state, "active", "seated again at the end of block %d" % blk)
 	assert_eq(_mg(scene).started, 2)
 	_to_beat(scene, 50.0)
 	assert_eq(scene.hotspots.selected, "", "no door is selected for the seated player")
@@ -1195,7 +1222,7 @@ func test_the_run_ending_clears_a_pending_door_and_a_door_taken_while_the_run_en
 	_leave_by(scene, "exit:ward.dorm")
 	assert_eq(scene._mg.pending_exit, "ward.exit_dorm")
 	scene.engine.energy = 1.0
-	_to_beat(scene, 30.0)
+	_to_beat(scene, 47.0)  # (judging is back from beat 32: block 2 is missed)
 	assert_false(_events(scene, "depleted").is_empty(), "the crowd is leaving")
 	assert_eq(scene._mg.pending_exit, "", "the pending door is dropped")
 	assert_true((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_dropped" and e["why"] == "gone"))
@@ -1203,7 +1230,7 @@ func test_the_run_ending_clears_a_pending_door_and_a_door_taken_while_the_run_en
 	assert_false(_events(scene, "run_over").is_empty())
 	assert_eq(scene.hotspots.selected, "", "nothing selected")
 	_free(d)
-	# a door touched while the run is ending: the player gets up, nothing is carried out
+	# a door touched, then the run ends before the resume boundary (seated, nothing is judged, so the energy can only be gone by other means): nothing is carried out
 	d = _scene(_pattern("0".repeat(40)))
 	scene = d["scene"]
 	var w := _wallet()
@@ -1213,10 +1240,12 @@ func test_the_run_ending_clears_a_pending_door_and_a_door_taken_while_the_run_en
 	ctx["play"] = false
 	assert_true(_until(scene, ctx, func() -> bool: return _phase(scene) == "await_bet", 20.0))
 	assert_true(mg.tap("bet", scene._vt))
-	scene.engine.energy = 1.0
-	assert_true(_until(scene, ctx, func() -> bool: return not _events(scene, "depleted").is_empty(), 40.0), "the crowd is leaving")
-	assert_true(mg.tap("exit:ward.dorm", scene._vt), "a door while the run ends")
-	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "" and not _events(scene, "run_over").is_empty(), 40.0))
+	assert_true(mg.tap("exit:ward.dorm", scene._vt), "a door")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "resuming", 8.0), "up, waiting for the boundary")
+	scene.engine.energy = 0.0
+	mg.on_run_over(scene._vt)
+	_run_to(scene, float(scene._vt) + 2.0 * STEP)
+	assert_eq(mg.state, "")
 	assert_eq(scene._mg.pending_exit, "", "nothing pending")
 	assert_eq(scene._mg.armed_exit, "")
 	assert_false((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_pending"), "never carried out")
@@ -1301,20 +1330,24 @@ func test_no_crowd_home_stands_in_the_tables_clearing_or_its_sight_lines() -> vo
 		if str(map.homes[h]["sector"]) != "dayroom":
 			continue
 		n += 1
+		if str(h) in BlackjackActivity.ACTORS.values():  # (the table's own players stand at it, behind it from the chair)
+			assert_true((map.homes[h]["at"] as Vector2).y < TABLE_AT.y, "%s stands behind the table" % str(h))
+			continue
 		assert_false(_in_clearing(map.homes[h]["at"], hull), "%s's home %s is clear of the card table and its sight lines" % [str(h), str(map.homes[h]["at"])])
 	assert_true(n >= 20, "the day room's crowd is still there (%d homes)" % n)
+	for id: String in BlackjackActivity.ACTORS.values():
+		assert_true(map.homes.has(id), "%s has a home at the table" % id)
 	var occ: Array = map.occluders.filter(func(o: Dictionary) -> bool: return str(o["id"]) == RunCardTable.OCCLUDER)
 	assert_eq(occ.size(), 1, "the table stands in the map")
-	var meta: Dictionary = RunCardTable.new().meta
-	assert_near(float(occ[0]["width"]), float(meta["metres"][0]), 0.05, "the occluder is as wide as the art says")
-	assert_near(float(occ[0]["height"]), float(meta["metres"][1]), 0.05, "and as tall")
+	var img := Image.load_from_file(ProjectSettings.globalize_path("res://assets/minigames/blackjack/world_table_empty.png"))
+	assert_near(float(occ[0]["width"]) / float(occ[0]["height"]), float(img.get_width()) / float(img.get_height()), 0.02, "the occluder has the empty table's aspect")
 
 
 func test_the_tables_people_invite_cheer_at_the_touch_refuse_a_wave_off_and_invite_again() -> void:
 	var d := _scene("none")
 	var scene: Node = d["scene"]
 	_to_beat(scene, 4.0)
-	assert_true(scene.card_table != null and (scene.card_table as RunCardTable).ok(), "the table's sheet is loaded")
+	assert_true(scene.card_table != null and (scene.card_table as RunCardTable).ok(), "the table's three players are crowd actors of the day room")
 	assert_eq(_mood(scene), "invite", "the table is on show: they invite")
 	var st: StoryStage = scene.stages[scene.active_world]["stage"]
 	var props := 0
@@ -1322,7 +1355,10 @@ func test_the_tables_people_invite_cheer_at_the_touch_refuse_a_wave_off_and_invi
 		for p in (st.crowds[rid] as StoryCrowd).props:
 			if (p as StoryCrowdProp).drawer.is_valid():
 				props += 1
-	assert_eq(props, 1, "the table's occluder is drawn by the run's table")
+	assert_eq(props, 0, "the table is the map's own occluder: nobody painted into it")
+	var dir: Array = (scene.card_table as RunCardTable).directed
+	assert_eq(dir.filter(func(x: Dictionary) -> bool: return str(x["loop"]) == "invite").map(func(x: Dictionary) -> String: return "%s:%s" % [x["id"], x["state"]]),
+		["cards_dealer:beckon", "cards_a:beckon", "cards_b:look"], "inviting: the dealer and one player beckon, the other looks")
 	_to_beat(scene, 6.0)
 	var t_touch: float = scene._vt
 	assert_true(scene.hotspot_select("ward.cards"))
@@ -1340,12 +1376,13 @@ func test_the_tables_people_invite_cheer_at_the_touch_refuse_a_wave_off_and_invi
 	var commits: Array = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit")
 	assert_false(bool(commits[0]["success"]), "no input: waved off")
 	assert_eq(_mood(scene), "refuse", "the people refuse too")
+	assert_eq(st.crowds.values().filter(func(c: StoryCrowd) -> bool: return c.actors.has("cards_dealer"))[0].directing("cards_dealer", scene._vt), "activity", "the dealer is directed")
 	_run_to(scene, float(commits[0]["t"]) + 4.2 * BEAT)
 	assert_eq(_mood(scene), "invite", "then they invite again: the table can be touched again")
 	_free(d)
 
 
-func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() -> void:
+func test_the_tables_people_welcome_the_player_and_the_game_directs_them_while_seated() -> void:
 	var d := _scene()
 	var scene: Node = d["scene"]
 	_to_beat(scene, 6.0)
@@ -1355,13 +1392,14 @@ func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() ->
 	assert_eq(_mood(scene), "welcome", "they welcome the player to the chair")
 	_to_beat(scene, 16.05)
 	assert_eq(_mg(scene).state, "active", "seated on the downbeat")
-	_run_to(scene, _mg(scene).begin_t + 0.2 * BEAT)
-	assert_eq(_mood(scene), "welcome", "seated, the close-up still rising over them: the room's table is still there behind it")
-	_run_to(scene, _mg(scene).begin_t + 1.0 * BEAT)
-	assert_eq(_mg(scene).state, "active")
-	assert_eq(_mood(scene), "hidden", "seated: the close-up is the table, the room's version is not drawn behind it")
-	assert_eq((scene.card_table as RunCardTable).region("1"), Rect2(), "nothing to draw")
-	_to_beat(scene, 20.0)
+	assert_eq(_mood(scene), "seated", "seated: the game directs them")
+	var host: RunMinigameHost = scene._mg
+	_to_beat(scene, 22.0)
+	var people: Array = host.mode_log.filter(func(l: Dictionary) -> bool: return str(l["kind"]) == "people")
+	assert_true(people.size() >= 3, "the activity directs the table's players through the port (%d)" % people.size())
+	for p: Dictionary in people:
+		assert_true(str(p["id"]) in BlackjackActivity.ACTORS.values(), "a table player: %s" % str(p["id"]))
+		assert_true(str(p["played"]) != "", "%s plays %s (or its fallback): %s" % [str(p["id"]), str(p["state"]), str(p["played"])])
 	assert_true(_mg(scene).tap("exit", scene._vt), "the exit between hands")
 	var ctx := _ctx("stick")
 	ctx["play"] = false
@@ -1370,14 +1408,14 @@ func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() ->
 		if _mg(scene).state != "":
 			moods[_mood(scene)] = true
 		return _mg(scene).state == ""
-	assert_true(_until(scene, ctx, watch, 8.0), "left")
-	assert_eq(moods.keys(), ["hidden", "invite"], "getting up: hidden while the close-up is up, back in the room inviting as it sinks away")
+	assert_true(_until(scene, ctx, watch, _UP_BEATS), "left")
+	assert_true(moods.has("seated"), "getting up: still the game's while leaving (%s)" % str(moods.keys()))
 	_run_to(scene, scene._vt + 0.1)
 	assert_eq(_mood(scene), "invite", "up again: they invite again")
 	_free(d)
 
 
-func test_the_tables_frames_are_a_function_of_song_time_and_state_only() -> void:
+func test_the_tables_moods_are_a_function_of_song_time_and_state_only() -> void:
 	var bs := BEAT
 	assert_eq(RunCardTable.mood_of({}, {}, "", 3.0, bs), {"loop": "idle", "t0": 0.0}, "not on show: they play among themselves")
 	var avail := {"state": "available", "t_state": 0.0}
@@ -1387,40 +1425,18 @@ func test_the_tables_frames_are_a_function_of_song_time_and_state_only() -> void
 	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": false}, "", 4.5, bs), {"loop": "refuse", "t0": 4.0}, "a wave-off outranks the table on show again")
 	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": false}, "", 4.0 + 4.01 * bs, bs)["loop"], "invite", "for four beats")
 	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "entering", 4.5, bs)["loop"], "welcome")
-	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs)["loop"], "hidden")
-	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs, "rising"), {"loop": "welcome", "t0": 4.0}, "the close-up still rising")
-	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "active", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away")
-	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "leaving", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away (a fall, a stop)")
-	assert_eq(RunCardTable.closeup_of({}, 5.0, bs), "none", "no activity: nothing covers the table")
-	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 0.1 * bs, bs), "rising", "the close-up only starting to rise")
-	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 1.0 * bs, bs), "up", "risen")
-	assert_eq(RunCardTable.closeup_of({"phase": "await_bet", "phase_t0": 5.0}, 9.0, bs), "up", "playing")
-	var leave := {"phase": "leaving", "phase_t0": 8.0, "pile": {"via": "pockets", "t0": 8.0, "dur": 4.0 * bs}}
-	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 2.0 * bs, bs), "up", "gathering the money: still up")
-	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 3.9 * bs, bs), "sinking", "sinking away at the end")
+	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs)["loop"], "seated")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "leaving", 9.0, bs)["loop"], "seated", "getting up: still the game's")
 	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "", 40.0, bs)["loop"], "invite", "after getting up")
-	# the same song times give the same frames whatever the frame steps that led there; a pose holds for half a beat and lands on the half beats
-	for loop in ["idle", "invite", "pleased", "refuse"]:
-		var by_step := {}
-		for step in [1.0 / 30.0, 1.0 / 60.0, 0.013]:
-			var t := 0.0
-			var seen := []
-			while t < 8.0:
-				t += step
-				for probe in [1.0, 2.5, 3.3, 5.75]:
-					if absf(t - probe) < step * 0.5:
-						seen.append([probe, RunCardTable.frame_of(loop, 1.0, probe, 8 if loop != "pleased" else 4, 2, bs, false)])
-			by_step[step] = seen
-		var keys := by_step.keys()
-		for k in keys:
-			assert_eq(by_step[k], by_step[keys[0]], "%s: the same frames at the same song times" % loop)
-	for i in 64:
-		var t0 := float(i) * bs * 0.5 + 0.001
-		var t1 := float(i) * bs * 0.5 + bs * 0.5 - 0.001
-		assert_eq(RunCardTable.frame_of("invite", 0.0, t0, 8, 2, bs, false), RunCardTable.frame_of("invite", 0.0, t1, 8, 2, bs, false), "a pose holds for its half beat")
-	assert_eq(RunCardTable.frame_of("pleased", 10.0, 10.0 + 0.2 * bs, 4, 2, bs, false), 0, "arms up at once at the touch")
-	assert_eq(RunCardTable.frame_of("refuse", 10.0, 10.0 + 30.0, 8, 2, bs, false), 7, "the refusal plays once and holds")
-	assert_eq(RunCardTable.frame_of("invite", 0.0, 7.7, 8, 2, bs, true), 0, "reduced motion: the key pose")
+	for loop: String in RunCardTable.PEOPLE:
+		for seat: String in RunCardTable.PEOPLE[loop]:
+			var stt := str(RunCardTable.PEOPLE[loop][seat])
+			assert_true(stt in StoryCrowd.ACTIVITY_STATES or stt in StoryCrowd.CROWD_FALLBACKS, "%s %s: %s is a people state" % [loop, seat, stt])
+	# directions are given once per change of loop
+	var t := RunCardTable.new()
+	t.set_mood({"loop": "invite", "t0": 0.0}, 1.0)
+	t.set_mood({"loop": "invite", "t0": 0.0}, 1.5)
+	assert_eq(t.directed, [], "no stage: nothing directed, nothing logged")
 
 
 func test_from_the_tables_waypoint_the_table_is_hit_and_the_other_day_room_hotspots_keep_their_centres() -> void:

@@ -112,7 +112,7 @@ func apply_action(a: Dictionary) -> bool:
 				_faces.append({"t0": t0, "t1": t0 + tot, "pts": pts, "turn_s": turn, "release_s": clampf(float(args.get("release_bars", 1.0)) * bar_s(), 0.001, tot), "herald": bool(args.get("herald", false)), "wts": wts})
 				return true
 			if args.has("by") or args.has("pitch"):  # a glance: the head turns `by` degrees (and tips `pitch` up, negative down) from wherever the rail faces and comes back; it never touches the route
-				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args.get("by", 0.0)), "pitch": float(args.get("pitch", 0.0))})
+				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args.get("by", 0.0)), "pitch": float(args.get("pitch", 0.0)), "steady": bool(args.get("steady", false))})  # steady: the pitch survives a hold (an activity's view_pitch, CONTRACTS.md 10)
 				return true
 			_add({"kind": "look", "t0": t0, "t1": t0 + maxf(dur, 0.001), "at": str(args.get("at", "")), "yaw": args.get("yaw", null), "in": args.get("in", [])})
 		"player_role":
@@ -581,9 +581,11 @@ func glance_at(t: float) -> float:
 
 
 ## The head tipped up (positive) or down (negative) in degrees at t from the authored glances with a `pitch`.
-func pitch_at(t: float) -> float:
+func pitch_at(t: float, steady_only := false) -> float:
 	var sum := 0.0
 	for g in _glances:
+		if steady_only and not bool(g.get("steady", false)):
+			continue
 		if t >= float(g["t0"]) and t < float(g["t1"]):
 			var u := (t - float(g["t0"])) / (float(g["t1"]) - float(g["t0"]))
 			var e := sin(PI * u)
@@ -793,7 +795,8 @@ func pose_at(t: float) -> Dictionary:
 		bob *= 1.0 - still
 		drift *= 1.0 - still
 		glance *= 1.0 - still
-		glance_pitch *= 1.0 - still
+		var steady := pitch_at(t, true)  # (a steady pitch, an activity's view_pitch, is kept through the hold: CONTRACTS.md 10)
+		glance_pitch = (glance_pitch - steady) * (1.0 - still) + steady
 	var rail_yaw := float(st["yaw"]) + glance
 	var yaw := rail_yaw
 	var face_pitch := 0.0

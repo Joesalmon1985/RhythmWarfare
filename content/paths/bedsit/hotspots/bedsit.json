@@ -1,0 +1,302 @@
+{
+ "world": "bedsit",
+ "hotspots": [
+  {
+   "id": "bedsit.threshold_n",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_n"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "space_rave"
+   },
+   "on_failure": {
+    "route": "space_rave"
+   },
+   "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.threshold_e",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_e"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "dino_rave"
+   },
+   "on_failure": {
+    "route": "dino_rave"
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.threshold_s",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_s"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "magic_rave"
+   },
+   "on_failure": {
+    "route": "magic_rave"
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.threshold_w",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_w"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "transport_rave"
+   },
+   "on_failure": {
+    "route": "transport_rave"
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.dev_exit",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_s"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [
+     "bedsit_dev_exit"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit.end"
+   },
+   "on_failure": {
+    "route": "bedsit.end"
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.way_out",
+   "world": "bedsit",
+   "scene": "bedsit",
+   "map": "bedsit",
+   "anchor": {
+    "pos": [
+     -1.9,
+     1.35,
+     0.6
+    ]
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [
+     "bedsit_way_out"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bedsit.end"
+   },
+   "on_failure": {
+    "route": "bedsit.end"
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.end.exit",
+   "world": "bedsit",
+   "scene": "bedsit.end",
+   "map": "bedsit",
+   "anchor": {
+    "waypoint": "threshold_s"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_leave"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_bedsit_leave"
+    ]
+   },
+   "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "bedsit.end.mirror",
+   "world": "bedsit",
+   "scene": "bedsit.end",
+   "map": "bedsit",
+   "anchor": {
+    "thing": "w_car"
+   },
+   "kind": "object",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "bedsit_end_looked"
+    ],
+    "energy": 4
+   },
+   "on_failure": {
+    "energy": -2
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
+  }
+ ]
+}

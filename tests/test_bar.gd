@@ -1,0 +1,704 @@
+extends TestCase
+## The bar recipe memory game (bedsit brief section 6): the recipe grows from two ingredients to three after a success, the order is demonstrated then hidden, a correct sequence is served fast and
+## counts, a wrong press serves slow and repeats the same order with its demonstration, bounces are ignored, four served drinks complete the bar and set its flag, leaving and returning keeps the
+## order, the rhythm is suspended while it is seated (no misses, no energy loss) and judging resumes on the boundary, the pad strip's taps reach the four controls.
+
+const BEAT := 60.0 / 174.0
+const CONFIG_PATH := "res://content/minigames/bar.json"
+const SCRIPT_PATH := "res://src/minigames/bar/bar_activity.gd"
+const TMP_SAVE := "user://test_bar_save.json"
+
+var _saved: RunProgress
+
+
+func _cfg(extra: Dictionary = {}) -> Dictionary:
+	var c: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CONFIG_PATH))
+	c["layout"] = BarData.LAYOUT.duplicate(true)  # (these tests are about the test scene's map; the Space rave's own layout is themes.json bar.space.layout, tests/test_space_rave.gd)
+	c.merge(extra, true)
+	return c
+
+
+## A seated bar activity (theme `theme`, seed `seed`), begun at song time 0.
+func _bar(theme := "space", seed := 7, extra: Dictionary = {}, wallet: Variant = null) -> BarActivity:
+	var a := BarActivity.new()
+	a.setup({"seed": seed, "beat_s": BEAT, "config": _cfg(extra), "wallet": wallet, "request": {"theme": theme}})
+	a.begin(0.0)
+	return a
+
+
+## Updates to the start of the input phase; returns that song time.
+func _to_input(a: BarActivity) -> float:
+	var t := 0.0
+	var guard := 0
+	while str(a.state()["phase"]) != "input" and guard < 40:
+		var s := a.state()
+		t = float(s["phase_t0"]) + float(s["phase_dur"]) + 0.001
+		a.update(t)
+		guard += 1
+	return t
+
+
+## Presses the recipe in order (0.4 s apart) starting at `t`; returns the time after the last press.
+func _press_all(a: BarActivity, t: float) -> float:
+	for i: Variant in a.recipe():
+		assert_true(a.tap("ing:%d" % int(i), t), "press %d accepted" % int(i))
+		t += 0.4
+	return t
+
+
+## A wrong press: an ingredient that is not the next one.
+func _wrong_press(a: BarActivity, t: float) -> void:
+	var s := a.state()
+	var want := int((s["recipe"] as Array)[int(s["pos"])])
+	assert_true(a.tap("ing:%d" % ((want + 1) % 4), t), "the wrong press is taken")
+
+
+## Past the serve phase of the last drink: returns the time.
+func _past_serve(a: BarActivity) -> float:
+	var s := a.state()
+	var t := float(s["phase_t0"]) + float(s["phase_dur"]) + 0.001
+	a.update(t)
+	return t
+
+
+## Serves one drink correctly from the start of its phases; returns the time after the serve.
+func _serve_one(a: BarActivity) -> float:
+	var t := _to_input(a)
+	t = _press_all(a, t)
+	return _past_serve(a)
+
+
+# --- the game ------------------------------------------------------------------------------------------------------------------
+
+func test_the_recipe_is_two_ingredients_then_three_after_a_success() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	assert_eq(a.recipe().size(), 2, "the first drink has two ingredients")
+	assert_eq(int(a.state()["len"]), 2)
+	_serve_one(a)
+	assert_eq(a.served(), 1)
+	assert_eq(a.recipe().size(), 3, "three after a success")
+	_serve_one(a)
+	assert_eq(a.recipe().size(), 3, "and it stays three")
+	for r: Variant in a.recipe():
+		assert_true(int(r) >= 0 and int(r) < 4, "an ingredient of the four")
+	# a recipe is not a run of the same ingredient
+	var rec := a.recipe()
+	for i in range(1, rec.size()):
+		assert_true(int(rec[i]) != int(rec[i - 1]), "no ingredient twice running")
+
+
+func test_recipes_come_from_the_themes_list_or_are_generated_from_the_four_ingredients_and_the_seed() -> void:
+	BarActivity.forget_all()
+	var listed := _bar("space", 3)
+	var space: Dictionary = BarData.resolve({}, "space")
+	assert_eq(space["source"], "themes")
+	assert_true((space["recipes"] as Array).has(listed.recipe()), "from the theme's list")
+	# no list: generated, and the same seed gives the same recipes
+	BarActivity.forget_all()
+	var cfg := {"ingredients": [{"id": "a", "color": "#ff0000"}, {"id": "b", "color": "#00ff00"}, {"id": "c", "color": "#0000ff"}, {"id": "d", "color": "#ffff00"}]}
+	var g1 := BarActivity.new()
+	g1.setup({"seed": 11, "config": _cfg(cfg), "request": {}})
+	g1.begin(0.0)
+	var d: Dictionary = BarData.resolve(cfg, "")
+	assert_eq(d["source"], "config")
+	assert_eq((d["recipes"] as Array).size(), 0)
+	BarActivity.forget_all()
+	var g2 := BarActivity.new()
+	g2.setup({"seed": 11, "config": _cfg(cfg), "request": {}})
+	assert_eq(g1.recipe(), g2.recipe(), "seeded")
+	assert_eq(g1.recipe().size(), 2)
+
+
+func test_the_order_is_demonstrated_one_ingredient_at_a_time_then_hidden() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var s := a.state()
+	assert_eq(s["phase"], "arrive")
+	assert_false(bool(s["bubble"]), "no bubble while the customer arrives")
+	var t_demo := float(s["phase_t0"]) + float(s["phase_dur"]) + 0.001
+	a.update(t_demo)
+	s = a.state()
+	assert_eq(s["phase"], "demo")
+	assert_true(bool(s["bubble"]), "the pictorial order is up")
+	assert_eq(int(s["shown"]), 0, "the first ingredient")
+	assert_near(float(s["show_s"]), 0.8, 1e-9, "presentation time from the config")
+	a.update(t_demo + 0.8)
+	assert_eq(int(a.state()["shown"]), 1, "the second after show_s")
+	assert_false(a.targets().has("ing:0"), "no presses while it is shown")
+	assert_false(a.tap("ing:0", t_demo + 0.9), "a press during the demonstration is not taken")
+	a.update(t_demo + 1.6 + 0.01)
+	s = a.state()
+	assert_eq(s["phase"], "input", "then hidden: the player's turn")
+	assert_false(bool(s["bubble"]), "the order is hidden")
+	assert_eq(int(s["shown"]), -1)
+	assert_true(a.targets().has("ing:0") and a.targets().has("ing:3"), "the four ingredients are live")
+	# a different presentation time
+	var b := _bar("space", 7, {"show_s_per_ingredient": 0.3})
+	var tb := float(b.state()["phase_t0"]) + float(b.state()["phase_dur"]) + 0.001
+	b.update(tb + 0.65)
+	assert_eq(b.state()["phase"], "input", "two ingredients at 0.3 s each: done after 0.6 s")
+
+
+func test_a_correct_sequence_serves_fast_and_counts() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var t := _to_input(a)
+	var t_after := _press_all(a, t)
+	var s := a.state()
+	assert_eq(s["phase"], "serve")
+	assert_eq(s["outcome"], "happy")
+	assert_eq(a.served(), 1, "counted at once")
+	assert_near(float(s["phase_dur"]), 1.4, 1e-9, "serve_fast_s")
+	assert_eq((s["glass"] as Array).size(), 2, "one layer per ingredient")
+	assert_true((s["glass"] as Array).all(func(g: Dictionary) -> bool: return not bool(g["wrong"])))
+	assert_eq(int(s["mistakes"]), 0)
+	assert_false(a.tap("ing:0", t_after), "no presses while serving")
+	var next := _past_serve(a)
+	s = a.state()
+	assert_eq(s["phase"], "arrive", "the next customer")
+	assert_eq((s["glass"] as Array).size(), 0, "a fresh glass")
+	assert_true(next > t_after)
+
+
+func test_a_wrong_press_ends_the_attempt_serves_slow_and_repeats_the_same_order() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	# one right, then a wrong one
+	assert_true(a.tap("ing:%d" % int(order[0]), t))
+	t += 0.4
+	var want := int(order[1])
+	assert_true(a.tap("ing:%d" % ((want + 1) % 4), t))
+	var s := a.state()
+	assert_eq(s["phase"], "serve")
+	assert_eq(s["outcome"], "mistake", "the attempt is over at the wrong press")
+	assert_eq(int(s["wrong"]), (want + 1) % 4)
+	assert_near(float(s["phase_dur"]), 3.0, 1e-9, "serve_slow_s: slower than the happy handover")
+	assert_true(float(s["phase_dur"]) > 1.4)
+	assert_eq(a.served(), 0, "not counted")
+	assert_true((s["glass"] as Array)[-1]["wrong"], "the wrong layer is in the glass")
+	assert_false(a.tap("ing:%d" % want, t + 0.5), "no more presses while the mistake is shown")
+	var t2 := _past_serve(a)
+	s = a.state()
+	assert_eq(s["phase"], "demo", "the demonstration is repeated")
+	assert_eq(s["recipe"], order, "the same order")
+	assert_eq(int(s["attempt"]), 2)
+	assert_true(bool(s["bubble"]))
+	assert_eq((s["glass"] as Array).size(), 0, "a fresh glass")
+	assert_eq(a.recipe().size(), 2, "still two: no success yet")
+	# and it can be got right now
+	var t3 := _to_input(a)
+	_press_all(a, t3)
+	assert_eq(a.state()["outcome"], "happy")
+	assert_eq(a.served(), 1)
+	assert_true(t3 > t2)
+	assert_eq(int(a.state()["mistakes"]), 1)
+
+
+func test_repeated_presses_within_the_debounce_are_ignored() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	var id := "ing:%d" % int(order[0])
+	assert_true(a.tap(id, t))
+	assert_false(a.tap(id, t + 0.05), "a bounce")
+	assert_false(a.tap(id, t + 0.2), "a double tap")
+	assert_eq(int(a.state()["pos"]), 1, "one step")
+	assert_eq(int(a.state()["ignored"]), 2)
+	assert_eq(a.state()["phase"], "input", "and not a mistake either")
+	assert_true(a.tap("ing:%d" % int(order[1]), t + 0.25), "the next ingredient straight after is fine")
+	assert_eq(a.state()["outcome"], "happy")
+	# the debounce is configurable
+	var b := _bar("space", 7, {"debounce_s": 0.0})
+	var tb := _to_input(b)
+	var o2 := b.recipe()
+	assert_true(b.tap("ing:%d" % int(o2[0]), tb))
+	assert_true(b.tap("ing:%d" % int(o2[0]), tb + 0.01), "with no debounce a second press of the same one is taken: the wrong ingredient now (recipes never repeat), a mistake")
+	assert_eq(b.state()["outcome"], "mistake")
+	assert_eq(int(b.state()["ignored"]), 0)
+
+
+func test_four_served_drinks_complete_the_bar_and_set_its_flag() -> void:
+	BarActivity.forget_all()
+	var a := _bar("magic")
+	var t := 0.0
+	for k in 3:
+		t = _serve_one(a)
+		assert_false(a.is_done(), "not yet after %d" % (k + 1))
+		assert_eq(a.state()["phase"], "arrive")
+	var ti := _to_input(a)
+	_press_all(a, ti)
+	assert_eq(a.served(), 4)
+	var s := a.state()
+	assert_eq(s["phase"], "serve")
+	assert_false(a.is_done())
+	_past_serve(a)
+	assert_eq(a.state()["phase"], "payoff", "the last drink gets the payoff")
+	assert_false(a.is_done(), "the bartender raises a glass first")
+	assert_eq(a.result()["flags_to_set"], [], "no flag before it is done")
+	_past_serve(a)
+	assert_true(a.is_done())
+	assert_eq(a.done_reason(), "done")
+	var r := a.result()
+	assert_true(bool(r["completed"]))
+	assert_eq(r["flags_to_set"], ["rave.magic.bar_done"], "bar_done for the theme")
+	assert_eq(int(r["score"]), 4)
+	assert_eq(r["activity_id"], "bar")
+	assert_true(ContractShapes.activity_result(r).is_empty(), str(ContractShapes.activity_result(r)))
+	assert_true(t >= 0.0)
+	# a smaller workload is configurable
+	BarActivity.forget_all()
+	var b := _bar("space", 7, {"drinks_to_serve": 2, "drinks": 2})
+	_serve_one(b)
+	_serve_one(b)
+	_past_serve(b)
+	_past_serve(b)
+	assert_true(b.is_done(), "two drinks when configured")
+
+
+func test_leaving_and_coming_back_keeps_the_order() -> void:
+	BarActivity.forget_all()
+	var w := RunWallet.new()
+	var a := _bar("dinos", 5, {}, w)
+	_serve_one(a)
+	var order := a.recipe()
+	assert_eq(order.size(), 3)
+	var t := _to_input(a)
+	a.tap("ing:%d" % int(order[0]), t)  # half way through
+	a.request_leave(t + 1.0)
+	assert_true(a.is_done())
+	assert_eq(a.done_reason(), "left")
+	assert_false(bool(a.result()["completed"]))
+	assert_eq(a.result()["flags_to_set"], [], "no flag for leaving")
+	# a new activity (another seed, as the controller gives) in the same run and theme
+	var b := BarActivity.new()
+	b.setup({"seed": 999, "beat_s": BEAT, "config": _cfg(), "wallet": w, "request": {"theme": "dinos"}})
+	b.begin(100.0)
+	assert_eq(b.served(), 1, "the served count is kept")
+	assert_eq(b.recipe(), order, "and the order on the counter")
+	assert_eq(b.state()["phase"], "arrive")
+	# another theme or another run starts afresh
+	var c := BarActivity.new()
+	c.setup({"seed": 999, "beat_s": BEAT, "config": _cfg(), "wallet": RunWallet.new(), "request": {"theme": "dinos"}})
+	assert_eq(c.served(), 0, "another run: from the start")
+	var d := BarActivity.new()
+	d.setup({"seed": 999, "beat_s": BEAT, "config": _cfg(), "wallet": w, "request": {"theme": "space"}})
+	assert_eq(d.served(), 0, "another rave: from the start")
+	# done forgets
+	BarActivity.forget_all()
+
+
+func test_leaving_by_an_exit_door_and_an_interrupt_both_end_it() -> void:
+	BarActivity.forget_all()
+	var a := BarActivity.new()
+	a.setup({"seed": 7, "config": _cfg(), "request": {"theme": "space"}, "exits": [{"id": "x.a", "route": "space.floor"}, {"id": "x.b", "route": "space.cloak"}]})
+	a.begin(0.0)
+	assert_true(a.targets().has("exit:space.floor") and a.targets().has("exit:space.cloak"))
+	assert_true(a.tap("exit:space.cloak", 0.5))
+	assert_true(a.is_done())
+	assert_eq(a.done_route(), "space.cloak")
+	var b := _bar()
+	b.interrupt("host", 1.0)
+	assert_eq(b.done_reason(), "host")
+	assert_eq(b.result()["reason"], "host")
+
+
+func test_the_controls_are_four_pictures_without_words() -> void:
+	var a := _bar("transport")
+	var cs := a.controls()
+	assert_eq(cs.size(), 4)
+	var ids: Array = cs.map(func(c: Dictionary) -> String: return str(c["id"]))
+	assert_eq(ids, ["ing:0", "ing:1", "ing:2", "ing:3"])
+	var shapes := {}
+	var colors := {}
+	for c: Dictionary in cs:
+		assert_eq(c["label"], "", "no words on the buttons")
+		shapes[c["shape"]] = true
+		colors[c["color"]] = true
+	assert_eq(shapes.size(), 4, "four distinct silhouettes")
+	assert_eq(colors.size(), 4, "and four distinct colours")
+
+
+# --- the content -----------------------------------------------------------------------------------------------------------------
+
+func test_every_theme_has_four_distinct_ingredients_recipes_and_customers() -> void:
+	var names := {
+		"space": ["nebula_syrup", "comet_ice", "star_dust", "moon_milk"], "magic": ["rainbow_nectar", "unicorn_foam", "glitter_sugar", "dragonfruit"],
+		"dinos": ["fern_juice", "lava_sauce", "amber_resin", "egg_cream"], "transport": ["diesel_cola", "tyre_liquorice", "road_salt", "headlamp_lemon"]}
+	for th: String in names:
+		var d: Dictionary = BarData.resolve({}, th)
+		assert_eq(d["source"], "themes", th)
+		var got: Array = (d["ingredients"] as Array).map(func(e: Dictionary) -> String: return str(e["id"]))
+		assert_eq(got, names[th], th)
+		var shapes := {}
+		var cols := {}
+		for e: Dictionary in d["ingredients"]:
+			shapes[e["shape"]] = true
+			cols[(e["color"] as Color).to_html(false)] = true
+		assert_eq(shapes.size(), 4, "%s: four silhouettes" % th)
+		assert_eq(cols.size(), 4, "%s: four colours" % th)
+		var by_len := {2: 0, 3: 0}
+		for r: Array in d["recipes"]:
+			by_len[r.size()] += 1
+		assert_true(int(by_len[2]) >= 3 and int(by_len[3]) >= 3, "%s: recipes of both lengths: %s" % [th, str(by_len)])
+		assert_true((d["customers"] as Array).size() >= 2)
+	# a theme whose list names an unknown ingredient drops that recipe
+	assert_eq(BarData.recipe_indices(["a", "zzz"], {"a": 0}), [])
+	assert_eq(BarData.recipe_indices(["a", "a"], {"a": 0}), [], "no repeat")
+	assert_eq(BarData.recipe_indices(["a", "b", "a"], {"a": 0, "b": 1}), [0, 1, 0])
+	assert_eq(BarData.recipe_indices(["a"], {"a": 0}), [], "two or three")
+
+
+func test_every_pad_pictogram_is_drawn_bright_enough_and_only_the_dark_ones_are_lifted() -> void:
+	for th: String in ["space", "magic", "dinos", "transport"]:
+		var d: Dictionary = BarData.resolve({}, th)
+		for e: Dictionary in d["ingredients"]:
+			var c: Color = e["color"]
+			var drawn := ControlPictograms.legible(c)
+			assert_true(drawn.get_luminance() >= ControlPictograms.MIN_LUMA - 1e-6, "%s %s is drawn at luminance %.2f" % [th, e["id"], drawn.get_luminance()])
+			if c.get_luminance() >= ControlPictograms.MIN_LUMA:
+				assert_true(drawn.is_equal_approx(c), "%s %s keeps its colour" % [th, e["id"]])
+	var tr: Array = BarData.resolve({}, "transport")["ingredients"]
+	for i in [0, 1]:  # slots 1 and 2: diesel cola and tyre liquorice, dark on the dark slot before
+		var c0: Color = tr[i]["color"]
+		assert_true(c0.get_luminance() < ControlPictograms.MIN_LUMA, "%s is a dark material" % tr[i]["id"])
+		var up := ControlPictograms.legible(c0)
+		assert_true(up.get_luminance() > c0.get_luminance() + 0.05, "%s is lifted" % tr[i]["id"])
+		assert_near(up.h, c0.h, 0.02, "%s keeps its hue" % tr[i]["id"])
+
+
+func test_ingredient_sprites_are_64_px_with_a_silhouette_each() -> void:
+	var masks := {}
+	for shape: String in BarData.SHAPES:
+		var img := BarDraw.image(shape, Color("ff8800"))
+		assert_eq(img.get_size(), Vector2i(64, 64), shape)
+		var n := 0
+		var sig := ""
+		for y in 64:
+			for x in 64:
+				if img.get_pixel(x, y).a > 0.5:
+					n += 1
+					if x % 4 == 0 and y % 4 == 0:
+						sig += "1"
+				elif x % 4 == 0 and y % 4 == 0:
+					sig += "0"
+		assert_true(n > 300 and n < 3800, "%s fills a sensible part of the sprite: %d" % [shape, n])
+		masks[sig] = true
+	assert_eq(masks.size(), BarData.SHAPES.size(), "sixteen distinct silhouettes")
+	assert_true(BarDraw.texture("star", Color.RED) == BarDraw.texture("star", Color.RED), "cached")
+
+
+func test_the_registered_config_agrees_with_the_contract_fixture() -> void:
+	var fx: Dictionary = ContractShapes.load_fixture("activity_bar.json")
+	var cfg := _cfg()
+	for k: String in fx:
+		assert_eq(cfg.get(k), fx[k], "bar.json keeps the fixture's %s" % k)
+	assert_eq(ActivityMode.of_config(cfg), ActivityMode.Mode.REPLACE)
+	var theme: Dictionary = ContractShapes.load_fixture("theme_space.json")
+	var req := RunMinigameHost.build_request("bar", cfg, "space", theme, "rave.space", "space_floor")
+	assert_true(ContractShapes.activity_request(req).is_empty(), str(ContractShapes.activity_request(req)))
+	assert_eq(req["return_pose"], "bar_view")
+	assert_eq(req["config"]["flags_on_complete"], ["rave.space.bar_done"])
+	# the activity seats with the request and the themes.json content wins over the theme file's own list
+	var a := BarActivity.new()
+	a.setup({"seed": 1, "config": req["config"], "request": req})
+	assert_eq(a.theme(), "space")
+	assert_eq(str(a.controls()[0]["icon"]), "nebula_syrup")
+
+
+func test_no_text_is_drawn_anywhere_in_the_bar() -> void:
+	for f: String in ["bar_activity.gd", "bar_draw.gd", "bar_data.gd"]:
+		var src := FileAccess.get_file_as_string("res://src/minigames/bar/" + f)
+		for bad in ["draw_string", "Label.new", "Button.new", "RichTextLabel", "tooltip_text", "FontFile", "SystemFont"]:
+			assert_false(src.contains(bad), "%s has no %s" % [f, bad])
+
+
+# --- the staging (ruling 38): things, people, feedback, pieces, the map ---------------------------------------------------------------
+
+func _thing(a: BarActivity, id: String) -> Dictionary:
+	for t: Dictionary in a.things():
+		if str(t["id"]) == id:
+			return t
+	return {}
+
+
+func _people(a: BarActivity, who: String) -> Array:
+	return (a.world().people_log as Array).filter(func(x: Dictionary) -> bool: return str(x["id"]) == who).map(func(x: Dictionary) -> String: return str(x["state"]))
+
+
+func test_the_order_bubble_is_a_thing_only_while_the_order_is_demonstrated() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	assert_true(_thing(a, "bar_order").is_empty(), "no bubble while the customer arrives")
+	var s := a.state()
+	var t0 := float(s["phase_t0"]) + float(s["phase_dur"]) + 0.001
+	a.update(t0)
+	var order := a.recipe()
+	var b := _thing(a, "bar_order")
+	assert_eq(b["sprite"], "bar_order_space")
+	assert_eq(int(b["frame"]), int(order[0]), "one frame per step: the first ingredient")
+	a.update(t0 + 0.85)
+	assert_eq(int(_thing(a, "bar_order")["frame"]), int(order[1]), "then the second")
+	_to_input(a)
+	assert_true(_thing(a, "bar_order").is_empty(), "hidden for the player's turn")
+	# every thing has the contract's keys, inside the sector of the map
+	var g := _thing(a, "bar_glass")
+	for k in ["id", "sprite", "at", "sector", "size", "frame"]:
+		assert_true(g.has(k), "a thing has %s" % k)
+	assert_eq(g["sprite"], "bar_glass_space")
+	assert_eq(int(g["frame"]), 0, "an empty glass")
+
+
+func test_the_glass_fills_a_layer_per_ingredient_overflows_on_a_mistake_and_slides_to_the_customer() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	var at0: Array = _thing(a, "bar_glass")["at"]
+	a.tap("ing:%d" % int(order[0]), t)
+	var g := _thing(a, "bar_glass")
+	assert_eq(int(g["frame"]), 1, "one layer")
+	assert_eq(g["layers"], [((a.state()["ingredients"] as Array)[int(order[0])]["color"] as Color).to_html(false)], "in the ingredient's colour")
+	a.tap("ing:%d" % int(order[1]), t + 0.4)
+	assert_eq(int(_thing(a, "bar_glass")["frame"]), 2)
+	# the handover: the glass slides toward the customer and goes with them
+	var s := a.state()
+	var t_s := float(s["phase_t0"])
+	a.update(t_s + 0.2 * 1.4)
+	var mid: Array = _thing(a, "bar_glass")["at"]
+	assert_true(float(mid[0]) < float(at0[0]), "sliding toward the customer: %s from %s" % [str(mid), str(at0)])
+	a.update(t_s + 0.55 * 1.4)
+	var end: Array = _thing(a, "bar_glass")["at"]
+	assert_near(float(end[0]), -0.8, 0.05, "at the customer")
+	a.update(t_s + 0.9 * 1.4)
+	assert_true(_thing(a, "bar_glass").is_empty(), "the customer leaves with it")
+	# a mistake: overflow, tipped, gone, a fresh glass
+	var b := _bar("space", 9)
+	var tb := _to_input(b)
+	_wrong_press(b, tb)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 4, "overflow")
+	var t0 := float(b.state()["phase_t0"])
+	b.update(t0 + 0.5 * 3.0)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 5, "tipped away")
+	b.update(t0 + 0.72 * 3.0)
+	assert_true(_thing(b, "bar_glass").is_empty(), "gone")
+	b.update(t0 + 0.9 * 3.0)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 0, "a fresh glass")
+	assert_false(_thing(b, "bar_glass").has("layers"))
+
+
+func test_the_customer_and_the_bartender_are_directed_and_the_shelf_lights_as_drinks_are_served() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	_to_input(a)
+	assert_eq(_people(a, "customer").back(), "waiting")
+	_wrong_press(a, float(a.state()["phase_t0"]) + 0.5)
+	assert_eq(_people(a, "customer").back(), "frown", "a mistake frowns")
+	assert_eq(_people(a, "bartender").back(), "hands_up")
+	_past_serve(a)
+	_serve_one(a)
+	assert_eq(_people(a, "customer").back(), "waiting", "the next customer waits")
+	assert_true(_people(a, "customer").has("happy"), "a served drink is happy")
+	assert_true(_people(a, "bartender").has("clap"))
+	var w: WorldThings = a.world()
+	var on: Array = (w.piece_log as Array).filter(func(x: Dictionary) -> bool: return x["op"] == "on").map(func(x: Dictionary) -> String: return str(x["piece"]))
+	assert_eq(on, ["bar_shelf_0"], "one shelf glass per served drink")
+	for _i in 2:
+		_serve_one(a)
+	_serve_one(a)
+	var ti := _to_input(a)
+	assert_true(ti >= 0.0)
+	_past_serve(a)
+	assert_eq(a.state()["phase"], "payoff")
+	assert_eq(_people(a, "bartender").back(), "raise_glass")
+	assert_eq(_people(a, "customer").back(), "hands_up")
+	var pulses: Array = (w.piece_log as Array).filter(func(x: Dictionary) -> bool: return x["op"] == "pulse").map(func(x: Dictionary) -> String: return str(x["piece"]))
+	assert_eq(pulses, ["bar_shelf_0", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3"], "the payoff lights them all")
+
+
+func test_presses_give_feedback_on_the_glass_and_a_served_drink_glows_the_counter() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	a.tap("ing:%d" % int(order[0]), t)
+	a.tap("ing:%d" % ((int(order[1]) + 1) % 4), t + 0.4)
+	var fb: Array = (a.world().feedback_log as Array).map(func(x: Dictionary) -> String: return "%s:%s" % [x["thing"], x["kind"]])
+	assert_eq(fb, ["bar_glass:tick", "bar_glass:cross"])
+	var b := _bar("space", 3)
+	_serve_one(b)
+	assert_true((b.world().feedback_log as Array).any(func(x: Dictionary) -> bool: return x["thing"] == "bar_counter" and x["kind"] == "glow"))
+
+
+func test_a_host_world_receives_the_things_every_update() -> void:
+	BarActivity.forget_all()
+	var w := WorldThings.new()
+	var a := BarActivity.new()
+	a.setup({"seed": 7, "config": _cfg(), "request": {"theme": "dinos"}, "world": w})
+	a.begin(0.0)
+	assert_true(a.world() == w)
+	assert_eq(a.make_view(), null, "no canvas view: the stage draws the things")
+	var t := _to_input(a)
+	assert_true(t > 0.0)
+	assert_false(w.things.is_empty(), "set_things was called")
+	assert_eq(str((w.things[0] as Dictionary)["sprite"]), "bar_glass_dinos")
+	var ids: Array = (w.things as Array).map(func(x: Dictionary) -> String: return str(x["id"]))
+	assert_eq(ids, ["bar_glass"], "only the glass in the player's turn")
+
+
+func test_the_test_scene_map_has_the_counter_and_the_shelf_as_bar_pieces_and_the_things_stand_in_it() -> void:
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/bar_scene/bar_room.json"))
+	var m := StoryMap.from_dict(d, "bar_test", false)
+	assert_eq(m.errors, [], "the map loads clean: %s" % str(m.errors))
+	var pieces: Array = []
+	for th: Dictionary in m.things:
+		if str(th.get("piece", "")) != "":
+			pieces.append(str(th["piece"]))
+	pieces.sort()
+	assert_eq(pieces, ["bar_back_shelf", "bar_counter", "bar_shelf_0", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3"], "bar_* pieces, a shelf glass per drink")
+	assert_true(m.has_waypoint("bar_view"))
+	# every thing the bar sets lies in a sector of that map, at the layout's places, and its sheet exists
+	var a := _bar()
+	a.update(float(a.state()["phase_t0"]) + float(a.state()["phase_dur"]) + 0.1)
+	var layout := BarData.layout({"layout": BarData.LAYOUT}, "space")
+	assert_eq(layout["sector"], "bar_room")
+	for t: Dictionary in a.things():
+		assert_eq(str(t["sector"]), str((m.sectors[0] as Dictionary)["id"]), "the map's sector")
+		var at: Array = t["at"]
+		var poly: PackedVector2Array = (m.sectors[0] as Dictionary)["poly"]
+		assert_true(Geometry2D.is_point_in_polygon(Vector2(float(at[0]), float(at[1])), poly), "%s stands in the room" % t["id"])
+		var path := "res://assets/story/bar_test/sprites/%s.png" % t["sprite"]
+		assert_true(FileAccess.file_exists(path), "placeholder sheet %s" % path)
+	for th in ["space", "magic", "dinos", "transport"]:
+		var g := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/bar_test/sprites/bar_glass_%s.png" % th))
+		assert_eq(g.get_size(), Vector2i(64 * 6, 96), "glass sheet: six frames")
+		var o := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/bar_test/sprites/bar_order_%s.png" % th))
+		assert_eq(o.get_size(), Vector2i(128 * 4, 128), "order sheet: a frame per ingredient")
+
+
+# --- the engine and the run scene --------------------------------------------------------------------------------------------------
+
+func test_the_controller_seats_the_bar_in_replace_mode_with_four_controls() -> void:
+	BarActivity.forget_all()
+	var c := MinigameController.new(null)
+	c.register("bar", SCRIPT_PATH, _cfg())
+	var theme: Dictionary = ContractShapes.load_fixture("theme_space.json")
+	var req := RunMinigameHost.build_request("bar", _cfg(), "space", theme, "rave.space", "space_floor")
+	assert_true(c.request("bar", 0.0, 1.0, [], req))
+	assert_eq(c.mode, ActivityMode.Mode.REPLACE)
+	assert_true(c.activity is BarActivity)
+	c.update(1.0)
+	assert_true(c.owns_strip(1.0), "the ingredients own the strip")
+	assert_eq((c.activity.controls() as Array).size(), 4)
+	assert_eq(c.activity.make_view(), null, "no canvas view (ruling 38)")
+	assert_eq(c.activity.config["flags_on_complete"], ["rave.space.bar_done"])
+
+
+func _scene(bot: String) -> Dictionary:
+	_saved = Session.run_progress
+	if FileAccess.file_exists(TMP_SAVE):
+		DirAccess.remove_absolute(TMP_SAVE)
+	Session.run_progress = RunProgress.load_data(TMP_SAVE, "user://none.json")
+	OS.set_environment("RW_RUN_VIRTUAL", "1")
+	OS.set_environment("RW_RUN_BOT", bot)
+	OS.set_environment("RW_RUN_ROUTES", "")
+	OS.set_environment("RW_RUN_TAPS", "none")
+	OS.set_environment("RW_MINIGAME_TAPS", "")
+	Session.run_start_node = ""
+	var host := Control.new()
+	host.size = Vector2(1152, 648)
+	tree.root.add_child(host)
+	var scene: Control = (load("res://src/run/run_play.tscn") as PackedScene).instantiate()
+	host.add_child(scene)
+	scene.size = Vector2(1152, 648)
+	return {"host": host, "scene": scene}
+
+
+func _free(d: Dictionary) -> void:
+	Session.run_progress = _saved
+	if FileAccess.file_exists(TMP_SAVE):
+		DirAccess.remove_absolute(TMP_SAVE)
+	(d["host"] as Control).queue_free()
+	for k in ["RW_RUN_VIRTUAL", "RW_RUN_BOT", "RW_RUN_ROUTES", "RW_RUN_TAPS", "RW_MINIGAME_TAPS"]:
+		OS.set_environment(k, "")
+
+
+func _run_to(scene: Node, t_end: float) -> void:
+	var t: float = scene._vt
+	while t < t_end:
+		t += 1.0 / 30.0
+		scene._vt = t
+		scene._step_virtual(t)
+
+
+func test_in_the_scene_the_bar_replaces_the_pads_costs_no_rhythm_and_resumes_on_the_boundary() -> void:
+	BarActivity.forget_all()
+	# the bot plays phase 1, nothing in phase 2 and block 0 of phase 3 (the bar owns the strip there), then everything again
+	var d := _scene("blocks:1111" + "00000" + "111111111111")
+	var scene: Node = d["scene"]
+	scene.minigames.register("bar", SCRIPT_PATH, _cfg())
+	for h in scene.data.hotspots["warehouse"]:
+		if h["id"] == "warehouse.dancer":
+			h["on_success"] = {"activity": "bar"}
+	_run_to(scene, 49.5 * BEAT)
+	assert_true(scene.hotspot_select("warehouse.dancer"))
+	var pad1: Rect2 = scene.pad_view.button_rects()[1]
+	var pad2: Rect2 = scene.pad_view.button_rects()[2]
+	_run_to(scene, 64.5 * BEAT)
+	var mg: MinigameController = scene.minigames
+	assert_eq(mg.state, "active", "seated on the downbeat")
+	assert_eq(mg.mode, ActivityMode.Mode.REPLACE)
+	var bar := mg.activity as BarActivity
+	var e: RunEngine = scene.engine
+	var misses0: int = e.judge.misses
+	var energy0: float = e.energy
+	var moves0: int = (scene.journey_log as Array).size()
+	var layer: RunActivityInput = scene._mg.controls_layer
+	assert_true(layer != null and layer.ids == ["ing:0", "ing:1", "ing:2", "ing:3"], "four ingredient controls")
+	assert_true(scene.pad_view.visible and (scene.pad_view.slot_fn as Callable).is_valid(), "the pads stay drawn and show the controls in their slots (contract 10)")
+	assert_false(scene.lane_input.enabled, "the lane input is off")
+	assert_true(scene._mg.view == null, "no canvas layer over the room")
+	# arrive, demonstration: the strip taps are the controls' but not live yet
+	assert_eq(scene.dispatch_tap(pad1.get_center()), "activity_controls", "a strip tap reaches the controls, never a pad")
+	assert_eq(int(bar.state()["pos"]), 0)
+	assert_true(str(bar.state()["phase"]) in ["arrive", "demo"], "still being shown")
+	# into the input phase: pad 1's centre is ingredient 0
+	var order := bar.recipe()
+	var s := bar.state()
+	_run_to(scene, 64.0 * BEAT + 1.0 + 1.6 + 0.6)  # seated + arrive_s + two ingredients shown
+	s = bar.state()
+	assert_eq(s["phase"], "input", "hidden demo, the player's turn: %s" % str(s["phase"]))
+	var strays0: int = e.judge.strays
+	var first := int(order[0])
+	var pads := [pad1, pad2, scene.pad_view.button_rects()[3], scene.pad_view.button_rects()[4]]
+	assert_eq(scene.dispatch_tap((pads[first] as Rect2).get_center()), "activity_controls")
+	assert_eq(int(bar.state()["pos"]), 1, "the right strip tap is the right ingredient")
+	assert_eq((bar.state()["last_press"] as Dictionary)["id"], "ing:%d" % first)
+	scene._on_button_pressed(1, 0)
+	assert_eq(e.judge.strays, strays0, "no pad was pressed")
+	# a tap in the stage is never a world choice
+	var sel0: String = scene.hotspots.selected
+	_run_to(scene, scene._vt + 0.5)
+	assert_eq(scene.dispatch_tap(scene._stage_host.global_position + scene._stage_host.size * 0.5), "activity_view")
+	assert_eq(scene.hotspots.selected, sel0, "no world choice")
+	# leaving: the activity is done, judging resumes on the boundary with the strip back a bar before
+	var t_leave: float = scene._vt
+	assert_true(mg.tap("exit", t_leave))
+	_run_to(scene, t_leave + 0.2)
+	assert_eq(mg.state, "resuming")
+	assert_true(mg.resume_t > t_leave, "resumes on a later boundary")
+	assert_true(scene.engine.hold)
+	_run_to(scene, mg.resume_t + 0.1)
+	assert_eq(mg.state, "")
+	assert_false(scene.engine.hold)
+	assert_true(scene.pad_view.visible and scene.lane_input.enabled, "the pads are back")
+	var fin: Dictionary = mg.log.filter(func(l: Dictionary) -> bool: return l["kind"] == "finished")[0]
+	assert_near(float(fin["t"]), mg.resume_t, 1e-6, "released on the boundary")
+	assert_eq(e.judge.misses, misses0, "zero misses while the bar owned the strip")
+	assert_near(e.energy, energy0, 1e-9, "zero energy loss")
+	var seated_moves: Array = (scene.journey_log as Array).slice(moves0).filter(func(a: Dictionary) -> bool: return str(a["action"]) in ["player_move", "player_walk"] and float(a["t0"]) < mg.resume_t - 0.05)
+	assert_eq(seated_moves.size(), 0, "no rail step while seated")
+	_free(d)

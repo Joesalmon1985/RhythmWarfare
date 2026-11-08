@@ -211,16 +211,14 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 
 ## The Bassment (workstream D, drawn by the same HotspotView)
 
-63 passages and the defeat passage, 151 hotspots. Status `verified` = in the data (`check_maps.gd`, `tests/test_trial.gd`), wired in `TrialScene`, walked (`tools/trial/walk_trial.sh`: defaults and taps) and every passage's targets tapped from where the camera stands.
+63 passages and the defeat passage, 144 hotspots. Status `verified` = in the data (`check_maps.gd`, `tests/test_trial.gd`), wired in `TrialScene`, walked (`tools/trial/walk_trial.sh`: defaults and taps) and every passage's targets tapped from where the camera stands.
 
 | Passage | Hotspot | Kind | S outcome | F outcome | Needs | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 0 Defeated | 0.0 (default) | exit | leave the dungeon | - | always | verified |
 | 1 The Service Hatch | 1.0 (default) | exit | passage 3, The Ladder Foot | holds the place and becomes the default | always | verified |
 | 1 The Service Hatch | 1.1 | exit | passage 2, Chalk on the Wall | holds the place and becomes the default | always | verified |
-| 1 The Service Hatch | 1.2 | exit | leave the dungeon | - | always | verified |
 | 2 Chalk on the Wall | 2.0 (default) | exit | passage 3, The Ladder Foot | holds the place and becomes the default | always | verified |
-| 2 Chalk on the Wall | 2.1 | exit | leave the dungeon | - | always | verified |
 | 3 The Ladder Foot | 3.0 (default) | exit | passage 4, The Cable Run | holds the place and becomes the default | always | verified |
 | 3 The Ladder Foot | 3.1 | exit | passage 10, The Warm Stairs | holds the place and becomes the default | always | verified |
 | 3 The Ladder Foot | 3.2 | exit | leave the dungeon | - | always | verified |
@@ -233,12 +231,10 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | 6 Singed | 6.0 (default) | exit | passage 7, The Cable Nest | holds the place and becomes the default | always | verified |
 | 6 Singed | 6.1 | exit | leave the dungeon | - | always | verified |
 | 7 The Cable Nest | 7.0 (default) | exit | passage 15, The Crystal Stacks | holds the place and becomes the default | always | verified |
-| 7 The Cable Nest | 7.1 | exit | leave the dungeon | - | always | verified |
 | 8 Lost Property | 8.0 | encounter | passage 9, The Brass Lamp | holds the place and becomes the default | always | verified |
 | 8 Lost Property | 8.1 (default) | exit | passage 4, The Cable Run | holds the place and becomes the default | always | verified |
 | 8 Lost Property | 8.2 | exit | leave the dungeon | - | always | verified |
 | 9 The Brass Lamp | 9.0 (default) | exit | passage 4, The Cable Run | holds the place and becomes the default | always | verified |
-| 9 The Brass Lamp | 9.1 | exit | leave the dungeon | - | always | verified |
 | 10 The Warm Stairs | 10.0 (default) | exit | passage 12, The Flooded Boiler Room | holds the place and becomes the default | always | verified |
 | 10 The Warm Stairs | 10.1 | exit | passage 11, The Valve Wheel | holds the place and becomes the default | always | verified |
 | 10 The Warm Stairs | 10.2 | exit | leave the dungeon | - | always | verified |
@@ -249,7 +245,6 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | 12 The Flooded Boiler Room | 12.2 | exit | leave the dungeon | - | always | verified |
 | 13 Fried | 13.0 (default) | exit | leave the dungeon | - | always | verified |
 | 14 The Dry Landing | 14.0 (default) | exit | passage 15, The Crystal Stacks | holds the place and becomes the default | always | verified |
-| 14 The Dry Landing | 14.1 | exit | leave the dungeon | - | always | verified |
 | 15 The Crystal Stacks | 15.0 (default) | exit | passage 16, The Humming Hall | holds the place and becomes the default | always | verified |
 | 15 The Crystal Stacks | 15.1 | exit | passage 18, The Crystal Terraces | holds the place and becomes the default | always | verified |
 | 15 The Crystal Stacks | 15.2 | exit | leave the dungeon | - | always | verified |
@@ -297,7 +292,6 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | 32 The Twin Steps Out | 32.2 | exit | leave the dungeon | - | always | verified |
 | 33 Shattered | 33.0 (default) | exit | leave the dungeon | - | always | verified |
 | 34 The Gallery's End | 34.0 (default) | exit | passage 35, The Reverb Pit | holds the place and becomes the default | always | verified |
-| 34 The Gallery's End | 34.1 | exit | leave the dungeon | - | always | verified |
 | 35 The Reverb Pit | 35.0 (default) | exit | passage 37, The Rope Ledge | holds the place and becomes the default | always | verified |
 | 35 The Reverb Pit | 35.1 | exit | passage 36, A Shout into the Dark | holds the place and becomes the default | always | verified |
 | 35 The Reverb Pit | 35.2 | exit | leave the dungeon | - | always | verified |
@@ -307,7 +301,6 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | 37 The Rope Ledge | 37.1 | feature | passage 38, The Pit Floor | luck miss: passage 39, A Long Way Down | always | verified |
 | 37 The Rope Ledge | 37.2 | exit | leave the dungeon | - | always | verified |
 | 38 The Pit Floor | 38.0 (default) | exit | passage 37, The Rope Ledge | holds the place and becomes the default | always | verified |
-| 38 The Pit Floor | 38.1 | exit | leave the dungeon | - | always | verified |
 | 39 A Long Way Down | 39.0 (default) | exit | leave the dungeon | - | always | verified |
 | 40 The Vault of Records | 40.0 (default) | encounter | passage 42, The Inner Vault | holds the place and becomes the default | always | verified |
 | 40 The Vault of Records | 40.1 | object | passage 42, The Inner Vault | holds the place and becomes the default | token | verified |

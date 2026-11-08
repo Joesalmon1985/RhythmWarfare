@@ -1,0 +1,192 @@
+{
+ "id": "transport",
+ "title": "The Wet Rally Street",
+ "course": "race_transport",
+ "stage_world": "race_transport",
+ "scene": "transport_race",
+ "return_hotspot": "transport_race.back",
+ "timing": {
+  "grid_beats": 8.0,
+  "decision_s": 4.0,
+  "gap_s": 1.6,
+  "first_s": 4.5,
+  "no_situation_last_m": 180.0,
+  "finish_hold_s": 3.0,
+  "lane_ease_beats": 1.5,
+  "dt": 0.008333333
+ },
+ "speed": {
+  "top_mps": 38.0,
+  "min_frac": 0.35,
+  "accel": 5.0,
+  "decel": 9.0,
+  "start_rhythm": 0.6,
+  "rhythm_rate": 0.15,
+  "rhythm_floor": 0.25
+ },
+ "rivals": [
+  {
+   "id": "rival_0",
+   "sprite": "car_rival_0",
+   "lane": 0,
+   "start_m": 6.0,
+   "pace": 0.88,
+   "wobble": 0.03,
+   "period_s": 9.0,
+   "phase": 0.2
+  },
+  {
+   "id": "rival_1",
+   "sprite": "car_rival_1",
+   "lane": 2,
+   "start_m": 12.0,
+   "pace": 0.855,
+   "wobble": 0.03,
+   "period_s": 11.0,
+   "phase": 1.3
+  },
+  {
+   "id": "rival_2",
+   "sprite": "car_rival_2",
+   "lane": 0,
+   "start_m": 18.0,
+   "pace": 0.83,
+   "wobble": 0.03,
+   "period_s": 7.5,
+   "phase": 2.4
+  }
+ ],
+ "situations": [
+  {
+   "kind": "braking_car",
+   "weight": 3,
+   "sprite": "car_taxi",
+   "gap_m": [
+    55.0,
+    7.0
+   ],
+   "brake_after_s": 0.8
+  },
+  {
+   "kind": "rival_opening",
+   "weight": 3,
+   "reach_m": [
+    3.0,
+    80.0
+   ],
+   "gap_m": 6.0,
+   "traffic_sprite": "car_van"
+  },
+  {
+   "kind": "blocked_lane",
+   "weight": 2,
+   "sprite": "barrier",
+   "gap_m": [
+    60.0,
+    8.0
+   ]
+  },
+  {
+   "kind": "narrowing",
+   "weight": 2,
+   "sprite": "cones",
+   "traffic_sprite": "car_van",
+   "gap_m": [
+    60.0,
+    8.0
+   ],
+   "alongside_m": [
+    26.0,
+    1.5
+   ]
+  }
+ ],
+ "outcomes": {
+  "clear": {
+   "speed_mul": 0.97
+  },
+  "overtake": {
+   "speed_mul": 1.0,
+   "boost_mps": 4.0,
+   "boost_s": 2.0,
+   "rival_mul": 0.72,
+   "rival_s": 2.5
+  },
+  "follow": {
+   "speed_mul": 0.85
+  },
+  "brake": {
+   "speed_mul": 0.72
+  },
+  "contact": {
+   "speed_mul": 0.5,
+   "recover_s": 2.0,
+   "recover_cap": 0.7
+  },
+  "kerb": {
+   "speed_mul": 0.65,
+   "recover_s": 1.5,
+   "recover_cap": 0.8
+  }
+ },
+ "view": {
+  "dash": {
+   "ahead_m": 1.4,
+   "y": 0.48,
+   "size": [
+    3.4,
+    0.42
+   ]
+  },
+  "gauge": {
+   "ahead_m": 1.3,
+   "y": 0.8,
+   "size": [
+    0.17,
+    0.17
+   ]
+  },
+  "speedo": {
+   "ahead_m": 1.32,
+   "side_m": -0.55,
+   "y": 0.8,
+   "size": [
+    0.45,
+    0.15
+   ]
+  },
+  "rain": {
+   "ahead_m": 2.6,
+   "size": [
+    6.4,
+    3.0
+   ]
+  },
+  "glow_ahead_m": 12.0,
+  "start_lights": {
+   "s": 16.0,
+   "y": 4.6,
+   "size": [
+    3.2,
+    1.1
+   ]
+  },
+  "car_size": [
+   2.0,
+   1.3
+  ],
+  "car_y": 0.22,
+  "van_size": [
+   2.2,
+   2.0
+  ],
+  "barrier_size": [
+   3.0,
+   1.25
+  ],
+  "cones_size": [
+   3.2,
+   1.05
+  ]
+ }
+}
