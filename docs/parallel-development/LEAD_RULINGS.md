@@ -191,9 +191,11 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     is a success whatever the rhythm (as a quest entrance, ruling 15); the window hold gives way to the walk
     (StoryPlayer.end_window_holds). Built on wip/engine-geography; tests/test_geography.gd.
 
-40. **Open (owner): the card table's mode.** A8b runs blackjack in `replace` mode (judging suspended while
+40. **The card table's mode: `replace`, kept as built (owner, 8 November).** A8b runs blackjack in `replace` mode (judging suspended while
     seated, no wobble or fall, the run cannot end at the table, getting up finishes on the resume boundary),
     because under ruling 38 the pad slots carry the four card controls and cannot also be the rhythm pads.
     That overrides the owner's decisions B6/B7 (`rhythm`: the pads keep you on the chair). The alternative
     that keeps B6/B7 is controls as in-world touches (the deck = twist, the chips = bet, the dealer = stick,
-    the door = up) with the pads staying rhythm. The lead merged A8b as built and asks the owner.
+    the door = up) with the pads staying rhythm. The owner chose to keep it as built: while seated the pads
+    are the card controls and judging is suspended; B6/B7 are superseded for the card table (contracts 4/5:
+    blackjack is `replace`).
