@@ -16,12 +16,22 @@ var actions: Array = []  # every action emitted, with its world
 var door_style := "walk"  # the walking style of the next door walk (an exit failure staggers)
 var leaving := false  # a threshold walk out of this phase's scene is under way (H1.6, ruling 39): the rail takes no more steps until the next phase
 var cine_until := -1.0  # song time a hotspot cinematic's move ends (the next scene's door walk waits for it)
+## A walk-out at a walking pace (LEAD_RULINGS 42) may need longer than the beats left before the phase's boundary: the walk and its doorway hold then run on into the next phase
+## while its music plays, and the world swap (the passage frame, the cut to the new world's doorway, the arrival) waits for the hold to end, on a whole beat (`cut_t`, song time; -1:
+## the swap is on the boundary as before). At the next phase's start it becomes `swap_t` (RunPlay shows the new world then) and the new scene's rail waits for the arrival (`arriving_until`).
+var cut_t := -1.0
+var swap_t := -1.0
+var arriving_until := -1.0
+var walk_offs: Array = []  # [{t, node, to, from, length, bars, pace, hold_bars, cut_t, paced}] one per walk-out from a choice tap (the tests and the playtests read it)
 ## (node id, the rail's place after the block-2 decision) -> [[x, z, keep, height], ...]: the window's hotspots, the default kept ([] none). The run scene gives it; the camera frames them with a
 ## StoryPlayer `face` look (StoryPlayer.best_facing from wherever the rail is); unset, block 3 keeps its ordinary glance and stroll.
 var face_fn: Callable
 
 const FACE_TURN_BEAT := 49.0  # the phase beat the window's hotspots are framed by
 const FACE_RELEASE_BEAT := 60.5  # the head hands back to the rail from the lock beat (the commit), by the phase's end
+## The latest beat of the next phase a walk-out's cut may fall on: the arrival walk (3 bars at most, from 2 beats before the cut) is then over before the next scene's block-2
+## decision (beat 44.75), which walks to its choice viewpoint for the next choice window (beat 49). A walk-out that would end later loses its hold first, then is shortened.
+const CUT_LATEST_BEAT := 32.0
 ## The heralds' look (docs/art/HERALDS.md, the visibility rule): in the opening of a scene the head turns to each quest entrance on offer and its herald, one entrance a block
 ## (the first in block 0, the next in block 1, at most three), from HERALD_LOOK_FROM to HERALD_LOOK_TO beats into its block, turning in and handing back over HERALD_TURN_BARS.
 ## A look, never a move: the rail and the route are untouched, and the block's own glance is left out so it never swings the entrance away.
@@ -30,6 +40,7 @@ const HERALD_LOOK_TO := 15.0
 const HERALD_TURN_BARS := 1.0
 const HERALD_MAX_LOOKS := 3
 
+var walk_pace := true  # the walk-out from a choice tap at a walking pace (ruling 42; the tests of ruling 39's authored bars turn it off)
 var look_heralds := true  # the heralds' look and the window's herald points (the tests turn it off to see the rail's own camera)
 var _herald_blocks: Dictionary = {}  # block -> true: the blocks of this phase whose glance a herald look replaces
 static var _maps: Dictionary = {}
@@ -78,6 +89,10 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 		out.append({"t0": t0, "action": "player_role", "args": {"role": "dancer"}})
 	elif skip_arrival:
 		skip_arrival = false
+	elif changed and cut_t > t0 + 1.0e-6:  # the walk-out is still under way in the world being left (ruling 42): the cut and the arrival wait for its hold to end
+		swap_t = cut_t
+		out.append_array(rail.arrival(swap_t, engine.level.notes))
+		arriving_until = maxf(rail.busy_until, swap_t)
 	elif changed:
 		out.append_array(rail.arrival(t0, engine.level.notes))
 	elif new_scene:  # a path inside the world: a plain door walk, the stage stays (after a hotspot cinematic that is still under way: when it has finished, if that is soon)
@@ -87,10 +102,21 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 			walked = cine_until > t0 + 6.0 * engine.beat_s  # too long to wait: the cinematic is where the camera stays
 			t_walk = cine_until
 		out.append_array(rail.door_walk(t_walk, engine.level.notes, walked))
+	if not (changed and cut_t > t0 + 1.0e-6):
+		swap_t = -1.0
+		arriving_until = -1.0
+	cut_t = -1.0
 	door_target = ""
 	leaving = false
 	var looks := herald_looks(id, t0, engine)
-	out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
+	if arriving_until > t0:  # (still walking out, then arriving: block 0's glance and stroll, and the heralds' looks that start before the arrival is over, are left out)
+		looks = looks.filter(func(a: Dictionary) -> bool: return float(a["t0"]) >= arriving_until)
+		var bb := float(engine.timing("block_beats"))
+		for blk in _herald_blocks.keys():
+			if t0 + (float(blk) * bb + HERALD_LOOK_FROM) * engine.beat_s < arriving_until:
+				_herald_blocks.erase(blk)
+	else:
+		out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
 	out.append_array(looks)
 	node_id = id
 	world = w
@@ -116,17 +142,41 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 ## the boundary is shortened to end on it (the guard before a boundary is shorter than a bar: CONTRACTS.md 3, the leg-length disagreement).
 ## `move` (optional) is the route's move {to, via?, bars?, hold_bars?, style?} (threshold_move): the walk follows its `via` polyline over its bars, still ending by the boundary, and keeps
 ## its hold at the threshold only when there is time for it before the boundary.
-func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0, move: Dictionary = {}) -> Array:
+## `paced_from` (a walk-out from a choice tap, ruling 42: the rail's place at the tap): the leg's length from there (RunRail.leg_length) sets the least bars, at no more than
+## RunRail.WALK_PACE_MAX m/s (RunRail.walk_off_bars, 2 to 8). A leg the authored bars already walk at that pace is exactly as before. A longer one keeps its paced bars and its hold
+## even past the boundary, up to the next phase's CUT_LATEST_BEAT (the hold goes first, then the leg is shortened), and the world swap waits for it on a whole beat (`cut_t`).
+func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0, move: Dictionary = {}, paced_from := "") -> Array:
 	if rail == null or wp == "" or t_boundary <= t:
 		return []
-	var avail := (t_boundary - t) / rail.bar_s()
+	var bar := rail.bar_s()
+	var beat := bar / 4.0
+	var avail := (t_boundary - t) / bar
 	var want := float(move.get("bars", bars)) if not move.is_empty() else bars
-	var b := minf(clampf(want, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), avail)
+	var b := clampf(want, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX)
+	var length := -1.0
+	var paced := false
+	if paced_from != "":
+		length = RunRail.leg_length(_map_of(node_id), paced_from, {"to": wp, "via": move.get("via", [])})
+		if length > RunRail.WALK_PACE_MAX * b * bar + 1.0e-6:  # the authored bars would walk it faster than walking pace
+			paced = true
+			b = maxf(b, RunRail.walk_off_bars(length, bar))
+			avail = (t_boundary + CUT_LATEST_BEAT * beat - t) / bar
+	b = minf(b, avail)
 	var style := str(move.get("style", door_style)) if door_style == "walk" else door_style  # (an exit failure's stagger wins over the route's own style)
 	var args := {"to": wp, "style": style, "bars": b, "threshold": true}
 	if typeof(move.get("via")) == TYPE_ARRAY and not (move["via"] as Array).is_empty():
 		args["via"] = (move["via"] as Array).duplicate()
 	var hold := minf(maxf(float(move.get("hold_bars", 0.0)), 0.0), avail - b)
+	cut_t = -1.0
+	var t_end := t + (b + maxf(hold, 0.0)) * bar
+	if paced and t_end > t_boundary + 1.0e-6:  # past the boundary: the swap waits for the hold to end, on the next whole beat (the hold runs on to it)
+		cut_t = t_boundary + ceilf((t_end - t_boundary) / beat - 1.0e-6) * beat
+		hold = (cut_t - t) / bar - b
+	if paced_from != "":
+		var pace := length / (b * bar) if length > 0.0 and b > 0.0 else 0.0
+		walk_offs.append({"t": t, "node": node_id, "to": wp, "from": paced_from, "length": length, "bars": b, "pace": pace, "hold_bars": maxf(hold, 0.0), "cut_t": cut_t, "paced": paced})
+		var cut_txt := "the cut %.2f beats after the boundary" % ((cut_t - t_boundary) / beat) if cut_t > 0.0 else "the cut on the boundary"
+		print("RUN walk-off %s %s -> %s: leg %.1f m, %.2f bars (%.2f m/s, at most %.1f), hold %.2f bars, %s" % [node_id, paced_from, wp, length, b, pace, RunRail.WALK_PACE_MAX, maxf(hold, 0.0), cut_txt])
 	if hold > 1.0e-6:
 		args["hold_bars"] = hold
 	if hold > 1.0e-6:
@@ -141,17 +191,19 @@ func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0, move: 
 
 ## The walk out of scene `from` toward `to` in another world, started at `t` and ending by the boundary `t_boundary` (the lock handler, RunPlay._update_passage): the route's
 ## move when the scene has one (its polyline), else a straight walk to the threshold spot; [] when the route has no threshold.
-func threshold_leave(t: float, t_boundary: float, from: String, to: String) -> Array:
+## `paced` (the walk-out from a choice tap, commit_walk): at a walking pace from the rail's place (threshold_walk's `paced_from`).
+func threshold_leave(t: float, t_boundary: float, from: String, to: String, paced := false) -> Array:
 	var wp := threshold_of(from, to)
 	if wp == "":
 		return []
 	var move := threshold_move(from, to)
-	return threshold_walk(t, t_boundary, wp, 2.0, move if str(move.get("to", "")) == wp else {})
+	return threshold_walk(t, t_boundary, wp, 2.0, move if str(move.get("to", "")) == wp else {}, rail.place() if paced and walk_pace and rail != null else "")
 
 
 ## The walk out at a committed choice (lead ruling on H1.6, "you chose, you go"): a `hotspot_commit` event `ev` of the final window for a touched choice (not the untouched default)
 ## whose route leads to another world with a threshold starts the threshold walk at the commit's own time, with the route move's authored bars (clamped 2 to 4) and its hold, each only
-## as far as it fits before the phase's boundary (a late commit is shortened, never run past it). [] otherwise: the lock (beat 61) then walks the default as before.
+## as far as it fits before the phase's boundary (a late commit is shortened, never run past it); a leg those bars would walk faster than RunRail.WALK_PACE_MAX takes its paced bars
+## instead (2 to 8, ruling 42) and may run on past the boundary (threshold_walk). [] otherwise: the lock (beat 61) then walks the default as before.
 func commit_walk(ev: Dictionary, engine: RunEngine) -> Array:
 	var out: Dictionary = ev.get("outcome", {})
 	if out.is_empty() or str(out.get("window", "")) != "final" or not bool(out.get("tapped", false)) or bool(out.get("stays", false)):
@@ -160,7 +212,7 @@ func commit_walk(ev: Dictionary, engine: RunEngine) -> Array:
 	var from := str(ev.get("node", engine.node_id))
 	if not data.nodes.has(to) or not data.nodes.has(from) or to == from or str(data.nodes[to]["world"]) == str(data.nodes[from]["world"]):
 		return []
-	return threshold_leave(float(ev["t"]), engine.t_of(float(engine.timing("phase_beats"))), from, to)
+	return threshold_leave(float(ev["t"]), engine.t_of(float(engine.timing("phase_beats"))), from, to, true)
 
 
 ## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1), else the route's own move
@@ -236,6 +288,9 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	var notes := engine.level.notes
 	if leaving:  # (the player is walking out to another world: no rail step, no glance, no stroll; the walk is the camera's move)
 		log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": rail.place(), "kind": "leaving", "role": rail.role, "pos": rail.pos})
+		return []
+	if float(ev["t"]) < arriving_until:  # (a walk-out ran on into this phase: the camera is still arriving; the rail takes its first step after the arrival)
+		log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": rail.place(), "kind": "arriving", "role": rail.role, "pos": rail.pos})
 		return []
 	var out: Array = rail.step(bool(ev["passed"]), float(ev["t"]), notes, engine.t_of(FACE_TURN_BEAT) if b == 2 else -1.0)
 	var last: Dictionary = rail.visited[rail.visited.size() - 1]

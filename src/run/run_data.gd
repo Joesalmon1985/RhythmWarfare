@@ -677,7 +677,7 @@ func _validate_places() -> void:
 		var mp := str(n["map"])
 		if not known.has(mp):
 			var ids := {}
-			var path: String = StoryMap.PATH % mp
+			var path: String = StoryMap.path_of(mp)
 			var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
 			if typeof(parsed) != TYPE_DICTIONARY:
 				errors.append("scene %s: map %s not found (%s)" % [id, mp, path])

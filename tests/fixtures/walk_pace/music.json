@@ -1,0 +1,26 @@
+{
+	"note": "Test fixture of tests/test_geography.gd: the walk-pace worlds' music, merged into content/story/music.json by the test.",
+	"nodes": [
+		{
+			"id": "pace_a",
+			"audio": "dd_part2",
+			"chart": "dd_part2",
+			"treatment": "none",
+			"temporary": true
+		},
+		{
+			"id": "pace_b",
+			"audio": "dd_part2",
+			"chart": "dd_part2",
+			"treatment": "none",
+			"temporary": true
+		},
+		{
+			"id": "pace_c",
+			"audio": "dd_part2",
+			"chart": "dd_part2",
+			"treatment": "none",
+			"temporary": true
+		}
+	]
+}

@@ -1,0 +1,280 @@
+{
+	"note": "Test fixture of tests/test_geography.gd (LEAD_RULINGS 42, the walk-out at a walking pace): three one-scene geography worlds in the hall map (tests/fixtures/walk_pace/hall.json), merged into the main run (174 bpm, a bar 1.379 s). Each route's authored bars are 2 with a 1-bar hold; the leg's length decides: pace_a up to pace_b is 24 m (6 bars), pace_b up to pace_a 5 m (2 bars, as before), pace_b left to pace_c 40 m (8 bars, flagged by the rail check), pace_c up to pace_a 7 m.",
+	"worlds": [
+		{
+			"id": "pace_a",
+			"title": "Pace A",
+			"map": "res://tests/fixtures/walk_pace/hall.json",
+			"depth": 1,
+			"geography": true,
+			"blurb": "The 24 m leg."
+		},
+		{
+			"id": "pace_b",
+			"title": "Pace B",
+			"map": "res://tests/fixtures/walk_pace/hall.json",
+			"depth": 2,
+			"geography": true,
+			"blurb": "The 5 m and 40 m legs."
+		},
+		{
+			"id": "pace_c",
+			"title": "Pace C",
+			"map": "res://tests/fixtures/walk_pace/hall.json",
+			"depth": 2,
+			"geography": true,
+			"blurb": "The far side."
+		}
+	],
+	"nodes": [
+		{
+			"id": "pace_a",
+			"world": "pace_a",
+			"scene": "hall",
+			"title": "Pace A",
+			"entry": true,
+			"exit_scene": true,
+			"role": "dancer",
+			"blurb": "Pace A",
+			"next": [
+				{
+					"to": "pace_a",
+					"dir": "down",
+					"label": "Stay",
+					"loop": true
+				},
+				{
+					"to": "pace_b",
+					"dir": "up",
+					"label": "Up to B"
+				}
+			],
+			"place": {
+				"waypoint": "a_home",
+				"rail": {
+					"good": [
+						{
+							"to": "a_view",
+							"role": "dancer",
+							"style": "walk",
+							"bars": 3,
+							"hold_bars": 3,
+							"choice": true
+						}
+					],
+					"bad": [
+						{
+							"to": "a_side",
+							"role": "queasy",
+							"style": "walk",
+							"bars": 2
+						}
+					],
+					"arrive": "a_door",
+					"exits": {
+						"down": "a_home",
+						"up": "a_out"
+					},
+					"routes": {
+						"up": {
+							"to": "a_out",
+							"via": [
+								"a_turn"
+							],
+							"style": "walk",
+							"bars": 2,
+							"hold_bars": 1
+						}
+					},
+					"glances": [
+						{
+							"by": -20,
+							"bars": 2
+						},
+						{
+							"by": 18,
+							"bars": 2
+						}
+					],
+					"strolls": [
+						{
+							"fwd": 1.0,
+							"bars": 3
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "pace_b",
+			"world": "pace_b",
+			"scene": "hall",
+			"title": "Pace B",
+			"entry": true,
+			"exit_scene": true,
+			"role": "dancer",
+			"blurb": "Pace B",
+			"next": [
+				{
+					"to": "pace_b",
+					"dir": "down",
+					"label": "Stay",
+					"loop": true
+				},
+				{
+					"to": "pace_a",
+					"dir": "up",
+					"label": "Back to A"
+				},
+				{
+					"to": "pace_c",
+					"dir": "left",
+					"label": "Far to C"
+				}
+			],
+			"place": {
+				"waypoint": "b_home",
+				"rail": {
+					"good": [
+						{
+							"to": "b_view",
+							"role": "dancer",
+							"style": "walk",
+							"bars": 3,
+							"hold_bars": 3,
+							"choice": true
+						}
+					],
+					"bad": [
+						{
+							"to": "b_side",
+							"role": "queasy",
+							"style": "walk",
+							"bars": 2
+						}
+					],
+					"arrive": "b_door",
+					"exits": {
+						"down": "b_home",
+						"up": "b_out",
+						"left": "b_out_far"
+					},
+					"routes": {
+						"up": {
+							"to": "b_out",
+							"via": [
+								"b_turn"
+							],
+							"style": "walk",
+							"bars": 2,
+							"hold_bars": 1
+						},
+						"left": {
+							"to": "b_out_far",
+							"via": [
+								"b_far"
+							],
+							"style": "walk",
+							"bars": 2,
+							"hold_bars": 1
+						}
+					},
+					"glances": [
+						{
+							"by": -20,
+							"bars": 2
+						},
+						{
+							"by": 18,
+							"bars": 2
+						}
+					],
+					"strolls": [
+						{
+							"fwd": 1.0,
+							"bars": 3
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "pace_c",
+			"world": "pace_c",
+			"scene": "hall",
+			"title": "Pace C",
+			"entry": true,
+			"exit_scene": true,
+			"role": "dancer",
+			"blurb": "Pace C",
+			"next": [
+				{
+					"to": "pace_c",
+					"dir": "down",
+					"label": "Stay",
+					"loop": true
+				},
+				{
+					"to": "pace_a",
+					"dir": "up",
+					"label": "Back to A"
+				}
+			],
+			"place": {
+				"waypoint": "c_home",
+				"rail": {
+					"good": [
+						{
+							"to": "c_view",
+							"role": "dancer",
+							"style": "walk",
+							"bars": 3,
+							"hold_bars": 3,
+							"choice": true
+						}
+					],
+					"bad": [
+						{
+							"to": "c_side",
+							"role": "queasy",
+							"style": "walk",
+							"bars": 2
+						}
+					],
+					"arrive": "c_door",
+					"exits": {
+						"down": "c_home",
+						"up": "c_out"
+					},
+					"routes": {
+						"up": {
+							"to": "c_out",
+							"via": [
+								"c_turn"
+							],
+							"style": "walk",
+							"bars": 2,
+							"hold_bars": 1
+						}
+					},
+					"glances": [
+						{
+							"by": -20,
+							"bars": 2
+						},
+						{
+							"by": 18,
+							"bars": 2
+						}
+					],
+					"strolls": [
+						{
+							"fwd": 1.0,
+							"bars": 3
+						}
+					]
+				}
+			}
+		}
+	]
+}

@@ -12,6 +12,13 @@ extends RefCounted
 ## portals; chapter checks: every actor has a home, every player_move / player_look target is a waypoint or actor.
 
 const PATH := "res://content/story/maps/%s.json"
+
+
+## The file of map `chapter`: content/story/maps/<id>.json, or the id itself when it is a res:// path to a .json (a test fixture's map, e.g. tests/fixtures/walk_pace/hall.json).
+static func path_of(chapter: String) -> String:
+	return chapter if chapter.begins_with("res://") and chapter.ends_with(".json") else PATH % chapter
+
+
 const EPS := 1.0e-3
 const HOME_MARGIN := 0.25
 const WAYPOINT_MARGIN := 0.3
@@ -72,7 +79,7 @@ var _portals: Array = []  # {a, b, p0, p1, mid}
 
 
 static func load_chapter(chapter: String, check_files := true) -> StoryMap:
-	var path := PATH % chapter
+	var path := path_of(chapter)
 	var m := StoryMap.new()
 	m.id = chapter
 	m.art = chapter
