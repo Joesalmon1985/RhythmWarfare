@@ -19,10 +19,10 @@ GUIDE = {  # name: (guide thing, route node, sprite stem)
 
 
 def _rail(P):
+    # round 2: one reveal, then the choice viewpoint. The run moves the rail one place per passed block and holds the choice only when the camera stands on the choice place
+    # by the window (beat 49): round 1's four-place loop was still walking when the window opened (a real run, the bot, RW_RUN_VIRTUAL). The other reveals stay in the map as views.
     good = [
         P("bt_hatch_view", bars=4, hold=2, via=["bt_v_a1"]),
-        P("bt_window_view", bars=3, hold=2, via=["bt_v_a2"]),
-        P("bt_dock_view", bars=4, hold=2, via=["bt_v_a3"]),
         P("bt_ref", bars=4, hold=8, choice=True, via=["bt_v_a4"]),
     ]
     bad = [P("bt_ref_back", "queasy", "walk", 2), P("bt_sw_corner", "queasy", "stagger", 3)]

@@ -6,10 +6,10 @@ shot on the real run scene with the bot playing perfectly:
   * state_committed  the guide tapped IN the window (RW_RUN_SELECT=<hotspot>@50: ruling 39, a geography guide's tap commits at its beat), shot at beat 51.5: the committed sprite;
   * state_walk       the same tap without the camera override, shot at beat 52.5: the first frame of the walk-off along the route.
 
-The first two stand the drawn camera at the scene's reference viewpoint (RW_STORY_CAM=<ref>; the hotspots follow it) because in a scene's FIRST phase the rail is still on its stay
-loop when the window opens (the loop's three reveals take the opening bars; see the scene docs): the frames show what the player sees from the choice viewpoint in a later phase.
+No camera override: the rail itself stands at the choice viewpoint through the window (round 2 cut each stay loop to one reveal and the choice viewpoint; with round 1's four
+places the camera was still walking when the window opened). `ref` is kept for a caller that wants the drawn camera pinned (RW_STORY_CAM), None otherwise.
 
-    import guide_states; rows = guide_states.shoot(scene, ref_waypoint, hotspot_id, tmp)      (tools/doom/shoot_dock.py, shoot_balcony.py, shoot_booth.py)
+    import guide_states; rows = guide_states.shoot(scene, None, hotspot_id, tmp)      (tools/doom/shoot_dock.py, shoot_balcony.py, shoot_booth.py)
 
 Returns [(name, PIL image)] at 16:9 (1280 x 720). RW_KEEP keeps them full size (state_*.jpg: no _16x9 suffix, so frame_check measures only the eight rail shots).
 """
@@ -41,8 +41,9 @@ def _run(scene, tmp, name, beat, extra, res):
 
 
 def shoot(scene, ref, hotspot, tmp, res="1280x720"):
-    plan = [("state_selected", 47.0, {"RW_CHOICE_PRESELECT": "1", "RW_RUN_SELECT": "%s@44" % hotspot, "RW_STORY_CAM": ref}),
-            ("state_committed", 51.5, {"RW_RUN_SELECT": "%s@50" % hotspot, "RW_STORY_CAM": ref}),
+    pin = {"RW_STORY_CAM": ref} if ref else {}
+    plan = [("state_selected", 47.0, {"RW_CHOICE_PRESELECT": "1", "RW_RUN_SELECT": "%s@44" % hotspot, **pin}),
+            ("state_committed", 51.5, {"RW_RUN_SELECT": "%s@50" % hotspot, **pin}),
             ("state_walk", 52.5, {"RW_RUN_SELECT": "%s@50" % hotspot})]
     out = []
     for name, beat, extra in plan:

@@ -113,7 +113,7 @@ def main(out):
         rows[rows.index(None)] = r20
     rows = [r for r in rows if r is not None]
     if not only or re.search(only, "state"):  # round 2: the selected and committed guide states and the first walk frame, one row under the shots
-        states = gs.shoot(SCENE, STATE_TAP[0], STATE_TAP[1], tmp)
+        states = gs.shoot(SCENE, None, STATE_TAP[1], tmp)  # (the real rail: it holds at the choice viewpoint through the window)
         if states:
             row = Image.new("RGB", (2 * W, 240 + 16), (12, 12, 20))
             for k, (nm, im) in enumerate(states):

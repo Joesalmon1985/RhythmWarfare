@@ -42,6 +42,10 @@ SECTORS = [
     ("bal_step_a", r(-7.25, 8.5, -6, 11), 0.375, 3.5, 120, "STEP1", "CEIL3_5"),
     ("bal_step_b", r(-8.5, 8.5, -7.25, 11), 0.75, 3.5, 120, "STEP1", "CEIL3_5"),
     ("bal_top", r(-9.75, 8.5, -8.5, 11), 1.125, 3.5, 130, "STEP1", "CEIL3_5"),
+    # round 2: the iron balcony outside the window stands over a drop (the painting's window shows the rail, the drop and the skyline): a void west of the terrace behind a railing,
+    # its far wall the lit facade across the way, its walls 2.4 m (under a metre above the eye: the sky shows over them); a 1 m plain drop at the south end joins it to the map
+    ("drop_a", r(-15, 1, -9.75, 8.5), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    ("drop_b", r(-15, 0, -9.75, 1), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
     ("hatch", r(-1, 11, 1, 12), 0.0, 2.5, 140, "FLOOR5_1", "CEIL3_5"),
     ("moth", r(-3, 12, 3, 17.5), 0.25, 4.25, 160, "FLOOR0_1", "CEIL3_5"),
     ("dock_door", r(1.75, 3, 2.5, 5.5), 0.0, 2.5, 150, "FLOOR5_1", "CEIL3_5"),
