@@ -19,7 +19,7 @@ The Doom scenes are behind a flag and an overlay: nothing in `content/run/run.js
 ## What the flag adds
 
 `RW_DOOM_WORLDS=1` makes `RunData` merge `content/run/doom/` into the main run: eight GEOGRAPHY worlds (`docs/engine/GEOGRAPHY_WORLDS.md`, hook H1.6), each ONE scene whose id is the world id
-(`doom_warehouse` depth 1, the other seven depth 2), with its music entry (the Warehouse arrangements), its hotspots in `content/run/doom/hotspots/<world>.json` (three guides and the stay) and its
+(`doom_warehouse` depth 1, the other seven depth 2), with its music entry (the Warehouse arrangements as the fallback; with the track packs present each world plays its own recorded track, table in `docs/doom/MUSIC.md`), its hotspots in `content/run/doom/hotspots/<world>.json` (three guides and the stay) and its
 StoryData `story_doom_<world>.json`. There are no stand-in and no return scenes.
 
 Each scene's `down` route is the stay loop; its three guides lead straight to the entry scenes of other worlds, per the brief's table (ahead = `up`, left, right):

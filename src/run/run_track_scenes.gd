@@ -118,6 +118,8 @@ func _read(v: Dictionary, where: String, d: RunData) -> void:
 		return
 	for sid in (mine as Dictionary):
 		var w := "%s: paths.%s scene %s" % [where, path_key, sid]
+		if not d.nodes.has(str(sid)) and str(sid).begins_with("doom_") and not RunData.doom_worlds_on():
+			continue  # a Doom world's entry (docs/doom/MUSIC.md): it belongs to the overlay, which only RW_DOOM_WORLDS=1 merges into the run
 		if not d.nodes.has(str(sid)):
 			errors.append("%s: there is no such scene in this run" % w)
 			continue
