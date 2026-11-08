@@ -582,6 +582,8 @@ Also logged: deferrals with their reason, every fallback with its cause (`not_re
 `no_blend`, `short_lead`, `grid`, `planner_error`), the hard floor being reached with any stem still above
 -60 dB (a recipe bug), and decode times per pack.
 
+A transition is locked, and its line printed, once per destination and boundary: when the engine reports the same route again at that boundary (a geography exit's tap gives its `route_commit` before the lap's lock point, ruling 39), the director logs `TRANSITION observe id=<n> ... already locked` and allocates no new id.
+
 ## 9. Android
 
 ### 9.1 What must be measured on a device (stage X4)
