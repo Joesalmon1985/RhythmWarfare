@@ -700,7 +700,7 @@ func test_the_test_scene_map_and_sprite_sheets_carry_the_things() -> void:
 	var dir := FIX + "assets/story/cloak_test/sprites/"
 	for p: Dictionary in m["things"]:
 		assert_true(FileAccess.file_exists(dir + str(p["sprite"]) + ".png"), "sprite for %s" % p["id"])
-	var r := _staged("dinos")
+	var r := _staged("dinos", {"layout": CloakroomActivity.LAYOUT})  # (the dinos theme's sheets in the TEST room: since the Dinosaur rave landed, themes.json carries its own layout, in dino_rave's cave)
 	var w: WorldThings = r[2]
 	assert_true(w.things.size() >= 9)
 	for t: Dictionary in w.things:
