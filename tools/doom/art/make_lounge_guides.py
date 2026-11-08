@@ -140,6 +140,20 @@ def draw(who, state, i):
     return c.image()
 
 
+LOUNGE_PAINTING = "doom_worlds/Mustard octagonal lounge of three routes-2.png"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import make_bar_guides as mbg  # noqa: E402
+CROPS = {  # stage D polish (ruling 36): crops from the paintings (tools/doom/art/make_guides.py crop_guide)
+    # the Dock guide stands full length in this painting's doorway (186 px, crown to feet)
+    "dock": dict(src=LOUNGE_PAINTING, top=283, chin=0, cut=469, centre_x=808,
+                 poly=[(808, 283), (800, 290), (780, 311), (772, 334), (771, 370), (772, 410), (774, 440), (786, 444), (788, 467), (832, 469), (851, 440), (849, 390), (847, 342),
+                       (866, 337), (882, 335), (897, 327), (892, 319), (880, 317), (866, 321), (838, 311), (824, 300), (820, 285)],
+                 hand=(866, 314, 899, 340, 850, 899)),
+    # the Floor guide: her full-length picture in the Copper Bar painting (420 px), mirrored: here she stands on the right and turns to the room
+    "floor": dict(mbg.CROPS["floor"], mirror=True, door_left=False),
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(os.path.dirname(SHEET), exist_ok=True)
@@ -147,9 +161,10 @@ def main():
     sheet = Image.new("RGBA", (cols * W, 2 * H), (14, 12, 34, 255))
     for r, who in enumerate(LOOK):
         x = 0
+        cropped = mg.crop_guide(CROPS[who]) if who in CROPS else None
         for state, n in mg.FRAMES.items():
             for i in range(n):
-                im = draw(who, state, i)
+                im = cropped[(state, i)] if cropped else draw(who, state, i)
                 im.save(os.path.join(OUT, "guide_%s_%s_%d.png" % (who, state, i)))
                 sheet.alpha_composite(im, (x * W, r * H))
                 x += 1

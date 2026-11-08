@@ -59,17 +59,20 @@ style("rug_stripe_a rug_stripe_b", "floor_rug_cream", "wall_sofa", "ceil_beam", 
 style("rug_in", "floor_rug_orange", "wall_sofa", "ceil_beam", "#ffe0b0", step="wall_table", light=0.95)
 style("table", "floor_table", "wall_table", "ceil_beam", "#ffe8c0", step="wall_table", light=1.0)
 style("ahead_step_a ahead_step_b", "floor_marble", "wall_stone", "ceil_street", "#c8d4e8", step="wall_stone", lip="wall_stone", light=0.85)
-style("ahead_street", "floor_street", "wall_street", "ceil_street", "#b8c8e8", step="wall_stone", lip="wall_stone", light=0.8)
+style("ahead_street", "floor_street", "wall_street", "ceil_street", "#b8c8e8", step="wall_stone", lip="wall_stone", light=1.0)
 style("left_vest", "floor_wood", "wall_wood", "ceil_beam", "#ffd0a0", step="wall_wood", lip="wall_stone", light=0.9)
 style("left_bar", "floor_wood", "wall_wood", "ceil_beam", "#ffc890", step="wall_copper", lip="wall_stone", light=0.9)
 style("left_counter", "floor_table", "wall_copper", "ceil_beam", "#ffd8a8", step="wall_copper", light=1.0)
-style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#a8c0ff", step="wall_blue", lip="wall_stone", light=0.85)
-style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#8ca8ff", step="wall_blue", lip="wall_blue", light=0.8)
+style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#a8c0ff", step="wall_blue", lip="wall_stone", light=1.0)
+style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#8ca8ff", step="wall_blue", lip="wall_blue", light=1.0)
 style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtain", "ceil_beam", "#ffc8a0", step="wall_curtain", lip="wall_stone", light=0.85)
 OWN_TEX = ["wall_stone", "wall_marble", "wall_sofa", "wall_curtain", "wall_wood", "wall_copper", "wall_table", "wall_street", "wall_blue", "wall_beam",
            "floor_marble", "floor_rug_red", "floor_rug_cream", "floor_rug_orange", "floor_sofa", "floor_table", "floor_wood", "floor_street", "floor_blue", "floor_curtain",
            "ceil_beam", "ceil_street", "thing_plant", "thing_lamp", "thing_vase", "thing_cushion", "thing_cushion_b",
-           "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads"]
+           "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads", "wall_stone_b", "wall_stone_c", "lg_p_sofa", "lg_p_palm_l", "lg_p_palm_r"]
+RAIN_IN = ("ahead_street",)
+WET = {"concourse": 0.45, "step_ring": 0.45, "ahead_street": 0.9, "ahead_step_a": 0.6, "ahead_step_b": 0.6, "right_vest": 0.5, "right_passage": 0.5}  # stage D: the painting's polished marble and the rain street (gloss)
+STONES = ["wall_stone", "wall_stone_b", "wall_stone_c"]  # the stone's three variants, one per piece (a hash of its id): no wall repeats one tile
 GUIDE_OWN = {"dock": OWN, "floor": OWN, "bar": SHARED}  # where each guide's sprite set lives
 
 # id, doom point, look-at doom point, hold_bars (0 = a moving place), what it is
@@ -81,9 +84,9 @@ WAYPOINTS = [
     ("lg_west", (-196, -50), (150, 0), 2, "reveal: the west walkway, the pit and its sofas across to the blue passage"),
     ("lg_north", (0, 200), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
     ("lg_east", (196, 45), (-175, 175), 2, "reveal: the east walkway looking back across the pit to the Bar arch"),
-    ("lg_ahead_door", W("n", 0, 58), (0, 330), 0, "THRESHOLD ahead (Dock): up the two steps, in the street at the foot of the Dock guide; the world transition happens here"),
+    ("lg_ahead_door", W("n", 0, -6), (0, 330), 0, "THRESHOLD ahead (Dock): at the foot of the steps, 3.2 m before the Dock guide (stage D: held a step back so the pads do not cover him); the world transition happens here"),
     ("lg_bar_door", W("nw", 0, 22), (-220, 262), 0, "THRESHOLD left (Bar): inside the arch, before the Bar guide"),
-    ("lg_floor_door", W("ne", 0, 22), (233, 205), 0, "THRESHOLD right (Floor): inside the blue passage, before the Floor guide"),
+    ("lg_floor_door", W("ne", 0, 2), (233, 205), 0, "THRESHOLD right (Floor): at the blue passage's mouth, a step back from the Floor guide (stage D)"),
     # via points: the ring round the pit (octagon of inradius 196), and the way in at each door
     ("lg_v_ene", (196, 81), (81, 196), 0, "via: the walkway, east-north-east corner"),
     ("lg_v_nne", (81, 196), (-81, 196), 0, "via: north-north-east"),
@@ -116,6 +119,9 @@ THINGS = [  # id, sprite, doom point, y centre above the sector's floor, size (h
     ("lg_lamp_table", "thing_lamp", (0, 0), 0.34, 0.7), ("lg_vase", "thing_vase", (16, 10), 0.4, 0.8),
     ("lg_cushion_a", "thing_cushion", (-34, 106), 0.36, 0.55), ("lg_cushion_b", "thing_cushion_b", (-14, 108), 0.34, 0.5),
     ("lg_cushion_c", "thing_cushion_b", (50, -104), 0.34, 0.5), ("lg_cushion_d", "thing_cushion", (-50, -102), 0.36, 0.55),
+    # the painting's foreground (stage D polish), cut from it: the near sofa with the patterned cushion 1.4 m before the reference viewpoint (on the pit's step ring, -0.375 m:
+    # its top is 0.9 m over the walkway) and the two palms at the frame's edges
+    ("lg_fg_sofa", "lg_p_sofa", (0, -150), 0.82, 0.9), ("lg_fg_palm_l", "lg_p_palm_l", (-52, -145), 1.15, 1.6), ("lg_fg_palm_r", "lg_p_palm_r", (56, -148), 1.25, 1.8),
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the hub, a cool pool beyond each doorway: grey-blue rain, amber bar, cobalt passage)
     ("lg_lt_table", (0, 0), 1.6, 9.0, "#ffa43c", 1.8), ("lg_lt_dome", (0, 0), 5.2, 15.0, "#ffb860", 1.1),
@@ -124,13 +130,16 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the h
     ("lg_lt_ref", (0, -200), 3.4, 8.0, "#ffc070", 1.2),
     ("lg_lt_dock", (0, 330), 3.0, 8.0, "#8cacd8", 1.5), ("lg_lt_dock2", (0, 250), 3.0, 6.0, "#9ab4d8", 1.1),
     ("lg_lt_bar", W("nw", 0, 110), 2.8, 7.0, "#ffa040", 1.8), ("lg_lt_bar2", W("nw", 60, 150), 2.6, 5.0, "#ffb860", 1.4),
+    # stage D: the Dock guide is lit from the street lamp over him and the hub's amber behind the viewer (the first pass left him a silhouette in the doorway)
+    ("lg_lt_dock_key", W("n", 0, 80), 2.7, 3.5, "#dce6ff", 1.8), ("lg_lt_dock_warm", W("n", 0, 30), 2.2, 4.0, "#ffc080", 1.4),
+    ("lg_lt_st_w", (-60, 330), 2.2, 4.5, "#ffd090", 1.6), ("lg_lt_st_e", (60, 390), 2.2, 4.5, "#c8d8ff", 1.6), ("lg_lt_st_n", (-40, 420), 2.4, 4.5, "#ffd090", 1.4),
     ("lg_lt_floor", W("ne", 0, 100), 2.8, 8.0, "#3c64ff", 1.7), ("lg_lt_floor2", W("ne", 0, 40), 2.6, 5.0, "#5a80ff", 1.3),
 ]
 DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, height m, emissive
-    ("lg_sc_n1", "deco_sconce", (-74, 237), 1.7, 0.95, True), ("lg_sc_n2", "deco_sconce", (74, 237), 1.7, 0.95, True),
-    ("lg_sc_e1", "deco_sconce", (237, -74), 1.7, 0.95, True), ("lg_sc_w1", "deco_sconce", (-237, -74), 1.7, 0.95, True),
-    ("lg_sc_e2", "deco_sconce", (237, 74), 1.7, 0.95, True), ("lg_sc_w2", "deco_sconce", (-237, 74), 1.7, 0.95, True),
-    ("lg_sc_s1", "deco_sconce", (-74, -237), 1.7, 0.95, True), ("lg_sc_s2", "deco_sconce", (74, -237), 1.7, 0.95, True),
+    ("lg_sc_n1", "deco_sconce", (-74, 237), 1.6, 1.25, True), ("lg_sc_n2", "deco_sconce", (74, 237), 1.6, 1.25, True),
+    ("lg_sc_e1", "deco_sconce", (237, -74), 1.6, 1.25, True), ("lg_sc_w1", "deco_sconce", (-237, -74), 1.6, 1.25, True),
+    ("lg_sc_e2", "deco_sconce", (237, 74), 1.6, 1.25, True), ("lg_sc_w2", "deco_sconce", (-237, 74), 1.6, 1.25, True),
+    ("lg_sc_s1", "deco_sconce", (-74, -237), 1.6, 1.25, True), ("lg_sc_s2", "deco_sconce", (74, -237), 1.6, 1.25, True),
     ("lg_studs_nw1", "deco_studs", W("nw", 98, -2), 0.9, 1.9, False), ("lg_studs_nw2", "deco_studs", W("nw", -98, -2), 0.9, 1.9, False),
     ("lg_studs_ne1", "deco_studs", W("ne", 98, -2), 0.9, 1.9, False), ("lg_studs_ne2", "deco_studs", W("ne", -98, -2), 0.9, 1.9, False),
     ("lg_studs_se1", "deco_studs", W("se", 94, -2), 0.9, 1.9, False), ("lg_studs_se2", "deco_studs", W("se", -94, -2), 0.9, 1.9, False),
@@ -138,6 +147,9 @@ DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, he
     ("lg_bottles", "deco_bottles", W("nw", -40, 188), 1.2, 1.3, True), ("lg_vinyl", "deco_vinyl", W("nw", 50, 188), 1.7, 1.0, False),
     ("lg_beads_w", "deco_beads", (-281, 0), 0.0, 2.6, False), ("lg_beads_e", "deco_beads", (281, 0), 0.0, 2.6, False),
     ("lg_beads_s", "deco_beads", (0, -281), 0.0, 2.6, False),
+    # stage D: the street's wall lamps (the painting's rain street is lined with them), each with a cool pool (LIGHTS)
+    ("lg_st_lamp_w", "deco_sconce", (-78, 330), 2.2, 0.8, True), ("lg_st_lamp_e", "deco_sconce", (78, 390), 2.2, 0.8, True),
+    ("lg_st_lamp_n", "deco_sconce", (-40, 438), 2.4, 0.8, True),
 ]
 
 
@@ -181,10 +193,20 @@ def main():
     for s in d["sectors"]:
         nm = names[int(s["doom_sector"])]
         f, w, c, tint, step, lip, light = S[nm]
+        if w == "wall_stone":
+            w = STONES[sum(ord(ch) * (i + 1) for i, ch in enumerate(str(s["id"]))) % len(STONES)]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"] = f, w, c, lift(tint)
         s["step_tex"], s["lip_tex"] = step, lip
         s["room"] = "main"
         s["light"] = round(light if light is not None else min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        if nm in RAIN_IN:
+            s["rain"] = True
+        else:
+            s.pop("rain", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
+        else:
+            s.pop("wet", None)
         s["room_name"] = nm  # (readable by the Magic rave's authoring; the engine ignores unknown keys)
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
             used[s[k]] = True
@@ -202,6 +224,7 @@ def main():
     barriers(d)
     d["sky"] = {}
     d["fog"] = {"color": "#2a1608", "density": 0.016}
+    d["weather"] = {"rain": 0.8, "wind": 6}  # stage D: the painting's rain in the street beyond the Dock door (only `ahead_street` lets it in: RAIN_IN)
     d["palette_weight"] = 1.0
     keep = [w for w in d["waypoints"] if not w["id"].startswith("lg_")]
     for wid, at, look, hold, _why in WAYPOINTS:

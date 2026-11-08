@@ -37,6 +37,9 @@ ISLANDS = [
     ("ped_step_a", rect(30, -107, 110, -83), 40, 320, 230, "STEP1", "CEIL3_5", "courtyard", {}),
     ("ped_step_b", rect(30, -83, 110, -59), 52, 320, 240, "STEP1", "CEIL3_5", "courtyard", {}),
 ]
+# the steel-plated landing the painting's viewer stands on (stage D polish): a 0.5 m plate in the ring's south-west corner round the reference viewpoint, so the eye (2.1 m over
+# the walkway) looks over the fence onto the floor and the stage guide's feet clear the railing, as in the painting
+ISLANDS.append(("plate", rect(-680, -640, -560, -560), 16, 320, 200, "FLOOR4_8", "CEIL3_5", "stone_ring", {}))
 # the gates: a 0.5 m step in front of each of the two openings in the courtyard's 1 m ledge (south x -400..-320, west y -120..-40); the rest of the ledge is the railing wall
 ISLANDS.append(("gate_step_s", rect(-400, -541, -320, -517), 16, 320, 190, "STEP1", "CEIL3_5", "stone_ring", {}))
 ISLANDS.append(("gate_step_w", rect(-541, -120, -517, -40), 16, 320, 190, "STEP1", "CEIL3_5", "stone_ring", {}))
