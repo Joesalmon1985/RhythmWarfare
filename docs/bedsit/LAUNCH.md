@@ -174,9 +174,10 @@ All four raves are real nodes now (`LANDED` in `tools/run/make_bedsit.py`: N spa
 | Transport | `transport_` | the Dock | a wet street forecourt (rain, `weather` on the map), a pair of tracks a step down, a long roofed depot hall | stage N (a loading dock, a locomotive's face behind the DJ), left-luggage cloakroom bay W, ticket-office bar bay E, garage beside the stage |
 
 - Every stage is north (frame phi 180, origin 0): `BassKnobActivity` puts the knob at world (0, -25.12) in the sector `stage`.
-- The race entrance of magic, dinos and transport is the `<prefix>_race` PLACEHOLDER node (the hold `hangar_view` facing the racer, looping back to the hub). It becomes a real race scene,
-  exactly like `space_race`, as soon as `content/races/<theme>.json` exists (`activity_scenes` in `make_bedsit.py`; the race hotspot is replayable). Every theme file's `race.course` is
-  `race_space` until per-theme courses exist (`tools/story/build_race.py --theme <x>`).
+- Every theme has a race (`content/races/<theme>.json`, built by `tools/story/build_race.py --theme <x>`): Space's rules and numbers on four courses
+  (`race_space`, `race_magic` the Moonlit Lane, `race_dinos` the Lava Ledge, `race_transport` the Wet Rally Street). The Magic, Dinos and Transport race art is a
+  PLACEHOLDER (`manifest.json` `placeholder: true`: not drawn from a painting, Space's cell size not the 256 px class, no race sounds). The `<prefix>_race` hangar node
+  is a real race scene in all four (`activity_scenes` in `make_bedsit.py`; the race hotspot is replayable). `play_bedsit.cmd --race <theme>` starts in that hangar.
 - **The bedsit's way out (ruling 41).** The opening is finished once ANY ONE rave has all three of its activities done: the bass fixed, the cloakroom done and the bar done
   (the save's `raves.<theme>.bass_fixed`, `cloakroom_done`, `bar_done`). The player does not have to visit all four raves (brief section 10), and a visit alone, or two of the
   three activities, does not open it. `SpaceRaveHost.opening_done` checks this at every scene start and sets the run flag `bedsit_way_out`; the bedsit's hotspot `bedsit.way_out`
