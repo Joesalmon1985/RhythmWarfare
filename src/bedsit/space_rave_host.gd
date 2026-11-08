@@ -25,6 +25,7 @@ const LIGHT_GROUPS := {  # each theme's stage set pieces (content/story/maps/<th
 }
 const LIGHT_GROUP := ["pylon_beams", "ring_lights", "hologram_dome"]  # (the Space rave's, kept for callers of the first version)
 const ACTIVITY_PIECES := {"cloakroom": ["cloak_lamp"], "bar": ["bar_shelf_1", "bar_shelf_2", "bar_shelf_3", "bar_shelf_4"]}  # what a finished activity leaves lit (the maps' pieces)
+const WAY_OUT_FLAG := "bedsit_way_out"  # ruling 41: the run flag the bedsit's way out (hotspot bedsit.way_out) needs; set while ANY one rave has its three activities done
 const QUIET_CAP := 25.0  # the crowd shows at most this energy (the quiet band) until the bass is back
 const RAMP_BEATS := 4.0  # one bar
 
@@ -65,8 +66,24 @@ func light_group() -> Array:
 	return LIGHT_GROUPS.get(theme, LIGHT_GROUP)
 
 
+## Ruling 41: the opening is complete once ANY one rave has all three activities done in the save (raves.<theme>.bass_fixed, cloakroom_done, bar_done). Visiting is not enough;
+## the puzzles are kept for the run, so once open the way out stays open for the run.
+static func opening_done(p: Variant) -> bool:
+	if p == null:
+		return false
+	for th: String in RaveSave.THEMES:
+		var all := true
+		for pz: String in RaveSave.PUZZLES:
+			all = all and bool(p.puzzle_done(th, pz))
+		if all:
+			return true
+	return false
+
+
 ## A scene starts at song time `t` (every phase start, and the run's first scene).
 func enter(node_id: String, t: float) -> void:
+	if progress != null and opening_done(progress):  # (every scene, the bedsit included: its way out reads the flag)
+		progress.set_flag(WAY_OUT_FLAG)
 	if not is_rave_node(node_id):
 		if in_rave:
 			leave(t)

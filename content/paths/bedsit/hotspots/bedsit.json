@@ -176,10 +176,7 @@
    "min_px": 88,
    "available": {
     "flags_all": [
-     "bedsit_been_space",
-     "bedsit_been_dinos",
-     "bedsit_been_magic",
-     "bedsit_been_transport"
+     "bedsit_way_out"
     ],
     "flags_none": [],
     "energy_min": 0,

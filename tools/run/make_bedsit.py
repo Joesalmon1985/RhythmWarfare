@@ -70,9 +70,10 @@ RAVES = {
               "The garage beside the stage: a rally hatchback and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
 }
 ORDER = ["space", "magic", "dinos", "transport"]  # the order the raves' nodes are written in
-# WAY_OUT. A path must end somewhere (tests/test_run_matrix.gd); while a rave was a placeholder its one-scene ending was that end. With all four landed, the bedsit's way out to the
-# Warehouse (bedsit.end, the development exit's scene) opens once the player has come home from every rave this run: each rave's routes home set the run flag BEEN % theme.
-BEEN = "bedsit_been_%s"
+# WAY_OUT (ruling 41; the brief: the player need not visit all four flavours). The bedsit's way out to the Warehouse (hotspot bedsit.way_out -> bedsit.end -> run:warehouse) opens once
+# ANY one rave has its three activities done (the save's raves.<theme>.bass_fixed, cloakroom_done, bar_done): SpaceRaveHost.opening_done sets the run flag WAY_OUT_FLAG at every scene
+# start while that holds, so once open it stays open for the run; a visit alone does not open it, and every rave stays reachable from the bedsit.
+WAY_OUT_FLAG = "bedsit_way_out"
 
 
 def stations(theme: str) -> dict:
@@ -197,7 +198,8 @@ def run_json() -> dict:
     return {
         "schema": 1,
         "path": {"id": "bedsit", "title": "The Bedsit", "entry_from": "bedsit.start", "returns_to": "warehouse", "dev": True,
-                 "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd."},
+                 "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd.",
+                 "ending_gate": {"flag": WAY_OUT_FLAG, "by": "activities", "note": "ruling 41: the way out opens once any one rave's three activities are done (SpaceRaveHost.opening_done); tests/test_bedsit_opening_end.gd proves it"}},
         "timing": main_timing,
         "start_node": "bedsit",
         "worlds": [{"id": "bedsit", "title": "The Bedsit", "map": "bedsit", "story": "res://content/story/bedsit.json", "depth": 1, "blurb": "One room, four walls, four raves."}] +
@@ -223,9 +225,8 @@ def hotspots_json() -> dict:
         rows.append(hotspot_row("bedsit.threshold_" + f.lower(), "bedsit", {"waypoint": thr}, scene_id, f == "N"))
     rows.append(hotspot_row("bedsit.dev_exit", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
                             {"flags_all": ["bedsit_dev_exit"], "flags_none": [], "energy_min": 0, "once": False}))
-    if not PLACEHOLDER_RAVES:  # every rave has landed, so no placeholder ending is left: the way out to the Warehouse opens once the player has come home from all four (WAY_OUT)
-        rows.append(hotspot_row("bedsit.way_out", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
-                                {"flags_all": [BEEN % FACING[f][0] for f in FACINGS], "flags_none": [], "energy_min": 0, "once": False}))
+    rows.append(hotspot_row("bedsit.way_out", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,  # WAY_OUT (ruling 41)
+                            {"flags_all": [WAY_OUT_FLAG], "flags_none": [], "energy_min": 0, "once": False}))
     for scene_id, f in PLACEHOLDER_RAVES.items():
         ph = hotspot_row("%s.back" % scene_id, scene_id, {"waypoint": FACING[f][3]}, "run:warehouse", True)
         flag = ["keep:path_bedsit_%s_placeholder" % FACING[f][0]]
@@ -288,10 +289,6 @@ def rave_hotspots(theme: str) -> list:
             rows.append(h)
         rows.append(row("%s.back" % sid, sid, {"waypoint": door}, "exit", world, default=True))
         rows.append(row("%s.home" % sid, sid, {"waypoint": door}, "exit", "bedsit"))  # (the door is behind the camera at the hold: a door staged at the station's view point stood in front of the counter)
-    for h in rows:  # going home from this rave marks it as been to (the bedsit's way out opens once all four have been: hotspots_json, WAY_OUT)
-        for k in ("on_success", "on_failure"):
-            if h[k].get("route") == "bedsit":
-                h[k]["flags_set"] = [BEEN % theme]
     return rows
 
 

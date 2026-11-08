@@ -6,7 +6,12 @@
   "entry_from": "bedsit.start",
   "returns_to": "warehouse",
   "dev": true,
-  "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd."
+  "opens": "The new opening (docs/briefs/BEDSIT_RAVES_BRIEF.md section 2): a bedsit seen in four directions. Started with RW_BEDSIT=1 or RW_RUN_PATH=bedsit; tools/dev/play_bedsit.cmd.",
+  "ending_gate": {
+   "flag": "bedsit_way_out",
+   "by": "activities",
+   "note": "ruling 41: the way out opens once any one rave's three activities are done (SpaceRaveHost.opening_done); tests/test_bedsit_opening_end.gd proves it"
+  }
  },
  "timing": {
   "bpm": 174,

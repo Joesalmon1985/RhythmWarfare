@@ -177,9 +177,13 @@ All four raves are real nodes now (`LANDED` in `tools/run/make_bedsit.py`: N spa
 - The race entrance of magic, dinos and transport is the `<prefix>_race` PLACEHOLDER node (the hold `hangar_view` facing the racer, looping back to the hub). It becomes a real race scene,
   exactly like `space_race`, as soon as `content/races/<theme>.json` exists (`activity_scenes` in `make_bedsit.py`; the race hotspot is replayable). Every theme file's `race.course` is
   `race_space` until per-theme courses exist (`tools/story/build_race.py --theme <x>`).
-- **The bedsit's way out.** With no placeholder rave left there was no ending on the path. Each rave's routes home now set the run flag `bedsit_been_<theme>`, and the bedsit's hotspot
-  `bedsit.way_out` (anchored on `threshold_s`, route `bedsit.end`, then the Warehouse) is available once all four are set (`BEEN` / `WAY_OUT` in `make_bedsit.py`). The development exit
-  `bedsit.dev_exit` (flag `bedsit_dev_exit`) is unchanged. This is a stand-in for the lead/owner's decision on how the opening ends.
+- **The bedsit's way out (ruling 41).** The opening is finished once ANY ONE rave has all three of its activities done: the bass fixed, the cloakroom done and the bar done
+  (the save's `raves.<theme>.bass_fixed`, `cloakroom_done`, `bar_done`). The player does not have to visit all four raves (brief section 10), and a visit alone, or two of the
+  three activities, does not open it. `SpaceRaveHost.opening_done` checks this at every scene start and sets the run flag `bedsit_way_out`; the bedsit's hotspot `bedsit.way_out`
+  (anchored on `threshold_s`) needs that flag and leads to `bedsit.end`, then the Warehouse. Once open it stays open for the run (the puzzles are kept for the run, and a new run
+  starts them over); the four raves stay reachable from the bedsit all the while. The development exit `bedsit.dev_exit` (flag `bedsit_dev_exit`) is unchanged. The path declares
+  the gate (`run.json` `path.ending_gate`), so `tests/test_run_matrix.gd`, whose bot plays no activities, lets the bedsit live in its loop; `tests/test_bedsit_opening_end.gd`
+  proves the gate (`--filter bedsit`).
 
 ### Transport (`tools/story/build_transport_rave.py`)
 
