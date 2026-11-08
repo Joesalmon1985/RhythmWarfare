@@ -51,6 +51,7 @@
   "tr_board": "textures/tr_board.png",
   "tr_garage_door": "textures/tr_garage_door.png",
   "tr_timetable": "textures/tr_timetable.png",
+  "tr_luggage": "textures/tr_luggage.png",
   "tr_counter": "textures/tr_counter.png",
   "tr_desk": "textures/tr_desk.png",
   "tr_lockers": "textures/tr_lockers.png",
@@ -565,7 +566,7 @@
    "ceiling": 7.0,
    "floor_tex": "tr_floor_walk",
    "ceil_tex": "tr_ceil_truss",
-   "wall_tex": "tr_wall_ware",
+   "wall_tex": "tr_wall_brick",
    "light": 0.88,
    "tint": "#ffd0a0",
    "room": "main",
@@ -2262,7 +2263,7 @@
   {
    "id": "coat_hatch_0",
    "kind": "decal",
-   "sprite": "tr_wall_lamp",
+   "sprite": "tr_luggage",
    "at": [
     -18.985,
     -12.6
@@ -2275,7 +2276,7 @@
   {
    "id": "coat_hatch_1",
    "kind": "decal",
-   "sprite": "tr_wall_lamp",
+   "sprite": "tr_luggage",
    "at": [
     -18.985,
     -10.0
@@ -2288,7 +2289,7 @@
   {
    "id": "coat_hatch_2",
    "kind": "decal",
-   "sprite": "tr_wall_lamp",
+   "sprite": "tr_luggage",
    "at": [
     -18.985,
     -7.4

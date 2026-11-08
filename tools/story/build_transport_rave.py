@@ -53,7 +53,7 @@ HUB_AT = [0.0, 15.0]
 TEXTURES = ["tr_floor_asphalt", "tr_floor_conc", "tr_floor_walk", "tr_floor_blue", "tr_floor_rails", "tr_floor_dock", "tr_wall_brick", "tr_wall_steel", "tr_wall_ware", "tr_wall_shutter",
             "tr_wall_blue", "tr_wall_tile", "tr_trim", "tr_ceil_truss", "tr_bollard", "tr_street_lamp", "tr_hang_lamp", "tr_wall_lamp", "tr_neon", "tr_crate", "tr_case", "tr_drum", "tr_pallet",
             "tr_pallet_stack", "tr_van", "tr_fence", "tr_windows", "tr_towers", "tr_shutter_rave", "tr_loco", "tr_bus", "tr_racer", "tr_signal", "tr_board", "tr_garage_door", "tr_timetable",
-            "tr_counter", "tr_desk", "tr_lockers", "tr_rack", "tr_console", "tr_deck", "tr_hatch", "tr_cone", "tr_glow", "tr_knob_0", "tr_knob_1", "tr_knob_2", "tr_knob_3",
+            "tr_luggage", "tr_counter", "tr_desk", "tr_lockers", "tr_rack", "tr_console", "tr_deck", "tr_hatch", "tr_cone", "tr_glow", "tr_knob_0", "tr_knob_1", "tr_knob_2", "tr_knob_3",
             "pc_glass_lit", "pc_lamp_lit"]
 PIECES = ("tr_signal_beams", "tr_track_lights", "tr_headlamp_dome")
 AMBIENT = "tr_ambient"
@@ -293,6 +293,26 @@ def timetable() -> Cv:
     return c
 
 
+def luggage_hatch() -> Cv:
+    """A left-luggage hatch in the bay's back wall: a steel frame, a roller shutter half up on shelves of cases, a yellow number plate."""
+    c = Cv(128, 128)
+    c.paint(c.rect(0, 0, 128, 128), ramp("#14161e", "#2a2e38", "#4a505c", "#7a8290"), c.lit((0, 0, 128, 128), 0.5, 0.3), edge_col=OUTLINE)
+    c.paint(c.rect(12, 40, 116, 116), ramp("#1a1408", "#4a3418", "#8a6430", "#d8a860"), c.lit((12, 40, 116, 116), 0.6, -0.3), edge=False)
+    for r, y in enumerate((70, 104)):
+        c.flat(c.rect(12, y, 116, y + 4), "#3a3e48")
+        for k in range(5):
+            x = 16 + k * 20
+            col = ["#7a1a2a", "#1a3a6a", "#5a3a14", "#2a5a2a", "#6a1a5a"][(k + r) % 5]
+            c.paint(c.rrect(x, y - 22 + (k % 2) * 4, x + 16, y, 2), ramp("#08080c", col, px_mix(col, "#ffffff", 0.35), "#ffffff"), c.lit((x, y - 22, x + 16, y), 0.5, 0.4), edge_col=OUTLINE)
+    for yy in range(14, 42, 4):
+        c.paint(c.rect(10, yy, 118, yy + 4), ramp("#2a2e38", "#4a505c", "#7a8290", "#b8c0cc"), c.round_y(yy, yy + 4, 0.55, 0.6), edge=False)
+    c.flat(c.rrect(48, 2, 80, 12, 2), YELLOW, edge=True, edge_col=OUTLINE)
+    c.flat(c.rect(58, 4, 62, 10), "#14141a")
+    c.flat(c.rect(66, 4, 70, 10), "#14141a")
+    c.flat(c.rect(10, 116, 118, 120), "#c8c8d0")
+    return c
+
+
 def cone() -> Cv:
     c = Cv(48, 64)
     c.paint(c.poly([(20, 4), (28, 4), (42, 56), (6, 56)]), ramp("#7a2a08", "#d8501a", "#ff8a3a", "#ffd0a0"), c.round_x(6, 42), edge_col=OUTLINE)
@@ -321,6 +341,7 @@ def build_art():
     art.sprite("tr_garage_door", garage_door())
     art.sprite("tr_timetable", timetable())
     art.sprite("tr_cone", cone())
+    art.sprite("tr_luggage", luggage_hatch())
 
     def tickets(cv, y):  # the ticket office's counter top: a ticket machine, a bell, a stack of tickets
         cv.paint(cv.rrect(70, y - 46, 104, y - 2, 4), ramp("#1a2a5a", "#2a4a9a", "#4a7ad8", "#a8c8ff"), cv.lit((70, y - 46, 104, y - 2), 0.55, 0.4), edge_col=OUTLINE)
@@ -382,9 +403,9 @@ def build_map(art):
                                    "deck_sprite": "tr_deck", "arch": "tr_loco", "spk_l": "tr_signal", "spk_r": "tr_signal", "woofer": "tr_drum", "pieces": PIECES, "lt_a": HIVIS, "lt_b": CYAN,
                                    "dj": ("tentacle", "a"), "dancers": [("blob", "b"), ("cyclops", "a"), ("grey", "a")], "glow": "tr_glow"})
     add_cloak(m, CLOAK_F, "hall", {"floor": "tr_floor_blue", "tint": "#c8d8f0", "ceil": "tr_ceil_truss", "wall": "tr_wall_tile", "counter": "tr_desk", "rail": "tr_rack", "cabinet": "tr_lockers",
-                                   "hatch_decal": "tr_wall_lamp", "lt": "#d8e8ff", "glow": "tr_glow"},
+                                   "hatch_decal": "tr_luggage", "lt": "#d8e8ff", "glow": "tr_glow"},
               [("antenna", "a"), ("grey", "b"), ("insect", "a"), ("blob", "b"), ("cyclops", "b"), ("tentacle", "a"), ("grey", "a"), ("insect", "b")], ("cyclops", "a"))
-    add_bar(m, BAR_F, "hall", {"floor": "tr_floor_walk", "tint": "#ffd0a0", "ceil": "tr_ceil_truss", "wall": "tr_wall_ware", "counter": "tr_counter", "cabinet": "tr_lockers", "screen": "tr_board",
+    add_bar(m, BAR_F, "hall", {"floor": "tr_floor_walk", "tint": "#ffd0a0", "ceil": "tr_ceil_truss", "wall": "tr_wall_brick", "counter": "tr_counter", "cabinet": "tr_lockers", "screen": "tr_board",
                                "window_a": "tr_windows", "window_b": "tr_windows", "lt": SODIUM, "glow": "tr_glow"},
             ("blob", "a"), ("antenna", "b"), [("b1", "insect", "a", 20.0, 2.6), ("b2", "cyclops", "b", 19.2, 3.4)])
     add_race(m, RACE_F, "hall", {"floor": "tr_floor_conc", "tint": "#d8e8f0", "ceil": "tr_ceil_truss", "wall": "tr_wall_shutter", "door": "tr_garage_door", "side_a": "tr_wall_lamp", "side_b": "tr_wall_lamp",

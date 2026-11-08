@@ -2628,6 +2628,14 @@
    ],
    "metres": 1.0
   },
+  "tr_luggage": {
+   "file": "textures/tr_luggage.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "tr_counter": {
    "file": "textures/tr_counter.png",
    "size": [
