@@ -173,6 +173,7 @@ bad rail with the reversed `via`, the drop from a good place to the bad rail, th
   [1.4, 1.8] m above the local floor and 0.1 m under the ceiling. The local floor is the sector's floor, except across a step, where it is
   the stair line (straight from one floor to the other over the span the eye ramps over);
 * every choice viewpoint holds at least 3 bars.
+* every walk-out to another world is measured from the rail's place at the tap, as the engine does (`rail.place()`), as the worst case over home and every good and bad rail place, with the paced bars (ruling 42); more than 8 bars is warned.
 
     godot --headless --path . -s tools/story/check_rail_paths.gd -- [run.json ...] [--node=<filter>]
 

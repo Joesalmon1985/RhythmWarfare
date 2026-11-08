@@ -166,25 +166,50 @@ static func check_rail(map: StoryMap, node_id: String, home: String, rail: Dicti
 	return errors
 
 
+## Every place the rail can stand on: home, then the `to` of each good and bad entry (unique).
+static func rail_places(rail: Dictionary, home: String) -> Array:
+	var out: Array = []
+	for wp in [home]:
+		if wp != "":
+			out.append(wp)
+	for key in ["good", "bad"]:
+		for p in rail.get(key, []):
+			if typeof(p) == TYPE_DICTIONARY and str(p.get("to", "")) != "" and not out.has(str(p["to"])):
+				out.append(str(p["to"]))
+	return out
+
+
 ## The walk-outs of run scene `n` (a run.json node; `place` its place block, `world_of` node id -> world, `bpm` the run's tempo), LEAD_RULINGS 42: every route of rail.routes whose
-## `next` entry leads to another world, measured from the scene's choice viewpoint (else its home) along its authored leg (RunRail.leg_length), with the bars it gets (the authored
+## `next` entry leads to another world, measured from the rail's place at the tap (worst case, see START RULE) along its authored leg (RunRail.leg_length), with the bars it gets (the authored
 ## bars clamped 2 to 4, or more when they would walk it faster than RunRail.WALK_PACE_MAX: RunRail.walk_off_bars, at most 8) and the pace, and `warn` when it would need more than
-## RunRail.WALK_OFF_BARS_MAX bars at that pace (the scene's fault): [{dir, from, to, length (-1 unknown), bars, pace, need, warn}].
+## RunRail.WALK_OFF_BARS_MAX bars at that pace (the scene's fault): [{dir, from, choice, places, to, length (-1 unknown), bars, pace, need, warn}].
+## START RULE: the engine measures from the rail's place at the tap (RunJourney.commit_walk passes rail.place(): home, or the `to` of the good/bad rail entry at the rail position), which is the
+## choice viewpoint only when the rail is standing on it. The check cannot know the timing, so it takes the WORST CASE: the longest leg over home and every good/bad rail place (`from` is that
+## place, `choice` is the choice viewpoint, `places` how many places were tried).
 static func walk_offs(map: StoryMap, n: Dictionary, place: Dictionary, world_of: Dictionary, bpm: float) -> Array:
 	var out: Array = []
 	var rail: Dictionary = place.get("rail", {})
 	var routes: Dictionary = rail.get("routes", {}) if typeof(rail.get("routes")) == TYPE_DICTIONARY else {}
-	var from := RunRail.walk_off_from(rail, str(place.get("waypoint", "")))
+	var home := str(place.get("waypoint", ""))
+	var choice_wp := RunRail.walk_off_from(rail, home)
+	var stands := rail_places(rail, home)
 	var bar := 4.0 * 60.0 / bpm
 	for e in n.get("next", []):
 		var dir := str(e.get("dir", ""))
 		if dir == "down" or not routes.has(dir) or typeof(routes[dir]) != TYPE_DICTIONARY or str(world_of.get(str(e.get("to", "")), "")) == str(n.get("world", "")):
 			continue
 		var mv: Dictionary = routes[dir]
+		# the engine starts at the rail's place at the tap (RunJourney.commit_walk: rail.place()), which the check cannot know: the worst case over every place the rail can stand on
+		var from := choice_wp
 		var length := RunRail.leg_length(map, from, mv)
+		for wp in stands:
+			var l := RunRail.leg_length(map, wp, mv)
+			if l > length + 1.0e-6:
+				length = l
+				from = wp
 		var b := clampf(float(mv.get("bars", 3.0)), RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX)
 		if length > RunRail.WALK_PACE_MAX * b * bar + 1.0e-6:
 			b = maxf(b, RunRail.walk_off_bars(length, bar))
 		var need := RunRail.walk_off_bars_needed(length, bar) if length >= 0.0 else 0.0
-		out.append({"dir": dir, "from": from, "to": str(mv.get("to", "")), "length": length, "bars": b, "pace": length / (b * bar) if length >= 0.0 else 0.0, "need": need, "warn": need > RunRail.WALK_OFF_BARS_MAX})
+		out.append({"dir": dir, "from": from, "choice": choice_wp, "places": stands.size(), "to": str(mv.get("to", "")), "length": length, "bars": b, "pace": length / (b * bar) if length >= 0.0 else 0.0, "need": need, "warn": need > RunRail.WALK_OFF_BARS_MAX})
 	return out

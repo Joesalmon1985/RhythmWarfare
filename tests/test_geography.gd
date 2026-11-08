@@ -689,13 +689,58 @@ func test_a_40_m_leg_walks_8_bars_and_the_rail_check_flags_it() -> void:
 		for x in StoryRailCheck.walk_offs(m, n, n["place"], world_of, 174.0):
 			got["%s %s" % [n["id"], x["dir"]]] = x
 	assert_eq(got.keys().size(), 4, "four walk-outs measured: %s" % str(got.keys()))
-	assert_eq(int(got["pace_a up"]["bars"]), 6)
+	# the check measures the worst case over the rail's places (the engine starts at the rail's place at the tap): home, the choice viewpoint and the bad place
+	assert_eq(str(got["pace_a up"]["from"]), "a_home")
+	assert_eq(str(got["pace_a up"]["choice"]), "a_view")
+	assert_eq(int(got["pace_a up"]["bars"]), 8)
 	assert_false(bool(got["pace_a up"]["warn"]))
 	assert_eq(int(got["pace_b up"]["bars"]), 2)
 	assert_eq(int(got["pace_b left"]["bars"]), 8)
-	assert_eq(int(got["pace_b left"]["need"]), 10)
-	assert_true(bool(got["pace_b left"]["warn"]), "the 40 m leg is flagged: it needs 10 bars at 3 m/s")
-	assert_eq(int(got["pace_c up"]["bars"]), 2)
+	assert_eq(str(got["pace_b left"]["from"]), "b_side")
+	assert_eq(int(got["pace_b left"]["need"]), 11)
+	assert_true(bool(got["pace_b left"]["warn"]), "the 44 m leg from the bad place is flagged: it needs 11 bars at 3 m/s")
+	assert_eq(int(got["pace_c up"]["bars"]), 3)
+
+
+## The rail check measures the walk-outs from the same start as the engine: for every leg, the engine's walk-out (RunJourney.commit_walk's threshold_leave, from the rail's place at the tap)
+## started with the rail standing on the check's `from` place has the check's length, and the check's `from` is the longest start over the rail's places.
+func test_the_rail_check_measures_each_leg_from_the_engines_start() -> void:
+	var run := _read(FIX_PACE + "/run.json")
+	var d := _data("pace_check", Callable(), FIX_PACE)
+	var world_of := {}
+	for n in run["nodes"]:
+		world_of[str(n["id"])] = str(n["world"])
+	var m := StoryMap.load_chapter(str(run["worlds"][0]["map"]), false)
+	var compared := 0
+	for n in run["nodes"]:
+		var id := str(n["id"])
+		if not d.nodes.has(id):
+			continue
+		for x in StoryRailCheck.walk_offs(m, n, n["place"], world_of, 174.0):
+			var to := ""
+			for e in n["next"]:
+				if str(e["dir"]) == str(x["dir"]):
+					to = str(e["to"])
+			var longest := 0.0
+			var lens := {}
+			for pos in range(-(d.nodes[id]["rail"]["bad"] as Array).size(), (d.nodes[id]["rail"]["good"] as Array).size() + 1):
+				var e := RunEngine.new(d)
+				e.begin(id)
+				var j := RunJourney.new(d)
+				j.look_heralds = false
+				j.on_event({"kind": "phase_start", "node": id, "t": 0.0, "phase": 1}, e)
+				j.rail.pos = pos
+				var w := j.threshold_leave(e.t_of(50.0), e.t_of(64.0), id, to, true)
+				if w.is_empty() or j.walk_offs.is_empty():
+					continue
+				var wo: Dictionary = j.walk_offs[0]
+				lens[str(wo["from"])] = float(wo["length"])
+				longest = maxf(longest, float(wo["length"]))
+			assert_true(lens.has(str(x["from"])), "%s %s: the engine can start at the check's place %s (%s)" % [id, x["dir"], x["from"], str(lens.keys())])
+			assert_near(float(x["length"]), float(lens.get(str(x["from"]), -99.0)), 0.05, "%s %s: the check's metres equal the engine's leg from %s" % [id, x["dir"], x["from"]])
+			assert_near(float(x["length"]), longest, 0.05, "%s %s: the check measures the longest start" % [id, x["dir"]])
+			compared += 1
+	assert_eq(compared, 4, "all four legs compared")
 
 
 func test_a_late_tap_on_a_long_leg_keeps_the_leg_and_shortens_the_hold() -> void:
