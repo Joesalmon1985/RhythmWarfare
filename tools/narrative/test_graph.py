@@ -304,10 +304,11 @@ class RealData(unittest.TestCase):
     def test_today_rule3_returns_land_on_the_floor(self):
         d = self.rt[3].data
         self.assertEqual(d["fixed_landings"].keys(), {"main/warehouse"})
-        # N2.5 gave the three path quests a visible return in every scene; the Bassment's passages still lack one, so the
-        # counts follow the data and rule 3 stays FAIL until the Bassment return lands (then without_visible_return is 0).
+        # N2.5 gave the three path quests a visible return in every scene and the shared wiring step gave every Bassment passage one
+        # (tools/trial/returns.py) except the seven whose camera shows no spot for it (tools/trial/return_spots.json); today they land on the Floor (a fixed scene),
+        # so rule 3 stays FAIL on today's graph.
         self.assertGreater(d["fixed_landing_scenes"], 0)
-        self.assertGreater(d["without_visible_return"], 0)
+        self.assertLessEqual(d["without_visible_return"], 7)
         self.assertEqual(self.rt[3].status, "FAIL")
 
     def test_today_other_rules(self):
@@ -356,7 +357,8 @@ class RealData(unittest.TestCase):
         self.assertFalse(any(e["rhythm_gate"] for e in hub_entries))
 
     def test_target_seven_routes_flagged(self):
-        flagged = [e for e in self.target.edges if e.get("owner_to_confirm")]
+        seen = set()  # (an authored route is the data's own edges: one for a passed block, one for a missed one)
+        flagged = [e for e in self.target.edges if e.get("owner_to_confirm") and not ((e["from"], e["via"]) in seen or seen.add((e["from"], e["via"])))]
         self.assertEqual(len(flagged), 7)
         self.assertEqual(sum(1 for e in flagged if e["link"] == "restart"), 5)
 
@@ -410,7 +412,9 @@ class RealData(unittest.TestCase):
 
     def test_proposed_object_colliding_with_hotspot_fails_rule7(self):
         ov = copy.deepcopy(self.ov)
-        ov["entrances"][4]["object"]["id"] = "warehouse.bar.ember"
+        e = ov["entrances"][0]  # (every entrance is built now: one is made proposed again, under an id the content already has)
+        e["object"]["status"] = "proposed"
+        e["object"]["id"] = "warehouse.bar.ember"
         _, r = self.build(ov)
         self.assertTrue(any("collides" in f for f in r[7].fail))
 

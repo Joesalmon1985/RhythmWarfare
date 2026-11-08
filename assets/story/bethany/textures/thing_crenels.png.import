@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://datlyixt8irq"
-path="res://.godot/imported/wall_columns.png-d28c42e3d1fe3962b89cccfa48a2f6f7.ctex"
+uid="uid://dyui55jhcd2wm"
+path="res://.godot/imported/thing_crenels.png-fe9a97003a465c68250b2f9efdc25fb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/jerusalem/textures/wall_columns.png"
-dest_files=["res://.godot/imported/wall_columns.png-d28c42e3d1fe3962b89cccfa48a2f6f7.ctex"]
+source_file="res://assets/story/bethany/textures/thing_crenels.png"
+dest_files=["res://.godot/imported/thing_crenels.png-fe9a97003a465c68250b2f9efdc25fb0.ctex"]
 
 [params]
 

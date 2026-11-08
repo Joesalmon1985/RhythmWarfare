@@ -117,12 +117,17 @@ func test_a_single_route_window_has_one_arrow_and_it_is_the_default() -> void:
 	var e := RunEngine.new(RunData.load_default())
 	e.begin("warehouse.chill")
 	var opts := e.options()
-	assert_eq(opts.size(), 1)
+	assert_eq(opts.size(), 2, "the scene's one way on and its way back to the hub (the shared wiring step)")
 	assert_true(bool(opts[0]["default"]))
+	assert_false(bool(opts[1]["default"]), "the way back is never the default")
 	assert_true(bool(opts[0]["in_world"]), "a path inside the world")
 	assert_eq(opts[0]["title"], "The Door", "an in-world route names the room")
+	assert_eq(str(opts[1]["to"]), "warehouse", "the way back leads to the Floor")
+	assert_true(bool(opts[1].get("to_hub", false)))
 	var ex := RunEngine.new(RunData.load_default())
 	ex.begin("warehouse.exit")
 	for o in ex.options():
+		if str(o.get("dir", "")) == "hub":
+			continue  # (the way back to the Floor)
 		assert_false(bool(o["in_world"]), "an exit scene leads to other worlds")
 	assert_eq(ex.options()[0]["title"], "The Mothership", "a world exit names the world")

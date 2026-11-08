@@ -66,9 +66,13 @@ Nobody has to aim a camera at an entrance. Two things in `src/run/run_journey.gd
    move at the block's decision). The points it holds are `StoryHeralds.look_points`: the entrance from 1.3 m under its mark up to the mark's top, the herald from
    the knees to the head. The block's own glance is left out so it cannot swing the entrance away. It is a look, never a move: the rail, the route and the song
    are untouched, and it is a pure function of song time like every other look.
-2. **The window.** From the block-2 decision the window's face look (the turn to the window's hotspots, unchanged: the default exit still decides the group)
-   counts the herald's spot as one more point (`RunJourney.with_heralds`), so of the groups that hold the default the one with the entrance and its herald wins
-   whenever it fits beside the default.
+   In a scene with more staged entrances than three looks and the window can show (five: the Floor's four gates and its wizard) each look also carries the other
+   entrances' points, not kept (shared wiring step, 7 November 2026), so the group framed holds its own entrance and as many of the others as fit. The turn stops short of a wall nearer than 2.6 m in the middle of the picture
+   (`StoryPlayer.herald_cap`; docs/art/CAMERA_CLEARANCE.md "The herald look") and never starts in the last beat of a door walk.
+2. **The window.** From the block-2 decision the window's face look (the turn to the window's hotspots: the default exit still decides the group) frames the group
+   of choices holding the most weight (`RunJourney.window_points`, the one list the run scene and the tests build): a quest entrance and its herald's spot weigh
+   2 (`WINDOW_ENTRANCE_W`), a way back (a path's `<quest>.return`, a scene's `<scene>.to_hub`) 0.5 (`WINDOW_RETURN_W`), every other choice 1. So a way back never
+   pulls the picture off the quest entrances, and it is framed beside them when it fits; its placement must keep it in the picture at the window (the test pins it).
 
 An early-window entrance (the wizard: blocks 0 and 1 only) is on offer only in the opening, so its window is the opening look. Reduced motion changes nothing
 in the look (it has no bob or sway; the turn is a smooth one-bar turn like the window's).
@@ -79,8 +83,13 @@ the flags that put every entrance on offer), replays the journey on the real rai
 beats 4 to 12 and of beats 49 to 60. Today all five are at 100 %. With the look turned off (`RunJourney.look_heralds = false`) the openings fall to 0 %.
 `RW_HERALD_VIEW_DEBUG=1` prints the camera and the rectangles every bar, for whoever places a new one.
 
-**What it cannot guarantee.** That nothing stands between the camera and the herald (the people move; the test does not check occlusion: look at the
-shots); that a fourth entrance in one scene is looked at (three looks a scene); that the entrance fits beside the default exit in the window (when it cannot,
+**Occlusion (the wall test, shared wiring step).** A sample counts only when a ray from the eye to the entrance (its mark's top, else its middle) and one to the
+herald (its head, else its chest) reach them past the map's walls, steps, lintels, floors and ceilings (the rays of `tools/art/camera_clearance_check.gd`) and the
+lower half of the map's occluders (the card table and the people at it). The dancers are not seen (they move). An entrance hidden for more than a fifth of its samples
+is listed in the test's `KNOWN_HIDDEN` (the findings of 7 November 2026, placement work for the location packages); a new one fails the test. A scene's way back to its
+hub must be in the picture, unoccluded, for half the route window (`KNOWN_BACK_UNSEEN` lists those that are not yet).
+
+**What it cannot guarantee.** That no dancer stands between the camera and the herald (look at the shots); that a fourth entrance in one scene is looked at (three looks a scene); that the entrance fits beside the default exit in the window (when it cannot,
 the default wins and the entrance is only seen in the opening); that the mark stays clear of the HUD's corner (the bar's ember sits by it in the window); and
 the camera of a run that wanders off the scripted rail (a sloppy run stands elsewhere: the look still turns to the entrance, but from further away or nearer).
 

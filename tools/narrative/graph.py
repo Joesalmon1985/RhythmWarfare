@@ -468,7 +468,7 @@ def build_target(game, ov):
     authored = set()  # entrance objects the content now has as hotspots (status "existing"): the overlay's ungated edge stands for the hotspot's own edges (N2.2)
     for en in entrances:
         o = en.get("object", {})
-        if o.get("status") == "partial" and o.get("copy_of"):
+        if o.get("status") in ("partial", "existing") and o.get("copy_of"):  # (a copy authored on the hub keeps naming its original, whose gate the target still removes)
             originals.add(o["copy_of"])
         if o.get("status") == "existing" and o.get("id"):
             authored.add(o["id"])
@@ -477,10 +477,24 @@ def build_target(game, ov):
         if x.get("kind") == "quest_entry" and xo.get("status") == "existing" and xo.get("id"):
             authored.add(xo["id"])
 
+    # hub links and ways back to the hub that the content has as hotspots (status "existing"): the data's own edges are the routes; they carry the overlay's `link`
+    rules0 = {r.get("id"): r for r in ov.get("route_rules", [])}
+    linked = {}  # hotspot id -> link kind
+    for l in locs:
+        for hl in l.get("hub_links", []):
+            if hl.get("object", {}).get("status") == "existing":
+                linked[hl["object"]["id"]] = "hub_to_hub"
+    if rules0.get("to_hub", {}).get("status") == "existing":
+        for n, d in nodes.items():
+            if d["category"] == "mainline" and not d["hub"] and d.get("location"):
+                linked[_object_pattern(rules0["to_hub"]["object"], scene=n)] = "to_hub"
     edges = []
     for e in base.edges:
         if e.get("hidden"):
             continue  # the hidden leaves are rebuilt from the quests' `hidden_fallbacks`
+        if e["via"] in linked:
+            e = _copy(e)
+            e["link"] = linked[e["via"]]
         c = e["condition"]
         if e["via"] in authored and e["kind"] != "quest_return":
             continue  # an authored entrance: the overlay's edge below is its route (ungated, through the port)
@@ -528,6 +542,10 @@ def build_target(game, ov):
     # 2. the links between the hubs of a pair of locations
     for l in locs:
         for hl in l.get("hub_links", []):
+            if hl["object"]["id"] in linked:
+                if not any(e["via"] == hl["object"]["id"] and e["from"] == l["hub"] and e["to"] == hl["to"] for e in base.edges):
+                    problems.append(f"hub link {hl['object']['id']}: existing, but the data has no route from {l['hub']} to {hl['to']} by it")
+                continue
             add(new_edge(l["hub"], hl["to"], hl["object"]["id"], "scene", "proposed", link="hub_to_hub"))
     # 3. the route rules
     rules = {r.get("id"): r for r in ov.get("route_rules", [])}
@@ -538,7 +556,12 @@ def build_target(game, ov):
         r = rules["to_hub"]
         for n, d in sorted(nodes.items()):
             if d["category"] == "mainline" and not d["hub"] and d.get("location"):
-                add(new_edge(n, hubs[d["location"]], _object_pattern(r["object"], scene=n), r.get("kind", "scene"), "proposed", link="to_hub"))
+                oid = _object_pattern(r["object"], scene=n)
+                if oid in linked:
+                    if not any(e["via"] == oid and e["from"] == n and e["to"] == hubs[d["location"]] for e in base.edges):
+                        problems.append(f"to_hub {oid}: existing, but the data has no route from {n} to {hubs[d['location']]} by it")
+                    continue
+                add(new_edge(n, hubs[d["location"]], oid, r.get("kind", "scene"), "proposed", link="to_hub"))
     if "back" in rules:
         r = rules["back"]
         preds = collections.defaultdict(list)
@@ -582,6 +605,15 @@ def build_target(game, ov):
         elif kind in ("restart", "second_route"):
             if x.get("to") not in nodes:
                 problems.append(f"extra route {x['object']['id']}: destination {x.get('to')} does not exist")
+                continue
+            if x["object"].get("status") == "existing":  # authored (tools/run/path_routes.py): the data's own edge is the route
+                if not any(e["via"] == x["object"]["id"] and e["from"] == x["scene"] and e["to"] == x["to"] for e in base.edges):
+                    problems.append(f"extra route {x['object']['id']}: existing, but the data has no route from {x['scene']} to {x['to']} by it")
+                for e in edges:
+                    if e["via"] == x["object"]["id"] and e["from"] == x["scene"]:
+                        e["link"] = kind
+                        if x.get("owner_to_confirm"):
+                            e["owner_to_confirm"] = True
                 continue
             e = add(new_edge(x["scene"], x["to"], x["object"]["id"], "scene", "proposed", link=kind))
             if x.get("owner_to_confirm"):

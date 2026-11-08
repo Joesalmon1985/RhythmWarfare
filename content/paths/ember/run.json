@@ -87,6 +87,12 @@
      "to": "hollow.ford",
      "dir": "up",
      "label": "hollow.ford"
+    },
+    {
+     "to": "hollow.inn",
+     "dir": "skip",
+     "label": "Straight to the inn",
+     "second_route": true
     }
    ],
    "place": {
@@ -156,7 +162,8 @@
       }
      ],
      "exits": {
-      "up": "orchard_gate"
+      "up": "orchard_gate",
+      "skip": "orchard_gate"
      }
     }
    },
@@ -926,6 +933,13 @@
      "dir": "left",
      "label": "north.pass",
      "loop": true
+    },
+    {
+     "to": "north",
+     "dir": "back",
+     "label": "Back to the North",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -996,7 +1010,8 @@
      ],
      "exits": {
       "up": "bridge_wp",
-      "left": "lake_edge"
+      "left": "lake_edge",
+      "back": "bridge_wp"
      }
     }
    },
@@ -1923,6 +1938,19 @@
      "to": "run:warehouse",
      "dir": "up",
      "label": "run:warehouse"
+    },
+    {
+     "to": "hollow",
+     "dir": "restart",
+     "label": "Back to the Hollow, the road again",
+     "restart": true
+    },
+    {
+     "to": "mountain",
+     "dir": "back",
+     "label": "Back down the mountain",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -1992,7 +2020,9 @@
       }
      ],
      "exits": {
-      "up": "pool_wp"
+      "up": "pool_wp",
+      "restart": "pool_wp",
+      "back": "pool_wp"
      }
     }
    },
@@ -2061,6 +2091,19 @@
      "to": "run:warehouse",
      "dir": "up",
      "label": "run:warehouse"
+    },
+    {
+     "to": "hollow",
+     "dir": "restart",
+     "label": "Back to the Hollow, the road again",
+     "restart": true
+    },
+    {
+     "to": "mountain",
+     "dir": "back",
+     "label": "Back down the mountain",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -2130,7 +2173,9 @@
       }
      ],
      "exits": {
-      "up": "ember_wp"
+      "up": "ember_wp",
+      "restart": "ember_wp",
+      "back": "ember_wp"
      }
     }
    },

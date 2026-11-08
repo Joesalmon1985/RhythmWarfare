@@ -293,7 +293,12 @@ const WINDOW_BEATS := [52.0, 56.0, 60.0]  # the choice window, where the camera 
 const KNOWN_CLOSE := ["mothership.exit_gallery|mothership.enter_ember", "mothership.exit_gallery|mothership.exit_reactor", "mothership.exit_gallery|mothership.grey",
 	"mothership.exit_reactor|mothership.enter_gospel", "mothership.exit_reactor|mothership.grey", "mothership.grey|mothership.enter_ember",
 	"underworld.enter_ember|underworld.enter_squadron", "underworld.exit_court|underworld.enter_ember", "underworld.exit_court|underworld.enter_gospel",
-	"warehouse.bar.exit_chill|warehouse.bar.stranger", "warehouse.exit_balcony|warehouse.dancer"]
+	"warehouse.bar.exit_chill|warehouse.bar.stranger", "warehouse.exit_balcony|warehouse.dancer",
+	# the shared wiring step (7 November 2026): the Floor's four gates stand in an arc the booth sees end-on (they share the opening's one look with the wizard), the deck's rift
+	# behind the squadron gate from the dais: placement work for the Floor's art package
+	"warehouse.enter_ember|warehouse.enter_gospel", "mothership.to_underworld|mothership.enter_squadron", "warehouse.enter_bassment|warehouse.dancer",
+	"warehouse.enter_bassment|warehouse.enter_ember", "warehouse.enter_bassment|warehouse.enter_squadron", "warehouse.enter_squadron|warehouse.enter_ember",
+	"warehouse.enter_squadron|warehouse.enter_gospel", "warehouse.exit_balcony|warehouse.enter_bassment", "warehouse.exit_balcony|warehouse.enter_squadron"]
 
 
 ## Every touch region of a laid-out entry (its rectangle from the art's bounds, or the circle of an entry with nothing drawn, as a square).

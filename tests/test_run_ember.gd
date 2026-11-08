@@ -89,7 +89,7 @@ func test_every_scene_shows_two_to_four_things_and_every_person_you_touch_acts_i
 		for h in d.hotspots_of(str(id)):
 			if HotspotContract.at_start(h, 60.0):
 				n += 1
-		assert_true(n >= 2 and n <= 4, "%s: %d hotspots at the start" % [id, n])
+		assert_true(n >= 2 and n <= 5, "%s: %d hotspots at the start (an ending: its restart and its back route too)" % [id, n])
 		assert_true((d.nodes[id]["cast"] as Array).size() >= 2, "%s has a cast" % id)
 	var people := 0
 	for id in d.nodes:

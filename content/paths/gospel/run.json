@@ -79,6 +79,12 @@
      "to": "jordan.baptism",
      "dir": "up",
      "label": "to jordan.baptism"
+    },
+    {
+     "to": "jordan.nazareth",
+     "dir": "skip",
+     "label": "Straight on to Nazareth",
+     "second_route": true
     }
    ],
    "place": {
@@ -154,7 +160,8 @@
       }
      ],
      "exits": {
-      "up": "bank_night.door_up"
+      "up": "bank_night.door_up",
+      "skip": "bank_night.door_up"
      }
     }
    },
@@ -2212,6 +2219,13 @@
      "to": "jerusalem.tomb",
      "dir": "up",
      "label": "to jerusalem.tomb"
+    },
+    {
+     "to": "jerusalem.trial",
+     "dir": "back",
+     "label": "Back to the trial",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -2287,7 +2301,8 @@
       }
      ],
      "exits": {
-      "up": "hill.door_up"
+      "up": "hill.door_up",
+      "back": "hill.door_up"
      }
     }
    },
@@ -2495,6 +2510,19 @@
      "to": "run:warehouse",
      "dir": "up",
      "label": "to run:warehouse"
+    },
+    {
+     "to": "jordan",
+     "dir": "restart",
+     "label": "Back to the Jordan, the life again",
+     "restart": true
+    },
+    {
+     "to": "jerusalem.golgotha",
+     "dir": "back",
+     "label": "Back to the hill",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -2570,7 +2598,9 @@
       }
      ],
      "exits": {
-      "up": "tomb.door_up"
+      "up": "tomb.door_up",
+      "restart": "tomb.door_up",
+      "back": "tomb.door_up"
      }
     }
    },
@@ -2688,6 +2718,19 @@
      "to": "run:warehouse",
      "dir": "up",
      "label": "to run:warehouse"
+    },
+    {
+     "to": "jordan",
+     "dir": "restart",
+     "label": "Back to the Jordan, the life again",
+     "restart": true
+    },
+    {
+     "to": "jerusalem.trial",
+     "dir": "back",
+     "label": "Back to the trial",
+     "back": true,
+     "loop": true
     }
    ],
    "place": {
@@ -2763,7 +2806,9 @@
       }
      ],
      "exits": {
-      "up": "road.door_up"
+      "up": "road.door_up",
+      "restart": "road.door_up",
+      "back": "road.door_up"
      }
     }
    },

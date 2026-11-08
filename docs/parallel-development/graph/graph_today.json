@@ -113,6 +113,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/10",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.10.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -138,6 +153,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/11",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.11.1"
   },
   {
    "condition": {
@@ -206,6 +236,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/12",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.12.2"
   },
   {
    "condition": {
@@ -307,6 +352,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/15",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.15.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [
@@ -350,6 +410,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/16",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.16.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -375,6 +450,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/17",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.17.1"
   },
   {
    "condition": {
@@ -419,6 +509,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/18",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.18.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -444,6 +549,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/19",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.19.1"
   },
   {
    "condition": {
@@ -556,6 +676,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/20",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.20.3"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -581,6 +716,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/21",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.21.1"
   },
   {
    "condition": {
@@ -656,6 +806,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/23",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.23.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -684,6 +849,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/24",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.24.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -709,6 +889,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/25",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.25.1"
   },
   {
    "condition": {
@@ -753,6 +948,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/26",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.26.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -778,6 +988,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/27",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.27.1"
   },
   {
    "condition": {
@@ -836,6 +1061,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/28",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.28.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -861,6 +1101,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/29",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.29.1"
   },
   {
    "condition": {
@@ -905,6 +1160,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/3",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.3.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -946,6 +1216,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/30",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.30.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -971,6 +1256,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/31",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.31.1"
   },
   {
    "condition": {
@@ -1039,6 +1339,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/32",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.32.2"
   },
   {
    "condition": {
@@ -1140,6 +1455,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/35",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.35.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1165,6 +1495,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/36",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.36.1"
   },
   {
    "condition": {
@@ -1221,6 +1566,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/37",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.37.2"
   },
   {
    "condition": {
@@ -1322,6 +1682,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/4",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.4.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -1392,6 +1767,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/40",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.40.3"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1417,6 +1807,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/41",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.41.1"
   },
   {
    "condition": {
@@ -1461,6 +1866,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/42",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.42.2"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -1502,6 +1922,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/43",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.43.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1527,6 +1962,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/44",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.44.1"
   },
   {
    "condition": {
@@ -1585,6 +2035,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/45",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.45.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1613,6 +2078,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/46",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.46.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1638,6 +2118,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/47",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.47.1"
   },
   {
    "condition": {
@@ -1709,6 +2204,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/48",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.48.3"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1734,6 +2244,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/49",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.49.1"
   },
   {
    "condition": {
@@ -1788,6 +2313,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/5",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.5.2"
   },
   {
    "condition": {
@@ -1848,6 +2388,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/51",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.51.1"
+  },
+  {
+   "condition": {
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
@@ -1904,6 +2459,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/52",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.52.3"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1932,6 +2502,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/53",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.53.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -1957,6 +2542,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/54",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.54.1"
   },
   {
    "condition": {
@@ -2028,6 +2628,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/55",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.55.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2053,6 +2668,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/56",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.56.1"
   },
   {
    "condition": {
@@ -2098,6 +2728,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/57",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.57.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2123,6 +2768,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/58",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.58.1"
   },
   {
    "condition": {
@@ -2181,6 +2841,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/59",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.59.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2206,6 +2881,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/6",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.6.1"
   },
   {
    "condition": {
@@ -2266,6 +2956,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/61",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.61.1"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2304,6 +3009,21 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "system back key"
+  },
+  {
+   "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/62",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.62.2"
   },
   {
    "condition": {
@@ -2421,6 +3141,21 @@
   },
   {
    "condition": {
+    "default": false,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "outcome": "exit"
+   },
+   "from": "bassment/8",
+   "kind": "quest_return",
+   "quest": "bassment",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "trial.8.2"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -2492,6 +3227,34 @@
    "status": "existing",
    "to": "ember/deeps.falls",
    "via": "deeps.lake"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/deeps",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/north",
+   "via": "deeps.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/north",
+   "via": "deeps.back"
   },
   {
    "condition": {
@@ -2788,6 +3551,34 @@
    "status": "existing",
    "to": "ember/hollow.ford",
    "via": "hollow.gate"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/hollow",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow.inn",
+   "via": "hollow.skip"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow.inn",
+   "via": "hollow.skip"
   },
   {
    "condition": {
@@ -3663,6 +4454,66 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.keeper.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.keeper.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.keeper.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.keeper.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [],
     "object_kind": "object",
     "outcome": "on_miss"
@@ -3772,6 +4623,66 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.spring.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mountain.spring.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.spring.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "scene",
+   "status": "existing",
+   "to": "ember/mountain",
+   "via": "mountain.spring.back"
   },
   {
    "condition": {
@@ -5120,6 +6031,34 @@
     "outcome": "on_miss"
    },
    "from": "gospel/jerusalem.golgotha",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.golgotha.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.golgotha.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.golgotha",
    "kind": "quest_return",
    "quest": "gospel",
    "status": "existing",
@@ -5154,6 +6093,66 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.road.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.trial",
+   "via": "jerusalem.road.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_road"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.road.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_road"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.road.restart"
   },
   {
    "condition": {
@@ -5268,6 +6267,66 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.golgotha",
+   "via": "jerusalem.tomb.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jerusalem.golgotha",
+   "via": "jerusalem.tomb.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.tomb.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "jerusalem.tomb.restart"
   },
   {
    "condition": {
@@ -5546,6 +6605,34 @@
    "status": "existing",
    "to": "gospel/jordan.baptism",
    "via": "jordan.shepherd"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jordan",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan.nazareth",
+   "via": "jordan.skip"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan",
+   "kind": "scene",
+   "status": "existing",
+   "to": "gospel/jordan.nazareth",
+   "via": "jordan.skip"
   },
   {
    "condition": {
@@ -6297,6 +7384,114 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "hospital.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "hospital.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.corridor",
+   "via": "hospital.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6423,6 +7618,109 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "hospital.to_ward"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "hospital.to_ward"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "hospital.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "hospital.cafeteria.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.cafeteria.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.cafeteria.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.cafeteria",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.garden",
+   "via": "hospital.cafeteria.enter_gospel"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6522,6 +7820,34 @@
    "status": "existing",
    "to": "main/hospital.garden",
    "via": "hospital.cafeteria.vending"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.corridor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.corridor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.corridor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.corridor.to_hub"
   },
   {
    "condition": {
@@ -6655,6 +7981,65 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital.dayroom.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.dayroom.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.dayroom.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.dayroom",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.garden",
+   "via": "hospital.dayroom.enter_bassment"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6749,6 +8134,34 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.exit.to_hub"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6836,6 +8249,49 @@
    "status": "existing",
    "to": "main/ward_late",
    "via": "hospital.exit.exit_ward_late"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.garden",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.garden.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.garden",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital.garden.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital.garden",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital.exit",
+   "via": "hospital.garden.enter_squadron"
   },
   {
    "condition": {
@@ -6930,6 +8386,50 @@
    "status": "existing",
    "to": "main/hospital.exit",
    "via": "hospital.garden.mum"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital.garden",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "hospital.garden.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.to_hub"
   },
   {
    "condition": {
@@ -7095,6 +8595,65 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "hospital_late.cafe.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.cafe.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.cafe.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.cafe",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital_late.exit",
+   "via": "hospital_late.cafe.enter_ember"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7227,6 +8786,34 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.exit.to_hub"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7354,6 +8941,65 @@
    "status": "existing",
    "to": "main/ward_late",
    "via": "hospital_late.exit.exit_ward_late"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "hospital_late.quiet.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.quiet.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "hospital_late.quiet.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/hospital_late.quiet",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital_late.exit",
+   "via": "hospital_late.quiet.enter_bassment"
   },
   {
    "condition": {
@@ -7686,6 +9332,34 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "mothership.to_underworld"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "mothership.to_underworld"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "secret",
     "outcome": "on_pass"
    },
@@ -7696,6 +9370,34 @@
    "status": "existing",
    "to": "squadron/base",
    "via": "mothership.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.bridge.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.bridge.to_hub"
   },
   {
    "condition": {
@@ -7919,6 +9621,34 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "ms_probed"
     ],
@@ -7974,6 +9704,34 @@
    "status": "existing",
    "to": "bassment/1",
    "via": "mothership.gallery.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.gallery.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.gallery.to_hub"
   },
   {
    "condition": {
@@ -8101,6 +9859,34 @@
    "status": "existing",
    "to": "gospel/jordan",
    "via": "mothership.reactor.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.reactor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "mothership.reactor.to_hub"
   },
   {
    "condition": {
@@ -8266,6 +10052,34 @@
    "status": "existing",
    "to": "gospel/jordan",
    "via": "underworld.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "underworld.to_mothership"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership",
+   "via": "underworld.to_mothership"
   },
   {
    "condition": {
@@ -8528,6 +10342,34 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.court",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.court.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.court",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.court.to_hub"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -8695,6 +10537,34 @@
    "from": "main/underworld.exit",
    "kind": "scene",
    "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.exit",
+   "kind": "scene",
+   "status": "existing",
    "to": "main/ward",
    "via": "underworld.exit.exit_ward"
   },
@@ -8743,6 +10613,34 @@
    "status": "existing",
    "to": "gospel/jordan",
    "via": "underworld.furnace.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.furnace.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.furnace.to_hub"
   },
   {
    "condition": {
@@ -8852,6 +10750,34 @@
    "status": "existing",
    "to": "main/underworld.pit",
    "via": "underworld.furnace.ladle"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.pit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.pit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.pit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld",
+   "via": "underworld.pit.to_hub"
   },
   {
    "condition": {
@@ -8982,6 +10908,82 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "ward.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "ward.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "ward.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "ward.to_hospital"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/hospital",
+   "via": "ward.to_hospital"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -9009,6 +11011,66 @@
    "status": "existing",
    "to": "main/ward.art",
    "via": "ward.cards"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.art",
+   "via": "ward.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.art",
+   "via": "ward.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.art",
+   "via": "ward.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.art",
+   "via": "ward.enter_squadron"
   },
   {
    "condition": {
@@ -9136,6 +11198,66 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "ward.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.art",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "ward.art.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.art",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.art.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.art",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.art.to_hub"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -9165,6 +11287,21 @@
    "status": "existing",
    "to": "main/ward.corridor",
    "via": "ward.art.easel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.art",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.corridor",
+   "via": "ward.art.enter_bassment"
   },
   {
    "condition": {
@@ -9229,6 +11366,49 @@
    "status": "existing",
    "to": "main/ward.corridor",
    "via": "ward.art.painter"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.corridor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.corridor.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.corridor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.corridor.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.corridor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.courtyard",
+   "via": "ward.corridor.enter_squadron"
   },
   {
    "condition": {
@@ -9361,6 +11541,66 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.corridor",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "ward.corridor.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.courtyard",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "ward.courtyard.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.courtyard",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.courtyard.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.courtyard",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.courtyard.to_hub"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -9390,6 +11630,21 @@
    "status": "existing",
    "to": "main/ward.exit",
    "via": "ward.courtyard.chef"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.courtyard",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.exit",
+   "via": "ward.courtyard.enter_ember"
   },
   {
    "condition": {
@@ -9455,6 +11710,50 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.dorm",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "ward.dorm.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.dorm.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.dorm.to_hub"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -9484,6 +11783,21 @@
    "status": "existing",
    "to": "main/ward.corridor",
    "via": "ward.dorm.cabinet"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward.corridor",
+   "via": "ward.dorm.enter_gospel"
   },
   {
    "condition": {
@@ -9622,6 +11936,34 @@
    "from": "main/ward.exit",
    "kind": "scene",
    "status": "existing",
+   "to": "main/ward",
+   "via": "ward.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward.exit",
+   "kind": "scene",
+   "status": "existing",
    "to": "main/ward_late",
    "via": "ward.exit.exit_ward_late"
   },
@@ -9638,6 +11980,34 @@
    "status": "existing",
    "to": "main/ward_late",
    "via": "ward.exit.exit_ward_late"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.to_hub"
   },
   {
    "condition": {
@@ -9761,6 +12131,50 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.dorm",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "ward_late.dorm.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.dorm.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.dorm.to_hub"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -9790,6 +12204,21 @@
    "status": "existing",
    "to": "main/ward_late.exit",
    "via": "ward_late.dorm.cabinet"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late.dorm",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward_late.exit",
+   "via": "ward_late.dorm.enter_gospel"
   },
   {
    "condition": {
@@ -9883,6 +12312,34 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.exit.to_hub"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -9942,6 +12399,65 @@
    "status": "existing",
    "to": "main/ward_late",
    "via": "ward_late.exit.stare"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.treat",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "ward_late.treat.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late.treat",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.treat.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/ward_late.treat",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward",
+   "via": "ward_late.treat.to_hub"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/ward_late.treat",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/ward_late.exit",
+   "via": "ward_late.treat.enter_bassment"
   },
   {
    "condition": {
@@ -10038,6 +12554,22 @@
   {
    "condition": {
     "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "warehouse.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
     "flags_none": [
      "wh_wizard_met"
     ],
@@ -10061,6 +12593,38 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "warehouse.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "warehouse.enter_gospel"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "exit",
     "outcome": "on_miss"
    },
@@ -10119,6 +12683,66 @@
    "status": "existing",
    "to": "main/warehouse.bar",
    "via": "warehouse.dancer"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse.bar",
+   "via": "warehouse.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse.bar",
+   "via": "warehouse.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse.bar",
+   "via": "warehouse.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse.bar",
+   "via": "warehouse.enter_squadron"
   },
   {
    "condition": {
@@ -10211,6 +12835,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "warehouse.enter_squadron"
+  },
+  {
+   "condition": {
     "flags_all": [
      "wh_saw_floor"
     ],
@@ -10226,6 +12866,34 @@
    "status": "existing",
    "to": "gospel/jordan",
    "via": "warehouse.balcony.star"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse.balcony",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.balcony.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.balcony",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.balcony.to_hub"
   },
   {
    "condition": {
@@ -10400,6 +13068,34 @@
    "from": "main/warehouse.bar",
    "kind": "scene",
    "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.bar.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.bar",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.bar.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse.bar",
+   "kind": "scene",
+   "status": "existing",
    "to": "main/warehouse.booth",
    "via": "warehouse.bar.exit_booth"
   },
@@ -10537,6 +13233,34 @@
    "status": "existing",
    "to": "main/warehouse.chill",
    "via": "warehouse.bar.stranger"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse.booth",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.booth.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.booth",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.booth.to_hub"
   },
   {
    "condition": {
@@ -10697,6 +13421,34 @@
    "status": "existing",
    "to": "bassment/1",
    "via": "warehouse.chill.wizard"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse.chill",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.chill.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.chill",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.chill.to_hub"
   },
   {
    "condition": {
@@ -10942,6 +13694,34 @@
    "status": "existing",
    "to": "main/underworld",
    "via": "warehouse.exit.exit_underworld"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_miss"
+   },
+   "from": "main/warehouse.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.exit.to_hub"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "exit",
+    "outcome": "on_pass"
+   },
+   "from": "main/warehouse.exit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "warehouse.exit.to_hub"
   },
   {
    "condition": {
@@ -12347,6 +15127,66 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [
+     "keep:path_squadron_free"
+    ],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "escape.c13.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [
+     "keep:path_squadron_free"
+    ],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "escape.c13.restart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/escape.c12",
+   "via": "escape.c13.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "scene",
+   "status": "existing",
+   "to": "squadron/escape.c12",
+   "via": "escape.c13.back"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "squadron/escape.c14",
@@ -12450,14 +15290,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 822,
+   "edges": 1015,
    "edges_by_kind": {
-    "quest_entry": 19,
-    "quest_return": 230,
-    "scene": 573
+    "quest_entry": 42,
+    "quest_return": 279,
+    "scene": 694
    },
    "edges_by_status": {
-    "existing": 822
+    "existing": 1015
    },
    "nodes": 146
   },

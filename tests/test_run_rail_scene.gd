@@ -75,7 +75,7 @@ func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
 	var d := _scene(Vector2(1152, 648), "perfect", "right")  # the floor: right is the bar
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
-	assert_eq(scene.hotspot_items().size(), 3, "the hotspots are on show while the window is open: the bar door, the balcony stair and the dancer (the wizard has an earlier window)")
+	assert_eq(scene.hotspot_items().size(), 7, "the hotspots are on show while the window is open: the bar door, the balcony stair, the dancer and the Floor's four quest entrances (the wizard has an earlier window)")
 	assert_eq(scene.engine.selected_route(), "warehouse.bar", "the scripted tap is on the bar door")
 	_run_to(scene, 60.0 * BEAT)
 	var walked_before: int = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and float(a["t0"]) > 60.5 * BEAT).size()
@@ -107,7 +107,7 @@ func test_the_world_swap_keeps_the_passage_frame() -> void:
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
 	var n_hs: int = scene.hotspot_items().size()
-	assert_true(n_hs >= 2 and n_hs <= 4, "two to four hotspots, among them one exit per candidate world (%d)" % n_hs)
+	assert_true(n_hs >= 2 and n_hs <= 5, "two to five hotspots, among them one exit per candidate world and the way back to the hub (%d)" % n_hs)
 	assert_eq(scene._passage.aperture, 1.0, "the frame is open mid-window")
 	_run_to(scene, 63.9 * BEAT)
 	assert_true(scene._passage.aperture < 0.3, "shut to the doorway on the last beat before the swap (%f)" % scene._passage.aperture)

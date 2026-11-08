@@ -9,7 +9,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.2
   },
   "floor_grass": {
    "file": "textures/floor_grass.png",
@@ -17,23 +17,23 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_path": {
    "file": "textures/floor_path.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "floor_shingle": {
    "file": "textures/floor_shingle.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "floor_water": {
    "file": "textures/floor_water.png",
@@ -41,21 +41,29 @@
     128,
     128
    ],
-   "metres": 4.0
+   "metres": 1.3
   },
   "sky_day": {
    "file": "textures/sky_day.png",
    "size": [
-    256,
-    64
+    1024,
+    128
+   ],
+   "metres": 1.0
+  },
+  "sky_lake": {
+   "file": "textures/sky_lake.png",
+   "size": [
+    1024,
+    128
    ],
    "metres": 1.0
   },
   "sky_storm": {
    "file": "textures/sky_storm.png",
    "size": [
-    256,
-    64
+    1024,
+    128
    ],
    "metres": 1.0
   },
@@ -104,6 +112,14 @@
    "size": [
     96,
     80
+   ],
+   "metres": 1.0
+  },
+  "thing_door": {
+   "file": "textures/thing_door.png",
+   "size": [
+    112,
+    224
    ],
    "metres": 1.0
   },
@@ -275,21 +291,13 @@
    ],
    "metres": 1.0
   },
-  "wall_door": {
-   "file": "textures/wall_door.png",
-   "size": [
-    128,
-    128
-   ],
-   "metres": 3.0
-  },
   "wall_hill": {
    "file": "textures/wall_hill.png",
    "size": [
     128,
     128
    ],
-   "metres": 6.0
+   "metres": 1.2
   },
   "wall_limestone": {
    "file": "textures/wall_limestone.png",
@@ -297,7 +305,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.2
   },
   "wall_rock": {
    "file": "textures/wall_rock.png",
@@ -305,7 +313,7 @@
     128,
     128
    ],
-   "metres": 4.0
+   "metres": 1.2
   }
  },
  "stage": {

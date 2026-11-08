@@ -20,6 +20,11 @@ const STYLES := ["walk", "stagger", "run", "climb", "carried"]
 const ROUTE_KEYS := ["up", "left", "right", "stumble", "arrive"]  # rail.routes: one move per route direction (`down` is the stay: no move), the stumble and the arrival
 ## A choice viewpoint (a rail place with "choice": true, docs/story/HEIGHTS_AND_PATHS.md) holds at least this many bars: the whole choice window (RunJourney's beats 49 to 60.5).
 const CHOICE_HOLD_BARS := 3.0
+## A walk-out at a walking pace (LEAD_RULINGS 42): the walk from a choice tap along the route's authored leg takes as long as the leg needs at no more than WALK_PACE_MAX
+## metres a second, in whole bars, WALK_OFF_BARS_MIN to WALK_OFF_BARS_MAX (walk_off_bars). A leg that needs more than the most is the scene's fault (tools/story/check_rail_paths.gd warns).
+const WALK_PACE_MAX := 3.0
+const WALK_OFF_BARS_MIN := 2.0
+const WALK_OFF_BARS_MAX := 8.0
 
 var node_id := ""
 var home := ""
@@ -38,12 +43,56 @@ var queasy := 0.0
 var sick_played := false
 var busy_until := -1.0  # song time until which a journey move is under way (and its hold)
 var hold_from := -1.0  # song time the last move's hold (`hold_bars`) starts
+var last_skip := ""  # why the last ambient() gave no glance ("" it gave one or the node has none): "choice" a choice viewpoint's window, "hold" a move's hold (the walk's tally)
 var visited: Array = []  # [{place, pos, role, kind}] one entry per block decision (tests and playtests read it)
 var places_seen: Dictionary = {}  # place waypoint -> times stood there
 
 
 func bar_s() -> float:
 	return 4.0 * 60.0 / bpm
+
+
+## The bars a walk-out of `length_m` metres takes (ruling 42): ceil(length / WALK_PACE_MAX / bar length), clamped to WALK_OFF_BARS_MIN..MAX.
+static func walk_off_bars(length_m: float, bar_len_s: float) -> float:
+	if bar_len_s <= 0.0:
+		return WALK_OFF_BARS_MIN
+	return clampf(ceilf(length_m / WALK_PACE_MAX / bar_len_s - 1.0e-6), WALK_OFF_BARS_MIN, WALK_OFF_BARS_MAX)
+
+
+## The bars a leg of `length_m` would need at WALK_PACE_MAX, unclamped (the rail check flags more than WALK_OFF_BARS_MAX).
+static func walk_off_bars_needed(length_m: float, bar_len_s: float) -> float:
+	return ceilf(length_m / WALK_PACE_MAX / maxf(bar_len_s, 1.0e-6) - 1.0e-6)
+
+
+## The length (metres) of a route's authored leg on `map`: the straight segments from waypoint `from_wp` through the move's `via` to its `to` (as StoryPlayer walks a polyline);
+## -1 when the map or a waypoint is missing.
+static func leg_length(map: StoryMap, from_wp: String, move: Dictionary) -> float:
+	if map == null or from_wp == "":
+		return -1.0
+	var chain: Array = [from_wp]
+	if typeof(move.get("via")) == TYPE_ARRAY:
+		chain.append_array((move["via"] as Array).map(func(x: Variant) -> String: return str(x)))
+	chain.append(str(move.get("to", "")))
+	var total := 0.0
+	var prev: Dictionary = map.waypoint(str(chain[0]))
+	if prev.is_empty():
+		return -1.0
+	for i in range(1, chain.size()):
+		var w: Dictionary = map.waypoint(str(chain[i]))
+		if w.is_empty():
+			return -1.0
+		total += (prev["at"] as Vector2).distance_to(w["at"])
+		prev = w
+	return total
+
+
+## Where a scene's walk-out starts when its rail is followed to the choice: its choice viewpoint (the first rail place with "choice": true, the good rail first), else home.
+static func walk_off_from(rail: Dictionary, home_wp: String) -> String:
+	for key in ["good", "bad"]:
+		for p in rail.get(key, []):
+			if typeof(p) == TYPE_DICTIONARY and bool(p.get("choice", false)):
+				return str(p.get("to", home_wp))
+	return home_wp
 
 
 ## Problems with one node's rail data (waypoint existence is checked against the map by tests/test_run_rail.gd).
@@ -323,8 +372,12 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 	var beat := 60.0 / bpm
 	var idx := phase_n * 4 + block + node_id.length()
 	var window := block >= 3  # the last block is the hotspot window: the head stays on the room (no look at the ceiling, no turn away from the hotspots; visual polish)
+	last_skip = ""
 	if window and at_choice():  # a choice viewpoint: the camera stands still through the window (RunJourney holds it)
+		last_skip = "choice"
 		return out
+	if not glances.is_empty() and _in_hold(t_block + 5.0 * beat, float((glances[idx % glances.size()] as Dictionary).get("bars", 2.0)) * bar_s()):
+		last_skip = "hold"
 	if not glances.is_empty() and not _in_hold(t_block + 5.0 * beat, float((glances[idx % glances.size()] as Dictionary).get("bars", 2.0)) * bar_s()):
 		var g: Dictionary = glances[idx % glances.size()]
 		var by := float(g.get("by", 0.0))

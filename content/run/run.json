@@ -359,7 +359,8 @@
      "if_energy_below": 45
     }
    ],
-   "trial_gate": "deathtrap_opening"
+   "trial_gate": "deathtrap_opening",
+   "max_hotspots": 10
   },
   {
    "id": "warehouse.bar",
@@ -380,6 +381,13 @@
      "to": "warehouse.booth",
      "dir": "left",
      "label": "Back across the floor, up to the booth"
+    },
+    {
+     "to": "warehouse",
+     "dir": "hub",
+     "label": "Back to the Floor",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -450,7 +458,8 @@
      ],
      "exits": {
       "right": "bar_to_chill",
-      "left": "bar_door"
+      "left": "bar_door",
+      "hub": "back_warehouse_bar"
      }
     }
    },
@@ -508,6 +517,13 @@
      "to": "warehouse.booth",
      "dir": "left",
      "label": "Along the stairs to the booth"
+    },
+    {
+     "to": "warehouse",
+     "dir": "hub",
+     "label": "Back to the Floor",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -578,7 +594,8 @@
      ],
      "exits": {
       "right": "balcony_door",
-      "left": "balcony_stairs"
+      "left": "balcony_stairs",
+      "hub": "back_warehouse_balcony"
      }
     }
    },
@@ -632,6 +649,13 @@
      "to": "warehouse.exit",
      "dir": "up",
      "label": "Out through the floor to the door"
+    },
+    {
+     "to": "warehouse",
+     "dir": "hub",
+     "label": "Back to the Floor",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -700,7 +724,8 @@
       }
      ],
      "exits": {
-      "up": "chill_door"
+      "up": "chill_door",
+      "hub": "back_warehouse_chill"
      }
     }
    },
@@ -755,6 +780,13 @@
      "to": "warehouse.exit",
      "dir": "up",
      "label": "Down the stage, out through the floor"
+    },
+    {
+     "to": "warehouse",
+     "dir": "hub",
+     "label": "Back to the Floor",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -818,7 +850,8 @@
       }
      ],
      "exits": {
-      "up": "booth_down"
+      "up": "booth_down",
+      "hub": "back_warehouse_booth"
      }
     }
    },
@@ -878,6 +911,13 @@
      "to": "underworld",
      "dir": "right",
      "label": "The floor cracks open"
+    },
+    {
+     "to": "warehouse",
+     "dir": "hub",
+     "label": "Back to the Floor",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -941,7 +981,8 @@
      ],
      "exits": {
       "up": "tunnel",
-      "right": "door_r"
+      "right": "door_r",
+      "hub": "back_warehouse_exit"
      }
     }
    },
@@ -1000,6 +1041,12 @@
      "to": "mothership.reactor",
      "dir": "up",
      "label": "Past the gallery to the reactor catwalk"
+    },
+    {
+     "to": "underworld",
+     "dir": "link",
+     "label": "Down through the rift in the deck, to the Underworld",
+     "hub_link": true
     }
    ],
    "place": {
@@ -1070,7 +1117,8 @@
      ],
      "exits": {
       "right": "deck_gallery_door",
-      "up": "deck_reactor_door"
+      "up": "deck_reactor_door",
+      "link": "deck_rift"
      }
     }
    },
@@ -1108,7 +1156,8 @@
      "beats": 8,
      "if_energy_below": 40
     }
-   ]
+   ],
+   "max_hotspots": 10
   },
   {
    "id": "mothership.gallery",
@@ -1124,6 +1173,13 @@
      "to": "mothership.bridge",
      "dir": "up",
      "label": "On to the bridge"
+    },
+    {
+     "to": "mothership",
+     "dir": "hub",
+     "label": "Back to the Deck",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1192,7 +1248,8 @@
       }
      ],
      "exits": {
-      "up": "gallery_east"
+      "up": "gallery_east",
+      "hub": "back_mothership_gallery"
      }
     }
    },
@@ -1246,6 +1303,13 @@
      "to": "mothership.bridge",
      "dir": "up",
      "label": "Across the catwalk to the bridge"
+    },
+    {
+     "to": "mothership",
+     "dir": "hub",
+     "label": "Back to the Deck",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1315,7 +1379,8 @@
       }
      ],
      "exits": {
-      "up": "catwalk_bridge"
+      "up": "catwalk_bridge",
+      "hub": "back_mothership_reactor"
      }
     }
    },
@@ -1367,6 +1432,13 @@
      "to": "mothership.exit",
      "dir": "up",
      "label": "Back along the catwalk to the medbay"
+    },
+    {
+     "to": "mothership",
+     "dir": "hub",
+     "label": "Back to the Deck",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1436,7 +1508,8 @@
       }
      ],
      "exits": {
-      "up": "bridge_door"
+      "up": "bridge_door",
+      "hub": "back_mothership_bridge"
      }
     }
    },
@@ -1494,6 +1567,13 @@
      "to": "ward",
      "dir": "right",
      "label": "Through the exam room door"
+    },
+    {
+     "to": "mothership",
+     "dir": "hub",
+     "label": "Back to the Deck",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1557,7 +1637,8 @@
      ],
      "exits": {
       "left": "airlock_door",
-      "right": "exam_door"
+      "right": "exam_door",
+      "hub": "back_mothership_exit"
      }
     }
    },
@@ -1615,6 +1696,12 @@
      "to": "underworld.furnace",
      "dir": "left",
      "label": "The west tier, down to the furnace"
+    },
+    {
+     "to": "mothership",
+     "dir": "link",
+     "label": "Up the beam of cold light, to the Mothership",
+     "hub_link": true
     }
    ],
    "place": {
@@ -1678,7 +1765,8 @@
      ],
      "exits": {
       "right": "arena_tier_r",
-      "left": "arena_tier_l"
+      "left": "arena_tier_l",
+      "link": "arena_beam"
      }
     }
    },
@@ -1715,7 +1803,8 @@
      "beats": 8,
      "if_energy_below": 40
     }
-   ]
+   ],
+   "max_hotspots": 10
   },
   {
    "id": "underworld.court",
@@ -1731,6 +1820,13 @@
      "to": "underworld.pit",
      "dir": "up",
      "label": "The causeway to the pit"
+    },
+    {
+     "to": "underworld",
+     "dir": "hub",
+     "label": "Back to the Arena",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1799,7 +1895,8 @@
       }
      ],
      "exits": {
-      "up": "court_causeway"
+      "up": "court_causeway",
+      "hub": "back_underworld_court"
      }
     }
    },
@@ -1852,6 +1949,13 @@
      "to": "underworld.pit",
      "dir": "up",
      "label": "Back through the arena, over the causeway"
+    },
+    {
+     "to": "underworld",
+     "dir": "hub",
+     "label": "Back to the Arena",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -1920,7 +2024,8 @@
       }
      ],
      "exits": {
-      "up": "furnace_out"
+      "up": "furnace_out",
+      "hub": "back_underworld_furnace"
      }
     }
    },
@@ -1973,6 +2078,13 @@
      "to": "underworld.exit",
      "dir": "up",
      "label": "Up the causeway to the throne"
+    },
+    {
+     "to": "underworld",
+     "dir": "hub",
+     "label": "Back to the Arena",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2041,7 +2153,8 @@
       }
      ],
      "exits": {
-      "up": "pit_door"
+      "up": "pit_door",
+      "hub": "back_underworld_pit"
      }
     }
    },
@@ -2100,6 +2213,13 @@
      "to": "ward",
      "dir": "right",
      "label": "The south door, into the quiet"
+    },
+    {
+     "to": "underworld",
+     "dir": "hub",
+     "label": "Back to the Arena",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2163,7 +2283,8 @@
      ],
      "exits": {
       "left": "throne_door_l",
-      "right": "throne_door_r"
+      "right": "throne_door_r",
+      "hub": "back_underworld_exit"
      }
     }
    },
@@ -2217,6 +2338,12 @@
      "to": "hospital.corridor",
      "dir": "up",
      "label": "Out of the ward into the corridor"
+    },
+    {
+     "to": "ward",
+     "dir": "link",
+     "label": "Through the door to the old wing, to the Ward",
+     "hub_link": true
     }
    ],
    "place": {
@@ -2285,7 +2412,8 @@
       }
      ],
      "exits": {
-      "up": "ward_door"
+      "up": "ward_door",
+      "link": "ward_old_wing"
      }
     }
    },
@@ -2322,7 +2450,8 @@
      "beats": 12,
      "if_energy_below": 40
     }
-   ]
+   ],
+   "max_hotspots": 10
   },
   {
    "id": "hospital.corridor",
@@ -2343,6 +2472,13 @@
      "to": "hospital.cafeteria",
      "dir": "right",
      "label": "On to the cafeteria"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2412,7 +2548,8 @@
      ],
      "exits": {
       "left": "corridor_day_door",
-      "right": "corridor_cafe"
+      "right": "corridor_cafe",
+      "hub": "back_hospital_corridor"
      }
     }
    },
@@ -2466,6 +2603,13 @@
      "to": "hospital.garden",
      "dir": "up",
      "label": "Down the corridor to the garden"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2529,7 +2673,8 @@
       }
      ],
      "exits": {
-      "up": "dayroom_door"
+      "up": "dayroom_door",
+      "hub": "back_hospital_dayroom"
      }
     }
    },
@@ -2574,6 +2719,13 @@
      "to": "hospital.garden",
      "dir": "up",
      "label": "Through the glass doors to the garden"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2637,7 +2789,8 @@
       }
      ],
      "exits": {
-      "up": "cafe_garden_door"
+      "up": "cafe_garden_door",
+      "hub": "back_hospital_cafeteria"
      }
     }
    },
@@ -2689,6 +2842,13 @@
      "to": "hospital.exit",
      "dir": "up",
      "label": "On to the bandstand"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2758,7 +2918,8 @@
       }
      ],
      "exits": {
-      "up": "garden_door_e"
+      "up": "garden_door_e",
+      "hub": "back_hospital_garden"
      }
     }
    },
@@ -2815,6 +2976,13 @@
      "to": "ward_late",
      "dir": "right",
      "label": "Across the lawn, to the stage"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -2878,7 +3046,8 @@
      ],
      "exits": {
       "left": "bandstand_door_l",
-      "right": "bandstand_door_r"
+      "right": "bandstand_door_r",
+      "hub": "back_hospital_exit"
      }
     }
    },
@@ -2937,6 +3106,12 @@
      "to": "ward.dorm",
      "dir": "up",
      "label": "To the dormitory"
+    },
+    {
+     "to": "hospital",
+     "dir": "link",
+     "label": "Through the door to the general ward, to the Hospital",
+     "hub_link": true
     }
    ],
    "place": {
@@ -2970,7 +3145,7 @@
        "bars": 2
       }
      ],
-     "arrive": "day_door_a",
+     "arrive": "day_edge",
      "glances": [
       {
        "by": 22,
@@ -3007,7 +3182,8 @@
      ],
      "exits": {
       "right": "day_door_a",
-      "up": "day_door_b"
+      "up": "day_door_b",
+      "link": "day_door_general"
      }
     }
    },
@@ -3045,7 +3221,7 @@
      "if_energy_below": 40
     }
    ],
-   "max_hotspots": 5
+   "max_hotspots": 10
   },
   {
    "id": "ward.art",
@@ -3061,6 +3237,13 @@
      "to": "ward.corridor",
      "dir": "up",
      "label": "Back to the corridor"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -3130,7 +3313,8 @@
       }
      ],
      "exits": {
-      "up": "art_door"
+      "up": "art_door",
+      "hub": "back_ward_art"
      }
     }
    },
@@ -3183,6 +3367,13 @@
      "to": "ward.corridor",
      "dir": "up",
      "label": "Out to the corridor"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -3245,7 +3436,8 @@
       }
      ],
      "exits": {
-      "up": "dorm_door"
+      "up": "dorm_door",
+      "hub": "back_ward_dorm"
      }
     }
    },
@@ -3297,6 +3489,13 @@
      "to": "ward.courtyard",
      "dir": "up",
      "label": "Through the art room to the courtyard"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -3359,7 +3558,8 @@
       }
      ],
      "exits": {
-      "up": "corr_art_door"
+      "up": "corr_art_door",
+      "hub": "back_ward_corridor"
      }
     }
    },
@@ -3412,6 +3612,13 @@
      "to": "ward.exit",
      "dir": "up",
      "label": "Over to the stage"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -3481,7 +3688,8 @@
       }
      ],
      "exits": {
-      "up": "court_stage_door"
+      "up": "court_stage_door",
+      "hub": "back_ward_courtyard"
      }
     }
    },
@@ -3539,6 +3747,13 @@
      "to": "ward_late",
      "dir": "right",
      "label": "Stage right, round again"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "loop": true,
+     "to_hub": true
     }
    ],
    "place": {
@@ -3603,7 +3818,8 @@
      ],
      "exits": {
       "left": "stage_door_l",
-      "right": "stage_door_r"
+      "right": "stage_door_r",
+      "hub": "back_ward_exit"
      }
     }
    },
@@ -3662,6 +3878,12 @@
      "to": "hospital_late.quiet",
      "dir": "right",
      "label": "Down the corridor to the quiet room"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "to_hub": true
     }
    ],
    "place": {
@@ -3732,7 +3954,8 @@
      ],
      "exits": {
       "left": "garden_door_w",
-      "right": "garden_door_w2"
+      "right": "garden_door_w2",
+      "hub": "back_hospital_late"
      }
     }
    },
@@ -3784,6 +4007,12 @@
      "to": "hospital_late.exit",
      "dir": "up",
      "label": "Out to the bandstand"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "to_hub": true
     }
    ],
    "place": {
@@ -3853,7 +4082,8 @@
       }
      ],
      "exits": {
-      "up": "cafe_garden_door"
+      "up": "cafe_garden_door",
+      "hub": "back_hospital_late_cafe"
      }
     }
    },
@@ -3905,6 +4135,12 @@
      "to": "hospital_late.exit",
      "dir": "up",
      "label": "Out and across to the bandstand"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "to_hub": true
     }
    ],
    "place": {
@@ -3967,7 +4203,8 @@
       }
      ],
      "exits": {
-      "up": "quiet_door"
+      "up": "quiet_door",
+      "hub": "back_hospital_late_quiet"
      }
     }
    },
@@ -4018,6 +4255,12 @@
      "to": "ward_late",
      "dir": "right",
      "label": "Across the lawn, to the stage"
+    },
+    {
+     "to": "hospital",
+     "dir": "hub",
+     "label": "Back to the Ward",
+     "to_hub": true
     }
    ],
    "place": {
@@ -4081,7 +4324,8 @@
      ],
      "exits": {
       "left": "bandstand_door_l",
-      "right": "bandstand_door_r"
+      "right": "bandstand_door_r",
+      "hub": "back_hospital_late_exit"
      }
     }
    },
@@ -4140,6 +4384,12 @@
      "to": "ward_late.dorm",
      "dir": "right",
      "label": "Back to the dormitory"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "to_hub": true
     }
    ],
    "place": {
@@ -4210,7 +4460,8 @@
      ],
      "exits": {
       "left": "court_door_w",
-      "right": "court_south"
+      "right": "court_south",
+      "hub": "back_ward_late"
      }
     }
    },
@@ -4263,6 +4514,12 @@
      "to": "ward_late.exit",
      "dir": "up",
      "label": "Out to the day room"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "to_hub": true
     }
    ],
    "place": {
@@ -4332,7 +4589,8 @@
       }
      ],
      "exits": {
-      "up": "treat_door"
+      "up": "treat_door",
+      "hub": "back_ward_late_treat"
      }
     }
    },
@@ -4384,6 +4642,12 @@
      "to": "ward_late.exit",
      "dir": "up",
      "label": "Out to the day room"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "to_hub": true
     }
    ],
    "place": {
@@ -4446,7 +4710,8 @@
       }
      ],
      "exits": {
-      "up": "dorm_door"
+      "up": "dorm_door",
+      "hub": "back_ward_late_dorm"
      }
     }
    },
@@ -4495,6 +4760,12 @@
      "to": "hospital_late",
      "dir": "left",
      "label": "Across to the hospital"
+    },
+    {
+     "to": "ward",
+     "dir": "hub",
+     "label": "Back to the Day Room",
+     "to_hub": true
     }
    ],
    "place": {
@@ -4565,7 +4836,8 @@
      ],
      "exits": {
       "right": "day_door_a",
-      "left": "day_door_b"
+      "left": "day_door_b",
+      "hub": "back_ward_late_exit"
      }
     }
    },
@@ -4745,6 +5017,18 @@
     }
    ]
   },
+  "warehouse.stagger_bar_hub": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_warehouse_bar",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "warehouse.drink_at_bar": {
    "world": "warehouse",
    "steps": [
@@ -4825,6 +5109,18 @@
     }
    ]
   },
+  "warehouse.stagger_balcony_hub": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_warehouse_balcony",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "warehouse.rail_look": {
    "world": "warehouse",
    "steps": [
@@ -4875,6 +5171,18 @@
     }
    ]
   },
+  "warehouse.stagger_chill_hub": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_warehouse_chill",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "warehouse.sofa_rest": {
    "world": "warehouse",
    "steps": [
@@ -4906,6 +5214,18 @@
     {
      "move": "walk",
      "to": "booth_down",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_booth_hub": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_warehouse_booth",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -4972,6 +5292,18 @@
     }
    ]
   },
+  "warehouse.stagger_exit_hub": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_warehouse_exit",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "warehouse.thrown_out": {
    "world": "warehouse",
    "steps": [
@@ -5020,6 +5352,18 @@
     {
      "move": "walk",
      "to": "deck_reactor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.stagger_entry_link": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_rift",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5093,6 +5437,18 @@
     }
    ]
   },
+  "mothership.stagger_gallery_hub": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_mothership_gallery",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "mothership.window_gaze": {
    "world": "mothership",
    "steps": [
@@ -5153,6 +5509,18 @@
     }
    ]
   },
+  "mothership.stagger_reactor_hub": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_mothership_reactor",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "mothership.core_surge": {
    "world": "mothership",
    "steps": [
@@ -5202,6 +5570,18 @@
     }
    ]
   },
+  "mothership.stagger_bridge_hub": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_mothership_bridge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "mothership.warp": {
    "world": "mothership",
    "steps": [
@@ -5244,6 +5624,18 @@
     {
      "move": "walk",
      "to": "exam_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.stagger_exit_hub": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_mothership_exit",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5332,6 +5724,18 @@
     }
    ]
   },
+  "underworld.stagger_entry_link": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_beam",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "underworld.gate_nod": {
    "world": "underworld",
    "steps": [
@@ -5411,6 +5815,18 @@
     }
    ]
   },
+  "underworld.stagger_court_hub": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_underworld_court",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "underworld.seal_stand": {
    "world": "underworld",
    "steps": [
@@ -5454,6 +5870,18 @@
     {
      "move": "walk",
      "to": "furnace_out",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_furnace_hub": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_underworld_furnace",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5508,6 +5936,18 @@
     }
    ]
   },
+  "underworld.stagger_pit_hub": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_underworld_pit",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "underworld.lava_bridge": {
    "world": "underworld",
    "steps": [
@@ -5556,6 +5996,18 @@
     }
    ]
   },
+  "underworld.stagger_exit_hub": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_underworld_exit",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "underworld.take_throne": {
    "world": "underworld",
    "steps": [
@@ -5586,6 +6038,18 @@
     {
      "move": "walk",
      "to": "ward_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_entry_link": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ward_old_wing",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5701,6 +6165,18 @@
     }
    ]
   },
+  "hospital.stagger_corridor_hub": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_corridor",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "hospital.tea": {
    "world": "hospital",
    "steps": [
@@ -5762,6 +6238,18 @@
     {
      "move": "walk",
      "to": "dayroom_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_dayroom_hub": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_dayroom",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5840,6 +6328,18 @@
     }
    ]
   },
+  "hospital.stagger_cafeteria_hub": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_cafeteria",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "hospital.vend": {
    "world": "hospital",
    "steps": [
@@ -5877,6 +6377,18 @@
     }
    ]
   },
+  "hospital.stagger_garden_hub": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_garden",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "hospital.phone": {
    "world": "hospital",
    "steps": [
@@ -5908,6 +6420,18 @@
     {
      "move": "walk",
      "to": "bandstand_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_exit_hub": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_exit",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -5956,6 +6480,18 @@
     {
      "move": "walk",
      "to": "day_door_b",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_entry_link": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_door_general",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6067,6 +6603,18 @@
     }
    ]
   },
+  "ward.stagger_art_hub": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_art",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "ward.paint_look": {
    "world": "ward",
    "steps": [
@@ -6116,6 +6664,18 @@
     {
      "move": "walk",
      "to": "dorm_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_dorm_hub": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_dorm",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6181,6 +6741,18 @@
     }
    ]
   },
+  "ward.stagger_corridor_hub": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_corridor",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "ward.king": {
    "world": "ward",
    "steps": [
@@ -6225,6 +6797,18 @@
     {
      "move": "walk",
      "to": "court_stage_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_courtyard_hub": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_courtyard",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6298,6 +6882,18 @@
     }
    ]
   },
+  "ward.stagger_exit_hub": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_exit",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "ward.star_turn": {
    "world": "ward",
    "steps": [
@@ -6346,6 +6942,18 @@
     }
    ]
   },
+  "hospital_late.stagger_entry_hub": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_late",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "hospital_late.doctor": {
    "world": "hospital_late",
    "steps": [
@@ -6371,6 +6979,18 @@
     }
    ]
   },
+  "hospital_late.stagger_cafe_hub": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_late_cafe",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "hospital_late.kid": {
    "world": "hospital_late",
    "steps": [
@@ -6390,6 +7010,18 @@
     {
      "move": "walk",
      "to": "quiet_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.stagger_quiet_hub": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_late_quiet",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6426,6 +7058,18 @@
     {
      "move": "walk",
      "to": "bandstand_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.stagger_exit_hub": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_hospital_late_exit",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6480,12 +7124,36 @@
     }
    ]
   },
+  "ward_late.stagger_entry_hub": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_late",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "ward_late.stagger_treat_up": {
    "world": "ward_late",
    "steps": [
     {
      "move": "walk",
      "to": "treat_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_treat_hub": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_late_treat",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
@@ -6546,6 +7214,18 @@
     }
    ]
   },
+  "ward_late.stagger_dorm_hub": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_late_dorm",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
   "ward_late.lullaby": {
    "world": "ward_late",
    "steps": [
@@ -6589,6 +7269,18 @@
     {
      "move": "walk",
      "to": "day_door_b",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_exit_hub": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "back_ward_late_exit",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"

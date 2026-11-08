@@ -47,7 +47,7 @@
  ],
  "things": [
   {"id": "rope_rim", "kind": "billboard", "sprite": "thing_rope", "at": [-4.9, 0.6], "y": 12.3, "size": 5.0, "anim": "sway"},
-  {"id": "rope_ledge", "kind": "billboard", "sprite": "thing_rope", "at": [-5.5, -5.6], "y": 7.3, "size": 3.0, "anim": "sway"},
+  {"id": "rope_ledge", "kind": "billboard", "sprite": "thing_rope", "at": [-5.5, -5.6], "y": 8.5, "size": 3.0, "anim": "sway"},
   {"id": "torch_r1", "kind": "billboard", "sprite": "thing_torch", "at": [-5.2, 4.6], "y": 1.9, "size": 1.2, "anim": "flicker"},
   {"id": "torch_r2", "kind": "billboard", "sprite": "thing_torch", "at": [5.2, 4.6], "y": 1.9, "size": 1.2, "anim": "flicker"},
   {"id": "glow_r1", "kind": "billboard", "sprite": "thing_glow", "at": [-5.2, 4.55], "y": 1.9, "size": 2.0, "anim": "flicker", "blend": "add"},
@@ -87,7 +87,16 @@
   {"id": "ledge_rope", "at": [-7.4, -5.3], "yaw": 189, "sector": "ledge"},
   {"id": "pit_floor", "at": [1, -6], "yaw": 138, "sector": "shaft"},
   {"id": "rope_foot", "at": [-4.0, -0.3], "yaw": 138, "sector": "shaft"},
-  {"id": "pit_bottom", "at": [2.5, -3.5], "yaw": 120, "sector": "shaft"}
+  {"id": "pit_bottom", "at": [2.5, -3.5], "yaw": 120, "sector": "shaft"},
+  {
+   "id": "way_up_35",
+   "at": [
+    1.0,
+    3.0
+   ],
+   "yaw": 0,
+   "sector": "rim"
+  }
  ],
  "animated": [
   {"tex": "water", "mode": "swap", "frames": ["water", "water_1", "water_2", "water_3"], "rate": 3, "bright": 0.5, "amount": 0.2},

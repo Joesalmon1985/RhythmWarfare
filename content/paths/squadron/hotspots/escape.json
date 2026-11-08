@@ -460,6 +460,110 @@
    }
   },
   {
+   "id": "escape.c13.restart",
+   "world": "escape",
+   "scene": "escape.c13",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     38.78,
+     1.5,
+     10.95
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "base",
+    "flags_set": [
+     "keep:path_squadron_free"
+    ]
+   },
+   "on_failure": {
+    "route": "base",
+    "energy": -4,
+    "flags_set": [
+     "keep:path_squadron_free"
+    ]
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "escape.c13.back",
+   "world": "escape",
+   "scene": "escape.c13",
+   "map": "harbour",
+   "anchor": {
+    "pos": [
+     38.78,
+     1.5,
+     10.95
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c12"
+   },
+   "on_failure": {
+    "route": "escape.c12",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "squadron.return",
    "world": "escape",
    "scene": "escape.c13",

@@ -81,7 +81,16 @@
   {"id": "shelf_aisle", "at": [-5.5, 5.8], "yaw": -4, "sector": "aisle"},
   {"id": "inner_vault", "at": [0, -1.5], "yaw": 0, "sector": "inner"},
   {"id": "damp_door", "at": [-4.4, -9.0], "yaw": 0, "sector": "inner"},
-  {"id": "hot_door", "at": [4.8, -9.0], "yaw": 0, "sector": "inner"}
+  {"id": "hot_door", "at": [4.8, -9.0], "yaw": 0, "sector": "inner"},
+  {
+   "id": "vault_way_up",
+   "at": [
+    -2.5,
+    -5.5
+   ],
+   "yaw": 0,
+   "sector": "inner"
+  }
  ],
  "animated": [
   {"tex": "floor_wood", "mode": "flicker", "amount": 0.08, "bright": 0.0}

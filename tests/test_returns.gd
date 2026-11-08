@@ -3,9 +3,9 @@ extends TestCase
 ## success leads to the main run (`run:warehouse`; the router lands it on the checkpoint, docs/narrative/N2_2_ROUTER.md); it is never gated by rhythm (a miss leads the same way), never
 ## the default, and never within 0.75 m of another hotspot's anchor; and a return taken from a quest entered at a hub outside the Warehouse lands on that hub, also after a missed block.
 ##
-## NOT BUILT, so not tested: the "back" rows and the seven extra routes of lead ruling 17 (a hotspot's route must be a `next` edge of its scene, and an ending has the one route
-## `run:warehouse`: src/run/run_data.gd `_validate_routes` and `_load_hotspots`), and the Bassment's visible return. KNOWN_UNDER_THREE names the path scenes that have fewer than three distinct destinations today;
-## the test pins that list, so the package that builds the back and restart routes has to empty it.
+## The extra routes of lead ruling 17 (tools/run/path_routes.py): every ending's restart to its quest's first scene (it sets the ending's keep flag too), the two entry scenes' second
+## routes, and the back routes of the two scenes that had one onward route and of every ending; with them no path scene is under three destinations (KNOWN_UNDER_THREE is empty). The Bassment's own way
+## back (tools/trial/returns.py): every passage without a way out has one more choice that leads out, never the default, with its own exit hotspot.
 
 const PATHS := ["gospel", "squadron", "ember"]
 const MIN_GAP_M := 0.75
@@ -13,10 +13,16 @@ const FX_FLAG := "fx_n25"
 const TMP_SAVE := "user://test_returns_save.json"
 const STEP := 1.0 / 30.0
 
-## Scenes whose distinct destinations (onward routes plus the return) are under three: the two entry scenes (one onward route), the five endings (the return alone) and the two scenes
-## with one onward route and a predecessor (back would be the third).
-const KNOWN_UNDER_THREE := ["ember/deeps", "ember/hollow", "ember/mountain.keeper", "ember/mountain.spring", "gospel/jerusalem.golgotha", "gospel/jerusalem.road", "gospel/jerusalem.tomb",
-	"gospel/jordan", "squadron/escape.c13"]
+## Scenes whose distinct destinations (onward routes plus the return) are under three: none since the restarts, the second routes and the back routes.
+const KNOWN_UNDER_THREE := []
+## Bassment passages whose camera shows no spot for the return beside their own choices (tools/trial/return_spots.gd): their way out stays the back key.
+const NO_RETURN_SPOT := [1, 2, 7, 9, 14, 34, 38]
+## (quest, scene, kind, to): the routes of tools/run/path_routes.py
+const EXTRA := [["gospel", "jerusalem.tomb", "restart", "jordan"], ["gospel", "jerusalem.road", "restart", "jordan"], ["squadron", "escape.c13", "restart", "base"],
+	["ember", "mountain.spring", "restart", "hollow"], ["ember", "mountain.keeper", "restart", "hollow"], ["gospel", "jordan", "skip", "jordan.nazareth"],
+	["ember", "hollow", "skip", "hollow.inn"], ["gospel", "jerusalem.golgotha", "back", "jerusalem.trial"], ["ember", "deeps", "back", "north"],
+	["gospel", "jerusalem.tomb", "back", "jerusalem.golgotha"], ["gospel", "jerusalem.road", "back", "jerusalem.trial"], ["squadron", "escape.c13", "back", "escape.c12"],
+	["ember", "mountain.spring", "back", "mountain"], ["ember", "mountain.keeper", "back", "mountain"]]
 
 var _saved: RunProgress
 
@@ -204,3 +210,44 @@ func test_a_return_lands_on_the_hub_the_quest_was_entered_from_also_after_a_miss
 	assert_eq(str(router.state.progress_of("gospel")["scene"]), "gospel/jordan")
 	assert_eq(router.errors, [])
 	_free(d)
+
+
+func test_the_restarts_second_routes_and_back_routes_are_touchable_never_gated_never_the_default() -> void:
+	for x in EXTRA:
+		var d := RunData.load_path(str(x[0]))
+		assert_eq(d.errors, [], "%s loads clean" % x[0])
+		var sid := str(x[1])
+		var hid := "%s.%s" % [sid, "restart" if str(x[2]) == "restart" else str(x[2])]
+		var rows := _rows(d, sid, hid)
+		assert_eq(rows.size(), 1, "%s/%s: one %s" % [x[0], sid, hid])
+		if rows.size() != 1:
+			continue
+		var h: Dictionary = rows[0]
+		assert_eq(str(h["on_success"]["route"]), str(x[3]), "%s leads to %s" % [hid, x[3]])
+		assert_eq(str(h["on_failure"]["route"]), str(x[3]), "%s: a miss leads the same way" % hid)
+		assert_false(bool(h["default"]), "%s is never the default" % hid)
+		assert_true((h["available"]["flags_all"] as Array).is_empty(), "%s is always on offer" % hid)
+		var route := (d.nodes[sid]["next"] as Array).filter(func(e: Dictionary) -> bool: return str(e["to"]) == str(x[3]))
+		assert_eq(route.size(), 1, "%s/%s: the route to %s is one of the scene's" % [x[0], sid, x[3]])
+		if str(x[2]) == "restart":
+			assert_eq(str(d.nodes[sid]["next"][0]["to"]), "run:warehouse", "%s: the ending's way back stays first" % sid)
+			assert_eq(str(x[3]), d.start_node(), "%s: the restart leads to the quest's first scene" % sid)
+			var keep: Array = (h["on_success"] as Dictionary).get("flags_set", [])
+			assert_true(keep.any(func(f: String) -> bool: return f.begins_with("keep:path_")), "%s: the restart marks the ending reached too (%s)" % [hid, str(keep)])
+
+
+func test_the_bassment_has_its_own_way_back_from_every_passage() -> void:
+	var t := TrialData.load_default()
+	assert_eq(t.errors, [], "the Bassment loads clean")
+	var n := 0
+	for k in t.passages:
+		var p: Dictionary = t.passages[k]
+		var ret: Array = (p["choices"] as Array).filter(func(c: Dictionary) -> bool: return bool(c.get("return", false)))
+		if ret.is_empty():
+			assert_true(str(p.get("kind", "")) in ["death", "victory"] or NO_RETURN_SPOT.has(int(k)), "passage %s: only a death, the victory or a room with no spot for it is without the return" % str(k))
+			continue
+		n += 1
+		assert_false(bool(ret[0].get("default", false)), "passage %s: the return is never the default" % str(k))
+		assert_eq(str(ret[0].get("exit", "")), "warehouse", "passage %s: the return leads out" % str(k))
+	assert_eq(n, 56 - NO_RETURN_SPOT.size(), "every passage but the seven deaths, the victory and the rooms with no spot has the return")
+

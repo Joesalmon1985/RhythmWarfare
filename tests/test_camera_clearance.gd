@@ -41,3 +41,22 @@ func test_the_rays_see_a_near_wall_and_not_a_corridor() -> void:
 	assert_false(CC.fails(hall), "looking down a 2 m corridor: its side walls recede (%.2f m, %.0f%%)" % [float(hall["centre"]), 100.0 * float(hall["share"])])
 	var up := CC.clearance(m, {"cam": Vector3(0, 1.6, 0.0), "yaw": 0.0, "pitch": 40.0, "sector": "room"})
 	assert_true(float(up["centre"]) < 2.5, "a look up meets the ceiling (%.2f m)" % float(up["centre"]))
+
+
+## The herald look's cap (docs/art/CAMERA_CLEARANCE.md "The herald look"): the turn stops short of a near wall, a clear turn is whole, a rail already on a wall is left alone.
+func test_the_herald_look_stops_short_of_a_near_wall() -> void:
+	var m := StoryMap.from_dict({"id": "box", "start": "a", "sectors": [{"id": "room", "polygon": [[-5, -10], [5, -10], [5, 10], [-5, 10]], "floor": 0, "ceiling": 3}],
+		"waypoints": [{"id": "a", "at": [0, 0], "yaw": 0, "sector": "room"}]})
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	var at := Vector2(3.5, 0.0)  # 1.5 m from the east wall (x = 5); facing -z (yaw 0) is clear, facing +x (yaw -90) is the wall
+	assert_near(float(m.sight(at, "room", StoryProjector.forward(-90.0), 1.6)["m"]), 1.5, 0.01, "the sight line meets the east wall")
+	assert_true(p.centre_clear(at, "room", 0.0, 1.6) > 2.6, "facing along the room is clear")
+	var cap := p.herald_cap(at, "room", 0.0, -90.0, 1.0, 1.6)
+	assert_true(cap > 0.0 and cap < 1.0, "a turn onto the near wall stops short (%.2f of it)" % cap)
+	assert_true(p.centre_clear(at, "room", lerpf(0.0, -90.0, cap), 1.6) >= StoryPlayer.HERALD_CLEAR_M, "where it stops the centre is clear")
+	assert_eq(p.herald_cap(Vector2(0, 0), "room", 0.0, -60.0, 1.0, 1.6), 1.0, "a clear turn is whole")
+	var to_wall := p.herald_cap(at, "room", -90.0, -100.0, 1.0, 1.6)
+	assert_eq(to_wall, 1.0, "a rail already on the wall: the look is left as it is when it is no nearer")
+	var c := CC.clearance(m, {"cam": Vector3(at.x, 1.6, at.y), "yaw": lerpf(0.0, -90.0, cap), "pitch": 0.0, "sector": "room"})
+	assert_false(CC.fails(c), "the clearance check passes the capped pose (%.2f m)" % float(c["centre"]))

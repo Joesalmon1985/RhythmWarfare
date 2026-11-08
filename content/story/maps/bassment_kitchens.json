@@ -92,7 +92,16 @@
   {"id": "freezer_in", "at": [11.2, 3.0], "yaw": 80, "sector": "cold"},
   {"id": "cold_store", "at": [8.6, 4.8], "yaw": -78, "sector": "cold"},
   {"id": "cold_back_door", "at": [12.4, 3.8], "yaw": -90, "sector": "cold"},
-  {"id": "book_flames", "at": [-1.0, 2.6], "yaw": 28, "sector": "kitchen"}
+  {"id": "book_flames", "at": [-1.0, 2.6], "yaw": 28, "sector": "kitchen"},
+  {
+   "id": "way_up_51",
+   "at": [
+    13.07,
+    1.8
+   ],
+   "yaw": -78,
+   "sector": "cold"
+  }
  ],
  "animated": [
   {"tex": "floor_kitchen", "mode": "pulse", "rate": 2, "amount": 0.2, "bright": 0.3},

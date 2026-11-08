@@ -286,11 +286,12 @@ func test_the_table_is_a_72_px_touch_target_on_the_stage_and_the_day_room_alone_
 	var items: Array = scene.hotspot_items()
 	var ids: Array = items.map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
 	assert_contains(ids, "ward.cards", "the table is on show in the day room's final window: %s" % str(ids))
-	assert_eq(items.size(), 5, "the day room shows five hotspots")
+	var day_n: int = (RunData.load_default().hotspots["ward"] as Array).size()  # (the day room carries the quest entrances of N2.4 too: the count is read from the data, five or more)
+	assert_true(items.size() >= 5 and items.size() <= day_n, "the day room shows at least five hotspots (%d of %d authored)" % [items.size(), day_n])
 	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
 	var st: StoryStage = scene.stages[scene.active_world]["stage"]
 	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)
-	assert_eq(lay.size(), 5, "every hotspot has a place on the 844x390 screen")
+	assert_eq(lay.size(), items.size(), "every hotspot has a place on the 844x390 screen")
 	var pads: Dictionary = scene.pad_view.button_rects()
 	var found := false
 	for e in lay:
@@ -308,11 +309,12 @@ func test_the_table_is_a_72_px_touch_target_on_the_stage_and_the_day_room_alone_
 	assert_true(found, "the table has a layout entry")
 	var data: RunData = scene.data
 	assert_true(data.errors.is_empty(), "the content validates (at most four hotspots on show anywhere but the day room, five there): %s" % str(data.errors))
-	assert_eq(int(data.nodes["ward"].get("max_hotspots", 4)), 5, "the day room raises its own cap")
-	assert_eq((data.hotspots["ward"] as Array).size(), 5)
-	assert_true(data.hotspots.keys().all(func(k: Variant) -> bool: return str(k) == "ward" or int(data.nodes[k].get("max_hotspots", 4)) == 4), "every other scene keeps the cap of four")
+	assert_true(int(data.nodes["ward"].get("max_hotspots", 4)) >= 5, "the day room raises its own cap")
+	assert_true((data.hotspots["ward"] as Array).size() >= 5)
+	var hubs := ["warehouse", "mothership", "underworld", "hospital", "ward"]  # (the five hubs raise theirs to ten: lead ruling 16, the shared wiring step)
 	for id in data.nodes:
-		if str(id) == "ward":
+		if str(id) in hubs:
+			assert_eq(int(data.nodes[id]["max_hotspots"]), HotspotContract.MAX_PER_HUB, "%s, a hub, allows ten" % str(id))
 			continue
 		assert_false(data.nodes[id].has("max_hotspots"), "%s keeps the default cap" % str(id))
 	_free(d)
@@ -579,7 +581,7 @@ func test_a_player_without_the_stake_is_broke_and_can_only_leave() -> void:
 	_run_to(scene, float(scene._vt) + 5.0 * BEAT)
 	var s := _snap(scene)
 	assert_eq(str(s["phase"]), "broke")
-	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm"], "only the room's doors are targets")
+	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm", "exit:hospital"], "only the room's doors are targets (the hub link to the Hospital among them)")
 	assert_true(bool(s["hints"]["exit_urged"]))
 	assert_false(_mg(scene).tap("bet", scene._vt), "a bet is refused")
 	assert_eq(w.balance_pence(), 300)
@@ -598,7 +600,7 @@ func test_a_player_without_the_stake_is_broke_and_can_only_leave() -> void:
 	assert_eq(w.balance_pence(), 0)
 	assert_eq(w.held_pence(), 0)
 	s = _snap(scene)
-	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm"])
+	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm", "exit:hospital"])
 	assert_false(_mg(scene).tap("bet", scene._vt), "a bet is refused")
 	assert_eq(w.balance_pence(), 0)
 	assert_eq(ctx["viol"], [])
@@ -1039,11 +1041,11 @@ func test_the_rooms_exits_are_doors_at_the_table_each_its_own_target() -> void:
 	_to_beat(scene, 22.0)
 	var s := _snap(scene)
 	assert_eq(str(s["phase"]), "await_bet")
-	assert_eq(s["targets"], ["bet", "exit:ward.art", "exit:ward.dorm"], "one target per door")
+	assert_eq(s["targets"], ["bet", "exit:ward.art", "exit:ward.dorm", "exit:hospital"], "one target per door")
 	var ex: Array = s["exits"]
-	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["id"])), ["ward.exit_art", "ward.exit_dorm"], "the day room's exits, the default first")
-	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["scene"])), ["art", "dorm"], "where each leads")
-	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["dir"])), ["right", "up"])
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["id"])), ["ward.exit_art", "ward.exit_dorm", "ward.to_hospital"], "the day room's exits, the default first, the hub link last")
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["scene"])), ["art", "dorm", "ward"], "where each leads")
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["dir"])), ["right", "up", "link"])
 	assert_true(str(ex[0]["tint"]) != "" and str(ex[1]["tint"]) != "", "the destinations' colours come from the map")
 	assert_true(str(ex[0]["tint"]) != str(ex[1]["tint"]), "and differ")
 	# no view: the get-up control in the fourth slot is the default door (the other door is touched in the room once up)

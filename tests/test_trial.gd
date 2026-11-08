@@ -102,6 +102,9 @@ func test_every_passage_is_reachable_and_only_deaths_and_the_victory_end() -> vo
 	for n in d.passages:
 		var kind := str(d.passage(n).get("kind", "normal"))
 		for c in d.choices(n):
+			if bool((c as Dictionary).get("return", false)):  # the Bassment's own way back (tools/trial/returns.py): any passage, never the default
+				assert_false(bool((c as Dictionary).get("default", false)), "passage %d: the way back up is never the default" % n)
+				continue
 			if c.has("exit"):
 				exits.append(n)
 				assert_true(kind in ["death", "victory"], "passage %d offers an exit but is %s" % [n, kind])
@@ -109,7 +112,7 @@ func test_every_passage_is_reachable_and_only_deaths_and_the_victory_end() -> vo
 			else:
 				assert_true(passages_has(d, int(c["to"])), "link valid")
 		if kind == "death" or kind == "victory":
-			assert_eq((d.choices(n) as Array).size(), 1)
+			assert_eq((d.choices(n) as Array).size(), 1)  # (a death or the victory already leads out: no return)
 		else:
 			assert_true((d.choices(n) as Array).size() >= 1)
 	assert_eq(exits.size(), _count(d, "death") + 1, "every death and the victory has the way back")
@@ -181,11 +184,11 @@ func test_an_item_opens_a_shortcut_and_is_needed_to_see_it() -> void:
 	var d := _data()
 	var back := _id(d, "Behind the Counter")
 	var plain := TrialFlow.new(d, back)
-	assert_eq((plain.choices() as Array).size(), 1, "without the lamp only the trapdoor is on offer")
+	assert_eq((plain.choices() as Array).size(), 2, "without the lamp only the trapdoor is on offer (and the way back up)")
 	assert_eq(plain.flags, [])
 	var lit := TrialFlow.new(d, back)
 	lit.flags = ["lamp"]
-	assert_eq((lit.choices() as Array).size(), 2, "with the lamp the dark archway appears")
+	assert_eq((lit.choices() as Array).size(), 3, "with the lamp the dark archway appears")
 	assert_eq(str(lit.choices()[1]["requires"]), "lamp")
 	lit.select(1)
 	lit.phrase_done(true, 1.0)
@@ -197,13 +200,13 @@ func test_an_item_opens_a_shortcut_and_is_needed_to_see_it() -> void:
 	assert_eq(str(lit.current()["title"]), "The Mirror Mezzanine", "the shortcut skips the whole Fungus Farm")
 	assert_false(_id(d, "The Mildew Pond") in lit.visited)
 	var fork := TrialFlow.new(d, _id(d, "The Hall of Hands"))
-	assert_eq((fork.choices() as Array).size(), 2)
+	assert_eq((fork.choices() as Array).size(), 3)  # (each with the way back up, last)
 	fork.flags = ["fork"]
-	assert_eq((fork.choices() as Array).size(), 3)
+	assert_eq((fork.choices() as Array).size(), 4)
 	var token := TrialFlow.new(d, _id(d, "The Vault of Records"))
 	token.flags = ["token"]
-	assert_eq((token.choices() as Array).size(), 3)
-	assert_eq((TrialFlow.new(d, _id(d, "The Vault of Records")).choices() as Array).size(), 2)
+	assert_eq((token.choices() as Array).size(), 4)
+	assert_eq((TrialFlow.new(d, _id(d, "The Vault of Records")).choices() as Array).size(), 3)
 
 
 func test_items_are_found_by_winning_a_fight_or_taking_a_risk_and_announced() -> void:
@@ -291,7 +294,7 @@ func test_a_failed_phrase_can_be_retried_and_a_fight_has_an_outcome() -> void:
 	assert_eq(str(f.current()["title"]), "The Flooded Boiler Room", "still in the same passage with the same choices")
 	assert_eq(f.retry_index, 0, "the failed choice is marked for a retry")
 	assert_eq(f.failure, str(d.encounters["cable_eel"]["on_fail"]))
-	assert_eq((f.choices() as Array).size(), 2)
+	assert_eq((f.choices() as Array).size(), 3, "(the eel, the pipes and the way back up)")
 	f.select(0)
 	var win := f.phrase_done(true, 0.8)
 	assert_eq(win["outcome"], "win")
@@ -612,7 +615,7 @@ func test_the_scene_is_the_2d5_world_with_hotspots_and_a_caption_band() -> void:
 	scene._step_virtual(scene._vt)
 	assert_eq(tr.zone, "hatch", "the first zone is shown at once in a direct launch")
 	assert_true(tr.zone_stages["hatch"]["stage"].visible and tr.zone_stages["hatch"]["stage"].world_active, "a 2.5D stage")
-	assert_eq(tr.hotspot_items().size(), 2, "both choices are hotspots in the room")
+	assert_eq(tr.hotspot_items().size(), 2, "both choices are hotspots in the room (the first passage has no spot for the way back up: tools/trial/return_spots.json)")
 	assert_true(_sel(tr, 0)["hotspot"]["default"] and not _sel(tr, 1)["hotspot"]["default"], "the default is the brighter one")
 	assert_false((_sel(tr, 0)["state"] == "selected") or (_sel(tr, 1)["state"] == "selected"))
 	for c in tr.get_children():
@@ -1057,7 +1060,7 @@ func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_ta
 	var d := _scene_at("The Flooded Boiler Room", "perfect")
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2, 30.0))
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 3, 30.0))  # (the eel, the pipes and the way back up: tools/trial/returns.py)
 	assert_eq(tr.figure_pose(), "idle", "the eel is already in the room while the window is open: it is the hotspot")
 	var hs := tr.hotspot_of(0)
 	assert_eq(TrialHotspots.kind_of(hs), "encounter")
@@ -1109,7 +1112,7 @@ func test_a_creature_acts_instead_of_a_caption() -> void:
 	var d := _scene_at("The Flooded Boiler Room", "perfect")
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2 and not tr._fig.is_empty(), 30.0))
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 3 and not tr._fig.is_empty(), 30.0))
 	var hs := tr.hotspot_of(0)
 	assert_eq(str(hs["acting"]["figure"]), "cable_eel", "the eel's hotspot carries its acting")
 	var a := tr.figure_act_at(scene.hud.now_t)

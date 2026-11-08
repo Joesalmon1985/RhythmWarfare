@@ -4,7 +4,8 @@ extends TestCase
 ## a herald stands in the crowd of its room only while its entrance is on offer.
 
 const BEAT := 60.0 / 174.0
-const ENTRANCES := {"warehouse.wizard": "dungeon", "warehouse.balcony.star": "gospel", "warehouse.booth.radio": "squadron", "warehouse.bar.ember": "ember", "warehouse.chill.wizard": "dungeon"}
+const ENTRANCES := {"warehouse.wizard": "dungeon", "warehouse.balcony.star": "gospel", "warehouse.booth.radio": "squadron", "warehouse.bar.ember": "ember", "warehouse.chill.wizard": "dungeon",
+	"warehouse.enter_bassment": "dungeon", "warehouse.enter_gospel": "gospel", "warehouse.enter_squadron": "squadron", "warehouse.enter_ember": "ember"}  # (the Floor's own four, the shared wiring step)
 
 
 func _all_hotspots() -> Array:

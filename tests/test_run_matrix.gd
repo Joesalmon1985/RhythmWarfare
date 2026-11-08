@@ -128,6 +128,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 			var opts := e.options()
 			if taps == "changed":  # a decoy first (the other exit), then the seed's pick below
 				e.choose(str((opts[opts.size() - 1] as Dictionary)["to"]))
+			opts = opts.filter(func(o: Dictionary) -> bool: return not bool(o.get("to_hub", false)) and not bool(o.get("hub_link", false)))  # (the matrix player goes on: the ways back to a hub and the links between hubs are left to the narrative tests)
 			if taps != "none":
 				if seed == 2:
 					var pick := mini(1, opts.size() - 1)

@@ -66,9 +66,18 @@
   {"id": "cap_foot", "at": [-4.8, 2.4], "yaw": 71.6, "sector": "terrace_mid"},
   {"id": "haze_bank", "at": [-2.8, 0.5], "yaw": -53.9, "sector": "terrace_mid"},
   {"id": "pond_edge", "at": [0.2, 1.0], "yaw": -3.4, "sector": "terrace_mid"},
-  {"id": "pond_view", "at": [0.5, 6.6], "yaw": -7.5, "sector": "terrace_hi"},
+  {"id": "pond_view", "at": [0.5, 7.6], "yaw": -7.5, "sector": "terrace_hi"},
   {"id": "stairs_foot", "at": [5.7, -0.9], "yaw": -66.2, "sector": "spore_stairs"},
   {"id": "stairs_top", "at": [10.4, -3.5], "yaw": -90.0, "sector": "spore_stairs"},
-  {"id": "haze_view", "at": [-5.8, 4.8], "yaw": -33.2, "sector": "terrace_hi"}
+  {"id": "haze_view", "at": [-5.8, 4.8], "yaw": -33.2, "sector": "terrace_hi"},
+  {
+   "id": "way_up_29",
+   "at": [
+    10.38,
+    -5.15
+   ],
+   "yaw": -66.2,
+   "sector": "spore_stairs"
+  }
  ]
 }
