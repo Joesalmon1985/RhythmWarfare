@@ -111,7 +111,7 @@ STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
     "stage": ((-300, -190), 2.2, (-330, -190)),
     "bar": ((-600, -300), 2.2, (-600, -250)),
-    "lounge": ((-465, -604), 2.2, (-440, -604)),
+    "lounge": ((-448, -604), 2.2, (-423, -604)),  # stage D: 0.5 m deeper into the lounge than the first pass, so his feet clear the pad strip from the raised wh_ref plate
 }
 # stage D exposure pass: the painting's caged wall lanterns along the hall's walls (here the faces of the 3 m terrace riser round the walkway), each a small emissive
 # billboard 0.25 m off the wall with an amber wall-wash light (SCONCE_LIGHTS): warm practicals against the cobalt, as the painting's far wall has them

@@ -762,6 +762,9 @@ def polish_tiles():
             (462, 430), (452, 430), (452, 405), (462, 405), (462, 165), (452, 165), (452, 140), (462, 140), (462, 60), (452, 60)]
     rgb, al = wa.cut((450, 0, 530, 606), pipe, paint=paint)
     save("bar_p_pipe", rgb, al.astype(float))
+    # the stone post the Floor guide leans on (her crop keeps her hand at its top; the first pass left the hand on nothing)
+    rgb, al = wa.cut((92, 464, 172, 692), [(96, 470), (120, 464), (168, 466), (171, 470), (171, 692), (93, 692)], paint=paint)
+    save("bar_p_post", rgb, al.astype(float))
 
 
 def main():

@@ -10,6 +10,7 @@
   "bar_p_stool": "textures/bar_p_stool.png",
   "bar_p_counter": "textures/bar_p_counter.png",
   "bar_p_pipe": "textures/bar_p_pipe.png",
+  "bar_p_post": "textures/bar_p_post.png",
   "bar_brick_lit": "textures/bar_brick_lit.png",
   "bar_cobble": "textures/bar_cobble.png",
   "bar_planks": "textures/bar_planks.png",
@@ -1678,6 +1679,18 @@
    ],
    "y": 0.5,
    "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "bar_post_floor",
+   "kind": "billboard",
+   "sprite": "bar_p_post",
+   "at": [
+    -2.77,
+    -3.12
+   ],
+   "y": 0.42,
+   "size": 0.84,
    "anim": "none"
   },
   {

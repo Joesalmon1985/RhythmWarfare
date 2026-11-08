@@ -83,7 +83,7 @@ for k in ("bridge_1", "bridge_2"):
     STYLE[k] = ("bar_grate", "bar_quay", "bar_ceiling", "#c8b0a0", "bar_quay")
 for k in ("bar_w", "bar_back", "bar_e", "bar_front"):
     STYLE[k] = ("bar_planks", "bar_brick_lit", "bar_ceiling", "#ffc080", "bar_step")
-OWN_TEX = ["bar_brick", "bar_brick_b", "bar_brick_c", "bar_p_stool", "bar_p_counter", "bar_p_pipe", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
+OWN_TEX = ["bar_brick", "bar_brick_b", "bar_brick_c", "bar_p_stool", "bar_p_counter", "bar_p_pipe", "bar_p_post", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
            "bar_pendant", "bar_lantern", "bar_crate", "bar_crate_tall", "bar_jug", "bar_stool", "bar_taps", "bar_bottles", "bar_bottles_b", "bar_glass", "bar_pipe_col", "bar_sofa",
            "bar_tapestry", "bar_poster_a", "bar_poster_b", "bar_sign_booth", "bar_sign_floor", "bar_sign_chill", "bar_shelf", "bar_ivy", "bar_pipe_h", "bar_rack", "bar_window", "bar_door_floor",
            "bar_curtain"]
@@ -120,6 +120,7 @@ THINGS = [  # extra dressing, billboards: id, sprite, point (m), y (centre above
     ("bar_col_a", "bar_p_pipe", (-1.62, 3.75), 1.6, 3.2), ("bar_crate_a", "bar_crate_tall", (-1.15, 3.95), 0.55, 1.1), ("bar_crate_b", "bar_crate", (-0.75, 3.95), 0.3, 0.6),
     ("bar_jug_c", "bar_jug", (-1.15, 3.95), 1.32, 0.45), ("bar_col_b", "bar_p_pipe", (1.3, 0.1), 1.6, 3.2), ("bar_crate_c", "bar_crate", (1.0, -2.5), 0.3, 0.6),
     ("bar_sofa", "bar_sofa", (5.9, 5.9), 0.5, 1.0),
+    ("bar_post_floor", "bar_p_post", (-2.77, 3.12), 0.42, 0.84),  # stage D: the post under the Floor guide's hand (her crop leans on it, as in the painting)
     # the painting's foreground (stage D polish): its red velvet stool and the end of its copper counter with the whisky glass, cut from the painting, at the passage's east side
     ("bar_fg_stool", "bar_p_stool", (0.45, 1.3), 0.38, 0.75), ("bar_fg_counter", "bar_p_counter", (1.45, 0.75), 0.62, 1.25),  # 47 degrees right of wb_ref: the Chill-out guide (34 degrees) stays clear
 ]

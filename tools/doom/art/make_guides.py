@@ -331,32 +331,6 @@ def cut_figure(src, poly, top, chin, cut, centre_x):
     return small, s, (centre_x - x0) * s, nh
 
 
-def legs_below(c, cut_row, spec, lean=0):
-    """Draws what the painting hides under the cut: a coat skirt (spec['coat']), then two legs and shoes, with the procedural painter (dithered, lit from the upper left)."""
-    top = FEET - FIG_H + cut_row
-    hx = CX + spec.get("leg_dx", 0) + lean
-    hw = spec.get("hip_w", 20)
-    if spec.get("coat"):
-        knee = FEET - 70
-        m, d = c.mask()
-        cw0, cw1 = spec.get("coat_w", (34, 30))
-        d.polygon([(hx - cw0, top - 2), (hx + cw0, top - 2), (hx + cw1, knee), (hx - cw1, knee)], fill=255)
-        c.paint(m, spec["coat"], seed=31)
-        m, d = c.mask()
-        d.polygon([(hx - 4, top - 2), (hx + 4, top - 2), (hx + 6, knee), (hx - 6, knee)], fill=255)
-        c.paint(m, spec.get("under", "#15141c"))
-    for sx_ in (-1, 1):
-        t = (hx + sx_ * hw * 0.45, top - 2)
-        foot = (hx + sx_ * spec.get("stance", 12), FEET - 10)
-        mid = ((t[0] + foot[0]) / 2, (t[1] + foot[1]) / 2)
-        r0 = spec.get("thigh", 12)
-        m = limb([t, mid, foot], [r0, r0 - 2, spec.get("ankle", 7)])
-        c.paint(m, spec["trousers"], seed=40 + sx_, sparkle=spec.get("sparkle"))
-        m, d = c.mask()
-        d.rounded_rectangle([foot[0] - 10 + sx_ * 3, foot[1] + 1, foot[0] + 10 + sx_ * 3, foot[1] + 10], radius=4, fill=255)
-        c.paint(m, spec.get("shoes", "#2a1a14"))
-
-
 def continue_down(c, fig, ox, oy, s, spec):
     """What the painting hides under the cut, continued from the painting's own pixels: the bottom rows of the cut (columns `src_span`, painting x) are repeated downward
     (mirror-tiled, darkening toward the floor) over a span that tapers from `hip` (sprite px either side of CX) to the ankles, split into two legs below `split` (0..1 of the
