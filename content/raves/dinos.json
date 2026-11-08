@@ -154,7 +154,7 @@
  },
  "race": {
   "entrance": "hangar_view",
-  "course": "race_space",
+  "course": "race_dinos",
   "activity": "race"
  },
  "home": {

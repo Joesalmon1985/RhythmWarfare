@@ -58,9 +58,9 @@ def paving(t: dict, n=128) -> Cv:
     x, y = px.grid(n)
     seam = ((x % 32) < 1) | ((y % 32) < 1)
     shade = 0.45 + px.noise(n, 16, 21) * 0.35
-    c.a[..., :3] = px.quantise(shade, ramp("#23263a", "#33374f", "#454a66", "#5a5f7e"), 1.0)
+    c.a[..., :3] = px.quantise(shade, ramp(*t.get("pave_ramp", ("#23263a", "#33374f", "#454a66", "#5a5f7e"))), 1.0)
     c.a[..., 3] = 255
-    c.a[seam, :3] = _hx("#15172a")
+    c.a[seam, :3] = _hx(t.get("pave_seam", "#15172a"))
     wet = (px.noise(n, 40, 23, 2) > 0.62) & (px.speckle(n, 0.3, 24) > 0)
     c.a[wet, :3] = _hx(t["neon_b"]) // 2
     return c
@@ -68,7 +68,7 @@ def paving(t: dict, n=128) -> Cv:
 
 def kerb(t: dict, n=64) -> Cv:
     c = Cv(n, n)
-    c.a[..., :3] = px.quantise(0.4 + px.noise(n, 8, 31) * 0.3, ramp("#3b3e52", "#5d6078", "#8a8ea6", "#b8bccf"), 1.0)
+    c.a[..., :3] = px.quantise(0.4 + px.noise(n, 8, 31) * 0.3, ramp(*t.get("kerb_ramp", ("#3b3e52", "#5d6078", "#8a8ea6", "#b8bccf"))), 1.0)
     c.a[..., 3] = 255
     c.a[:3, :, :3] = _hx("#d8dbe8")
     c.a[18:, :, :3] = _hx("#1a1c2c")
@@ -77,7 +77,7 @@ def kerb(t: dict, n=64) -> Cv:
 
 def roof(t: dict, n=64) -> Cv:
     c = Cv(n, n)
-    c.a[..., :3] = px.quantise(0.3 + px.noise(n, 10, 41) * 0.3, ramp("#0d0e1a", "#171a2a", "#22263a"), 1.0)
+    c.a[..., :3] = px.quantise(0.3 + px.noise(n, 10, 41) * 0.3, ramp(*t.get("roof_ramp", ("#0d0e1a", "#171a2a", "#22263a"))), 1.0)
     c.a[..., 3] = 255
     return c
 
@@ -128,6 +128,9 @@ def facade(t: dict, seed: int, wall: tuple, win_lit: list, n=256, cols=4, rows=2
 def sky(t: dict, w=1024, h=256) -> Cv:
     """The sky strip (horizon at 0.76 of its height): a violet night, stars, a nebula, the Mothership hanging over the city, towers with lit windows on the horizon and the
     city's glow under them."""
+    if t.get("sky_kind"):  # a theme's own sky (race_art_themes.py)
+        import race_art_themes as rt
+        return rt.SKIES[t["sky_kind"]](t, w, h)
     c = Cv(w, h)
     yy = c.yy / h
     grad = np.clip(yy / 0.76, 0, 1)
@@ -224,6 +227,9 @@ def banner(t: dict) -> Cv:
 
 def neon(t: dict, kind: int) -> Cv:
     """A neon sign (an emissive decal): tubes on a dark backing board. No words: a noodle bowl, an alien head, a ringed planet, a cocktail glass, a rocket."""
+    if t.get("neon_set"):
+        import race_art_themes as rt
+        return rt.neon_set(t, kind)
     c = Cv(96, 72)
     c.paint(c.rrect(2, 2, 94, 70, 6), ramp("#07070e", "#10101c", "#181828"), c.lit((2, 2, 94, 70)), edge=True, edge_col="#2a2a40")
     col = [t["neon_a"], t["neon_b"], t["neon_c"], t["sodium"], t["neon_d"]][kind % 5]
@@ -322,9 +328,9 @@ def barrier(t: dict, frame: int) -> Cv:
     """Roadworks closing a lane: a striped barrier on trestles, two lamps flashing (frame 1 lit)."""
     w, h = 192, 80
     c = Cv(w, h)
-    c.paint(c.rect(4, 22, w - 4, 46), ramp("#401808", "#a03c10", "#ff7a20"), c.lit((4, 22, w - 4, 46)), edge=True)
+    c.paint(c.rect(4, 22, w - 4, 46), ramp(*t.get("barrier_ramp", ("#401808", "#a03c10", "#ff7a20"))), c.lit((4, 22, w - 4, 46)), edge=True)
     for k in range(0, w, 24):
-        c.flat(c.poly([(k, 22), (k + 12, 22), (k + 2, 46), (k - 10, 46)]) & c.rect(4, 22, w - 4, 46), "#f0f0f0")
+        c.flat(c.poly([(k, 22), (k + 12, 22), (k + 2, 46), (k - 10, 46)]) & c.rect(4, 22, w - 4, 46), t.get("barrier_stripe", "#f0f0f0"))
     for x0 in (16, w - 30):
         c.paint(c.rect(x0, 46, x0 + 10, 80), ramp("#1a1a24", "#3a3a4a", "#5a5a70"), c.round_x(x0, x0 + 10))
     for x0 in (22, w - 34):
@@ -340,7 +346,7 @@ def cones(t: dict, frame: int) -> Cv:
     c = Cv(w, h)
     for k in range(5):
         x = 10 + k * 38
-        c.paint(c.poly([(x + 10, 6), (x + 18, 6), (x + 26, 56), (x + 2, 56)]), ramp("#5a1a08", "#c04010", "#ff7a30"), c.lit((x, 6, x + 28, 56)), edge=True)
+        c.paint(c.poly([(x + 10, 6), (x + 18, 6), (x + 26, 56), (x + 2, 56)]), ramp(*t.get("cone_ramp", ("#5a1a08", "#c04010", "#ff7a30"))), c.lit((x, 6, x + 28, 56)), edge=True)
         c.flat(c.rect(x + 7, 24, x + 21, 30), "#ffffff" if frame else "#b0b0b8")
         c.flat(c.rect(x - 2, 56, x + 30, 62), "#1a1a20")
     return c
@@ -349,6 +355,9 @@ def cones(t: dict, frame: int) -> Cv:
 def dash(t: dict) -> Cv:
     """The car's bonnet and dash from the driver's low eye, one row per state: steady, leaning left, leaning right, braking (the brake lamp on the dash), jolted (a crack of
     sparks at the bonnet's edge). The lean is the car body's, drawn in the frame; the camera never rolls. Cells are 448 x 56 (drawn about 3.4 x 0.42 m)."""
+    if t.get("vehicle") in ("broom", "jeep", "rally"):
+        import race_art_themes as rt
+        return rt.dash_broom(t) if t["vehicle"] == "broom" else rt.dash_hood(t, t["vehicle"])
     cw, ch = 448, 56
     X = lambda x: int(round(x * cw / 400.0))
     Y = lambda y: int(round(y * ch / 104.0))
@@ -451,6 +460,9 @@ def start_lights(t: dict) -> Cv:
 
 def rain(t: dict) -> Cv:
     """Rain on the view (four frames of falling streaks, hard alpha, sparse)."""
+    if t.get("weather", "rain") != "rain":
+        import race_art_themes as rt
+        return rt.weather(t, t["weather"])
     cw, ch = 200, 120
     sheet = Cv(cw * 4, ch)
     rng = np.random.RandomState(3)
@@ -482,7 +494,15 @@ def textures(t: dict) -> dict:
         "rc_banner": (banner(t), None),
     }
     for i, (wall, lit) in enumerate(t["facades"]):
-        out["rc_facade_%d" % i] = (facade(t, 61 + i * 7, wall, lit), 8.0)
+        fk = t.get("facade_kind", "windows")
+        if fk == "stone":
+            import race_art_themes as rt
+            out["rc_facade_%d" % i] = (rt.facade_masonry(t, 61 + i * 7, wall, lit), 8.0)
+        elif fk == "rock":
+            import race_art_themes as rt
+            out["rc_facade_%d" % i] = (rt.facade_rock(t, 61 + i * 7, wall, lit), 8.0)
+        else:
+            out["rc_facade_%d" % i] = (facade(t, 61 + i * 7, wall, lit), 8.0)
     for k in range(5):
         out["rc_neon_%d" % k] = (neon(t, k), None)
     for k in range(3):
@@ -492,15 +512,20 @@ def textures(t: dict) -> dict:
 
 def sheets(t: dict) -> dict:
     out = {}
+    def vcar(paint, f, kind):
+        if t.get("vehicles", {}).get(kind):
+            import race_art_themes as rt
+            return rt.vehicle(paint, f, t["vehicles"][kind])
+        return car(paint, f, kind)
     for i, paint in enumerate(t["rivals"]):
         s = Cv(160 * 3, 104)
         for f in range(3):
-            s.stamp(car(paint, f), f * 160, 0)
+            s.stamp(vcar(paint, f, "racer"), f * 160, 0)
         out["car_rival_%d" % i] = (s, [3, 1])
     for name, paint, kind in (("car_taxi", t["taxi"], "taxi"), ("car_van", t["van"], "van")):
         s = Cv(160 * 3, 104)
         for f in range(3):
-            s.stamp(car(paint, f, kind), f * 160, 0)
+            s.stamp(vcar(paint, f, kind), f * 160, 0)
         out[name] = (s, [3, 1])
     s = Cv(192 * 2, 80)
     for f in range(2):

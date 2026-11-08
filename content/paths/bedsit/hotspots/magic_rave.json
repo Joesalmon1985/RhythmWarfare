@@ -525,6 +525,37 @@
    "repeatable": true
   },
   {
+   "id": "magic_race.race",
+   "world": "magic_rave",
+   "scene": "magic_race",
+   "map": "magic_rave",
+   "anchor": {
+    "thing": "hangar_racer"
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "race"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
    "id": "magic_race.back",
    "world": "magic_rave",
    "scene": "magic_race",

@@ -872,17 +872,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "magic_race",
-   "scene": "magic_race",
-   "title": "PLACEHOLDER: Carriage house",
+   "scene": "hangar",
+   "title": "Carriage house",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "magic",
-    "activity": "race"
-   },
+   "blurb": "The carriage house off the lounge's south side: an enchanted racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
    "theme": "magic",
-   "blurb": "A stand-in for the carriage house activity (id 'race' in content/raves/magic.json activities), built elsewhere as a minigame. It loops back to the rave.",
+   "activity": "race",
    "next": [
     {
      "to": "magic_rave",
@@ -897,14 +893,15 @@
     }
    ],
    "place": {
-    "waypoint": "hangar_view",
+    "waypoint": "hangar_door",
     "rail": {
      "good": [
       {
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
@@ -912,7 +909,8 @@
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -1234,17 +1232,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "dino_race",
-   "scene": "dino_race",
-   "title": "PLACEHOLDER: Ranger garage",
+   "scene": "hangar",
+   "title": "Ranger garage",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "dinos",
-    "activity": "race"
-   },
+   "blurb": "The ranger garage off the ledge: an off-road racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
    "theme": "dinos",
-   "blurb": "A stand-in for the ranger garage activity (id 'race' in content/raves/dinos.json activities), built elsewhere as a minigame. It loops back to the rave.",
+   "activity": "race",
    "next": [
     {
      "to": "dino_rave",
@@ -1259,14 +1253,15 @@
     }
    ],
    "place": {
-    "waypoint": "hangar_view",
+    "waypoint": "hangar_door",
     "rail": {
      "good": [
       {
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
@@ -1274,7 +1269,8 @@
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [
@@ -1596,17 +1592,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "transport_race",
-   "scene": "transport_race",
-   "title": "PLACEHOLDER: Garage",
+   "scene": "hangar",
+   "title": "Garage",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "transport",
-    "activity": "race"
-   },
+   "blurb": "The garage beside the stage: a rally hatchback and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md).",
    "theme": "transport",
-   "blurb": "A stand-in for the garage activity (id 'race' in content/raves/transport.json activities), built elsewhere as a minigame. It loops back to the rave.",
+   "activity": "race",
    "next": [
     {
      "to": "transport_rave",
@@ -1621,14 +1613,15 @@
     }
    ],
    "place": {
-    "waypoint": "hangar_view",
+    "waypoint": "hangar_door",
     "rail": {
      "good": [
       {
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
@@ -1636,7 +1629,8 @@
        "to": "hangar_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "glances": [

@@ -3,6 +3,7 @@ extends SceneTree
 ## countdown and the chosen opening lit, an overtake, a contact, the finish; the pads and the HUD in frame. Needs a renderer and a window size (--resolution):
 ##   bash tools/dev/godot.sh --path . --resolution 1280x720 -s tools/engine/shoot_race.gd -- <out dir>
 ##   bash tools/dev/godot.sh --path . --resolution 1600x720 -s tools/engine/shoot_race.gd -- <out dir>
+## A second argument names the rave's scene prefix (space, magic, dino, transport): `-- <out dir> magic`.
 ## Writes <out dir>/race_<n>_<moment>_<w>x<h>.png; tools/dev/race_sheet.py makes the contact sheet from both sizes. The race's seed is fixed (RW_MINIGAME_SEED=7).
 
 const RANK := {"overtake": 0, "clear": 1, "follow": 2, "brake": 3, "kerb": 4, "contact": 5}
@@ -44,11 +45,12 @@ func _go() -> void:
 	_out = args[0] if args.size() > 0 else "user://race_shots"
 	DirAccess.make_dir_recursive_absolute(_out)
 	var dr: Variant = Driver.new()
-	dr.start(self, Vector2(root.size), "space_rave")
-	dr.select("space_rave.race")
-	dr.in_node("space_race")
+	var prefix := args[1] if args.size() > 1 else "space"  # the scene id prefix of the rave (space, magic, dino, transport)
+	dr.start(self, Vector2(root.size), "%s_rave" % prefix)
+	dr.select("%s_rave.race" % prefix)
+	dr.in_node("%s_race" % prefix)
 	await _snap("race_0_hangar")
-	dr.select("space_race.race")
+	dr.select("%s_race.race" % prefix)
 	dr.seated()
 	dr.run_for(1.2)
 	await _snap("race_1_grid")
