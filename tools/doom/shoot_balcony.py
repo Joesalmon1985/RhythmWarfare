@@ -23,10 +23,10 @@ import guide_states as gs  # noqa: E402
 ROOT = ss.ROOT
 SCENE = "doom_balcony"
 PAINTING = os.path.join(ROOT, "art", "reference", "doom_worlds", "Rainy industrial rooftop, three musical paths-8.png")
-SHOTS = [("ref", "bc_ref"), ("hold_bridge", "bc_bridge_view"), ("hold_stair", "bc_stair_view"), ("hold_cabin", "bc_cabin_view"), ("route_ahead", "bc_bridge_end"), ("route_left", "bc_stair_foot"),
+SHOTS = [("ref", "bc_ref,0,-4"), ("hold_bridge", "bc_bridge_view"), ("hold_stair", "bc_stair_view"), ("hold_cabin", "bc_cabin_view"), ("route_ahead", "bc_bridge_end"), ("route_left", "bc_stair_foot"),
          ("route_right", "bc_cabin_in"), ("arrive", "bc_arrive")]
 ROUTES = ["up", "left", "right"]
-STATE_TAP = ("bc_ref", "doom_balcony.exit_mothership")  # round 2: the guide-state captures (tools/doom/guide_states.py): the reference viewpoint and the guide tapped
+STATE_TAP = ("bc_ref,0,-4", "doom_balcony.exit_mothership")  # round 2: the guide-state captures (tools/doom/guide_states.py): the reference viewpoint and the guide tapped
 RATE = 0.5
 
 
@@ -93,7 +93,7 @@ def main(out):
         pt = Image.open(PAINTING).convert("RGB")
         row = Image.new("RGB", (2 * W, 360 + 16 + 16), (12, 12, 20))
         row.paste(label(pt, "the painting (Rainy industrial rooftop, three musical paths-8)", W, 360), (0, 0))
-        row.paste(label(shots[("ref", "16x9")], "ref 16:9 (bc_ref, choice viewpoint, 8 bars still)", W, 360), (W, 0))
+        row.paste(label(shots[("ref", "16x9")], "ref 16:9 (bc_ref, choice viewpoint, 8 bars still, pitched -4 as the rail holds it)", W, 360), (W, 0))
         rows.append(row)
         rows.append(None)  # (the 20:9 ref goes in the next pair with a blank on the left)
     names = [n for n, _ in SHOTS]

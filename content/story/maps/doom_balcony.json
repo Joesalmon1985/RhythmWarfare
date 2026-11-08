@@ -5,6 +5,9 @@
  "start": "bc_arrive",
  "textures": {
   "bc_ceil": "textures/bc_ceil.png",
+  "bc_facade_a": "textures/bc_facade_a.png",
+  "bc_facade_b": "textures/bc_facade_b.png",
+  "bc_facade_c": "textures/bc_facade_c.png",
   "bc_floor_alley": "textures/bc_floor_alley.png",
   "bc_floor_cabin": "textures/bc_floor_cabin.png",
   "bc_floor_conc": "textures/bc_floor_conc.png",
@@ -25,21 +28,18 @@
   "bc_dish": "textures/bc_dish.png",
   "bc_cage_lamp": "textures/bc_cage_lamp.png",
   "bc_rack": "textures/bc_rack.png",
-  "bc_tower": "textures/bc_tower.png",
-  "bc_tower_b": "textures/bc_tower_b.png",
-  "bc_tower_c": "textures/bc_tower_c.png",
   "bc_forklift": "textures/bc_forklift.png",
-  "bc_eq_pink": "textures/bc_eq_pink.png",
-  "bc_eq_violet": "textures/bc_eq_violet.png",
   "bc_window_glow": "textures/bc_window_glow.png",
-  "bc_pipes": "textures/bc_pipes.png",
   "bc_led": "textures/bc_led.png",
   "bc_lace": "textures/bc_lace.png",
   "bc_tower_door": "textures/bc_tower_door.png",
   "bc_alley_door": "textures/bc_alley_door.png",
   "bc_stair_glow": "textures/bc_stair_glow.png",
-  "bc_windows": "textures/bc_windows.png",
   "bc_shutters": "textures/bc_shutters.png",
+  "bc_win_amber": "textures/bc_win_amber.png",
+  "bc_win_violet": "textures/bc_win_violet.png",
+  "bc_win_cyan": "textures/bc_win_cyan.png",
+  "bc_win_dark": "textures/bc_win_dark.png",
   "guide_mothership_idle_0": "textures/guide_mothership_idle_0.png",
   "guide_mothership_available_0": "textures/guide_mothership_available_0.png",
   "guide_mothership_available_1": "textures/guide_mothership_available_1.png",
@@ -137,18 +137,18 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 8.0,
+   "ceiling": 4.0,
    "floor_tex": "bc_floor_wet",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_conc",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.66
+   "ambient": 0.4
   },
   {
    "id": "1_0",
@@ -171,7 +171,7 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -182,7 +182,7 @@
    "doom_sector": 1,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.62
+   "ambient": 0.45
   },
   {
    "id": "2_0",
@@ -205,7 +205,7 @@
     ]
    ],
    "floor": -0.375,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -216,7 +216,7 @@
    "doom_sector": 2,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.45
   },
   {
    "id": "3_0",
@@ -239,7 +239,7 @@
     ]
    ],
    "floor": -0.75,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -250,7 +250,7 @@
    "doom_sector": 3,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.45
   },
   {
    "id": "4_0",
@@ -273,7 +273,7 @@
     ]
    ],
    "floor": -1.125,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -284,7 +284,7 @@
    "doom_sector": 4,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.45
   },
   {
    "id": "5_0",
@@ -307,7 +307,7 @@
     ]
    ],
    "floor": -1.5,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -318,7 +318,7 @@
    "doom_sector": 5,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.45
   },
   {
    "id": "6_0",
@@ -341,7 +341,7 @@
     ]
    ],
    "floor": -1.875,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_stair",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick",
@@ -352,7 +352,7 @@
    "doom_sector": 6,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.42
   },
   {
    "id": "7_0",
@@ -386,7 +386,7 @@
    "doom_sector": 7,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.75,
+   "ambient": 0.6,
    "wet": 0.5
   },
   {
@@ -437,7 +437,7 @@
    "doom_sector": 8,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.75,
+   "ambient": 0.45,
    "wet": 0.15
   },
   {
@@ -460,19 +460,19 @@
      -10.0
     ]
    ],
-   "floor": 0.375,
-   "ceiling": 8.0,
+   "floor": 0.0,
+   "ceiling": 4.0,
    "floor_tex": "bc_floor_grate",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_steel",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.9
   },
   {
    "id": "10_0",
@@ -494,19 +494,19 @@
      -11.0
     ]
    ],
-   "floor": 0.75,
-   "ceiling": 8.0,
+   "floor": 0.0,
+   "ceiling": 4.0,
    "floor_tex": "bc_floor_grate",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_steel",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 10,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.9
   },
   {
    "id": "11_0",
@@ -528,19 +528,19 @@
      -12.0
     ]
    ],
-   "floor": 1.125,
-   "ceiling": 8.0,
+   "floor": 0.0,
+   "ceiling": 4.0,
    "floor_tex": "bc_floor_grate",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_steel",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 11,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.5
+   "ambient": 0.9
   },
   {
    "id": "12_0",
@@ -562,19 +562,19 @@
      -16.0
     ]
    ],
-   "floor": 1.125,
-   "ceiling": 8.0,
+   "floor": 0.0,
+   "ceiling": 4.0,
    "floor_tex": "bc_floor_grate",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_steel",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 12,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.62
+   "ambient": 0.9
   },
   {
    "id": "13_0",
@@ -604,19 +604,19 @@
      -19.0
     ]
    ],
-   "floor": 1.125,
+   "floor": 0.0,
    "ceiling": 8.0,
    "floor_tex": "bc_floor_wet",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_conc",
    "light": 1.0,
-   "tint": "#dbd0ff",
+   "tint": "#f2edff",
    "room": "main",
    "flags": [],
    "doom_sector": 13,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.66
+   "ambient": 0.9
   },
   {
    "id": "14_0",
@@ -646,11 +646,11 @@
      -9.0
     ],
     [
-     -9.0,
+     -16.0,
      -9.0
     ],
     [
-     -9.0,
+     -16.0,
      -16.0
     ],
     [
@@ -659,18 +659,18 @@
     ]
    ],
    "floor": -9.0,
-   "ceiling": 2.40625,
+   "ceiling": 1.25,
    "floor_tex": "bc_floor_conc",
    "ceil_tex": "sky",
-   "wall_tex": "bc_wall_conc",
+   "wall_tex": "bc_facade_a",
    "light": 1.0,
-   "tint": "#a8b6e5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 14,
-   "step_tex": "bc_wall_conc",
+   "step_tex": "bc_facade_a",
    "lip_tex": "bc_trim",
-   "ambient": 0.68,
+   "ambient": 1.0,
    "void": true
   },
   {
@@ -678,6 +678,10 @@
    "polygon": [
     [
      -2.0,
+     -21.0
+    ],
+    [
+     -2.0,
      -19.0
     ],
     [
@@ -685,27 +689,27 @@
      -16.0
     ],
     [
-     -9.0,
+     -16.0,
      -16.0
     ],
     [
-     -9.0,
-     -19.0
+     -16.0,
+     -21.0
     ]
    ],
    "floor": -9.0,
-   "ceiling": 2.40625,
+   "ceiling": 1.25,
    "floor_tex": "bc_floor_conc",
    "ceil_tex": "sky",
-   "wall_tex": "bc_wall_conc",
+   "wall_tex": "bc_facade_b",
    "light": 1.0,
-   "tint": "#a8b6e5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 15,
-   "step_tex": "bc_wall_conc",
+   "step_tex": "bc_facade_b",
    "lip_tex": "bc_trim",
-   "ambient": 0.68,
+   "ambient": 1.0,
    "void": true
   },
   {
@@ -720,11 +724,11 @@
      -16.0
     ],
     [
-     9.0,
+     16.0,
      -16.0
     ],
     [
-     9.0,
+     16.0,
      -9.0
     ],
     [
@@ -749,25 +753,29 @@
     ]
    ],
    "floor": -9.0,
-   "ceiling": 2.40625,
+   "ceiling": 1.25,
    "floor_tex": "bc_floor_conc",
    "ceil_tex": "sky",
-   "wall_tex": "bc_wall_conc",
+   "wall_tex": "bc_facade_c",
    "light": 1.0,
-   "tint": "#a8b6e5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 16,
-   "step_tex": "bc_wall_conc",
+   "step_tex": "bc_facade_c",
    "lip_tex": "bc_trim",
-   "ambient": 0.68,
+   "ambient": 1.0,
    "void": true
   },
   {
    "id": "17_0",
    "polygon": [
     [
-     9.0,
+     16.0,
+     -21.0
+    ],
+    [
+     16.0,
      -16.0
     ],
     [
@@ -779,27 +787,70 @@
      -19.0
     ],
     [
-     9.0,
-     -19.0
+     2.0,
+     -21.0
     ]
    ],
    "floor": -9.0,
-   "ceiling": 2.40625,
+   "ceiling": 1.25,
    "floor_tex": "bc_floor_conc",
    "ceil_tex": "sky",
-   "wall_tex": "bc_wall_conc",
+   "wall_tex": "bc_facade_a",
    "light": 1.0,
-   "tint": "#a8b6e5",
+   "tint": "#eaf0ff",
    "room": "main",
    "flags": [],
    "doom_sector": 17,
-   "step_tex": "bc_wall_conc",
+   "step_tex": "bc_facade_a",
    "lip_tex": "bc_trim",
-   "ambient": 0.68,
+   "ambient": 1.0,
    "void": true
   },
   {
    "id": "18_0",
+   "polygon": [
+    [
+     16.0,
+     -33.0
+    ],
+    [
+     16.0,
+     -21.0
+    ],
+    [
+     2.0,
+     -21.0
+    ],
+    [
+     -2.0,
+     -21.0
+    ],
+    [
+     -16.0,
+     -21.0
+    ],
+    [
+     -16.0,
+     -33.0
+    ]
+   ],
+   "floor": -9.0,
+   "ceiling": 1.25,
+   "floor_tex": "bc_floor_conc",
+   "ceil_tex": "sky",
+   "wall_tex": "bc_facade_b",
+   "light": 1.0,
+   "tint": "#eaf0ff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 18,
+   "step_tex": "bc_facade_b",
+   "lip_tex": "bc_trim",
+   "ambient": 1.0,
+   "void": true
+  },
+  {
+   "id": "19_0",
    "polygon": [
     [
      -3.5,
@@ -819,7 +870,7 @@
     ]
    ],
    "floor": -1.875,
-   "ceiling": 8.0,
+   "ceiling": 7.0,
    "floor_tex": "bc_floor_alley",
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick_b",
@@ -827,13 +878,13 @@
    "tint": "#dbcbe5",
    "room": "main",
    "flags": [],
-   "doom_sector": 18,
+   "doom_sector": 19,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.6
+   "ambient": 0.4
   },
   {
-   "id": "19_0",
+   "id": "20_0",
    "polygon": [
     [
      10.5,
@@ -861,16 +912,16 @@
    "tint": "#ffd6ac",
    "room": "main",
    "flags": [],
-   "doom_sector": 19,
+   "doom_sector": 20,
    "step_tex": "bc_wall_steel",
    "lip_tex": "bc_trim",
-   "ambient": 0.75
+   "ambient": 0.5
   }
  ],
  "walls": [
   {
    "from": [
-    -9.0,
+    -16.0,
     -16.0
    ],
    "to": [
@@ -884,6 +935,20 @@
   },
   {
    "from": [
+    -16.0,
+    -21.0
+   ],
+   "to": [
+    -2.0,
+    -21.0
+   ],
+   "sector": "15_0",
+   "portal": "18_0",
+   "lower_tex": "",
+   "upper_tex": "sky"
+  },
+  {
+   "from": [
     -6.5,
     0.0
    ],
@@ -891,7 +956,7 @@
     -3.5,
     0.0
    ],
-   "sector": "18_0",
+   "sector": "19_0",
    "portal": "6_0",
    "lower_tex": "",
    "upper_tex": "sky"
@@ -1100,7 +1165,8 @@
    "sector": "13_0",
    "portal": "15_0",
    "lower_tex": "trim",
-   "upper_tex": "sky"
+   "upper_tex": "sky",
+   "blocked": true
   },
   {
    "from": [
@@ -1149,7 +1215,7 @@
    ],
    "sector": "0_0",
    "portal": "9_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "sky"
   },
   {
@@ -1181,7 +1247,7 @@
    ],
    "sector": "10_0",
    "portal": "9_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "sky"
   },
   {
@@ -1213,7 +1279,7 @@
    ],
    "sector": "10_0",
    "portal": "11_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "sky"
   },
   {
@@ -1390,11 +1456,25 @@
     -16.0
    ],
    "to": [
-    9.0,
+    16.0,
     -16.0
    ],
    "sector": "16_0",
    "portal": "17_0",
+   "lower_tex": "",
+   "upper_tex": "sky"
+  },
+  {
+   "from": [
+    2.0,
+    -21.0
+   ],
+   "to": [
+    16.0,
+    -21.0
+   ],
+   "sector": "17_0",
+   "portal": "18_0",
    "lower_tex": "",
    "upper_tex": "sky"
   },
@@ -1435,7 +1515,7 @@
     9.0,
     -6.0
    ],
-   "sector": "19_0",
+   "sector": "20_0",
    "portal": "8_0",
    "lower_tex": "",
    "upper_tex": "trim"
@@ -1448,7 +1528,7 @@
    "sprite": "guide_mothership_idle_0",
    "at": [
     -0.7,
-    -17.6
+    -16.7
    ],
    "y": 1.2,
    "size": 2.4,
@@ -1531,12 +1611,12 @@
    "kind": "billboard",
    "sprite": "bc_dish",
    "at": [
-    2.9,
-    -8.2
+    7.6,
+    -7.6
    ],
-   "size": 2.4,
+   "size": 2.0,
    "anim": "none",
-   "y": 1.2
+   "y": 4.5
   },
   {
    "id": "bc_lamp_brick",
@@ -1599,72 +1679,24 @@
    "y": 3.2
   },
   {
-   "id": "bc_tower_a",
-   "kind": "billboard",
-   "sprite": "bc_tower",
-   "at": [
-    -6.5,
-    -12.5
-   ],
-   "size": 12.5,
-   "anim": "none",
-   "y": 6.25
-  },
-  {
-   "id": "bc_tower_b",
-   "kind": "billboard",
-   "sprite": "bc_tower_b",
-   "at": [
-    -5.6,
-    -18.4
-   ],
-   "size": 13.0,
-   "anim": "none",
-   "y": 6.5
-  },
-  {
-   "id": "bc_tower_c",
-   "kind": "billboard",
-   "sprite": "bc_tower_c",
-   "at": [
-    5.5,
-    -12.0
-   ],
-   "size": 12.0,
-   "anim": "none",
-   "y": 6.0
-  },
-  {
-   "id": "bc_tower_d",
-   "kind": "billboard",
-   "sprite": "bc_tower",
-   "at": [
-    7.5,
-    -17.5
-   ],
-   "size": 11.0,
-   "anim": "none",
-   "y": 5.5
-  },
-  {
    "id": "bc_forklift",
    "kind": "billboard",
    "sprite": "bc_forklift",
    "at": [
-    4.5,
-    -17.0
+    5.0,
+    -30.0
    ],
-   "size": 1.5,
+   "size": 1.6,
    "anim": "none",
-   "y": 0.75
+   "y": 0.8
   },
   {
    "id": "bc_yard_case_a",
    "kind": "billboard",
    "sprite": "bc_case",
    "at": [
-    6.5,
-    -16.5
+    7.5,
+    -31.2
    ],
    "size": 1.2,
    "anim": "none",
@@ -1675,48 +1707,24 @@
    "kind": "billboard",
    "sprite": "bc_case",
    "at": [
-    -5.5,
-    -17.5
+    -6.0,
+    -31.0
    ],
    "size": 1.2,
    "anim": "none",
    "y": 0.6
   },
   {
-   "id": "bc_dc_eq_a",
-   "kind": "decal",
-   "sprite": "bc_eq_pink",
+   "id": "bc_yard_case_c",
+   "kind": "billboard",
+   "sprite": "bc_case",
    "at": [
-    -6.3,
-    -5.4
+    -4.6,
+    -31.6
    ],
-   "y": 0.3,
-   "size": 2.6,
-   "emissive": true
-  },
-  {
-   "id": "bc_dc_eq_b",
-   "kind": "decal",
-   "sprite": "bc_eq_pink",
-   "at": [
-    -6.3,
-    -2.6
-   ],
-   "y": 0.5,
-   "size": 2.4,
-   "emissive": true
-  },
-  {
-   "id": "bc_dc_eq_c",
-   "kind": "decal",
-   "sprite": "bc_eq_violet",
-   "at": [
-    -6.4,
-    5.6
-   ],
-   "y": 0.4,
-   "size": 1.6,
-   "emissive": true
+   "size": 0.9,
+   "anim": "none",
+   "y": 0.45
   },
   {
    "id": "bc_dc_window",
@@ -1731,15 +1739,16 @@
    "emissive": true
   },
   {
-   "id": "bc_dc_pipes",
+   "id": "bc_dc_window_b",
    "kind": "decal",
-   "sprite": "bc_pipes",
+   "sprite": "bc_window_glow",
    "at": [
-    3.3,
+    3.4,
     -8.0
    ],
-   "y": 0.0,
-   "size": 2.8
+   "y": 0.8,
+   "size": 2.2,
+   "emissive": true
   },
   {
    "id": "bc_dc_led_a",
@@ -1773,8 +1782,8 @@
     0.0,
     -18.8
    ],
-   "y": 2.3,
-   "size": 3.6
+   "y": 2.4,
+   "size": 3.4
   },
   {
    "id": "bc_dc_tower_door",
@@ -1813,18 +1822,6 @@
    "emissive": true
   },
   {
-   "id": "bc_dc_eq_d",
-   "kind": "decal",
-   "sprite": "bc_eq_pink",
-   "at": [
-    -6.4,
-    3.5
-   ],
-   "y": 0.6,
-   "size": 2.0,
-   "emissive": true
-  },
-  {
    "id": "bc_dc_stair_glow",
    "kind": "decal",
    "sprite": "bc_stair_glow",
@@ -1837,39 +1834,15 @@
    "emissive": true
   },
   {
-   "id": "bc_dc_win_a",
-   "kind": "decal",
-   "sprite": "bc_windows",
-   "at": [
-    -8.8,
-    -17.5
-   ],
-   "y": 2.0,
-   "size": 7.0,
-   "emissive": true
-  },
-  {
-   "id": "bc_dc_win_b",
-   "kind": "decal",
-   "sprite": "bc_windows",
-   "at": [
-    8.8,
-    -17.0
-   ],
-   "y": 2.0,
-   "size": 7.0,
-   "emissive": true
-  },
-  {
    "id": "bc_dc_shut_a",
    "kind": "decal",
    "sprite": "bc_shutters",
    "at": [
-    -5.0,
-    -18.8
+    -6.0,
+    -32.9
    ],
-   "y": 0.2,
-   "size": 3.0,
+   "y": 0.0,
+   "size": 3.4,
    "emissive": true
   },
   {
@@ -1878,10 +1851,683 @@
    "sprite": "bc_shutters",
    "at": [
     5.5,
-    -18.8
+    -32.9
    ],
-   "y": 0.2,
+   "y": 0.0,
+   "size": 3.4,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_shut_c",
+   "kind": "decal",
+   "sprite": "bc_shutters",
+   "at": [
+    -15.9,
+    -26.0
+   ],
+   "y": 0.0,
    "size": 3.0,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w00",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.0,
+    -32.9
+   ],
+   "y": 3.67,
+   "size": 2.23,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w01",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -15.0,
+    -32.9
+   ],
+   "y": 6.03,
+   "size": 2.09,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w02",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.0,
+    -32.9
+   ],
+   "y": 8.38,
+   "size": 2.04,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w03",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -12.0,
+    -32.9
+   ],
+   "y": 3.76,
+   "size": 2.05,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w04",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -12.0,
+    -32.9
+   ],
+   "y": 6.08,
+   "size": 2.08,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w05",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    -12.0,
+    -32.9
+   ],
+   "y": 8.57,
+   "size": 2.35,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w06",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -9.0,
+    -32.9
+   ],
+   "y": 6.16,
+   "size": 2.33,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w07",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -9.0,
+    -32.9
+   ],
+   "y": 8.36,
+   "size": 2.22,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w08",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    -6.0,
+    -32.9
+   ],
+   "y": 6.34,
+   "size": 2.13
+  },
+  {
+   "id": "bc_dc_w09",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -6.0,
+    -32.9
+   ],
+   "y": 8.56,
+   "size": 2.03,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w10",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -3.0,
+    -32.9
+   ],
+   "y": 3.94,
+   "size": 1.93,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w11",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -3.0,
+    -32.9
+   ],
+   "y": 6.16,
+   "size": 2.24,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w12",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    -3.0,
+    -32.9
+   ],
+   "y": 8.48,
+   "size": 1.9
+  },
+  {
+   "id": "bc_dc_w13",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    0.0,
+    -32.9
+   ],
+   "y": 3.96,
+   "size": 2.39,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w14",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    0.0,
+    -32.9
+   ],
+   "y": 6.11,
+   "size": 2.4
+  },
+  {
+   "id": "bc_dc_w15",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    3.0,
+    -32.9
+   ],
+   "y": 6.3,
+   "size": 2.23,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w16",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    3.0,
+    -32.9
+   ],
+   "y": 8.34,
+   "size": 2.32,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w17",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    6.0,
+    -32.9
+   ],
+   "y": 6.32,
+   "size": 2.13,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w18",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    6.0,
+    -32.9
+   ],
+   "y": 8.36,
+   "size": 2.08
+  },
+  {
+   "id": "bc_dc_w19",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    9.0,
+    -32.9
+   ],
+   "y": 3.73,
+   "size": 1.99,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w20",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    9.0,
+    -32.9
+   ],
+   "y": 6.09,
+   "size": 2.15,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w21",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    9.0,
+    -32.9
+   ],
+   "y": 8.49,
+   "size": 2.22,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w22",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    12.0,
+    -32.9
+   ],
+   "y": 6.14,
+   "size": 2.24
+  },
+  {
+   "id": "bc_dc_w23",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    12.0,
+    -32.9
+   ],
+   "y": 8.34,
+   "size": 2.14
+  },
+  {
+   "id": "bc_dc_w24",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.0,
+    -32.9
+   ],
+   "y": 8.44,
+   "size": 2.35,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w25",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -10.5
+   ],
+   "y": 6.1,
+   "size": 2.22,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w26",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -15.9,
+    -14.0
+   ],
+   "y": 6.35,
+   "size": 2.13,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w27",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -15.9,
+    -14.0
+   ],
+   "y": 8.56,
+   "size": 2.24,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w28",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -17.5
+   ],
+   "y": 3.96,
+   "size": 2.39,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w29",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -17.5
+   ],
+   "y": 6.37,
+   "size": 1.92,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w30",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    -15.9,
+    -21.0
+   ],
+   "y": 3.81,
+   "size": 2.22,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w31",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    -15.9,
+    -21.0
+   ],
+   "y": 6.16,
+   "size": 2.29
+  },
+  {
+   "id": "bc_dc_w32",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -21.0
+   ],
+   "y": 8.4,
+   "size": 2.37,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w33",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -24.5
+   ],
+   "y": 3.77,
+   "size": 2.34,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w34",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -24.5
+   ],
+   "y": 8.39,
+   "size": 2.04,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w35",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    -15.9,
+    -28.0
+   ],
+   "y": 3.87,
+   "size": 2.25,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w36",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    -15.9,
+    -31.5
+   ],
+   "y": 3.8,
+   "size": 2.38,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w37",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -31.5
+   ],
+   "y": 6.25,
+   "size": 2.09,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w38",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    -15.9,
+    -31.5
+   ],
+   "y": 8.34,
+   "size": 2.04,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w39",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -10.5
+   ],
+   "y": 3.65,
+   "size": 1.91,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w40",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    15.9,
+    -10.5
+   ],
+   "y": 6.32,
+   "size": 2.13,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w41",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    15.9,
+    -10.5
+   ],
+   "y": 8.5,
+   "size": 2.17
+  },
+  {
+   "id": "bc_dc_w42",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    15.9,
+    -14.0
+   ],
+   "y": 3.63,
+   "size": 2.03,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w43",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    15.9,
+    -14.0
+   ],
+   "y": 6.21,
+   "size": 2.27,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w44",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    15.9,
+    -14.0
+   ],
+   "y": 8.22,
+   "size": 1.93,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w45",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    15.9,
+    -21.0
+   ],
+   "y": 3.99,
+   "size": 1.96
+  },
+  {
+   "id": "bc_dc_w46",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -21.0
+   ],
+   "y": 6.14,
+   "size": 2.37,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w47",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -21.0
+   ],
+   "y": 8.48,
+   "size": 1.9,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w48",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -24.5
+   ],
+   "y": 3.71,
+   "size": 2.05,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w49",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -24.5
+   ],
+   "y": 8.6,
+   "size": 2.23,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w50",
+   "kind": "decal",
+   "sprite": "bc_win_violet",
+   "at": [
+    15.9,
+    -28.0
+   ],
+   "y": 3.61,
+   "size": 2.07,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w51",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    15.9,
+    -28.0
+   ],
+   "y": 6.0,
+   "size": 2.02,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w52",
+   "kind": "decal",
+   "sprite": "bc_win_cyan",
+   "at": [
+    15.9,
+    -28.0
+   ],
+   "y": 8.22,
+   "size": 2.23,
+   "emissive": true
+  },
+  {
+   "id": "bc_dc_w53",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    15.9,
+    -31.5
+   ],
+   "y": 3.92,
+   "size": 2.38
+  },
+  {
+   "id": "bc_dc_w54",
+   "kind": "decal",
+   "sprite": "bc_win_dark",
+   "at": [
+    15.9,
+    -31.5
+   ],
+   "y": 6.22,
+   "size": 2.03
+  },
+  {
+   "id": "bc_dc_w55",
+   "kind": "decal",
+   "sprite": "bc_win_amber",
+   "at": [
+    15.9,
+    -31.5
+   ],
+   "y": 8.42,
+   "size": 1.96,
    "emissive": true
   },
   {
@@ -1892,7 +2538,7 @@
     -4.5
    ],
    "y": 5.0,
-   "radius": 15.6,
+   "radius": 9.1,
    "color": "#5a80d8",
    "strength": 2.5
   },
@@ -1904,7 +2550,7 @@
     -8.0
    ],
    "y": 5.0,
-   "radius": 11.7,
+   "radius": 7.8,
    "color": "#6a90e0",
    "strength": 2.5
   },
@@ -1916,7 +2562,7 @@
     -6.0
    ],
    "y": 2.7,
-   "radius": 7.8,
+   "radius": 5.2,
    "color": "#ff8a40",
    "strength": 2.5
   },
@@ -1928,7 +2574,7 @@
     -2.5
    ],
    "y": 2.0,
-   "radius": 6.5,
+   "radius": 4.5,
    "color": "#ff7a38",
    "strength": 2.5
   },
@@ -1940,7 +2586,7 @@
     -5.0
    ],
    "y": 3.0,
-   "radius": 9.1,
+   "radius": 5.9,
    "color": "#ffa850",
    "strength": 2.5
   },
@@ -1969,6 +2615,18 @@
    "strength": 2.5
   },
   {
+   "id": "bc_lt_window_b",
+   "kind": "light",
+   "at": [
+    2.9,
+    -8.0
+   ],
+   "y": 1.8,
+   "radius": 4.5,
+   "color": "#a050ff",
+   "strength": 2.5
+  },
+  {
    "id": "bc_lt_puddle",
    "kind": "light",
    "at": [
@@ -1978,54 +2636,6 @@
    "y": 0.6,
    "radius": 5.2,
    "color": "#d03aa0",
-   "strength": 2.5
-  },
-  {
-   "id": "bc_lt_red_a",
-   "kind": "light",
-   "at": [
-    -5.0,
-    -12.0
-   ],
-   "y": 3.0,
-   "radius": 7.8,
-   "color": "#ff2a20",
-   "strength": 2.5
-  },
-  {
-   "id": "bc_lt_red_b",
-   "kind": "light",
-   "at": [
-    6.0,
-    -12.0
-   ],
-   "y": 3.0,
-   "radius": 7.8,
-   "color": "#ff2a20",
-   "strength": 2.5
-  },
-  {
-   "id": "bc_lt_yard",
-   "kind": "light",
-   "at": [
-    5.0,
-    -17.0
-   ],
-   "y": -6.0,
-   "radius": 11.7,
-   "color": "#4a90ff",
-   "strength": 2.5
-  },
-  {
-   "id": "bc_lt_yard2",
-   "kind": "light",
-   "at": [
-    -5.0,
-    -17.5
-   ],
-   "y": -6.0,
-   "radius": 11.7,
-   "color": "#4a90ff",
    "strength": 2.5
   },
   {
@@ -2044,12 +2654,24 @@
    "id": "bc_lt_isle",
    "kind": "light",
    "at": [
-    0.0,
-    -17.5
+    -0.7,
+    -15.4
    ],
-   "y": 3.0,
-   "radius": 7.2,
-   "color": "#d8c8ff",
+   "y": 2.8,
+   "radius": 5.2,
+   "color": "#ffe0c0",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_moth_rim",
+   "kind": "light",
+   "at": [
+    -0.4,
+    -18.2
+   ],
+   "y": 2.2,
+   "radius": 4.5,
+   "color": "#c090ff",
    "strength": 2.5
   },
   {
@@ -2057,10 +2679,10 @@
    "kind": "light",
    "at": [
     -5.0,
-    3.0
+    2.0
    ],
    "y": 3.0,
-   "radius": 7.8,
+   "radius": 5.2,
    "color": "#ff8a40",
    "strength": 2.5
   },
@@ -2096,7 +2718,7 @@
     -3.0
    ],
    "y": 3.5,
-   "radius": 9.1,
+   "radius": 6.5,
    "color": "#6a90e0",
    "strength": 2.5
   },
@@ -2123,30 +2745,6 @@
    "radius": 5.2,
    "color": "#3ad0ff",
    "strength": 2.4
-  },
-  {
-   "id": "bc_lt_twr_a",
-   "kind": "light",
-   "at": [
-    -6.0,
-    -12.0
-   ],
-   "y": 1.5,
-   "radius": 11.7,
-   "color": "#7a90e8",
-   "strength": 2.5
-  },
-  {
-   "id": "bc_lt_twr_b",
-   "kind": "light",
-   "at": [
-    5.0,
-    -12.0
-   ],
-   "y": 1.5,
-   "radius": 11.7,
-   "color": "#7a90e8",
-   "strength": 2.5
   },
   {
    "id": "bc_lt_tower_door",
@@ -2180,7 +2778,7 @@
     -8.0
    ],
    "y": 3.0,
-   "radius": 9.1,
+   "radius": 6.5,
    "color": "#8aa0e8",
    "strength": 2.5
   },
@@ -2192,16 +2790,124 @@
     -4.0
    ],
    "y": 3.0,
-   "radius": 7.8,
+   "radius": 5.2,
    "color": "#ff9a58",
    "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_a",
+   "kind": "light",
+   "at": [
+    -6.0,
+    -31.5
+   ],
+   "y": 2.5,
+   "radius": 10.4,
+   "color": "#4a90ff",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_b",
+   "kind": "light",
+   "at": [
+    5.5,
+    -31.5
+   ],
+   "y": 2.5,
+   "radius": 10.4,
+   "color": "#4a90ff",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_c",
+   "kind": "light",
+   "at": [
+    0.0,
+    -27.0
+   ],
+   "y": 4.0,
+   "radius": 11.7,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_d",
+   "kind": "light",
+   "at": [
+    -13.0,
+    -24.0
+   ],
+   "y": 3.0,
+   "radius": 10.4,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_e",
+   "kind": "light",
+   "at": [
+    12.0,
+    -20.0
+   ],
+   "y": 3.0,
+   "radius": 10.4,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_yard_f",
+   "kind": "light",
+   "at": [
+    -14.5,
+    -26.0
+   ],
+   "y": 2.0,
+   "radius": 7.8,
+   "color": "#4a90ff",
+   "strength": 2.5
+  },
+  {
+   "id": "bc_lt_fac_n",
+   "kind": "light",
+   "at": [
+    0.0,
+    -31.0
+   ],
+   "y": 7.0,
+   "radius": 13.0,
+   "color": "#7a80d0",
+   "strength": 2.4
+  },
+  {
+   "id": "bc_lt_fac_w",
+   "kind": "light",
+   "at": [
+    -14.5,
+    -17.0
+   ],
+   "y": 6.5,
+   "radius": 10.4,
+   "color": "#8a70d0",
+   "strength": 2.4
+  },
+  {
+   "id": "bc_lt_fac_e",
+   "kind": "light",
+   "at": [
+    14.5,
+    -17.0
+   ],
+   "y": 6.5,
+   "radius": 10.4,
+   "color": "#d09060",
+   "strength": 2.4
   },
   {
    "id": "bc_lamp_mothership",
    "kind": "light",
    "at": [
-    -1.4,
-    -17.2
+    -0.7,
+    -15.6
    ],
    "y": 2.6,
    "radius": 3.0,
@@ -2239,7 +2945,7 @@
    "sector": "13_0",
    "at": [
     -0.7,
-    -17.6
+    -16.7
    ]
   },
   "bc_guide_floor": {
@@ -2350,16 +3056,16 @@
    "id": "bc_stair_foot",
    "at": [
     -5.0,
-    -0.5
+    3.2
    ],
    "yaw": -180.0,
-   "sector": "6_0",
+   "sector": "19_0",
    "hold_bars": 1
   },
   {
    "id": "bc_cabin_in",
    "at": [
-    5.0,
+    7.2,
     -5.0
    ],
    "yaw": -90.0,
@@ -2513,7 +3219,7 @@
      "0_0"
     ],
     "floor": 0,
-    "ceiling": 256,
+    "ceiling": 128,
     "light": 110,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
@@ -2525,7 +3231,7 @@
      "1_0"
     ],
     "floor": 0,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 120,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
@@ -2537,7 +3243,7 @@
      "2_0"
     ],
     "floor": -12,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 110,
     "floor_flat": "STEP1",
     "ceil_flat": "CEIL3_5",
@@ -2549,7 +3255,7 @@
      "3_0"
     ],
     "floor": -24,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 105,
     "floor_flat": "STEP1",
     "ceil_flat": "CEIL3_5",
@@ -2561,7 +3267,7 @@
      "4_0"
     ],
     "floor": -36,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 100,
     "floor_flat": "STEP1",
     "ceil_flat": "CEIL3_5",
@@ -2573,7 +3279,7 @@
      "5_0"
     ],
     "floor": -48,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 100,
     "floor_flat": "STEP1",
     "ceil_flat": "CEIL3_5",
@@ -2585,7 +3291,7 @@
      "6_0"
     ],
     "floor": -60,
-    "ceiling": 256,
+    "ceiling": 224,
     "light": 100,
     "floor_flat": "STEP1",
     "ceil_flat": "CEIL3_5",
@@ -2620,10 +3326,10 @@
     "pieces": [
      "9_0"
     ],
-    "floor": 12,
-    "ceiling": 256,
+    "floor": 0,
+    "ceiling": 128,
     "light": 105,
-    "floor_flat": "STEP1",
+    "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -2632,10 +3338,10 @@
     "pieces": [
      "10_0"
     ],
-    "floor": 24,
-    "ceiling": 256,
+    "floor": 0,
+    "ceiling": 128,
     "light": 105,
-    "floor_flat": "STEP1",
+    "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -2644,10 +3350,10 @@
     "pieces": [
      "11_0"
     ],
-    "floor": 36,
-    "ceiling": 256,
+    "floor": 0,
+    "ceiling": 128,
     "light": 105,
-    "floor_flat": "STEP1",
+    "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -2656,8 +3362,8 @@
     "pieces": [
      "12_0"
     ],
-    "floor": 36,
-    "ceiling": 256,
+    "floor": 0,
+    "ceiling": 128,
     "light": 105,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
@@ -2668,7 +3374,7 @@
     "pieces": [
      "13_0"
     ],
-    "floor": 36,
+    "floor": 0,
     "ceiling": 256,
     "light": 130,
     "floor_flat": "FLOOR5_1",
@@ -2681,7 +3387,7 @@
      "14_0"
     ],
     "floor": -288,
-    "ceiling": 77,
+    "ceiling": 40,
     "light": 60,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2693,7 +3399,7 @@
      "15_0"
     ],
     "floor": -288,
-    "ceiling": 77,
+    "ceiling": 40,
     "light": 60,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2705,7 +3411,7 @@
      "16_0"
     ],
     "floor": -288,
-    "ceiling": 77,
+    "ceiling": 40,
     "light": 60,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2717,7 +3423,7 @@
      "17_0"
     ],
     "floor": -288,
-    "ceiling": 77,
+    "ceiling": 40,
     "light": 60,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2728,10 +3434,10 @@
     "pieces": [
      "18_0"
     ],
-    "floor": -60,
-    "ceiling": 256,
-    "light": 100,
-    "floor_flat": "FLOOR5_1",
+    "floor": -288,
+    "ceiling": 40,
+    "light": 60,
+    "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -2739,6 +3445,18 @@
    "19": {
     "pieces": [
      "19_0"
+    ],
+    "floor": -60,
+    "ceiling": 224,
+    "light": 100,
+    "floor_flat": "FLOOR5_1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "20": {
+    "pieces": [
+     "20_0"
     ],
     "floor": 0,
     "ceiling": 80,
@@ -2759,13 +3477,13 @@
   "approximate": true,
   "uncertain": [
    "INVENTED FROM THE PAINTING (tools/doom/trace/balcony_scene.py), not read from the render or the WAD (the supplied WAD has empty map lumps; the render of MAP15 gives only the macro footprint, see tools/doom/trace/balcony.json).",
-   "Every size, height and place is a guess from the painting: a 7 x 9 m roof deck, the brick stair down the west side (five 0.375 m steps), the cabin on the east side, the three-step bridge north (1 m treads) and its platform; the surrounding drop is four voids nine metres deep.",
+   "Every size, height and place is a guess from the painting: a 7 x 9 m roof deck, the brick stair down the west side (five 0.375 m steps), the cabin on the east side, the bridge north (level with the deck) and its platform; the surrounding drop is five voids nine metres deep, their walls stopping 1.25 m above the deck.",
    "The painting's far roofs, towers, the forklift in the yard below and the walkway on the right are NOT modelled as geometry: they are billboards and decals in the voids."
   ],
   "stats": {
-   "doom_sectors": 20,
-   "pieces": 20,
-   "portals": 36
+   "doom_sectors": 21,
+   "pieces": 21,
+   "portals": 38
   },
   "authored": true
  },

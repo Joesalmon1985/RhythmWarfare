@@ -1414,7 +1414,8 @@
         "bc_v_a4"
        ],
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -4
       }
      ],
      "bad": [

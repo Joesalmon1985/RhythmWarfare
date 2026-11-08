@@ -12,7 +12,8 @@ The painting's place (all metres, x east, y north; the viewer stands at the roof
   * a wet concrete ROOF DECK (7 x 9 m) with flight cases and cable at the viewer's right and a rusty railing along its open north edge;
   * on the left, in a brick wall, an iron STAIR running down past the deck's west edge, with a LANDING at its head (the Floor guide stands at the landing's rail);
   * on the right a control CABIN with a lit window and an open door (the Booth guide stands in the doorway);
-  * ahead a short iron BRIDGE (three steps up) over the dark drop to a platform at the foot of a tower (the Mothership guide stands there); the drop is three or more storeys (the pits are VOIDS).
+  * ahead a short iron BRIDGE over the drop to a platform at the foot of a tower (the Mothership guide stands there); the drop is three storeys (the pits are VOIDS) and its far walls are the
+    lit facades of the buildings below (round 2: they stop under the eye, so the sky, the moon and the city skyline stand over them).
 Everything is on a 0.25 m grid so every Doom coordinate is an integer.
 """
 import json
@@ -29,27 +30,30 @@ def r(x0, y0, x1, y1):
 
 # name, rect (m), floor (m), ceiling (m), light 0..255, floor flat, ceil flat
 SECTORS = [
-    ("deck", r(-3.5, 0, 3.5, 9), 0.0, 8.0, 110, "FLOOR5_1", "CEIL3_5"),
-    ("landing", r(-6.5, 5, -3.5, 8), 0.0, 8.0, 120, "FLOOR5_1", "CEIL3_5"),
-    ("s_a", r(-6.5, 4, -3.5, 5), -0.375, 8.0, 110, "STEP1", "CEIL3_5"),
-    ("s_b", r(-6.5, 3, -3.5, 4), -0.75, 8.0, 105, "STEP1", "CEIL3_5"),
-    ("s_c", r(-6.5, 2, -3.5, 3), -1.125, 8.0, 100, "STEP1", "CEIL3_5"),
-    ("s_d", r(-6.5, 1, -3.5, 2), -1.5, 8.0, 100, "STEP1", "CEIL3_5"),
-    ("s_e", r(-6.5, 0, -3.5, 1), -1.875, 8.0, 100, "STEP1", "CEIL3_5"),
+    # round 2: the deck's own walls (the cabin's front) stop at 4 m and the drops' far walls at 1.25 m, under the eye, so the open sky, the moon and the city fill the view over the drop
+    # and the far walls are the lit facades of the buildings below; the bridge and the platform are level with the deck (the drops' walls must stay above a railing's top)
+    ("deck", r(-3.5, 0, 3.5, 9), 0.0, 4.0, 110, "FLOOR5_1", "CEIL3_5"),
+    ("landing", r(-6.5, 5, -3.5, 8), 0.0, 7.0, 120, "FLOOR5_1", "CEIL3_5"),
+    ("s_a", r(-6.5, 4, -3.5, 5), -0.375, 7.0, 110, "STEP1", "CEIL3_5"),
+    ("s_b", r(-6.5, 3, -3.5, 4), -0.75, 7.0, 105, "STEP1", "CEIL3_5"),
+    ("s_c", r(-6.5, 2, -3.5, 3), -1.125, 7.0, 100, "STEP1", "CEIL3_5"),
+    ("s_d", r(-6.5, 1, -3.5, 2), -1.5, 7.0, 100, "STEP1", "CEIL3_5"),
+    ("s_e", r(-6.5, 0, -3.5, 1), -1.875, 7.0, 100, "STEP1", "CEIL3_5"),
     ("bdoor", r(3.5, 3.5, 4.25, 7), 0.0, 2.5, 150, "FLOOR5_1", "CEIL3_5"),
     ("cabin", r(4.25, 2.5, 9, 8.5), 0.0, 3.5, 150, "FLOOR5_1", "CEIL3_5"),
-    ("b_a", r(-1, 9, 1, 10), 0.375, 8.0, 105, "STEP1", "CEIL3_5"),
-    ("b_b", r(-1, 10, 1, 11), 0.75, 8.0, 105, "STEP1", "CEIL3_5"),
-    ("b_c", r(-1, 11, 1, 12), 1.125, 8.0, 105, "STEP1", "CEIL3_5"),
-    ("bridge", r(-1, 12, 1, 16), 1.125, 8.0, 105, "FLOOR5_1", "CEIL3_5"),
-    ("isle", r(-2, 16, 2, 19), 1.125, 8.0, 130, "FLOOR5_1", "CEIL3_5"),
-    # stage D polish: the drops' ceilings come down to 2.4 m (their far walls end less than a metre above the eye, so the sky's moon and skyline show over them: the painting's city)
-    ("vw1", r(-9, 9, -1, 16), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
-    ("vw2", r(-9, 16, -2, 19), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
-    ("ve1", r(1, 9, 9, 16), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
-    ("ve2", r(2, 16, 9, 19), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    ("b_a", r(-1, 9, 1, 10), 0.0, 4.0, 105, "FLOOR5_1", "CEIL3_5"),
+    ("b_b", r(-1, 10, 1, 11), 0.0, 4.0, 105, "FLOOR5_1", "CEIL3_5"),
+    ("b_c", r(-1, 11, 1, 12), 0.0, 4.0, 105, "FLOOR5_1", "CEIL3_5"),
+    ("bridge", r(-1, 12, 1, 16), 0.0, 4.0, 105, "FLOOR5_1", "CEIL3_5"),
+    ("isle", r(-2, 16, 2, 19), 0.0, 8.0, 130, "FLOOR5_1", "CEIL3_5"),
+    # the drop: four pits round the bridge and one beyond the tower (r(-2, 19, 2, 21) is the tower's solid foot), 9 m deep, walls to 1.25 m (convert.py needs a 1.2 m opening for the one plain drop that joins them to the map)
+    ("vw1", r(-16, 9, -1, 16), -9.0, 1.25, 60, "FLOOR0_1", "CEIL3_5"),
+    ("vw2", r(-16, 16, -2, 21), -9.0, 1.25, 60, "FLOOR0_1", "CEIL3_5"),
+    ("ve1", r(1, 9, 16, 16), -9.0, 1.25, 60, "FLOOR0_1", "CEIL3_5"),
+    ("ve2", r(2, 16, 16, 21), -9.0, 1.25, 60, "FLOOR0_1", "CEIL3_5"),
+    ("vn", r(-16, 21, 16, 33), -9.0, 1.25, 60, "FLOOR0_1", "CEIL3_5"),
     # stage D polish: the alley at the stair's foot (the way to the Floor runs on down it to a lit side door) and the cabin's back door onto the stairwell down (the way to the Booth)
-    ("alley", r(-6.5, -7, -3.5, 0), -1.875, 8.0, 100, "FLOOR5_1", "CEIL3_5"),
+    ("alley", r(-6.5, -7, -3.5, 0), -1.875, 7.0, 100, "FLOOR5_1", "CEIL3_5"),
     ("cback", r(9, 4, 10.5, 6), 0.0, 2.5, 150, "FLOOR5_1", "CEIL3_5"),
 ]
 # railings (flags impassable): the deck's open edges, the stair's open side, the bridge and the platform (pairs of sector names). isle|vw2 and isle|ve2 stay plain drops (the voids
@@ -125,7 +129,7 @@ def main():
         "approximate": True,
         "uncertain": [
             "INVENTED FROM THE PAINTING (tools/doom/trace/balcony_scene.py), not read from the render or the WAD (the supplied WAD has empty map lumps; the render of MAP15 gives only the macro footprint, see tools/doom/trace/balcony.json).",
-            "Every size, height and place is a guess from the painting: a 7 x 9 m roof deck, the brick stair down the west side (five 0.375 m steps), the cabin on the east side, the three-step bridge north (1 m treads) and its platform; the surrounding drop is four voids nine metres deep.",
+            "Every size, height and place is a guess from the painting: a 7 x 9 m roof deck, the brick stair down the west side (five 0.375 m steps), the cabin on the east side, the bridge north (level with the deck) and its platform; the surrounding drop is five voids nine metres deep, their walls stopping 1.25 m above the deck.",
             "The painting's far roofs, towers, the forklift in the yard below and the walkway on the right are NOT modelled as geometry: they are billboards and decals in the voids.",
         ],
         "vertices": [list(v) for v in V], "linedefs": L, "sidedefs": SD, "sectors": SEC, "sector_names": names,
