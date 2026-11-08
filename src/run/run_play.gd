@@ -1900,6 +1900,7 @@ func _claim_frame(t: float, t_commit: float) -> void:
 	if pl == null:
 		return
 	pl.release_faces(t, 2.0 * engine.beat_s)  # the head held on the window's hotspots (the look-pass window camera) lets go: the table is what the touch is about
+	pl.drop_herald_looks_from(t)  # (the heralds' looks of the blocks still to come: the table must not be swung out of the picture)
 	var span := 4.0 * engine.beat_s
 	pl._glances = pl._glances.filter(func(g: Dictionary) -> bool: return float(g["t1"]) <= t or float(g["t0"]) >= t_commit + span)
 	for k in int(ceil(maxf(t_commit - t, 0.0) / span)) + 1:

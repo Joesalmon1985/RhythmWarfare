@@ -720,6 +720,12 @@ func release_faces(t: float, over_s: float) -> void:
 	_face_memo = {"t": NAN}
 
 
+## Drops the heralds' looks (`herald`: the scene opening's turns to the quest entrances) that have not begun by `t`: a claim that takes the camera to a table keeps the table in the picture, a later block's herald look must not swing it away.
+func drop_herald_looks_from(t: float) -> void:
+	_faces = _faces.filter(func(f: Dictionary) -> bool: return not (bool(f.get("herald", false)) and float(f["t0"]) >= t))
+	_face_memo = {"t": NAN}
+
+
 ## How much a held `face` look owns the head at t (0 none, 1 fully on its points) and the points: {w, pts}. The latest one that is active wins.
 func face_at(t: float) -> Dictionary:
 	var out := {"w": 0.0, "pts": []}
