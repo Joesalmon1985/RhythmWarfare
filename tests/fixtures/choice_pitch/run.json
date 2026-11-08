@@ -1,0 +1,47 @@
+{
+	"note": "Test fixture of tests/test_choice_pitch.gd: two one-scene geography worlds on the night_one map, merged into the main run the way the Doom overlay is. Both stand on the choice viewpoint `steps` through the choice window; pitch_low authors a steady pitch of -14 degrees on it (the viewpoint looks down at its feature), pitch_plain authors none.",
+	"worlds": [
+		{"id": "pitch_low", "title": "Pitch Low", "map": "night_one", "depth": 1, "geography": true, "blurb": "The viewpoint looks down."},
+		{"id": "pitch_plain", "title": "Pitch Plain", "map": "night_one", "depth": 1, "geography": true, "blurb": "The viewpoint looks level."}
+	],
+	"nodes": [
+		{
+			"id": "pitch_low", "world": "pitch_low", "scene": "floor", "title": "Pitch Low", "entry": true, "exit_scene": true, "role": "dancer", "blurb": "The viewpoint looks down.",
+			"next": [
+				{"to": "pitch_low", "dir": "down", "label": "Stay", "loop": true},
+				{"to": "pitch_plain", "dir": "up", "label": "Up to the plain"}
+			],
+			"place": {
+				"waypoint": "floor_centre",
+				"rail": {
+					"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3, "hold_bars": 3, "choice": true, "pitch": -14}],
+					"bad": [{"to": "floor_edge", "role": "queasy", "style": "walk", "bars": 2}],
+					"arrive": "door",
+					"exits": {"down": "floor_centre", "up": "to_balcony"},
+					"routes": {"up": {"to": "to_balcony", "via": ["floor_edge"], "style": "walk", "bars": 2, "hold_bars": 1}},
+					"glances": [{"by": -20, "pitch": 6, "bars": 2}, {"by": 18, "bars": 2}],
+					"strolls": [{"fwd": 1.0, "bars": 3}]
+				}
+			}
+		},
+		{
+			"id": "pitch_plain", "world": "pitch_plain", "scene": "floor", "title": "Pitch Plain", "entry": true, "exit_scene": true, "role": "dancer", "blurb": "The viewpoint looks level.",
+			"next": [
+				{"to": "pitch_plain", "dir": "down", "label": "Stay", "loop": true},
+				{"to": "pitch_low", "dir": "up", "label": "Up to the low one"}
+			],
+			"place": {
+				"waypoint": "floor_centre",
+				"rail": {
+					"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3, "hold_bars": 3, "choice": true}],
+					"bad": [{"to": "floor_edge", "role": "queasy", "style": "walk", "bars": 2}],
+					"arrive": "door",
+					"exits": {"down": "floor_centre", "up": "to_balcony"},
+					"routes": {"up": {"to": "to_balcony", "via": ["floor_edge"], "style": "walk", "bars": 2, "hold_bars": 1}},
+					"glances": [{"by": -20, "pitch": 6, "bars": 2}, {"by": 18, "bars": 2}],
+					"strolls": [{"fwd": 1.0, "bars": 3}]
+				}
+			}
+		}
+	]
+}

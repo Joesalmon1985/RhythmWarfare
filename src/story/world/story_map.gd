@@ -734,6 +734,47 @@ func _find_voids() -> void:
 		s["void_top"] = maxf(top, float(s["floor"]))
 		if bool(s["void"]) and used.has(sid):
 			errors.append("sector %s is a void: no waypoint, home or spot may stand in it (the camera is never placed in a void)" % sid)
+	_group_void_tops()
+
+
+## A void split into several convex pieces (wedges of one pit) is one pit: each piece's `void_top` is the lowest floor around the whole connected group of void sectors that is
+## not itself a void (the rim), so no piece takes a sibling wedge at its own depth as its top (which would switch its haze off). A void with no void next to it is unchanged.
+func _group_void_tops() -> void:
+	var nb := {}  # sector id -> [neighbour ids through portals]
+	for p in portals():
+		var a := str(p["a"])
+		var b := str(p["b"])
+		if not nb.has(a):
+			nb[a] = []
+		if not nb.has(b):
+			nb[b] = []
+		(nb[a] as Array).append(b)
+		(nb[b] as Array).append(a)
+	var seen := {}
+	for s in sectors:
+		var sid := str(s["id"])
+		if not bool(s["void"]) or seen.has(sid):
+			continue
+		var group: Array = []
+		var todo: Array = [sid]
+		seen[sid] = true
+		var rim := INF
+		while not todo.is_empty():
+			var cur := str(todo.pop_back())
+			group.append(cur)
+			for o in nb.get(cur, []):
+				var os := sector(str(o))
+				if bool(os.get("void", false)):
+					if not seen.has(str(o)):
+						seen[str(o)] = true
+						todo.append(str(o))
+				else:
+					rim = minf(rim, float(os["floor"]))
+		if group.size() < 2 or rim == INF:
+			continue
+		for g in group:
+			var gs := sector(str(g))
+			gs["void_top"] = maxf(rim, float(gs["floor"]))
 
 
 func is_void(sid: String) -> bool:
