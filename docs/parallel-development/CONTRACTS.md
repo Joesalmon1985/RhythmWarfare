@@ -104,6 +104,13 @@ Route = {id, map, from: waypoint,
 - **Choice viewpoint**: a waypoint with `choice_view: true`. The last leg holds at least `CHOICE_HOLD_BARS_MIN` = 4 bars (one block, the whole
   window) and `hold: "window"`: from arrival until the commit no move, no stroll, no glance, no head drift that moves a target under the finger.
   The touch targets are validated from that pose (contract 9).
+- **Choice viewpoint pitch (built, wip/engine-hold-pitch)**: a rail place with `"choice": true` may author `pitch` (degrees, negative looks down,
+  within +-35, default 0; RunRail rejects it on a place that is no choice viewpoint), e.g. `{"to": "lava_view", "choice": true, "hold_bars": 3, "pitch": -14}`
+  for a viewpoint that looks down at its feature (the Underworld's lava lake, the Lounge's sunken sofa). The yaw stays the waypoint's. `RunJourney` puts it on the
+  window's `player_hold {bars, hold: "window", pitch}`; `StoryPlayer` tips the head to it over the beat before the window opens (beat 48 to 49), holds it
+  steady through the window (no bob, no drift, no glance: ruling 35), lets a `face` look (a herald's) own the pitch while it holds its points and comes back
+  to the held pitch as it hands back, and eases it out with the hold: over the window's last beat, or over the beat after a threshold walk-off ends the hold
+  (`end_window_holds`, ruling 39). A place without `pitch` gives exactly the old hold (no `pitch` key). Tests: `tests/test_choice_pitch.gd` (fixture `tests/fixtures/choice_pitch`).
 - Recovery/failure moves (Doom brief 4) stay `rail.bad` places; each is also move-then-hold.
 
 Provided by: `run_rail.gd`, `run_journey.gd`, `story_player.gd` (lead). Fixture: `route_space_to_stage.json`.

@@ -1,0 +1,7 @@
+{
+	"note": "Test fixture of tests/test_choice_pitch.gd: the two worlds' music, merged into content/story/music.json by the test.",
+	"nodes": [
+		{"id": "pitch_low", "audio": "dd_part2", "chart": "dd_part2", "treatment": "none", "temporary": true},
+		{"id": "pitch_plain", "audio": "dd_part2", "chart": "dd_part2", "treatment": "none", "temporary": true}
+	]
+}
