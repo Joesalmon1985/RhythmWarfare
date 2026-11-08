@@ -387,6 +387,42 @@ func test_booth_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_r
 				assert_false((rects[BOOTH_GUIDES[i]] as Rect2).intersects(rects[BOOTH_GUIDES[j]]), "booth %s: %s and %s do not overlap" % [asp, BOOTH_GUIDES[i], BOOTH_GUIDES[j]])
 
 
+func test_booth_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	# round 2 (the independent review): the wall-sightline check the other blocks have. A projection cannot see walls; this walks the line from bt_ref to each guide against the
+	# solid walls (the window onto the balcony is a railing over a portal: the eye passes through its glass)
+	var m := _booth_map()
+	if m == null:
+		fail("booth map did not load")
+		return
+	var cam: Vector2 = m.waypoint("bt_ref")["at"]
+	for g in BOOTH_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "booth %s: the sightline from bt_ref stays clear of solid walls" % g)
+
+
+func test_booth_the_desk_is_anchored_facing_the_reference_viewpoint() -> void:
+	# round 2: the painting's desk is a fixed quad (a decal with a yaw) facing bt_ref, not a camera-facing billboard that turns and looms on the aisle walk
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BOOTH_MAP))
+	var desk: Dictionary = {}
+	for t in doc["things"]:
+		if str(t["id"]) == "bt_desk_big":
+			desk = t
+	assert_eq(str(desk.get("kind", "")), "decal", "booth: the desk is a decal (a fixed quad)")
+	assert_true(desk.has("yaw"), "booth: the desk has its own yaw")
+	var m := _booth_map()
+	if m == null or not desk.has("yaw"):
+		return
+	var to_ref: Vector2 = ((m.waypoint("bt_ref")["at"] as Vector2) - Vector2(desk["at"][0], desk["at"][1])).normalized()
+	assert_true(m.forward_of_yaw(float(desk["yaw"])).dot(to_ref) > 0.99, "booth: the desk faces the reference viewpoint")
+
+
 func test_booth_guides_keep_their_distance_from_the_camera_places() -> void:
 	var m := _booth_map()
 	if m == null:

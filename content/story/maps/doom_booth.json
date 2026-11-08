@@ -134,8 +134,8 @@
    "doom_sector": 0,
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
-   "ambient": 0.55,
-   "wet": 0.35,
+   "ambient": 0.42,
+   "wet": 0.9,
    "rain": false
   },
   {
@@ -164,13 +164,15 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_foam",
    "light": 1.0,
-   "tint": "#ffd6ac",
+   "tint": "#fff2e0",
    "room": "main",
    "flags": [],
    "doom_sector": 1,
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
-   "ambient": 0.55
+   "ambient": 0.5,
+   "wet": 0.6,
+   "rain": false
   },
   {
    "id": "2_0",
@@ -266,13 +268,15 @@
    "ceil_tex": "bt_ceil",
    "wall_tex": "bt_wall_foam",
    "light": 1.0,
-   "tint": "#ffdbb6",
+   "tint": "#fff5e5",
    "room": "main",
    "flags": [],
    "doom_sector": 4,
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
-   "ambient": 0.55
+   "ambient": 0.45,
+   "wet": 0.8,
+   "rain": false
   },
   {
    "id": "5_0",
@@ -334,7 +338,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#e5eaff",
    "room": "main",
    "flags": [],
    "doom_sector": 6,
@@ -396,7 +400,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#b2c1f0",
+   "tint": "#e0e8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
@@ -430,7 +434,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#e5eaff",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
@@ -464,7 +468,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#e5eaff",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
@@ -498,7 +502,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bt_wall_dock",
    "light": 1.0,
-   "tint": "#bdcbf5",
+   "tint": "#e5eaff",
    "room": "main",
    "flags": [],
    "doom_sector": 10,
@@ -606,7 +610,9 @@
    "doom_sector": 13,
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
-   "ambient": 0.6
+   "ambient": 0.6,
+   "wet": 0.7,
+   "rain": false
   },
   {
    "id": "14_0",
@@ -685,7 +691,7 @@
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
    "ambient": 0.6,
-   "wet": 0.5,
+   "wet": 0.6,
    "rain": false
   },
   {
@@ -728,7 +734,7 @@
    "doom_sector": 16,
    "step_tex": "bt_wall_steel",
    "lip_tex": "bt_trim",
-   "ambient": 0.5,
+   "ambient": 0.38,
    "wet": 1.0,
    "rain": false
   }
@@ -2116,10 +2122,10 @@
   {
    "id": "bt_dock_in",
    "at": [
-    6.2,
+    5.4,
     -4.4
    ],
-   "yaw": -87.8,
+   "yaw": -88.3,
    "sector": "16_0",
    "hold_bars": 1
   },

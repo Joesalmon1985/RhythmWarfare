@@ -31,9 +31,9 @@ LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN, REACH = 1.4, 0.52, 0.35, 2.4, 1.0
 # the window is open to the storm sky (rain falls there, drips from the window's lintel and the double door), the dock annex floor is wet from its open shutter; nobody but the guides
 SKY = {"tex": "textures/bt_sky.png", "mode": "cylinder"}
 SKY_SECTORS = ["terrace", "porch", "bal_step_a", "bal_step_b", "bal_top", "drop_a", "drop_b"]
-AMBIENT = {"aisle": 0.55, "dais": 0.55, "landing": 0.55, "terrace": 0.7, "porch": 0.7, "dock": 0.5, "moth": 0.9, "drop_a": 1.0, "drop_b": 1.0}  # round 2: the Mothership chamber dark, lit by its violet portal
+AMBIENT = {"aisle": 0.42, "dais": 0.5, "landing": 0.45, "terrace": 0.7, "porch": 0.7, "dock": 0.38, "moth": 0.9, "drop_a": 1.0, "drop_b": 1.0}  # round 2: the Mothership chamber dark, lit by its violet portal
 WEATHER = {"rain": 0.85, "wind": 8, "drips": [{"at": [-4.2, -2.0], "h": 2.6}, {"at": [-4.2, -5.0], "h": 2.6}, {"at": [-5.0, -9.0], "h": 2.2}]}
-WET = {"dock": 1.0, "dock_door": 0.5, "moth": 0.9, "aisle": 0.35}  # round 2: the gloss bands under the lamps carry the highlights
+WET = {"dock": 1.0, "dock_door": 0.6, "moth": 0.9, "aisle": 0.9, "dais": 0.6, "landing": 0.8, "hatch": 0.7}  # round 2: the gloss bands under the lamps carry the highlights
 
 
 def M(x, y):
@@ -56,7 +56,7 @@ WAYPOINTS = [
     ("bt_dock_view", (1.1, 4.2), (6.5, 4.4), 2, "reveal: against the aisle's east wall looking through the open steel door into the dock"),
     ("bt_hatch", (0.0, 11.5), (0.0, 17), 1, "THRESHOLD ahead (Mothership): in the hatch, the world transition happens here"),
     ("bt_bal_top", (-9.1, 9.75), (-9.1, 3), 1, "THRESHOLD left (Balcony): the top of the balcony stair, the world transition happens here"),
-    ("bt_dock_in", (6.2, 4.4), (8.8, 4.5), 1, "THRESHOLD right (Dock): through the steel door and across the dock to its open shutter on the rainy street, the world transition happens here"),
+    ("bt_dock_in", (5.4, 4.4), (8.8, 4.5), 1, "THRESHOLD right (Dock): through the steel door and across the dock to its open shutter on the rainy street, the world transition happens here"),
     # via points (corners of the polyline moves)
     ("bt_v_a1", (0.0, 5.0), (0.0, 8), 0, "via: the aisle, mid way"),
     ("bt_v_a2", (-0.5, 9.6), (-2.9, 9.8), 0, "via: the aisle's north end, at the landing"),
@@ -82,16 +82,16 @@ ROUTES = {
 # sector name -> floor, wall, ceiling texture, tint, step_tex (the riser of a step up onto it)
 STYLE = {
     "aisle": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#fff0d8", "bt_wall_steel"),
-    "dais": ("bt_floor_plate", "bt_wall_foam", "bt_ceil", "#ffc080", "bt_wall_steel"),
+    "dais": ("bt_floor_plate", "bt_wall_foam", "bt_ceil", "#ffecd0", "bt_wall_steel"),
     "dstep_a": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc080", "bt_wall_steel"),
     "dstep_b": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc080", "bt_wall_steel"),
-    "landing": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#ffc890", "bt_wall_steel"),
+    "landing": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#fff0d8", "bt_wall_steel"),
     "bal_door": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc890", "bt_wall_steel"),
-    "porch": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "terrace": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#8aa0e8", "bt_wall_steel"),
-    "bal_step_a": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "bal_step_b": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "bal_top": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
+    "porch": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "terrace": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d0dcff", "bt_wall_steel"),
+    "bal_step_a": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "bal_step_b": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "bal_top": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
     "hatch": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#d0b0ff", "bt_wall_steel"),
     "moth": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#e0d0ff", "bt_wall_steel"),
     "drop_a": ("bt_floor_conc", "bt_facade", "bt_ceil", "#e0e8ff", "bt_facade"),
