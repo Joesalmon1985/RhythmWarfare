@@ -28,6 +28,7 @@ MARGIN = 0.5
 MAX_STEP = 0.5
 RAIL_TEX, RAIL_H = "uw_rail", 0.9
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.6, 0.55, 3.0
+LAMP_REACH = 1.35  # the lamps are pools, not floods (1.3 lit every wall to the same level)
 
 
 def M(x, y):
@@ -77,7 +78,7 @@ ROUTES = {
 SKY = "sky"  # the open ceiling: the map's red cloud sky at infinity (only the cave keeps a rock roof)
 STYLE = {  # floor, wall, ceiling, tint, step_tex (the face under a higher floor next to it), lip_tex, (unused)
     "plateau": ("uw_floor_slab", "uw_wall_rock", SKY, "#e8b8a8", "uw_wall_cliff", "uw_wall_rock", 0.85),
-    "cave": ("uw_floor_cave", "uw_wall_cave", "uw_ceil", "#8090e8", "uw_wall_cave", "uw_wall_rock", 0.8),
+    "cave": ("uw_floor_cave", "uw_wall_cave", "uw_floor_cave", "#8090e8", "uw_wall_cave", "uw_wall_rock", 0.8),
     "dstair": ("uw_floor_stone", "uw_wall_rock", SKY, "#e8b8a8", "uw_wall_step", "uw_wall_rock", 0.88),
     "shelf": ("uw_floor_stone", "uw_wall_rock", SKY, "#f0c0a8", "uw_wall_cliff", "uw_wall_rock", 0.9),
     "ledge": ("uw_floor_stone", "uw_wall_rock", SKY, "#e8b8a8", "uw_wall_step", "uw_wall_rock", 0.88),
@@ -90,7 +91,8 @@ STYLE = {  # floor, wall, ceiling, tint, step_tex (the face under a higher floor
     "abyss": ("uw_floor_lava", "uw_wall_far", SKY, "#ffffff", "uw_wall_abyss", "uw_wall_far", 1.0),
 }
 ABYSS_AMBIENT = 0.55
-LAVA_GRID, LAVA_Y, LAVA_R, LAVA_COL, LAVA_ST = 6.0, 0.6, 9.0, "#ff6418", 2.4  # the lava lamps: a grid every 6 m over the abyss, 0.6 m above the lava, each reaching every abyss piece
+WALK_AMBIENT = 0.5  # the walkable rock away from the lamps (below the engine's 0.62): deeper shadows, so the lamp pools and the lava carry the picture
+LAVA_GRID, LAVA_Y, LAVA_R, LAVA_COL, LAVA_ST = 6.0, 0.6, 9.0, "#ff7a24", 2.4  # the lava lamps: a grid every 6 m over the abyss, 0.6 m above the lava, each reaching every abyss piece
 SKY_TEX = {"tex": "textures/uw_sky.png", "mode": "cylinder", "horizon": 0.76}
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
@@ -121,14 +123,17 @@ DECALS = [
     ("uw_dc_tunnel", "uw_tunnel", (-15.95, 7.0), 3.4, 0.0, True, None), ("uw_dc_passage", "uw_passage", (21.0, 49.95), 12.0, 3.0, True, None),
 ]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (lava glow up the plateau's rim, the cave's blue, a lantern on the shelf, red fire on the tower; the lava lamps are LAVA_*)
-    ("uw_lt_ref", (0.0, 3.0), 0.4, 8.0, "#ff7a3a", 1.0), ("uw_lt_rim", (2.0, 5.0), 0.3, 8.0, "#ff5a20", 1.2), ("uw_lt_rim2", (-2.5, 5.0), 0.3, 6.0, "#ff5a20", 0.9),
-    ("uw_lt_ledge", (-2.8, 13.5), 3.0, 12.0, "#ff6a30", 1.4),
-    ("uw_lt_causeway", (-2.8, 23.5), 3.0, 12.0, "#ff5a20", 1.4), ("uw_lt_cave", (-11.0, 7.0), 2.0, 8.0, "#5070ff", 2.2), ("uw_lt_cave2", (-7.5, 7.0), 2.0, 5.0, "#7a90ff", 1.6), ("uw_lt_cave3", (-14.5, 7.0), 1.6, 5.0, "#8aa0ff", 1.8),
-    ("uw_lt_gong", (-4.4, 3.4), 2.4, 4.5, "#ffb060", 1.0),
-    ("uw_lt_shelf", (10.4, 14.0), 2.4, 7.0, "#ffb860", 1.7), ("uw_lt_stair", (7.2, 6.0), 2.4, 7.0, "#ff8a40", 1.0), ("uw_lt_tower", (1.0, 33.5), 6.0, 14.0, "#ff6a40", 1.4),
+    ("uw_lt_ref", (0.0, 3.0), 0.4, 8.0, "#ff9048", 1.0), ("uw_lt_rim", (2.0, 5.0), 0.3, 8.0, "#ff7430", 1.2), ("uw_lt_rim2", (-2.5, 5.0), 0.3, 6.0, "#ff7430", 0.9),
+    ("uw_lt_ledge", (-2.8, 13.5), 3.0, 12.0, "#ff8038", 1.4),
+    ("uw_lt_causeway", (-2.8, 23.5), 3.0, 12.0, "#ff7430", 1.4), ("uw_lt_cave", (-11.0, 7.0), 2.0, 8.0, "#9ab4ff", 2.2), ("uw_lt_cave2", (-7.5, 7.0), 2.0, 5.0, "#b4c8ff", 1.8), ("uw_lt_cave3", (-14.5, 7.0), 1.6, 5.0, "#c0d0ff", 1.8),
+    ("uw_lt_gong", (-4.4, 3.4), 2.4, 4.5, "#ffc47a", 1.0),
+    ("uw_lt_shelf", (10.4, 14.0), 2.4, 7.0, "#ffcc80", 1.7), ("uw_lt_stair", (7.2, 6.0), 2.4, 7.0, "#ffa050", 1.0), ("uw_lt_tower", (1.0, 33.5), 6.0, 14.0, "#ff6a40", 1.4),
     ("uw_lt_tower2", (-3.0, 37.5), 5.0, 10.0, "#d84a30", 1.2),
-    ("uw_lt_post_a", (-4.1, 5.0), 1.9, 6.0, "#ffb060", 1.2), ("uw_lt_post_b", (4.5, 4.9), 1.9, 6.0, "#ffb060", 1.2), ("uw_lt_post_c", (-1.5, 12.2), 1.9, 6.0, "#ffb060", 1.1),
-    ("uw_lt_post_d", (-1.5, 20.0), 1.9, 6.0, "#ffb060", 1.1), ("uw_lt_wall_w", (-5.8, 2.0), 2.6, 6.0, "#ff8a50", 0.9),
+    ("uw_lt_post_a", (-4.1, 5.0), 1.9, 6.0, "#ffc47a", 1.2), ("uw_lt_post_b", (4.5, 4.9), 1.9, 6.0, "#ffc47a", 1.2), ("uw_lt_post_c", (-1.5, 12.2), 1.9, 6.0, "#ffc47a", 1.1),
+    ("uw_lt_post_d", (-1.5, 20.0), 1.9, 6.0, "#ffc47a", 1.1),
+    # the lava falls light the far cliffs round them (each 1.5 m out from its fall, halfway up): the far walls' upper faces are lit by the falls, not by a flat ambient
+    ("uw_lt_fall_a", (3.0, 48.4), 7.0, 9.0, "#ff9040", 0.8), ("uw_lt_fall_b", (15.0, 48.4), 7.0, 9.0, "#ff9040", 0.8), ("uw_lt_fall_c", (28.4, 30.0), 7.0, 9.0, "#ff9040", 0.8),
+    ("uw_lt_fall_d", (24.0, 48.4), 7.0, 9.0, "#ff9040", 0.8), ("uw_lt_passage", (21.0, 48.4), 6.0, 8.0, "#ffb060", 0.7), ("uw_lt_wall_w", (-5.8, 2.0), 2.6, 6.0, "#ffa060", 0.9),
 ]
 
 
@@ -230,6 +235,8 @@ def main():
         if st == "abyss":
             s["void"] = True
             s["ambient"] = ABYSS_AMBIENT  # (the cliffs' tops; the lava lamps carry the floor and the cliffs' feet to full)
+        elif st != "cave":
+            s["ambient"] = WALK_AMBIENT
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
             if s[k] != SKY:
                 used[s[k]] = True
@@ -281,7 +288,7 @@ def main():
     d["start"] = "uw_arrive"
     barriers(d, names)
     d["sky"] = dict(SKY_TEX)
-    d["fog"] = {"color": "#4a120c", "density": 0.011}
+    d["fog"] = {"color": "#7a2210", "density": 0.007}  # a glowing red haze (the lava lights it), thinner: the far cliffs and tower keep their lamps
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("uw_")]
@@ -316,7 +323,7 @@ def main():
         gy += LAVA_GRID
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = M(*at)
-        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
+        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * LAMP_REACH, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
     for who, (at, size, lamp) in GUIDES.items():  # the lamp over each guide (the choice layer brightens it)
         x, z = M(*lamp)
         things.append({"id": "uw_lamp_" + who, "kind": "light", "at": [x, z], "y": 2.8, "radius": 3.0, "color": "#ffd9a0", "strength": 0.6})

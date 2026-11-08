@@ -24,6 +24,7 @@ ROOT = mb.ROOT
 OUT = os.path.join(ROOT, "assets", "story", "doom_underworld", "textures")
 S = 128
 hexc, shade, speckle, canvas, outline = mb.hexc, mb.shade, mb.speckle, mb.canvas, mb.outline
+BAYER4 = ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
 
 
 def veins(im, seed, col="#ff7a1c", amt=0.5, vertical=False):
@@ -54,8 +55,12 @@ def columns(base, lit, dark, seed, widths=(14, 18, 22), glow=None):
         w = min(w, S - x) if S - x < 28 else w
         shade_k = 0.75 + rnd.random() * 0.5
         d.rectangle([x, 0, x + w - 1, S], fill=shade(hexc(base), shade_k))
-        d.rectangle([x, 0, x + 2, S], fill=shade(hexc(lit), shade_k))
-        d.rectangle([x + w - 3, 0, x + w - 1, S], fill=hexc(dark))
+        d.rectangle([x, 0, x + 3, S], fill=shade(hexc(lit), shade_k * 1.35))  # the lit edge (dithered into the face below)
+        for yy in range(S):
+            for xx in range(x + 4, x + 4 + max(2, w // 4)):
+                if BAYER4[yy % 4][xx % 4] < 5:
+                    im.putpixel((xx % S, yy), shade(hexc(lit), shade_k))
+        d.rectangle([x + w - 6, 0, x + w - 1, S], fill=shade(hexc(dark), 0.55))  # the deep seam between prisms (stage D: contrast that survives the distance)
         for _ in range(3):  # a facet seam across the prism
             y = rnd.randrange(S)
             d.line([(x, y), (x + w, y + rnd.randint(-4, 4))], fill=hexc(dark))
@@ -83,10 +88,10 @@ def wall_step():
     d = ImageDraw.Draw(im)
     for row, y in enumerate(range(0, S, 32)):  # cut blocks
         off = 0 if row % 2 == 0 else 24
-        d.line([(0, y), (S, y)], fill=hexc("#0e0a12"), width=2)
-        d.line([(0, y + 2), (S, y + 2)], fill=hexc("#54445c"))
+        d.line([(0, y), (S, y)], fill=hexc("#060408"), width=4)
+        d.line([(0, y + 3), (S, y + 3)], fill=hexc("#6a5470"), width=2)
         for x in range(-off, S, 48):
-            d.line([(x, y), (x, y + 32)], fill=hexc("#0e0a12"), width=2)
+            d.line([(x, y), (x, y + 32)], fill=hexc("#060408"), width=3)
     return veins(speckle(im, 0.3, 31), 32, "#e0661a", 0.25)
 
 
@@ -375,9 +380,6 @@ def lavafall():
 
 # --- stage D round 1 (docs/briefs/DOOM_POLISH_BRIEF.md): the abyss, the far cliffs, the sky, the rim, the tunnel and the passage -------------------------------------------------
 
-BAYER4 = ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
-
-
 def wall_abyss():
     """The abyss's cliffs (the faces under the plateau, the ledge, the shelf and the tower, 5 m down to the lava): tall basalt prisms, a lit edge, a dark seam, dithered highlights, no
     horizontal seam (the old one tiled into a grid); a few glowing cracks climbing from below. The lava lamps light their feet orange, their tops stay dark (ABYSS_AMBIENT)."""
@@ -416,9 +418,13 @@ def wall_far():
         top = rnd.randrange(0, 40)
         d.rectangle([x, top, x + w - 1, S], fill=shade(hexc("#30202c"), k))
         d.rectangle([x, top, x + 1, S], fill=shade(hexc("#4e3646"), k))
-        d.rectangle([x, top, x + w - 1, top + 1], fill=hexc("#ff7a2a") if rnd.random() < 0.4 else hexc("#5a3a48"))
+        d.rectangle([x, top, x + w - 1, top + 1], fill=hexc("#ffa040") if rnd.random() < 0.7 else hexc("#5a3a48"))
+        for yy in range(top + 2, min(S, top + 10)):  # the lava's light caught under each ledge lip, dithered out
+            for xx in range(x + 2, x + w - 2):
+                if BAYER4[yy % 4][xx % 4] < 10 - (yy - top):
+                    im.putpixel((xx % S, yy), shade(hexc("#a04a2a"), 0.8 + 0.4 * rnd.random()))
         x += w
-    veins(im, 312, "#ff6a14", 0.3, vertical=True)
+    veins(im, 312, "#ff8a24", 0.6, vertical=True)
     return speckle(im, 0.2, 313)
 
 
@@ -431,7 +437,7 @@ def wall_cliff_v2():
 def floor_lava_v2():
     """The lava seen from above: bright orange-yellow flow, dark crust rafts with glowing rims, braided flow lines (the painting's river)."""
     rnd = random.Random(91)
-    im = Image.new("RGB", (S, S), hexc("#e0521a"))
+    im = Image.new("RGB", (S, S), hexc("#f06a1c"))
     d = ImageDraw.Draw(im)
     for _ in range(16):  # crust rafts with a glowing rim
         x, y = rnd.randrange(S), rnd.randrange(S)
@@ -440,7 +446,7 @@ def floor_lava_v2():
             for oy in (-S, 0):
                 d.ellipse([x + ox, y + oy, x + ox + w, y + oy + h], fill=hexc("#ff9a30"))
                 d.ellipse([x + ox + 2, y + oy + 2, x + ox + w - 2, y + oy + h - 2], fill=hexc(rnd.choice(["#4a1008", "#5a160a", "#3a0c06"])))
-    for _ in range(26):  # braided bright flow lines
+    for _ in range(40):  # braided bright flow lines
         x, y = rnd.randrange(S), rnd.randrange(S)
         for _k in range(rnd.randint(20, 50)):
             d.point((x % S, y % S), fill=hexc(rnd.choice(["#ffd040", "#ffb020", "#fff080"])))
@@ -464,7 +470,7 @@ def sky_red():
     px = im.load()
     for y in range(Hh):
         t = y / float(hz)
-        base = (int(60 + 120 * t), int(10 + 26 * t), int(10 + 14 * t))
+        base = (int(26 + 154 * t ** 1.6), int(4 + 42 * t ** 2.2), int(6 + 16 * t))  # near black at the zenith, the lava's glow on the cloud bottoms at the horizon (contrast, not a flat red)
         for x in range(W):
             n = math.sin(x * 0.045 + y * 0.31) + math.sin(x * 0.013 - y * 0.17 + 1.3) * 1.4 + math.sin(x * 0.11 + y * 0.07) * 0.5
             k = 0.78 + 0.16 * n + (BAYER4[y % 4][x % 4] - 7.5) / 60.0
@@ -557,15 +563,15 @@ DECALS = {"uw_bones": bones, "uw_lavafall": lavafall, "uw_tunnel": tunnel, "uw_p
 # painting's basalt reads lighter than its pixels because the lava lights it): the dark rock tiles only, the lava, the sky and the props keep their colours
 WARM = (1.12, 1.0, 0.9)  # the lift leans warm: the basalt takes the lava's light, not a lilac cast
 LIFT = {"uw_wall_rock": 1.7, "uw_wall_cliff": 1.7, "uw_wall_step": 1.6, "uw_wall_tower": 1.6, "uw_floor_slab": 1.55, "uw_floor_stone": 1.6, "uw_floor_tower": 1.6, "uw_wall_abyss": 1.6,
-        "uw_wall_far": 1.6, "uw_wall_cave": 1.7, "uw_floor_cave": 1.7, "uw_sky": 1.55}
+        "uw_wall_far": 1.6, "uw_wall_cave": 1.7, "uw_floor_cave": 1.7, "uw_sky": 1.55, "uw_tunnel": 1.9}  # (the tunnel decal is emissive: the lit way on)
 
 
 def lifted(name, im):
     k = LIFT.get(name)
     if k is None:
         return im
-    if name in ("uw_wall_cave", "uw_floor_cave", "uw_sky"):
-        return im.point(lambda v: min(255, int(v * k)))
+    if name in ("uw_wall_cave", "uw_floor_cave", "uw_sky", "uw_tunnel"):
+        return im.point(lambda v: min(255, int(v * k))) if im.mode != "RGBA" else Image.merge("RGBA", [*[c.point(lambda v: min(255, int(v * k))) for c in im.split()[:3]], im.split()[3]])
     r, g, b = im.convert("RGB").split()
     return Image.merge("RGB", [ch.point(lambda v, f=k * w: min(255, int(v * f))) for ch, w in zip((r, g, b), WARM)])
 

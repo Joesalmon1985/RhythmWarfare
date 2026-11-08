@@ -8,13 +8,16 @@ Why this does not start from tools/doom/trace/underworld.json: that trace is the
 painting (`art/reference/doom_worlds/Three Paths Across the Basalt Abyss-4.png`) is a viewer on a basalt plateau looking across a lava chasm at a stepped rock tower, with three ways on. So the
 scene is INVENTED FROM THE PAINTING, every sector below is a guess, flagged `approximate`; underworld.json stays as the record of what the render could and could not give.
 
-The painting's world (metres, x east, y north; the viewer stands at the south of the plateau and looks north; floors in metres, the cavern is open to a 22 m ceiling):
-  * the PLATEAU (floor 0, 12.5 x 7.5 m, its north edge only 4 m from the viewer so that the lava shows beyond it), foreground basalt slabs, a rock wall on the left (the cliff the bone chimes hang from) and one on the right;
+The painting's world (metres, x east, y north; the viewer stands at the south of the plateau and looks north; floors in metres; every piece but the cave is open to the map's red cloud sky, the walls
+stand 12 m, the height of the far cliffs):
+  * the PLATEAU (floor 0: 16 x 5 m, its west 11.5 m reaching 2.5 m further north and a 2 m strip up the west wall to y 9.5; its north edge only 3.9 m from the viewer so that the lava shows beyond it), foreground basalt slabs, a rock wall on the left
+    (the cliff the bone chimes hang from);
   * LEFT: the mouth of a blue-lit CAVE tunnel in the west wall (the Floor guide stands at its mouth);
   * AHEAD: a ledge (3.5 m wide, a 0.375 m step every 2 m up to +1.5) hugging the west cliff, then a gate pad and a causeway over the void to the foot of the TOWER (the Mothership guide stands on the
     ledge), four more steps up onto the tower terrace (+3 m) and a small stair to its top (+5 m);
   * RIGHT: a four-step stair (0.375 m risers) along the plateau's east side up to a SHELF at +1.5 m under a tent (the Dock guide stands on it);
-  * between and beyond them the ABYSS: a void 4 m down (the lava, drawn far below and hazed by the engine's void rule), made of rectangles by the decomposition below, every rim a railing.
+  * between and beyond them the ABYSS: a void 5 m down (the lava floor, -5 m) spanning x -4.5 to 30 and y 5.5 to 50 (`BOX`), made of rectangles by the decomposition below; every rim is a
+    railing (a low basalt kerb, `uw_rail`), one far rim behind the tower stays open for the loader's reachability rule; its far edge on the walls is the far cliff (12 m, lava falls on it).
 Everything is on a 0.5 m grid (walkable pieces on 0.25 m) so every Doom coordinate is an integer.
 """
 import json
