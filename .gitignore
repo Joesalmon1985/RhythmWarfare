@@ -14,3 +14,6 @@ content/imports/
 *.wad
 *.WAD
 /doom II wads/
+
+# Stage E: the re-encoded track packs bundled into the Android export (other artists' music, never committed)
+/track_packs/
