@@ -206,3 +206,9 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     stays open and the other raves stay reachable. This follows the brief (line 279: the player does not have
     to visit all four flavours to complete the opening) and replaces the raves agent's stand-in that needed
     all four `bedsit_been_<theme>` flags.
+
+42. **Walk-outs at a walking pace (lead, 9 November; the owner may overrule).** The walk from the tap along the
+    authored leg (ruling 39) takes as long as the leg needs at no more than 3 m/s: bars = ceil(length / 3 m/s /
+    bar length), clamped to 2..8 bars; the doorway hold and the cut are unchanged; the music keeps playing. A leg
+    longer than 8 bars allows at 3 m/s (about 33 m at 174 bpm) is the scene's fault: shorten it or add a hold.
+    The review found 2–4 bar walks over 17–28 m legs (5–7 m/s), which read as a sprint in a 2.5D world.
