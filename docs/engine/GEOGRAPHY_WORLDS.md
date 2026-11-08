@@ -82,8 +82,11 @@ An example follows. Its waypoint names are made up for illustration; a working f
      The run prints `RUN walk-off <node> <from> -> <to>: leg <m> m, <bars> bars (<m/s> m/s, at most 3.0), hold <bars> bars, the cut
      <beats> beats after the boundary | the cut on the boundary` and keeps the entry in `RunJourney.walk_offs`.
      A leg that would need more than 8 bars at 3 m/s (about 33 m at 174 bpm) is the scene's fault: shorten it or add a hold.
+     The engine starts the leg from the rail's place at the tap (`rail.place()`), not always the choice viewpoint (the rail may stand
+     on home or a bad place), so the check measures the worst case: the longest leg over home and every good and bad rail place, and
+     the line says which (`from <place> (worst case of <n> rail places; choice place <place>)`).
      `tools/story/check_rail_paths.gd` prints every walk-out's pace (`  WALKOFF <dir> <from> -> <to>: <m> m, <bars> bars at
-     <bpm> bpm, <m/s> m/s`) and flags those (`  WARN walk-off ... needs <n> bars at 3.0 m/s, more than 8 ...`). Fixture:
+     <bpm> bpm, <m/s> m/s, from ...`) and flags those (`  WARN walk-off ... needs <n> bars at 3.0 m/s, more than 8 ...`). Fixture:
      `tests/fixtures/walk_pace` (one hall map, legs of 24, 5, 40 and 7 m), tests in `tests/test_geography.gd`.
    - An untouched default walks from the lock at beat 61 (3 beats before the downbeat): `RunPlay._update_passage`
      calls `RunJourney.threshold_leave`. It is no walk-out from a tap: 3 beats, the swap on the downbeat, as before.

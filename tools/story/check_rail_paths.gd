@@ -75,7 +75,7 @@ func _walk_offs(m: StoryMap, n: Dictionary, place: Dictionary, world_of: Diction
 		if float(w["length"]) < 0.0:
 			print("  WALKOFF %s %s -> %s: the length is unknown (a waypoint is missing)" % [w["dir"], w["from"], w["to"]])
 			continue
-		print("  WALKOFF %s %s -> %s: %.1f m, %d bars at %.0f bpm, %.2f m/s" % [w["dir"], w["from"], w["to"], float(w["length"]), int(w["bars"]), bpm, float(w["pace"])])
+		print("  WALKOFF %s %s -> %s: %.1f m, %d bars at %.0f bpm, %.2f m/s, from %s (worst case of %d rail places; choice place %s)" % [w["dir"], w["from"], w["to"], float(w["length"]), int(w["bars"]), bpm, float(w["pace"]), "the choice place" if str(w["from"]) == str(w["choice"]) else "the longest", int(w["places"]), w["choice"]])
 		if bool(w["warn"]):
 			flagged += 1
 			print("  WARN walk-off %s %s -> %s: %.1f m needs %d bars at %.1f m/s, more than %d (the scene must shorten the leg or add a hold)" % [w["dir"], w["from"], w["to"], float(w["length"]), int(w["need"]), RunRail.WALK_PACE_MAX, int(RunRail.WALK_OFF_BARS_MAX)])

@@ -152,3 +152,29 @@ func test_every_scene_change_of_the_run_goes_through_the_port_in_order() -> void
 		assert_true(float(e["t"]) >= dir.lock_t(float(la[2])) - 1e-9 and float(e["t"]) <= dir.lock_t(float(la[2])) + 1.0 / 30.0 + 1e-6, "locked in the frame of the lock point")
 		assert_eq((la[3] as Dictionary)["mode"], &"cut")
 	_end_run(d, saved, "user://test_seam_save.json")
+
+
+# --- one transition per destination and boundary (MUSIC_TRANSITIONS.md 8.3) ------------------------------------------------------------
+
+## A geography exit's tap gives its route_commit before the lap's lock point (RunEngine.tap_commit, ruling 39: `t` is the boundary), and the lock point then reports the same route as the
+## engine's own exit (_nothing_pending: leaving and chosen). The director locks once: one id, one `locked`. A genuinely new destination at that boundary still locks anew.
+func test_a_tapped_exit_and_its_lock_point_lock_one_transition() -> void:
+	var rig: RefCounted = (load("res://tests/fixtures/transition/director_rig.gd") as GDScript).new({"bpm": 174.0, "laps": 1, "doors_from_lap": 1, "lock_lead_beats": 3.5})
+	var dir: TransitionDirector = rig.get("director")
+	var eng: RunEngine = rig.get("engine")
+	var ids: Array = []
+	dir.locked.connect(func(id: int, _d: Dictionary, _b: float, _p: Dictionary) -> void: ids.append(id))
+	var b := eng.t_of(eng.timing("phase_beats"))
+	dir.on_event({"kind": "route_commit", "from": eng.node_id, "to": "a", "chosen": true, "t": b, "at": b - 8.0 * eng.beat_s, "tapped": true})
+	assert_eq(ids.size(), 1, "the tap's route_commit locks the transition")
+	var info := {"t": b - 3.5 * eng.beat_s, "boundary_t": b, "node": eng.node_id, "lap": 1, "laps": 1, "final": true, "departure": true, "passed": true, "hold": false, "track": true,
+		"leaving": true, "route": "a", "chosen": true}
+	dir._on_lock_point(info)
+	assert_eq(ids, [1], "the lock point at the same boundary for the same destination emits no second locked")
+	assert_eq(dir.lock_log.size(), 1, "one lock, one RUN transition line")
+	assert_eq(dir.current().get("id", -1), 1, "the request is the first one, still locked")
+	assert_eq(dir.state(), TransitionPort.State.LOCKED)
+	info["route"] = "b"
+	dir._on_lock_point(info)
+	assert_eq(ids, [1, 2], "another destination at that boundary is a new lock, as before")
+	assert_eq(str((dir.current().get("dest", {}) as Dictionary).get("id", "")), "main/b")

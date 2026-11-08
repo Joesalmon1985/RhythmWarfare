@@ -316,10 +316,16 @@ func _nothing_pending(info: Dictionary, b: float) -> Dictionary:
 
 
 ## A transition the engine makes on its own, taken through the port: a fresh id, acknowledged and locked (the contract's default rule). `late`: there was no lock point before it.
+## Once per destination and boundary: a geography exit's tap gives its route_commit before the lap's lock point (RunEngine.tap_commit, ruling 39), and that lock point then reports the same
+## route as the engine's own exit; the second report is the transition already locked, not a new one (MUSIC_TRANSITIONS.md 8.3), so it allocates no id and emits nothing.
 func _observe(route: String, b: float, late: bool) -> void:
+	var dest := _dest_of_route(route)
+	if not _req.is_empty() and int(_req["state"]) == State.LOCKED and str((_req["dest"] as Dictionary).get("id", "")) == str(dest.get("id", "")) 			and absf(float(_req["boundary"]) - b) < 1e-4:
+		if not RunTrackScenes._under_test_runner():
+			print("TRANSITION observe id=%d %s at T=%.3f: already locked" % [int(_req["id"]), str(dest.get("id", "")), b])
+		return
 	if not _trans.is_empty():
 		_complete("a new lock came first")  # (keeps completed before the next locked; cut transitions are long silent by then)
-	var dest := _dest_of_route(route)
 	var res := _resolve(dest)
 	if res.is_empty():
 		res = {"route": route, "start": "", "data": data, "node": str(dest["node"])}
