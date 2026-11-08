@@ -83,40 +83,31 @@ func test_warehouse_to_bar_and_back_to_the_floor_on_the_run_scene() -> void:
 		assert_eq(str(w1[0]["args"]["to"]), str(wh_rail["exits"]["left"]), "to the threshold wh_bar_door")
 		assert_eq(w1[0]["args"]["via"], wh_rail["routes"]["left"]["via"], "along the Warehouse's left polyline")
 	var wh: StoryStage = scene.stages["doom_warehouse"]["stage"]
-	# ruling 42: the walk-out starts at the choice viewpoint (wh_fence, 20.9 m) at a walking pace: 6 bars from beat 52 end at beat 76, past the boundary; the hold runs on and
-	# the swap waits for it on a whole beat (beat 81 = 17 beats after the boundary, before the next phase's beat 32)
+	# ruling 42: the walk-out starts where the rail stands at the tap. Since polish A's stay rail that is the choice viewpoint wh_ref (5.5 m to wh_bar_door): the authored 2 bars
+	# already walk it at pace, so from beat 52 the leg ends at beat 60, the doorway hold takes the last bar and the swap is on the boundary (beat 64). The hold-past-the-boundary
+	# case of ruling 42b (cut_t on a whole beat by the next phase's beat 32) is proven in test_geography on the long legs.
 	assert_eq(scene.journey.walk_offs.size(), 1, "one walk-out so far")
 	var wo: Dictionary = scene.journey.walk_offs[0] if not (scene.journey.walk_offs as Array).is_empty() else {}
 	var t_cut := 64.0 * B
 	var t_arrive := 52.0 * B
 	if not wo.is_empty():
-		assert_eq(str(wo["from"]), "wh_fence", "from the choice viewpoint")
-		assert_near(float(wo["length"]), 20.9, 0.05, "the leg is 20.9 m")
-		assert_near(float(wo["bars"]), RunRail.walk_off_bars(float(wo["length"]), 4.0 * B), 1e-6, "at a walking pace")
-		assert_near(float(wo["bars"]), 6.0, 1e-6, "6 bars")
+		assert_eq(str(wo["from"]), "wh_ref", "from the choice viewpoint")
+		assert_near(float(wo["length"]), 5.5, 0.1, "the leg is 5.5 m")
+		assert_true(float(wo["length"]) <= RunRail.WALK_PACE_MAX * 2.0 * 4.0 * B + 1e-6, "the authored 2 bars walk it at no more than 3 m/s")
+		assert_near(float(wo["bars"]), 2.0, 1e-6, "2 bars (the authored leg, not lengthened)")
+		assert_eq(bool(wo["paced"]), false, "not paced: the leg is exactly as authored")
 		if w1.size() == 1:
-			assert_near(float(w1[0]["args"]["bars"]), 6.0, 1e-6, "the walk's own bars")
+			assert_near(float(w1[0]["args"]["bars"]), 2.0, 1e-6, "the walk's own bars")
+		assert_near(float(wo["hold_bars"]), 1.0, 0.01, "the doorway hold of about one bar fits before the boundary (the guard before it is a sliver short)")
 		t_arrive = 52.0 * B + float(wo["bars"]) * 4.0 * B
-		t_cut = float(wo["cut_t"])
-		assert_true(t_cut > 64.0 * B + 1e-6, "the swap waits for the hold, past the boundary")
-		assert_near(t_cut / B, roundf(t_cut / B), 1e-4, "on a whole beat (%f)" % (t_cut / B))
-		assert_true(t_cut <= (64.0 + RunJourney.CUT_LATEST_BEAT) * B + 1e-6, "by the next phase's beat 32")
-		assert_near(t_cut / B, 81.0, 1e-3, "beat 81 (17 beats after the boundary)")
-	# the Bar's music and engine start on the boundary while the Warehouse is still shown
-	_run_to(scene, 64.4 * B)
-	assert_eq(scene.engine.node_id, "doom_bar", "the engine and the music are in the Bar's phase from the boundary")
-	assert_eq(scene.active_world, "doom_warehouse", "the Warehouse is still shown while the walk-out goes on")
-	assert_true(scene._passage.aperture > 0.99, "the frame is open on the walk")
-	_run_to(scene, t_cut - 2.5 * B)
-	assert_true(scene._passage.aperture > 0.99, "the frame was still open 2.5 beats before the swap (%f)" % scene._passage.aperture)
-	assert_true(_near(wh, t_arrive, "wh_bar_door") < 0.05, "at the threshold when the leg's bars are walked (%f m)" % _near(wh, t_arrive, "wh_bar_door"))
-	_run_to(scene, t_cut - 0.1 * B)
+		assert_true(float(wo["cut_t"]) < 0.0, "no cut time: the swap on the boundary (cut_t -1)")
 	assert_true(_near(wh, t_arrive, "wh_bar_door") < 0.05, "at the threshold when the leg's bars are walked (%f m)" % _near(wh, t_arrive, "wh_bar_door"))
 	assert_true(_near(wh, t_cut - 0.1 * B, "wh_bar_door") < 0.05, "and still there in the doorway's hold")
-	assert_true(scene._passage.aperture < 0.3, "the frame shut to the doorway before the swap (%f)" % scene._passage.aperture)
-	assert_eq(scene.active_world, "doom_warehouse")
-	_run_to(scene, t_cut + 0.4 * B)
-	assert_eq(scene.active_world, "doom_bar", "the stage swapped to the Bar at the end of the hold")
+	assert_true(scene._passage.aperture < 0.3, "the frame shut to the doorway before the boundary (%f)" % scene._passage.aperture)
+	assert_eq(scene.active_world, "doom_warehouse", "the Warehouse is shown up to the boundary")
+	_run_to(scene, 64.4 * B)
+	assert_eq(scene.engine.node_id, "doom_bar", "the engine and the music are in the Bar's phase from the boundary")
+	assert_eq(scene.active_world, "doom_bar", "the stage swapped to the Bar on the boundary")
 	var bar: StoryStage = scene.stages["doom_bar"]["stage"]
 	_run_to(scene, t_cut + 12.0 * B)
 	assert_true(_near(bar, t_cut + 12.0 * B, "wb_ref") < 0.05, "the arrival walked home to wb_ref (%f m)" % _near(bar, t_cut + 12.0 * B, "wb_ref"))
@@ -130,11 +121,12 @@ func test_warehouse_to_bar_and_back_to_the_floor_on_the_run_scene() -> void:
 		assert_near(float(w2[0]["t0"]), 116.0 * B, 0.01, "from the scripted tap at beat 52 of the Bar's phase")
 		assert_eq(str(w2[0]["args"]["to"]), str(bar_rail["exits"]["left"]), "to the threshold wb_floor_door")
 		assert_eq(w2[0]["args"]["via"], bar_rail["routes"]["left"]["via"], "along the Bar's left polyline")
-	# the Bar's leg (wb_counter, 8.7 m, 3 bars from beat 116) ends on the boundary with no hold: the downbeat swap as before
+	# the Bar's leg (from the choice viewpoint wb_ref, 7.2 m, 3 bars from beat 116) ends on the boundary with no hold: the downbeat swap as before
 	assert_eq(scene.journey.walk_offs.size(), 2, "a second walk-out")
 	if (scene.journey.walk_offs as Array).size() == 2:
 		var wo2: Dictionary = scene.journey.walk_offs[1]
-		assert_eq(str(wo2["from"]), "wb_counter", "from the Bar's choice viewpoint")
+		assert_eq(str(wo2["from"]), "wb_ref", "from the Bar's choice viewpoint")
+		assert_near(float(wo2["length"]), 7.2, 0.1, "the leg is 7.2 m")
 		assert_near(float(wo2["bars"]), 3.0, 1e-6, "3 bars")
 		assert_true(float(wo2["cut_t"]) < 0.0, "no cut time: the swap on the boundary (cut_t -1)")
 	assert_true(_near(bar, 128.0 * B, "wb_floor_door") < 0.05, "at the Bar's threshold on the boundary (%f m)" % _near(bar, 128.0 * B, "wb_floor_door"))
