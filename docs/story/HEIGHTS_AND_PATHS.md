@@ -135,6 +135,7 @@ A `player_move` (and a rail place of `content/run/run.json` / `content/paths/*/r
 | `path` | the same, `to` being the last id |
 | `hold_bars` | after arriving, the camera stands still for this many bars: no bob, no drift, no glance (eased in and out over a beat) |
 | `choice` | (rail places) a choice viewpoint: it must hold at least `RunRail.CHOICE_HOLD_BARS` = 3 bars, the whole choice window |
+| `pitch` | (choice viewpoints only) a steady pitch held through the choice window: degrees, negative looks down, within +-35, default 0 (CONTRACTS.md 3) |
 
 What the player does with a polyline move (StoryPlayer):
 
@@ -216,6 +217,9 @@ what keeps a converted map inside the budget (docs/STORY_25D_PLAN.md 8.4: 12 ms 
 * In clip mode the crowd and the geometry share one walk: the crowd is drawn as deep as the geometry (the flood kept the crowd to 4 portals).
 * **The void haze is a multiplier** on the vertex colours: it darkens and tints toward the fog colour, it cannot lighten toward a pale fog.
   It is linear in depth from the walkway down to the void's floor; the map's distance fog adds to it as before. No height fog, no new pass.
+* A void split into several convex pieces (wedges of one pit, as a converted map has them) is one pit: every piece's `void_top` is the lowest
+  floor around the connected group of void sectors that is not itself a void (`StoryMap._group_void_tops`), so the haze is on in every wedge.
+  A void with no void next to it keeps the lowest floor around it, as before. Test: `tests/test_split_void.gd`.
 * The depth rule for voids is on by default only for maps of 64 pieces or more; hand-made maps opt in with `void_drop` (two Bassment
   maps have 6.5 m pits nobody stands in that would otherwise change look).
 * A railing is one strip per portal edge (no posts, no thickness), drawn in the higher sector's mesh; its tile must carry alpha.

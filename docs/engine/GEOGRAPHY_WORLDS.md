@@ -20,6 +20,9 @@ The scene (a `nodes` entry):
 - `place.rail`: `good`, `bad`, `glances`, `strolls` as for any scene. Also:
   - `arrive`: where the player steps in from another world.
   - `exits {dir: waypoint}`: one doorway per `next` direction, `down` included.
+  - a choice viewpoint (a `good`/`bad` place with `"choice": true`, `hold_bars >= 3`) may author `pitch`: degrees, negative looks down, within +-35,
+    default 0. The camera holds that pitch, still, through the whole choice window and lets it go with the walk-off (below). Use it where the
+    viewpoint looks down at its feature (a lava lake, a sunken sofa); the facing is still the waypoint's `yaw`. Unauthored, nothing changes.
   - `routes {up|left|right: move}`: each move is `{to, via?: [waypoints], bars, hold_bars?: >= 0, style?, role?}`. `bars` must be above 0; the walk clamps it to 2..4 bars, then to the time left before the boundary.
     `to` is the threshold, normally the same waypoint as `exits[dir]`. `stumble` and `arrive` keys are allowed. `down` has no move.
 
@@ -59,7 +62,8 @@ An example follows. Its waypoint names are made up for illustration; a working f
      others `declined`, and `route_commit` fires. The walk starts there (`RunEngine.tap_commit`, then
      `RunJourney.commit_walk`). A tap at beat 50 has 14 beats, enough for a 2-bar leg and a 1-bar hold. A tap made
      before the window opens commits as the window opens. Later taps in the same window are ignored. The choice
-     viewpoint's hold gives way to the walk (`StoryPlayer.end_window_holds`), and the rail takes no more steps.
+     viewpoint's hold gives way to the walk (`StoryPlayer.end_window_holds`), and the rail takes no more steps. A held `pitch`
+     eases back to level over the beat after the tap.
    - An untouched default walks from the lock at beat 61 (3 beats before the downbeat): `RunPlay._update_passage`
      calls `RunJourney.threshold_leave`.
 3. From beat 62 the passage frame shuts to the doorway. On the downbeat the stage swaps to the destination's map.
