@@ -6,7 +6,13 @@ Package "bedsit" of `docs/briefs/BEDSIT_RAVES_BRIEF.md` section 2 (branch `wip/p
 ## Launch
 
     tools\dev\play_bedsit.cmd          the bedsit, facing north        (PowerShell, cmd or a double-click)
-    tools\dev\play_bedsit.cmd E        stand at the east viewpoint (N, E, S or W), a development aid
+    tools\dev\play_bedsit.cmd E        start facing east (N, E, S or W: RW_BEDSIT_FACING, written to the save as a turn is), a development aid
+    tools\dev\play_bedsit.cmd --dev-keys     number keys 1 to 8 pick any choice on show in the bedsit too (RW_DEV_KEYS=1; off there by default)
+
+Touch (or click): the left fifth of the picture turns left, the right fifth turns right, the bottom middle stays, the top middle leaves through the threshold you face, and the
+middle of the picture is the room itself (the way out, once it is open). Desktop: the arrow keys are the same four regions (left, right, down = stay, up = leave). The number keys
+1 to 8, which pick the choices on show elsewhere in the game (INTERACTION_DESIGN.md 2.6), are off in the bedsit (they would pick any threshold whatever the facing) unless
+`RW_DEV_KEYS=1`. See "Playing it" at the end.
 
 It sets `RW_BEDSIT=1` and `RW_RUN_PATH=bedsit` and runs `tools/dev/play_tracks.sh --run` (the play copy of the save, the imported track packs). **F3** shows the
 overlay line; in the bedsit it ends with `compass N  theme Space` (and only then: the compass and the theme name are drawn nowhere else).
@@ -18,21 +24,21 @@ The flag, in the order the code reads it:
   run, every other path, the saves and the tests do not change; `test_the_flag_is_off_by_default_and_the_legacy_run_is_untouched` pins it.
 - `python3 tools/run/make_bedsit.py --bedsit` writes the path's files; without `--bedsit` the tool writes nothing.
 
-## What is built (and what today's engine ignores)
+## What is built
 
 | Piece | Where | Engine today |
 | --- | --- | --- |
 | The room | `content/story/maps/bedsit.json`, art in `assets/story/bedsit/` | drawn by StoryWorld as any map |
 | The path | `content/paths/bedsit/` (`run.json`, `music.json`, `hotspots/bedsit.json`) | loads clean (`tools/run/check_path.gd bedsit`: 0 errors) |
 | Themes and routes | `content/bedsit/themes.json` (the contract fixture's shape), `routes.json` | read by `BedsitNav` and the tests only |
-| The four regions | `src/bedsit/bedsit_nav.gd` (`press(save, "left" / "right" / "bottom" / "top")`) | **not called by any tap**: the world-region dispatcher is hook H5.5 |
-| `relaxed: true` on the node | `run.json` node `bedsit` | **ignored** (hook H1.7): energy still drains and a lap's default exit still fires |
-| `hold_bars: 4`, `choice_view: true` | `run.json` node `bedsit.bedsit.viewpoint`, and `choice_view` on the four waypoints | **ignored** (hook H3.1): the rail still adds a glance and a stroll (both set to zero here) |
+| The four regions | `content/bedsit/themes.json` `regions`; `src/bedsit/bedsit_room.gd` (`BedsitRoom`) on `src/bedsit/bedsit_nav.gd` (`press`) | **played by touch**: `RunPlay.dispatch_tap` (H5.5) gives a stage tap to the `world_regions` owner while the bedsit is the scene and `BedsitRoom.tap` turns, stays, leaves or touches the room ("Playing it") |
+| `relaxed: true` on the node | `run.json` node `bedsit` | **read** (`run_engine.gd`, hook H1.7): a failed block costs no energy, and with nothing touched the scene stays (no default exit fires) |
+| `hold_bars: 4`, `choice_view: true` | `run.json` node `bedsit.bedsit.viewpoint`, and `choice_view` on the four waypoints | descriptive: the camera is held by `BedsitRoom` instead (the rail retargeted to the facing's waypoint and held: no glance, stroll or drift, ruling 35a) |
 | The track | `content/run/track_scenes.json` `paths.bedsit.bedsit` (Chase & Status remix of Valley of the Shadows) | plays when the track pack is on the machine (`play_tracks.sh`); else the placeholder pack `bedsit_room` (174 BPM, synthesised) |
 | Sound cues (traffic, wardrobe shimmer, jungle) | none | the project has no ambient-cue hook for a map; not done |
 
-Because the engine does not yet read `relaxed`, a lap that ends takes the default exit, `bedsit.threshold_n`, to the north placeholder, which routes straight back to the bedsit: the
-player stays in the room (the lap restarts at the bedsit), which is the intended "stay" by another road. Energy still moves with the play until H1.7.
+Relaxed inspection (brief section 2) is real: the engine reads `relaxed` (`run_engine.gd`, H1.7), so a scene in which nothing is touched ends by staying in the bedsit with the
+facing kept, and missed blocks cost nothing; the rhythm never forces a departure. Only the top region (the facing's threshold) or the way out leaves.
 
 ## The routes and the placeholders
 
@@ -51,9 +57,11 @@ rave out of the `PLACEHOLDER_RAVES` table, regenerate with `python3 tools/run/ma
 
 ## State
 
-`bedsit_facing` ("N" | "E" | "S" | "W"; a new run starts "N") is written by `BedsitNav.press` into the run-state dictionary it is given; the overlay reads
-`Session.run_progress.data`. It never calls `RaveSave.migrate` (which stamps save version 3 on a file the loader still accepts only at version 2: hook H6.1 first). Turning wraps
-through all four directions: four left turns or four right turns are the same facing, bottom keeps it (tests).
+`bedsit_facing` ("N" | "E" | "S" | "W"; a new run starts "N") is part of the version 3 save (`RunProgress` VERSION 3; the loader takes 2 and 3 and migrates a 2: CONTRACTS.md 6,
+H6.1). Every turn in play writes it at once (`BedsitRoom` calls `RunProgress.set_bedsit_facing`, which saves), and every homecoming to the bedsit (from a rave, or the run's first
+scene) cuts the camera to the saved facing while the passage frame is shut. `BedsitNav.press` stays a pure function on the dictionary it is given (BedsitRoom hands it a copy).
+A new run (`run_started`) faces north again. The overlay reads `Session.run_progress.data`. Turning wraps through all four directions: four left or four right turns are the same
+facing, bottom keeps it (tests/test_bedsit.gd; by tap in the running scene, tests/test_bedsit_play.gd).
 
 ## The room
 
@@ -81,8 +89,9 @@ thresholds are the strange part.
   the amber fanlight with a bus passing, the indicator lamp.
 - Does not read yet: with the camera 2 m from the east and west walls (2.5 m from north and south) at eye 1.6 m and a level gaze, the picture spans 0.63 m to 2.57 m up the wall, so **the floor, the rug,
   the bed's mattress, the desk's legs and the toy car are out of frame** in every facing (the headboard, the posters over it and the desk top show). The painted pools of coloured light on the boards are
-  therefore never seen; the lights still colour the walls. A waypoint carries no pitch today (only a rail glance does); a held downward tilt of about 10 degrees on the four viewpoints would bring the floor
-  in (suggested for the hold hook H3.1). The blinking of the indicator and the traffic, wardrobe and jungle sounds cannot be seen or heard in a still: no ambient sound cue hook exists for a map.
+  therefore never seen; the lights still colour the walls. The engine now has a held, authored pitch at a choice viewpoint (a rail place's `pitch`, `player_hold` with a pitch,
+  merged into this branch), but the bedsit does not use it yet (its camera is held level by `BedsitRoom` on the four waypoints); a steady tilt of about 10 degrees down would bring the
+  floor in. The blinking of the indicator and the traffic, wardrobe and jungle sounds cannot be seen or heard in a still: no ambient sound cue hook exists for a map.
 - The dado (the lower wall, olive) is about a third of every frame; it could go warmer.
 
 ## Checks
@@ -180,10 +189,29 @@ All four raves are real nodes now (`LANDED` in `tools/run/make_bedsit.py`: N spa
 - **The bedsit's way out (ruling 41).** The opening is finished once ANY ONE rave has all three of its activities done: the bass fixed, the cloakroom done and the bar done
   (the save's `raves.<theme>.bass_fixed`, `cloakroom_done`, `bar_done`). The player does not have to visit all four raves (brief section 10), and a visit alone, or two of the
   three activities, does not open it. `SpaceRaveHost.opening_done` checks this at every scene start and sets the run flag `bedsit_way_out`; the bedsit's hotspot `bedsit.way_out`
-  (anchored on `threshold_s`) needs that flag and leads to `bedsit.end`, then the Warehouse. Once open it stays open for the run (the puzzles are kept for the run, and a new run
+  (on the door in the WEST facing, anchor `{"pos": [-1.9, 1.35, 0.6]}`: see "Playing it") needs that flag and leads to `bedsit.end`, then the Warehouse. Once open it stays open for the run (the puzzles are kept for the run, and a new run
   starts them over); the four raves stay reachable from the bedsit all the while. The development exit `bedsit.dev_exit` (flag `bedsit_dev_exit`) is unchanged. The path declares
   the gate (`run.json` `path.ending_gate`), so `tests/test_run_matrix.gd`, whose bot plays no activities, lets the bedsit live in its loop; `tests/test_bedsit_opening_end.gd`
   proves the gate (`--filter bedsit`).
+
+### Magic and unicorns (`tools/story/build_magic_rave.py`): PLACEHOLDER art
+
+- Tiles **borrowed** from the Chill-out lounge (`tools/story/borrowed/doom_lounge/`: curtain, marble, wood, rug, potion shelf, lamp, plant), recoloured violet and pearl.
+- **Drawn here, all PLACEHOLDER** (procedural, not hand-finished; ruling 36): everything iridescent (the pearl walkway, the moss ring and its toadstools, the velvet ring, the
+  well's floor), the deck, the knob frames, the door home and the three stage pieces (`mg_aurora`, `mg_sparkle_ring`, `mg_orb_dome`).
+- **People**: the Mothership's alien rigs recoloured pastel with a spiral unicorn horn (`rave_people.py`): PLACEHOLDER figures, not the 256 px Floor-guide standard. The bar's
+  customer is this rave's own `antenna` rig in that dress (`themes.json` `bar.magic.customers[].kind` is `horn`: the dress named; nothing draws `kind` on its own).
+- Activity sheets (copied PLACEHOLDERS): `cloak_symbols_magic`, `bar_glass_magic`, `bar_order_magic`, `cloak_coat`, `sr_knob`. The art's manifest and every sheet's sidecar say
+  `"placeholder": true` (`tests/rave_theme_test.gd` asserts it for Magic, Dinosaurs and Transport).
+
+### Dinosaurs (`tools/story/build_dinos_rave.py`): PLACEHOLDER art
+
+- Tiles **borrowed** from the Underworld (`tools/story/borrowed/doom_underworld/`).
+- **Drawn here, all PLACEHOLDER**: the ledge's dressing, the causeway railings, the lava, the tent bar, the cloakroom cave's desk and hides, the ribcage arch, the deck, the knob
+  frames, the door home and the three stage pieces (`dn_lava_sheets`, `dn_fire_ring`, `dn_ember_dome`).
+- **People**: the alien rigs recoloured in scaled greens, oranges and teals with crest spikes and two brow horns (`rave_people.py`): PLACEHOLDER figures, not dinosaurs drawn to the
+  Floor-guide standard. The bar's customer is this rave's own crested `antenna` rig (`kind` `crest`).
+- Activity sheets (copied PLACEHOLDERS): `cloak_symbols_dinos`, `bar_glass_dinos`, `bar_order_dinos`, `cloak_coat`, `sr_knob`; manifest and sidecars `"placeholder": true`.
 
 ### Transport (`tools/story/build_transport_rave.py`)
 
@@ -197,7 +225,62 @@ All four raves are real nodes now (`LANDED` in `tools/run/make_bedsit.py`: N spa
   the ticket counter, the left-luggage desk, the lockers, the hi-vis vest rail, the console, the deck, the door home, the knob frames, the sky and the three stage pieces
   (`tr_signal_beams`, `tr_track_lights`, `tr_headlamp_dome`). **People**: the Mothership's alien rigs recoloured hi-vis with a hard hat (`rave_people.py`): PLACEHOLDER figures, not the
   256 px Floor-guide standard.
-- Activity sheets (copied PLACEHOLDERS): `cloak_symbols_transport` (bus, bike, train, boat), `bar_glass_transport`, `bar_order_transport` (diesel cola, tyre liquorice, road salt, headlamp lemon), `cloak_coat`, `sr_knob`.
+- Activity sheets (copied PLACEHOLDERS): `cloak_symbols_transport` (bus, bike, train, boat), `bar_glass_transport`, `bar_order_transport` (diesel cola, tyre liquorice, road salt, headlamp lemon), `cloak_coat`, `sr_knob`;
+  manifest and sidecars `"placeholder": true`. The bar's customer is this rave's own hard-hatted `antenna` rig (`kind` `hard_hat`).
+- The bar's pad pictograms 1 and 2 (diesel cola `#6b3a1e`, tyre liquorice `#2a2a33`) were dark on the dark slot: `ControlPictograms` now draws any control colour under
+  luminance 0.35 lifted toward white (hue kept) with a pale rim; every other theme's ingredients are above it and unchanged (`tests/test_bar.gd`).
 - Shots: `docs/shots/bedsit/transport/transport_contact.jpg`, `docs/shots/bedsit/transport/activities.jpg`. The rain cannot be judged from the preview stills (the preview pipeline
   draws no motion); people are absent from the map preview (the activity sheet shows them).
 - Test: `tests/test_transport_rave.gd` (the shared body, `--filter test_transport_rave`).
+
+
+## Playing it: the four regions, the facing, the way out (play round 2, branch `wip/play-round2`)
+
+`src/bedsit/bedsit_room.gd` (`BedsitRoom`, owned by RunPlay as `bedsit`) is the bedsit as a running scene. While the scene is the bedsit, `RunPlay.world_regions` holds the four
+regions of `content/bedsit/themes.json` and the one dispatcher (`RunPlay.dispatch_tap`, H5.5: `ContractShapes.tap_owner` gives a stage tap to `world_regions`) hands every stage
+tap to `BedsitRoom.tap`; a pad-strip tap stays the pads'. In fractions of the picture (the stage area above the pads):
+
+| Region | Where | What it does |
+| --- | --- | --- |
+| left | x 0 to 0.22, full height | turn 90 degrees left: the camera turns on the spot over one bar to the facing's waypoint (`bedsit_n/e/s/w`) and holds still (no glance, stroll or drift: ruling 35a); the facing is saved at once; a pending threshold pick is withdrawn |
+| right | x 0.78 to 1, full height | turn 90 degrees right, the same |
+| bottom | x 0.25 to 0.75, y 0.72 to 1 | stay: the facing is kept, a pending threshold pick is withdrawn |
+| top | x 0.25 to 0.75, y 0 to 0.42 | leave: the threshold of the current facing (`bedsit.threshold_<f>`) is picked; the route to its rave commits at the scene's lock and leaves on the boundary (ruling 37) |
+| the room | x 0.25 to 0.75, y 0.42 to 0.72 (the gap) | the room's own hotspots that are not thresholds: the way out (and the development exit) |
+
+Only the threshold of the facing is on show (lit, and the only one the top region can pick), so the touch target follows the facing. A turn after the lock with a pick standing is
+refused (the way out is decided). The F3 overlay ends with `compass <f>  theme <name>`.
+
+**The way out** (`bedsit.way_out`, ruling 41) stands on the room's door in the **west** facing: anchor `{"pos": [-1.9, 1.35, 0.6]}` (just off the west wall, 1.35 m up, the
+door's middle; `WAY_OUT_ANCHOR` in `tools/run/make_bedsit.py`), which from the camera lands in the gap in the middle of the picture, about a third of the way across from the left.
+The top of that same door (its fanlight, the timetable) is in the top region and is the Transport threshold; the middle of the door is the way out. It is on show and touchable only
+while the run flag `bedsit_way_out` is set (`SpaceRaveHost.opening_done`, at every scene start, once any one rave's three activities are in the save). It never shares an anchor
+with a threshold, and the thresholds are not in the gap's hit list at all, so it never loses a tie (`HotspotView.hit` gives ties to the earlier entry). From the other three facings
+the door is out of the picture and the way out has no touch target.
+
+### The player's path to the ending, tap by tap
+
+The shortest: the Space rave, straight ahead.
+
+1. **North** (the start): the window, the rocket on the sill, the star mobile. Tap the **top middle** of the picture: the threshold is picked; at the end of the scene the camera
+   walks to the window and the Space rave's hub comes in.
+2. **The Space rave's hub**: tap the **DJ** waving on the stage: the walk to the deck. Tap the **deck**, then the **knob**: it resists twice, the third touch frees it; the bass
+   comes in on the next bar line, the stage lights come up, the crowd dances. Tap the **stage's foot** (the way back) to the hub.
+3. Tap the **cloakroom attendant**: the cloakroom; tap the **counter**; the pads become SAME (left) and DIFFERENT (right): eight coats. The counter lamp stays lit. Back to the
+   hub (its door, or the scene's default).
+4. Tap the **bartender**: the bar; tap the **counter**; the pads become the four ingredients: four drinks. The shelf glasses light. Back to the hub.
+5. Tap the **airlock hatch** (the way home): the bedsit again, **facing north** (the saved facing). The way out is now open.
+6. Tap the **left fifth** of the picture once: the camera turns to the **west** (the bed, the door, the bus timetable) and holds.
+7. Tap the **middle of the door** (the middle of the picture, a little left of centre): the way out is picked; at the end of the scene `bedsit.end`, then the Warehouse.
+
+Any rave does instead: facing **east** (one tap on the right) the jungle poster leads to the Dinosaurs, facing **south** (two taps on either side) the wardrobe to Magic and
+unicorns, facing **west** (one tap on the left) the top of the door to Transport. Coming home faces the way you left; from there turn to the west (from the south one tap on the
+right, from the east two taps on either side, from the west none) and tap the middle of the door. A visit alone, or two of the three activities, leaves the door shut: a tap on it
+does nothing.
+
+Proven by `tests/test_bedsit_play.gd` (the running scene, by taps through the dispatcher: all four facings, each rave's threshold and home again with the facing kept, the way out hit
+at its screen position after one rave's three activities and not before) and by the virtual run `tools/dev/bedsit_virtual_run.gd` (right, right, top into Magic, home, the facing
+checked in the save file):
+
+    bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tests/run_tests.gd -- --filter bedsit
+    bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/dev/bedsit_virtual_run.gd

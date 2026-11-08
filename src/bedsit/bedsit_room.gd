@@ -18,6 +18,7 @@ const TURN_BARS := BedsitNav.TURN_BARS  # one bar
 const HOLD_BARS := 16.0  # after a turn (and from a scene start) the camera holds still: a whole scene's length, renewed by the next turn
 const WAY_OUT := "bedsit.way_out"
 const THRESHOLD_PREFIX := "bedsit.threshold_"
+const START_FACING_ENV := "RW_BEDSIT_FACING"  # N, E, S or W: the run's first bedsit scene starts facing that way (written to the save like a turn); unset: the save's (a new run: north)
 
 var scene: Node = null  # RunPlay
 var active := false
@@ -82,6 +83,8 @@ func enter(node_id: String, t0: float) -> void:
 	active = true
 	world = str(node["map"])
 	scene.world_regions = regions()
+	if not was and int(scene.engine.phase_n) == 1 and OS.get_environment(START_FACING_ENV) in RaveSave.FACINGS:  # (tools\dev\play_bedsit.cmd E: start facing east, a development aid)
+		Session.run_progress.set_bedsit_facing(OS.get_environment(START_FACING_ENV))
 	facing = BedsitNav.facing_of(Session.run_progress.data)
 	_retarget(waypoint_of(facing), t0)
 	if not was:  # coming home (or the run's first scene): the camera faces the saved facing, cut while the passage frame is shut, and holds
