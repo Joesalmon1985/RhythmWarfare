@@ -61,6 +61,13 @@ static func packs_root() -> String:
 		d = PACKS_USER_DIR
 		if not DirAccess.dir_exists_absolute(PACKS_USER_DIR) and DirAccess.dir_exists_absolute(PACKS_BUNDLED_DIR):
 			d = PACKS_BUNDLED_DIR  # no packs pushed by hand: the ones inside the build
+	return _absolute(d)
+
+
+## A pack folder as the loaders want it: user:// and fixture res:// paths globalized to the disk, the bundled res://track_packs kept as res:// (inside an export it is not a disk folder; DirAccess, FileAccess and the Ogg loader read it through the pack).
+static func _absolute(d: String) -> String:
+	if d == PACKS_BUNDLED_DIR or d.begins_with(PACKS_BUNDLED_DIR + "/"):
+		return d
 	return ProjectSettings.globalize_path(d) if d.begins_with("res://") or d.begins_with("user://") else d
 
 
@@ -79,7 +86,7 @@ static func attach(d: RunData) -> void:
 static func load_for(d: RunData, json_path: String, p_packs_dir: String) -> RunTrackScenes:
 	var ts := RunTrackScenes.new()
 	ts.path_key = d.path_id if d.path_id != "" else MAIN_KEY
-	ts.packs_dir = ProjectSettings.globalize_path(p_packs_dir) if p_packs_dir.begins_with("res://") or p_packs_dir.begins_with("user://") else p_packs_dir
+	ts.packs_dir = _absolute(p_packs_dir)
 	ts.seed_value = d.seed_value
 	var where := json_path.get_file()
 	var v: Variant = JSON.parse_string(FileAccess.get_file_as_string(json_path)) if FileAccess.file_exists(json_path) else null
