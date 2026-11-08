@@ -629,6 +629,55 @@
    }
   },
   {
+   "id": "jerusalem.golgotha.back",
+   "world": "jerusalem",
+   "scene": "jerusalem.golgotha",
+   "map": "jerusalem",
+   "anchor": {
+    "pos": [
+     58.5,
+     1.5,
+     -6.6
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.trial"
+   },
+   "on_failure": {
+    "route": "jerusalem.trial",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "gospel.return",
    "world": "jerusalem",
    "scene": "jerusalem.golgotha",
@@ -796,6 +845,110 @@
    }
   },
   {
+   "id": "jerusalem.tomb.restart",
+   "world": "jerusalem",
+   "scene": "jerusalem.tomb",
+   "map": "jerusalem",
+   "anchor": {
+    "pos": [
+     76.5,
+     1.5,
+     -6.6
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jordan",
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ]
+   },
+   "on_failure": {
+    "route": "jordan",
+    "energy": -4,
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ]
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "jerusalem.tomb.back",
+   "world": "jerusalem",
+   "scene": "jerusalem.tomb",
+   "map": "jerusalem",
+   "anchor": {
+    "pos": [
+     76.5,
+     1.5,
+     -6.6
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.golgotha"
+   },
+   "on_failure": {
+    "route": "jerusalem.golgotha",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "gospel.return",
    "world": "jerusalem",
    "scene": "jerusalem.tomb",
@@ -957,6 +1110,110 @@
    },
    "show": {
     "archetype": "figure"
+   }
+  },
+  {
+   "id": "jerusalem.road.restart",
+   "world": "jerusalem",
+   "scene": "jerusalem.road",
+   "map": "jerusalem",
+   "anchor": {
+    "pos": [
+     94.5,
+     1.5,
+     -6.6
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jordan",
+    "flags_set": [
+     "keep:path_gospel_road"
+    ]
+   },
+   "on_failure": {
+    "route": "jordan",
+    "energy": -4,
+    "flags_set": [
+     "keep:path_gospel_road"
+    ]
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "jerusalem.road.back",
+   "world": "jerusalem",
+   "scene": "jerusalem.road",
+   "map": "jerusalem",
+   "anchor": {
+    "pos": [
+     94.5,
+     1.5,
+     -6.6
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.trial"
+   },
+   "on_failure": {
+    "route": "jerusalem.trial",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {

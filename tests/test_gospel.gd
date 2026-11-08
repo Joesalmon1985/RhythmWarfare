@@ -63,7 +63,7 @@ func test_every_scene_has_cast_and_every_character_hotspot_has_its_acting() -> v
 		var n: Dictionary = d.nodes[sid]
 		assert_true((n.get("cast", []) as Array).size() >= 2 or sid == "jerusalem.golgotha", "%s has cast lines" % sid)
 		var shown := d.hotspots_of(sid)
-		assert_true(shown.size() >= 2 and shown.size() <= 4, "%s: %d hotspots" % [sid, shown.size()])
+		assert_true(shown.size() >= 2 and shown.size() <= 5, "%s: %d hotspots (an ending: its way back, its restart and its back route besides its own)" % [sid, shown.size()])
 		for h in shown:
 			if str(h["kind"]) == "character":
 				var act: Dictionary = h.get("acting", {})

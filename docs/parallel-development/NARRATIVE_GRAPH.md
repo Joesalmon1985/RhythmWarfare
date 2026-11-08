@@ -107,6 +107,12 @@ Hub-to-hub links (the owner's decision 3). All four are **proposed**:
 | `main/hospital` | `main/ward` | `hospital.to_ward` | A door to the old wing, a sign half scratched off |
 | `main/ward` | `main/hospital` | `ward.to_hospital` | A door to the general ward with a window of clean light |
 
+**Built (shared wiring step, 7 November 2026).** The four hub links, the 31 `to_hub` ways back (`<scene>.to_hub`, a late world's scenes back to its location's hub), the
+Floor's four entrances (the hatch and the three copies, with heralds; the originals keep their gates in the data for now), the 5 `restart` and 2 second routes, back routes
+for the 7 path scenes that needed a third destination (tools/run/path_routes.py; the general `back` rule of 79 edges stays proposed) and the Bassment's own way back from 56
+passages (tools/trial/returns.py) are in the content and marked `existing` in the overlay; `RunData._validate_hub_route` accepts the hub routes. The tables below keep
+their design-time status column.
+
 With these links a run can visit all five locations: Warehouse, Alien Spaceship, Hell, Hospital Ward, Mental Hospital.
 The mainline has no route back to the Warehouse. That is the owner's decision (no new routes beyond the paired links), and the check
 confirms it (rule 4).

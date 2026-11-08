@@ -21,6 +21,7 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 import staging_data  # noqa: E402
 import returns_common  # noqa: E402  (the staging of a path's return object, N2.5)
+import path_routes  # noqa: E402  (the staging of a path's restart, second route and back objects)
 
 
 def files() -> list:
@@ -46,6 +47,8 @@ def staging_archetype(h: dict) -> str:
 def show_of(h: dict) -> dict:
     """The `show` block a row gets by default (ChoiceShow.default_archetype)."""
     own = returns_common.show_of(h["id"])
+    if own is None:
+        own = path_routes.show_of(h["id"])
     if own is not None:
         return own
     hb = h.get("herald")
@@ -68,6 +71,8 @@ def main(argv: list) -> int:
             want = staging_data.STAGING.get(h["id"])
             if want is None:
                 want = returns_common.staging_of(h["id"])
+            if want is None:
+                want = path_routes.staging_of(h["id"])
             if want is not None:
                 seen.add(h["id"])
             if want is None and "staging" in h:

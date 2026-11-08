@@ -421,6 +421,14 @@
      "to": 10,
      "phrase": "p_d1",
      "exit_wp": "to_stairs"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "way_up_3",
+     "return": true
     }
    ],
    "map": "bassment_hatch",
@@ -446,6 +454,14 @@
      "to": 8,
      "phrase": "p_d1",
      "exit_wp": "lost_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "edge_past",
+     "return": true
     }
    ],
    "map": "bassment_cables",
@@ -477,6 +493,14 @@
       "fail": 6
      },
      "exit_wp": "dash"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "gap",
+     "return": true
     }
    ],
    "map": "bassment_cables",
@@ -498,6 +522,14 @@
      "consequence": "You are a little crispier, but you can walk.",
      "default": true,
      "exit_wp": "past_junction"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "gap",
+     "return": true
     }
    ],
    "map": "bassment_cables",
@@ -547,6 +579,14 @@
      "consequence": "You pull the door shut on the dust.",
      "default": true,
      "exit_wp": "door_out"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "lamp_stand",
+     "return": true
     }
    ],
    "map": "bassment_cloakroom",
@@ -596,6 +636,14 @@
      "to": 11,
      "phrase": "p_d1",
      "exit_wp": "valve_wheel"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "edge_in",
+     "return": true
     }
    ],
    "map": "bassment_boiler",
@@ -617,6 +665,14 @@
      "consequence": "The eel looks a little less certain of itself.",
      "default": true,
      "exit_wp": "wade_in"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "pipe_climb",
+     "return": true
     }
    ],
    "map": "bassment_boiler",
@@ -649,6 +705,14 @@
       "fail": 13
      },
      "exit_wp": "pipe_climb"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "pipe_climb",
+     "return": true
     }
    ],
    "map": "bassment_boiler",
@@ -714,6 +778,14 @@
      "to": 18,
      "phrase": "p_b2",
      "exit_wp": "terrace_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "cellar_door",
+     "return": true
     }
    ],
    "map": "bassment_stacks",
@@ -739,6 +811,14 @@
      "to": 17,
      "phrase": "p_d2",
      "exit_wp": "crack_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "crack_foot",
+     "return": true
     }
    ],
    "map": "bassment_stacks",
@@ -763,6 +843,14 @@
      "phrase": "p_d2",
      "default": true,
      "exit_wp": "cellar_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "crack_foot",
+     "return": true
     }
    ],
    "map": "bassment_stacks",
@@ -790,6 +878,14 @@
      "phrase": "p_d2",
      "default": true,
      "exit_wp": "ledge_steps"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "way_up_18",
+     "return": true
     }
    ],
    "map": "bassment_stacks",
@@ -809,6 +905,14 @@
      "phrase": "p_d2",
      "default": true,
      "exit_wp": "stairs_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_in",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -847,6 +951,14 @@
      "to": 21,
      "phrase": "p_d2",
      "exit_wp": "bar_stool"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "bar_turn",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -868,6 +980,14 @@
      "consequence": "You push back the stool.",
      "default": true,
      "exit_wp": "bar_turn"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "barrel_row",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -916,6 +1036,14 @@
      "consequence": "The lamp throws a gold circle on the floor ahead.",
      "requires": "lamp",
      "exit_wp": "arch_far"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "arch_far",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -937,6 +1065,14 @@
      "phrase": "p_d2",
      "default": true,
      "exit_wp": "arch_far"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "trapdoor_foot",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -959,6 +1095,14 @@
      "consequence": "You have skipped the whole fungus farm.",
      "default": true,
      "exit_wp": "back_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "trapdoor_foot",
+     "return": true
     }
    ],
    "map": "bassment_cellar",
@@ -984,6 +1128,14 @@
      "to": 27,
      "phrase": "p_b2",
      "exit_wp": "cap_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "pond_edge",
+     "return": true
     }
    ],
    "map": "bassment_fungus",
@@ -1005,6 +1157,14 @@
      "consequence": "Your head still hums.",
      "default": true,
      "exit_wp": "pond_edge"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "haze_bank",
+     "return": true
     }
    ],
    "map": "bassment_fungus",
@@ -1032,6 +1192,14 @@
      "to": 27,
      "phrase": "p_d2",
      "exit_wp": "haze_bank"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "pond_edge",
+     "return": true
     }
    ],
    "map": "bassment_fungus",
@@ -1052,6 +1220,14 @@
      "consequence": "The green light fades below you.",
      "default": true,
      "exit_wp": "stairs_top"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "way_up_29",
+     "return": true
     }
    ],
    "map": "bassment_fungus",
@@ -1077,6 +1253,14 @@
      "to": 31,
      "phrase": "p_d3",
      "exit_wp": "wave_panel"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "twin_stand",
+     "return": true
     }
    ],
    "map": "bassment_mirrors",
@@ -1098,6 +1282,14 @@
      "consequence": "The stair brings you out behind the twin, who has not noticed you yet.",
      "default": true,
      "exit_wp": "aisle_mid"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "wave_panel",
+     "return": true
     }
    ],
    "map": "bassment_mirrors",
@@ -1130,6 +1322,14 @@
       "fail": 33
      },
      "exit_wp": "mirror_right"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "twin_stand",
+     "return": true
     }
    ],
    "map": "bassment_mirrors",
@@ -1195,6 +1395,14 @@
      "to": 36,
      "phrase": "p_d3",
      "exit_wp": "brink_east"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "way_up_35",
+     "return": true
     }
    ],
    "map": "bassment_pit",
@@ -1216,6 +1424,14 @@
      "consequence": "It might be worth a look down there.",
      "default": true,
      "exit_wp": "rope_head"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "ledge_door",
+     "return": true
     }
    ],
    "map": "bassment_pit",
@@ -1247,6 +1463,14 @@
       "fail": 39
      },
      "exit_wp": "ledge_rope"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "ledge_rope",
+     "return": true
     }
    ],
    "map": "bassment_pit",
@@ -1327,6 +1551,14 @@
      "to": 41,
      "phrase": "p_d3",
      "exit_wp": "shelf_mouth"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "velvet_gap",
+     "return": true
     }
    ],
    "map": "bassment_vaults",
@@ -1348,6 +1580,14 @@
      "consequence": "'Name on the list?'",
      "default": true,
      "exit_wp": "shelf_mouth"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "velvet_gap",
+     "return": true
     }
    ],
    "map": "bassment_vaults",
@@ -1373,6 +1613,14 @@
      "to": 48,
      "phrase": "p_d3",
      "exit_wp": "hot_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "vault_way_up",
+     "return": true
     }
    ],
    "map": "bassment_vaults",
@@ -1398,6 +1646,14 @@
      "to": 44,
      "phrase": "p_b3",
      "exit_wp": "dry_mouth"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "throne_foot",
+     "return": true
     }
    ],
    "map": "bassment_warren",
@@ -1419,6 +1675,14 @@
      "consequence": "Nobody has noticed you yet.",
      "default": true,
      "exit_wp": "dry_mouth"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "tunnel_bend",
+     "return": true
     }
    ],
    "map": "bassment_warren",
@@ -1446,6 +1710,14 @@
      "to": 46,
      "phrase": "p_d3",
      "exit_wp": "tribute_pile"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "throne_foot",
+     "return": true
     }
    ],
    "map": "bassment_warren",
@@ -1467,6 +1739,14 @@
      "consequence": "The king licks its crown, unbothered.",
      "default": true,
      "exit_wp": "court_floor"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "tunnel_bend",
+     "return": true
     }
    ],
    "map": "bassment_warren",
@@ -1487,6 +1767,14 @@
      "consequence": "The squeaks fade behind you.",
      "default": true,
      "exit_wp": "gnawed_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "tribute_pile",
+     "return": true
     }
    ],
    "map": "bassment_warren",
@@ -1521,6 +1809,14 @@
      "phrase": "p_d4",
      "consequence": "The imp watches your hand closely, and hopefully.",
      "exit_wp": "recipe_stand"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "counter_front",
+     "return": true
     }
    ],
    "map": "bassment_kitchens",
@@ -1542,6 +1838,14 @@
      "consequence": "The imp is still juggling.",
      "default": true,
      "exit_wp": "freezer_hatch"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "counter_front",
+     "return": true
     }
    ],
    "map": "bassment_kitchens",
@@ -1582,6 +1886,14 @@
      "consequence": "The heat falls away behind you.",
      "default": true,
      "exit_wp": "cold_back_door"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "way_up_51",
+     "return": true
     }
    ],
    "map": "bassment_kitchens",
@@ -1615,6 +1927,14 @@
      "consequence": "The note runs down the row and every statue shivers in tune.",
      "requires": "fork",
      "exit_wp": "hall_seam_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_seam_foot",
+     "return": true
     }
    ],
    "map": "bassment_hall",
@@ -1636,6 +1956,14 @@
      "consequence": "You have a feeling you will need that.",
      "default": true,
      "exit_wp": "hall_aisle_walk"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_statue_foot",
+     "return": true
     }
    ],
    "map": "bassment_hall",
@@ -1658,6 +1986,14 @@
      "consequence": "You have walked right past the gargoyle.",
      "default": true,
      "exit_wp": "hall_seam_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_way_up",
+     "return": true
     }
    ],
    "map": "bassment_hall",
@@ -1690,6 +2026,14 @@
       "fail": 56
      },
      "exit_wp": "hall_wall_creep"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_gargoyle_floor",
+     "return": true
     }
    ],
    "map": "bassment_hall",
@@ -1711,6 +2055,14 @@
      "consequence": "The gargoyle settles back on its haunches.",
      "default": true,
      "exit_wp": "hall_gargoyle_floor"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "hall_wall_creep",
+     "return": true
     }
    ],
    "map": "bassment_hall",
@@ -1735,6 +2087,14 @@
       "fail": 58
      },
      "exit_wp": "door_foot"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "door_foot",
+     "return": true
     }
    ],
    "map": "bassment_door",
@@ -1756,6 +2116,14 @@
      "consequence": "You roll your shoulders and listen.",
      "default": true,
      "exit_wp": "door_foot_left"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "door_foot",
+     "return": true
     }
    ],
    "map": "bassment_door",
@@ -1783,6 +2151,14 @@
      "to": 60,
      "phrase": "p_d1",
      "exit_wp": "echo_still"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "echo_way_up",
+     "return": true
     }
    ],
    "map": "bassment_echo",
@@ -1823,6 +2199,14 @@
      "consequence": "Your legs ache pleasantly.",
      "default": true,
      "exit_wp": "dawn_turn"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "dawn_landing_bench",
+     "return": true
     }
    ],
    "map": "bassment_dawn",
@@ -1850,6 +2234,14 @@
      "phrase": "p_d2",
      "consequence": "'No,' says the wizard, and holds the door.",
      "exit_wp": "dawn_landing_bench"
+    },
+    {
+     "label": "Climb back up to the hub",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "exit_wp": "car_park_out",
+     "return": true
     }
    ],
    "map": "bassment_dawn",

@@ -125,11 +125,16 @@ if s:
         if place not in allowed:
             bad("rail place %s is not on the rails of %s" % (place, node))
     blocks = len(s["rail"])
-    if s["glances"] < blocks:
-        bad("%d glances for %d blocks (every block needs one)" % (s["glances"], blocks))
+    # a block at a choice viewpoint holds still through the window (ruling 35a: RunJourney emits player_hold), a glance that would fall in a move's hold is left out (RunRail._in_hold), and a block
+    # withheld from the journey (a trial, a minigame, a claim) has none: by design, counted as the summary's holds and glance_skips
+    holds = int(s.get("holds", 0))
+    skips = s.get("glance_skips", {})
+    print("glance accounting: %d glances, %d choice holds, skips %s, for %d blocks" % (s["glances"], holds, json.dumps(skips, sort_keys=True), blocks))
+    if s["glances"] + holds + sum(int(v) for v in skips.values()) < blocks:
+        bad("%d glances, %d choice holds and %d designed skips for %d blocks (every block needs a glance, or a hold or skip by design)" % (s["glances"], holds, sum(int(v) for v in skips.values()), blocks))
     if blocks and s["moves"] < 1:
         bad("no journey moves")
-    print("levels:", " > ".join(s["nodes"]), "| rail stops:", len(s["rail"]), "| moves %d glances %d strolls %d | stages %s | worlds %s" % (s["moves"], s["glances"], s["strolls"], ",".join(sorted(s["worlds"])), ">".join(s["worlds_seen"])))
+    print("levels:", " > ".join(s["nodes"]), "| rail stops:", len(s["rail"]), "| moves %d glances %d choice holds %d (still, no glance: ruling 35a) strolls %d | stages %s | worlds %s" % (s["moves"], s["glances"], int(s.get("holds", 0)), s["strolls"], ",".join(sorted(s["worlds"])), ">".join(s["worlds_seen"])))
     print("rail:", " ".join(x.split(":", 1)[1] for x in s["rail"][:16]), "..." if len(s["rail"]) > 16 else "")
 if over:
     print("the run ended at phase %s on %s" % over.groups())

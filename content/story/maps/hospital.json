@@ -443,7 +443,17 @@
   {"id": "quiet_door", "at": [14.2, 3.8], "yaw": 0, "sector": "quiet"},
   {"id": "bandstand_front", "at": [62.4, -1.8], "yaw": 90, "sector": "bandstand"},
   {"id": "bandstand_door_l", "at": [59.8, -1.8], "yaw": -90, "sector": "bandstand"},
-  {"id": "bandstand_door_r", "at": [59.8, 3.8], "yaw": -90, "sector": "bandstand"}
+  {"id": "bandstand_door_r", "at": [59.8, 3.8], "yaw": -90, "sector": "bandstand"},
+  {"id": "ward_old_wing", "at": [-3.85, 2.05], "yaw": -90, "sector": "ward"},
+  {"id": "back_hospital_corridor", "at": [16.75, 1.9], "yaw": -90, "sector": "corridor"},
+  {"id": "back_hospital_dayroom", "at": [26.3, -4.95], "yaw": 180, "sector": "dayroom"},
+  {"id": "back_hospital_cafeteria", "at": [45.5, -4.95], "yaw": -90, "sector": "cafeteria"},
+  {"id": "back_hospital_garden", "at": [54.1, 3.3], "yaw": 90, "sector": "garden"},
+  {"id": "back_hospital_exit", "at": [57.95, 4.45], "yaw": -90, "sector": "garden"},
+  {"id": "back_hospital_late", "at": [48.1, -5.2], "yaw": 90, "sector": "garden"},
+  {"id": "back_hospital_late_cafe", "at": [33.85, -0.65], "yaw": -90, "sector": "cafeteria"},
+  {"id": "back_hospital_late_quiet", "at": [14.9, 5.1], "yaw": 180, "sector": "quiet"},
+  {"id": "back_hospital_late_exit", "at": [57.5, 3.5], "yaw": -90, "sector": "garden"}
  ],
  "spots": {
   "door": {"sector": "ward", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},

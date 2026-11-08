@@ -88,6 +88,237 @@
    }
   },
   {
+   "id": "warehouse.enter_bassment",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -5.0,
+     1.0,
+     3.25
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     -3.7,
+     3.3
+    ],
+    "toward": [
+     -5.0,
+     3.25
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "warehouse.enter_squadron",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -4.5,
+     1.0,
+     4.75
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_squadron_free"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     -3.2,
+     4.9
+    ],
+    "toward": [
+     -4.5,
+     4.75
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "warehouse.enter_ember",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -3.75,
+     1.0,
+     6.25
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_ember_kept",
+      "keep:path_ember_quenched"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     -2.45,
+     6.0
+    ],
+    "toward": [
+     -3.75,
+     6.25
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "warehouse.enter_gospel",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -2.75,
+     1.0,
+     7.5
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_gospel_road",
+      "keep:path_gospel_tomb"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     -4.0,
+     8.1
+    ],
+    "toward": [
+     -2.75,
+     7.5
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "warehouse.wizard",
    "world": "warehouse",
    "scene": "warehouse",
@@ -369,6 +600,43 @@
    }
   },
   {
+   "id": "warehouse.bar.to_hub",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "back_warehouse_bar"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse"
+   },
+   "on_failure": {
+    "route": "warehouse",
+    "cinematic": "warehouse.stagger_bar_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "warehouse.bar.bartender",
    "world": "warehouse",
    "scene": "warehouse.bar",
@@ -609,6 +877,43 @@
    }
   },
   {
+   "id": "warehouse.balcony.to_hub",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "back_warehouse_balcony"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse"
+   },
+   "on_failure": {
+    "route": "warehouse",
+    "cinematic": "warehouse.stagger_balcony_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "warehouse.balcony.rail",
    "world": "warehouse",
    "scene": "warehouse.balcony",
@@ -781,6 +1086,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "warehouse.chill.to_hub",
+   "world": "warehouse",
+   "scene": "warehouse.chill",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "back_warehouse_chill"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse"
+   },
+   "on_failure": {
+    "route": "warehouse",
+    "cinematic": "warehouse.stagger_chill_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -978,6 +1320,43 @@
    }
   },
   {
+   "id": "warehouse.booth.to_hub",
+   "world": "warehouse",
+   "scene": "warehouse.booth",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "back_warehouse_booth"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse"
+   },
+   "on_failure": {
+    "route": "warehouse",
+    "cinematic": "warehouse.stagger_booth_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "warehouse.booth.decks",
    "world": "warehouse",
    "scene": "warehouse.booth",
@@ -1147,6 +1526,43 @@
    "on_failure": {
     "route": "underworld",
     "cinematic": "warehouse.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "warehouse.exit.to_hub",
+   "world": "warehouse",
+   "scene": "warehouse.exit",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "back_warehouse_exit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse"
+   },
+   "on_failure": {
+    "route": "warehouse",
+    "cinematic": "warehouse.stagger_exit_hub",
     "energy": -5
    },
    "default": false,

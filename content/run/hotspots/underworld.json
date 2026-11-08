@@ -76,6 +76,43 @@
    }
   },
   {
+   "id": "underworld.to_mothership",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "arena_beam"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "underworld.stagger_entry_link",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "underworld.bouncer",
    "world": "underworld",
    "scene": "underworld",
@@ -320,6 +357,43 @@
    }
   },
   {
+   "id": "underworld.court.to_hub",
+   "world": "underworld",
+   "scene": "underworld.court",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "back_underworld_court"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "underworld.stagger_court_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "underworld.court.seal",
    "world": "underworld",
    "scene": "underworld.court",
@@ -477,6 +551,43 @@
    }
   },
   {
+   "id": "underworld.furnace.to_hub",
+   "world": "underworld",
+   "scene": "underworld.furnace",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "back_underworld_furnace"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "underworld.stagger_furnace_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "underworld.furnace.anvil",
    "world": "underworld",
    "scene": "underworld.furnace",
@@ -588,6 +699,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "underworld.pit.to_hub",
+   "world": "underworld",
+   "scene": "underworld.pit",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "back_underworld_pit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "underworld.stagger_pit_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -742,6 +890,43 @@
    "on_failure": {
     "route": "ward",
     "cinematic": "underworld.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "underworld.exit.to_hub",
+   "world": "underworld",
+   "scene": "underworld.exit",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "back_underworld_exit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "underworld.stagger_exit_hub",
     "energy": -5
    },
    "default": false,

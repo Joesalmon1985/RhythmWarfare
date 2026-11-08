@@ -76,6 +76,43 @@
    }
   },
   {
+   "id": "ward_late.to_hub",
+   "world": "ward_late",
+   "scene": "ward_late",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "back_ward_late"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "ward_late.stagger_entry_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "ward_late.stage_lamp",
    "world": "ward_late",
    "scene": "ward_late",
@@ -182,6 +219,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "ward_late.treat.to_hub",
+   "world": "ward_late",
+   "scene": "ward_late.treat",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "back_ward_late_treat"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "ward_late.stagger_treat_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -331,6 +405,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "ward_late.dorm.to_hub",
+   "world": "ward_late",
+   "scene": "ward_late.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "back_ward_late_dorm"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "ward_late.stagger_dorm_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -523,6 +634,43 @@
    }
   },
   {
+   "id": "ward_late.exit.to_hub",
+   "world": "ward_late",
+   "scene": "ward_late.exit",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "back_ward_late_exit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "ward_late.stagger_exit_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "ward_late.exit.stare",
    "world": "ward_late",
    "scene": "ward_late.exit",
@@ -598,6 +746,110 @@
    },
    "show": {
     "archetype": "figure"
+   }
+  },
+  {
+   "id": "ward_late.treat.enter_bassment",
+   "world": "ward_late",
+   "scene": "ward_late.treat",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     16.4,
+     1.1,
+     11.8
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     14.8,
+     11.9
+    ],
+    "toward": [
+     16.4,
+     11.8
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "ward_late.dorm.enter_gospel",
+   "world": "ward_late",
+   "scene": "ward_late.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     28.8,
+     1.1,
+     8.3
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     29.2,
+     10.0
+    ],
+    "toward": [
+     28.8,
+     8.3
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

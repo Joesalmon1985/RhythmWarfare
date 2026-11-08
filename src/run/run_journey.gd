@@ -31,6 +31,7 @@ const HERALD_TURN_BARS := 1.0
 const HERALD_MAX_LOOKS := 3
 
 var look_heralds := true  # the heralds' look and the window's herald points (the tests turn it off to see the rail's own camera)
+var glance_skips: Dictionary = {}  # why a block got no glance of its own -> count (RunRail.last_skip; tools/run/walk_run.sh prints it)
 var _herald_blocks: Dictionary = {}  # block -> true: the blocks of this phase whose glance a herald look replaces
 static var _maps: Dictionary = {}
 
@@ -47,7 +48,8 @@ func on_event(ev: Dictionary, engine: RunEngine) -> Array:
 		"block_result":
 			out = _block_result(ev, engine)
 		"lap_start":  # the same scene again, the rail where it has got to: only the glance and the stroll of the lap's first block
-			out = _tag(rail.ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
+			_herald_blocks = {}  # the heralds' look is the scene's opening (its first lap): a later lap's blocks keep their own glances
+			out = _tag(_ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
 	actions.append_array(out)
 	return out
 
@@ -90,7 +92,7 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 	door_target = ""
 	leaving = false
 	var looks := herald_looks(id, t0, engine)
-	out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
+	out.append_array(_without_glance(_ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
 	out.append_array(looks)
 	node_id = id
 	world = w
@@ -252,8 +254,16 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 		if not face.is_empty():
 			out.append(window_face(face, float(ev["t"]), engine))
 		else:
-			out.append_array(_without_glance(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
+			out.append_array(_without_glance(_ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
 	return _tag(out, world)
+
+
+## The rail's glance and stroll of a block, with the reason tallied when the rail gives no glance.
+func _ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
+	var out := rail.ambient(t_block, phase_n, block, notes)
+	if rail.last_skip != "":
+		glance_skips[rail.last_skip] = int(glance_skips.get(rail.last_skip, 0)) + 1
+	return out
 
 
 ## The map of a run node (the heralds' points need its floors), loaded once.
@@ -279,7 +289,8 @@ func staged_heralds(id: String, engine: RunEngine) -> Array:
 
 
 ## The heralds' opening look (the visibility rule, docs/art/HERALDS.md): one `face` look a staged entrance, in blocks 0, 1 and 2 of the phase starting at `t0`, holding the entrance,
-## its mark and its herald in the picture from wherever the rail is (StoryPlayer.best_facing). Data only: the herald block's points, never a hand-tuned angle.
+## its mark and its herald in the picture from wherever the rail is (StoryPlayer.best_facing), and the other staged entrances with it where they fit (their points, not kept). Data only:
+## the herald blocks' points, never a hand-tuned angle. The turn stops short of a near wall (StoryPlayer.herald_cap) and never starts in a door walk's last beat.
 func herald_looks(id: String, t0: float, engine: RunEngine) -> Array:
 	_herald_blocks = {}
 	var out: Array = []
@@ -289,13 +300,22 @@ func herald_looks(id: String, t0: float, engine: RunEngine) -> Array:
 	var heralds := staged_heralds(id, engine)
 	var beat := engine.beat_s
 	var bb := float(engine.timing("block_beats"))
-	var bars := (HERALD_LOOK_TO - HERALD_LOOK_FROM) * beat / rail.bar_s()
 	for i in mini(heralds.size(), HERALD_MAX_LOOKS):
 		var pts := StoryHeralds.look_points(heralds[i], m)
 		if pts.is_empty():
 			continue
+		for k in heralds.size():  # a scene with more entrances than one look a block plus the window can show (the Floor: four gates and its wizard): the others ride along, not kept
+			if k != i and heralds.size() > HERALD_MAX_LOOKS + 1:
+				pts.append_array(StoryHeralds.look_points(heralds[k], m, 0.0))
+		var t_look := t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat
+		var t_end := t0 + (float(i) * bb + HERALD_LOOK_TO) * beat
+		if rail != null and rail.busy_until > t_look and rail.busy_until - t_look <= beat:  # never start in a door walk's last beat: the walk turns the body to its arrival yaw there (docs/art/CAMERA_CLEARANCE.md, "The herald look")
+			t_look = rail.busy_until
+		var b := (t_end - t_look) / rail.bar_s()
+		if b <= HERALD_TURN_BARS:  # no room for the look: the block keeps its own glance
+			continue
 		_herald_blocks[i] = true
-		out.append({"t0": t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat, "action": "player_look", "args": {"face": pts, "bars": bars, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
+		out.append({"t0": t_look, "action": "player_look", "args": {"face": pts, "bars": b, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
 	return out
 
 
@@ -316,6 +336,33 @@ func window_face(pts: Array, t: float, engine: RunEngine) -> Dictionary:
 	return {"t0": t, "action": "player_look", "args": {"face": with_heralds(pts, engine), "bars": (t_end - t) / bar, "turn_bars": turn / bar, "release_bars": release / bar}}
 
 
+## The window look's weights (docs/art/HERALDS.md, the window rule): of the groups of choices the head can hold with the default exit, the one holding the most weight is framed. A quest
+## entrance weighs WINDOW_ENTRANCE_W, a way back (a path's `<quest>.return`, a scene's `<scene>.to_hub`) WINDOW_RETURN_W, every other choice 1: a way back never pulls the picture off the
+## quest entrances, and it is framed beside them when it fits (its placement keeps it in the picture at the window: tests/test_heralds_view.gd).
+const WINDOW_ENTRANCE_W := 2.0
+const WINDOW_RETURN_W := 0.5
+
+
+static func is_way_back(h: Dictionary) -> bool:
+	var id := str(h.get("id", ""))
+	return id.ends_with(".return") or id.ends_with(".to_hub")
+
+
+## The window look's points [[x, z, keep (the default), height, weight], ...] of hotspot rows `rows` (RunHotspots.shown in the last block): the rows on show in the final window, resolved
+## on map `m` (and the crowd, for a person); the run scene (RunPlay._window_face) and the tests that replay its journey build the same list here.
+static func window_points(rows: Array, m: StoryMap, crowds: Variant = {}) -> Array:
+	var pts: Array = []
+	for h in rows:
+		if RunHotspots.window_of(h) != "final":
+			continue
+		var r := HotspotView.resolve(h["anchor"], m, crowds)
+		if bool(r["ok"]):
+			var p: Vector3 = r["pos"]
+			var w := WINDOW_ENTRANCE_W if (h as Dictionary).has("herald") else (WINDOW_RETURN_W if is_way_back(h) else 1.0)
+			pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y, w])
+	return pts
+
+
 ## The window's points with the herald of every quest entrance on show in the window added (where it stands, not kept: the default exit still decides the group, and of the
 ## groups holding it the one with the entrance and its herald counts one more, so it is framed whenever it fits beside the default).
 func with_heralds(pts: Array, engine: RunEngine) -> Array:
@@ -327,5 +374,9 @@ func with_heralds(pts: Array, engine: RunEngine) -> Array:
 		if (h as Dictionary).has("herald") and RunHotspots.window_of(h) == "final":
 			var hp := StoryHeralds.look_points(h["herald"], m, 0.0)
 			if hp.size() >= 3:
-				out.append(hp[2])  # (the herald's feet: one point, like every option, so the window never trades the other choices for the herald)
+				var q: Array = (hp[2] as Array).duplicate()
+				while q.size() < 4:
+					q.append(NAN if q.size() == 3 else 0.0)
+				q.append(WINDOW_ENTRANCE_W)
+				out.append(q)  # (the herald's feet: one point, weighing what its entrance weighs, so the window frames the pair whenever it fits beside the default)
 	return out

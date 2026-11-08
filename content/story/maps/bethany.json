@@ -12,6 +12,7 @@
   "thing_basket_full": "textures/thing_basket_full.png",
   "thing_bush": "textures/thing_bush.png",
   "thing_citygate": "textures/thing_citygate.png",
+  "thing_crenels": "textures/thing_crenels.png",
   "thing_donkey": "textures/thing_donkey.png",
   "thing_flowers": "textures/thing_flowers.png",
   "thing_grass": "textures/thing_grass.png",
@@ -59,11 +60,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 2.8,
    "floor_tex": "floor_clay",
    "ceil_tex": "sky",
    "wall_tex": "wall_mudbrick",
-   "light": 0.74,
+   "light": 0.64,
    "tint": "#fff0d0",
    "room": "main",
    "flags": [],
@@ -92,7 +93,8 @@
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
-   }
+   },
+   "ambient": 0.45
   },
   {
    "id": "hill_dusk",
@@ -115,11 +117,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_grass",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.58,
+   "light": 0.54,
    "tint": "#ff9a60",
    "room": "hill_dusk",
    "flags": [],
@@ -175,7 +177,7 @@
    "floor_tex": "floor_road",
    "ceil_tex": "sky",
    "wall_tex": "wall_limestone",
-   "light": 0.74,
+   "light": 0.64,
    "tint": "#fff0d0",
    "room": "gate",
    "flags": [],
@@ -204,7 +206,8 @@
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
-   }
+   },
+   "ambient": 0.45
   },
   {
    "id": "bethany_spine",
@@ -573,6 +576,19 @@
    "size": 0.5
   },
   {
+   "id": "courtyard.sunlt",
+   "kind": "light",
+   "at": [
+    0.0,
+    -6.5
+   ],
+   "y": 5.0,
+   "radius": 12.5,
+   "color": "#ffe6b8",
+   "strength": 1.7,
+   "sector": "courtyard"
+  },
+  {
    "id": "hill_dusk.basket1",
    "sprite": "thing_basket",
    "at": [
@@ -785,6 +801,39 @@
     -2.4
    ],
    "size": 0.7
+  },
+  {
+   "id": "gate.crenA",
+   "sprite": "thing_crenels",
+   "at": [
+    32.0,
+    -11.96
+   ],
+   "size": 0.5,
+   "y": 4.75
+  },
+  {
+   "id": "gate.crenB",
+   "sprite": "thing_crenels",
+   "at": [
+    40.0,
+    -11.96
+   ],
+   "size": 0.5,
+   "y": 4.75
+  },
+  {
+   "id": "gate.sunlt",
+   "kind": "light",
+   "at": [
+    36.0,
+    -6.5
+   ],
+   "y": 5.0,
+   "radius": 12.5,
+   "color": "#ffe6b8",
+   "strength": 1.7,
+   "sector": "gate"
   }
  ],
  "homes": [
@@ -1299,6 +1348,8 @@
  "sky": {
   "tex": "textures/sky_day.png",
   "mode": "cylinder",
+  "repeats": 1,
+  "horizon": 0.75,
   "by_name": {
    "day": "textures/sky_day.png",
    "dusk": "textures/sky_dusk.png"

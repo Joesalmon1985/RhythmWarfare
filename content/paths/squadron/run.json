@@ -1853,6 +1853,19 @@
      "to": "run:warehouse",
      "dir": "up",
      "label": "Back to the Warehouse"
+    },
+    {
+     "to": "base",
+     "dir": "restart",
+     "label": "Back to the base, the missions again",
+     "restart": true
+    },
+    {
+     "to": "escape.c12",
+     "dir": "back",
+     "label": "Back to the quay",
+     "back": true,
+     "loop": true
     }
    ],
    "cast": [
@@ -1956,7 +1969,9 @@
       }
      ],
      "exits": {
-      "up": "c13_x_up"
+      "up": "c13_x_up",
+      "restart": "c13_x_up",
+      "back": "c13_x_up"
      }
     }
    },

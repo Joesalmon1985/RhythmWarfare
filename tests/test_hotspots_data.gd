@@ -87,7 +87,13 @@ func test_the_two_to_eight_rule_and_the_single_default() -> void:  # (N2.1: the 
 	var nine: Array = eight.duplicate(true)
 	nine.append(_hs({"anchor": {"waypoint": "stage"}}, "n8"))
 	d = _load_with(nine)
-	assert_true(_has_error(d, "9 hotspots are available at the start; a scene shows 2 to 8"), str(d.errors))
+	assert_false(_has_error(d, "hotspots are available at the start"), "the Floor is a hub: its max_hotspots 10 lets nine on show (lead ruling 16): " + str(d.errors))
+	var eleven: Array = nine.duplicate(true)
+	eleven.append(_hs({"anchor": {"waypoint": "steps"}}, "n9"))
+	eleven.append(_hs({"anchor": {"waypoint": "to_bar"}}, "n10"))
+	d = _load_with(eleven)
+	assert_true(_has_error(d, "11 hotspots are available at the start; a scene shows 2 to 10"), str(d.errors))
+	assert_eq(int(RunData.load_default().nodes["warehouse.bar"].get("max_hotspots", HotspotContract.MAX_PER_SCENE)), HotspotContract.MAX_PER_SCENE, "a scene that is not a hub keeps the cap of 8")
 	var two_defaults := _good_list()
 	two_defaults[1]["default"] = true
 	d = _load_with(two_defaults)
@@ -208,7 +214,7 @@ func _th(extra: Dictionary = {}, id := "a") -> Dictionary:
 
 func test_the_bassment_loads_passage_keyed_hotspots() -> void:
 	var td := _trial_load([_th(), _th({"anchor": {"waypoint": "chalk_wall"}, "on_success": {"route": "2"}, "default": false}, "b")])
-	assert_eq(td.errors, [], "passage 1: the ladder (the default) and the chalk")
+	assert_eq(td.errors, [], "passage 1: the ladder (the default) and the chalk (it has no way back up: tools/trial/return_spots.json)")
 	assert_eq(td.hotspots_of(1).size(), 2)
 	assert_eq(td.hotspots_of(2).size(), 0, "a passage with none authored has none")
 	assert_eq(td.hotspots_of(1)[0]["world"], "bassment")
