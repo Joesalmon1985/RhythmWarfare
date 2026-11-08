@@ -169,7 +169,11 @@
    "scene": "bedsit",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_s"
+    "pos": [
+     -1.9,
+     1.35,
+     0.6
+    ]
    },
    "kind": "exit",
    "radius_m": 1.0,
