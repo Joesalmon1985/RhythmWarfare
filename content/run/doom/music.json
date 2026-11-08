@@ -1,0 +1,92 @@
+{
+ "nodes": [
+  {
+   "id": "doom_warehouse",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_booth",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_bar",
+   "arrangement": "warehouse_1",
+   "slot": 1,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": true
+  },
+  {
+   "id": "doom_lounge",
+   "arrangement": "warehouse_1",
+   "slot": 3,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_dock",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_underworld",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_mothership",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_balcony",
+   "arrangement": "warehouse_1",
+   "slot": 2,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  }
+ ]
+}

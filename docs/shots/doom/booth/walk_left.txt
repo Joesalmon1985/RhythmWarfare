@@ -1,0 +1,14 @@
+MOVE bt_bal_top via=6 length=16.4
+WALK left 0 t=0.00 @0.500:-1.900:0.0:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK left 1 t=0.63 @0.451:-2.278:3.2:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK left 2 t=1.25 @0.316:-3.315:7.2:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK left 3 t=1.88 @0.115:-4.864:7.4:0.0:1.597 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK left 4 t=2.51 @-0.134:-6.778:7.4:0.0:1.584 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK left 5 t=3.13 @-0.411:-8.913:31.0:0.0:1.574 sector=0_0 ground=0.000 above=1.57 still=0.00
+WALK left 6 t=3.76 @-2.030:-9.696:80.3:0.0:1.574 sector=4_0 ground=0.000 above=1.57 still=0.00
+WALK left 7 t=4.39 @-4.181:-9.750:89.4:0.0:1.584 sector=5_0 ground=0.000 above=1.58 still=0.00
+WALK left 8 t=5.02 @-6.111:-9.750:92.1:0.0:1.894 sector=8_0 ground=0.297 above=1.63 still=0.00
+WALK left 9 t=5.64 @-7.673:-9.750:120.9:0.0:2.344 sector=9_0 ground=0.750 above=1.59 still=0.00
+WALK left 10 t=6.27 @-8.719:-9.750:160.2:0.0:2.709 sector=10_0 ground=1.116 above=1.62 still=0.00
+WALK left 11 t=6.90 @-9.100:-9.750:180.0:0.0:2.725 sector=10_0 ground=1.125 above=1.60 still=0.00
+HOLD bt_bal_top 1.0 moved=0.0028 turned=0.000

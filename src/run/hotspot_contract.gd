@@ -71,7 +71,7 @@ static func map_index(map_id: String) -> Dictionary:
 	if _maps.has(map_id):
 		return _maps[map_id]
 	var idx := {"ok": false, "waypoints": {}, "things": {}, "actors": {}, "sectors": [], "pieces": {}}
-	var path: String = StoryMap.PATH % map_id
+	var path: String = StoryMap.path_of(map_id)
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
 	if typeof(parsed) == TYPE_DICTIONARY:
 		idx["ok"] = true

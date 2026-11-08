@@ -1,0 +1,14 @@
+MOVE bc_bridge_end via=5 length=13.3
+WALK up 0 t=0.00 @0.500:-1.900:0.8:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK up 1 t=0.63 @0.441:-2.205:5.2:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK up 2 t=1.25 @0.280:-3.042:8.9:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK up 3 t=1.88 @0.040:-4.293:6.0:0.0:1.597 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK up 4 t=2.51 @0.000:-5.864:1.7:0.0:1.584 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK up 5 t=3.13 @0.000:-7.619:0.0:0.0:1.574 sector=0_0 ground=0.000 above=1.57 still=0.00
+WALK up 6 t=3.76 @0.000:-9.434:0.0:0.0:1.574 sector=9_0 ground=0.000 above=1.57 still=0.00
+WALK up 7 t=4.39 @0.000:-11.189:0.0:0.0:1.584 sector=11_0 ground=0.000 above=1.58 still=0.00
+WALK up 8 t=5.02 @0.000:-12.763:-0.1:0.0:1.597 sector=12_0 ground=0.000 above=1.60 still=0.00
+WALK up 9 t=5.64 @0.000:-14.037:-2.1:0.0:1.594 sector=12_0 ground=0.000 above=1.59 still=0.00
+WALK up 10 t=6.27 @0.000:-14.889:-4.7:0.0:1.594 sector=12_0 ground=0.000 above=1.59 still=0.00
+WALK up 11 t=6.90 @0.000:-15.200:-6.0:0.0:1.600 sector=12_0 ground=0.000 above=1.60 still=0.00
+HOLD bc_bridge_end 1.0 moved=0.0028 turned=0.000

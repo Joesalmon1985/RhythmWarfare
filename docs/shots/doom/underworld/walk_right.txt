@@ -1,0 +1,14 @@
+MOVE uw_shelf_end via=4 length=21.9
+WALK right 0 t=0.00 @1.000:-0.600:8.0:0.0:2.100 sector=0_0 ground=0.500 above=1.60 still=0.00
+WALK right 1 t=0.63 @1.490:-0.740:-27.4:0.0:2.094 sector=0_0 ground=0.500 above=1.59 still=0.00
+WALK right 2 t=1.25 @2.832:-1.123:-72.1:0.0:1.674 sector=2_0 ground=0.081 above=1.55 still=0.00
+WALK right 3 t=1.88 @4.837:-1.696:-71.8:0.0:1.597 sector=2_0 ground=0.000 above=1.60 still=0.00
+WALK right 4 t=2.51 @6.703:-2.938:-27.4:0.0:1.724 sector=2_0 ground=0.140 above=1.57 still=0.00
+WALK right 5 t=3.13 @7.100:-5.785:-2.1:0.0:2.325 sector=10_0 ground=0.750 above=1.57 still=0.00
+WALK right 6 t=3.76 @6.797:-8.714:5.5:0.0:3.074 sector=12_0 ground=1.500 above=1.57 still=0.00
+WALK right 7 t=4.39 @6.955:-11.534:-10.3:0.0:3.084 sector=13_0 ground=1.500 above=1.58 still=0.00
+WALK right 8 t=5.02 @7.471:-14.060:-57.5:0.0:3.097 sector=13_0 ground=1.500 above=1.60 still=0.00
+WALK right 9 t=5.64 @9.267:-13.392:-88.0:0.0:3.094 sector=13_0 ground=1.500 above=1.59 still=0.00
+WALK right 10 t=6.27 @10.537:-12.812:-55.5:0.0:3.094 sector=13_0 ground=1.500 above=1.59 still=0.00
+WALK right 11 t=6.90 @11.000:-12.600:-38.9:0.0:3.100 sector=13_0 ground=1.500 above=1.60 still=0.00
+HOLD uw_shelf_end 1.0 moved=0.0028 turned=0.000

@@ -1,0 +1,714 @@
+{
+ "id": "doom_balcony",
+ "title": "Doom Balcony",
+ "chapter": 1,
+ "music_pack": "res://songs/story_n1_warehouse",
+ "music_packs": [
+  "res://songs/story_n1_warehouse",
+  "res://songs/story_night_one_1",
+  "res://songs/story_night_one_2"
+ ],
+ "description": "Your first set. A quiet club, a full night ahead: open the room, find the groove, peak it, then close it.",
+ "duration_bars": 128,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Opening the room",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Finding the groove",
+   "start_bar": 33
+  },
+  {
+   "id": "III",
+   "title": "The peak",
+   "start_bar": 65
+  },
+  {
+   "id": "IV",
+   "title": "Closing the night",
+   "start_bar": 97
+  }
+ ],
+ "blocks": [
+  {
+   "id": "doors_open",
+   "title": "Doors open",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    }
+   ]
+  },
+  {
+   "id": "first_groove",
+   "title": "First groove",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    }
+   ]
+  },
+  {
+   "id": "first_bass_reveal",
+   "title": "First bass reveal",
+   "act": "Act I",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    }
+   ]
+  },
+  {
+   "id": "dancers_arrive",
+   "title": "Dancers gather at the door",
+   "act": "Act I",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 25,
+     "action": "gather_at_door",
+     "group": "gatherers"
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 31,
+     "action": "led_rings"
+    }
+   ]
+  },
+  {
+   "id": "dance_circle_forms",
+   "title": "The dance circle forms",
+   "act": "Act II",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    }
+   ]
+  },
+  {
+   "id": "spotlight_pass",
+   "title": "Spotlight pass",
+   "act": "Act II",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 41,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 45,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    }
+   ]
+  },
+  {
+   "id": "group_footwork",
+   "title": "Group footwork",
+   "act": "Act II",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "group_footwork",
+     "group": "all",
+     "bars": 4,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 51,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 53,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    }
+   ]
+  },
+  {
+   "id": "big_cheer_or_setback",
+   "title": "First big cheer / setback",
+   "act": "Act II",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 59,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 61,
+     "action": "regroup"
+    },
+    {
+     "at_bar": 63,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "performer_on_riser",
+   "title": "Performer on the riser",
+   "act": "Act III",
+   "start_bar": 65,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 65,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 65,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 65,
+     "action": "hero_solo",
+     "bars": 6
+    },
+    {
+     "at_bar": 67,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 69,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 71,
+     "action": "beams_off"
+    }
+   ]
+  },
+  {
+   "id": "bass_heavy_light_wave",
+   "title": "Bass-heavy light wave",
+   "act": "Act III",
+   "start_bar": 73,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 75,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 77,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 79,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 79,
+     "action": "beams_fan"
+    }
+   ]
+  },
+  {
+   "id": "synchronized_claps",
+   "title": "Synchronised claps",
+   "act": "Act III",
+   "start_bar": 81,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 81,
+     "action": "clap_sync",
+     "bars": 4,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 83,
+     "action": "riser_down"
+    },
+    {
+     "at_bar": 85,
+     "action": "jump_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 65
+     },
+     "else": "group_footwork",
+     "group": "all"
+    },
+    {
+     "at_bar": 87,
+     "action": "led_bars"
+    }
+   ]
+  },
+  {
+   "id": "floor_ripple",
+   "title": "Floor ripple",
+   "act": "Act III",
+   "start_bar": 89,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 89,
+     "action": "floor_ripple",
+     "bars": 4
+    },
+    {
+     "at_bar": 91,
+     "action": "wave_across",
+     "bars": 3,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 93,
+     "action": "led_wave"
+    },
+    {
+     "at_bar": 95,
+     "action": "beams_fan"
+    }
+   ]
+  },
+  {
+   "id": "crowd_wide_hands_up",
+   "title": "Hands in the air",
+   "act": "Act IV",
+   "start_bar": 97,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 97,
+     "action": "hands_up_all",
+     "bars": 4,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 99,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 101,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 103,
+     "action": "spotlight_off"
+    }
+   ]
+  },
+  {
+   "id": "peak_rave_lighting",
+   "title": "Peak rave lighting",
+   "act": "Act IV",
+   "start_bar": 105,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 107,
+     "action": "rave_peak",
+     "bars": 6,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 109,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 111,
+     "action": "beams_cross"
+    }
+   ]
+  },
+  {
+   "id": "last_bass_flourish",
+   "title": "Last bass flourish",
+   "act": "Act IV",
+   "start_bar": 113,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 113,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 117,
+     "action": "jump_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 70
+     },
+     "else": "clap_sync"
+    },
+    {
+     "at_bar": 119,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "closing_tableau",
+   "title": "Closing tableau",
+   "act": "Act IV",
+   "start_bar": 121,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 121,
+     "action": "ending_lean"
+    },
+    {
+     "at_bar": 123,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 125,
+     "action": "beams_fan"
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "first_impression",
+   "title": "First impression",
+   "at_bar": 33,
+   "block": "dance_circle_forms",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 16,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause"
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    }
+   ],
+   "good_text": "The door crowd poured onto the floor.",
+   "bad_text": "A few dancers hung back at the edges."
+  },
+  {
+   "id": "spotlight_circle",
+   "title": "The spotlight circle",
+   "at_bar": 57,
+   "block": "big_cheer_or_setback",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer"
+   ],
+   "bad": [
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    }
+   ],
+   "good_text": "The hero took the spotlight and the circle erupted.",
+   "bad_text": "The circle fizzled out into an awkward silence."
+  },
+  {
+   "id": "big_drop",
+   "title": "The big drop",
+   "at_bar": 73,
+   "block": "bass_heavy_light_wave",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump"
+   ],
+   "bad": [
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "sick_beat",
+     "bars": 4,
+     "after_bars": 4
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 8
+    }
+   ],
+   "good_text": "The drop landed: the whole floor jumped as one.",
+   "bad_text": "The drop stumbled, but the set stayed alive."
+  },
+  {
+   "id": "final_push",
+   "title": "The final push",
+   "at_bar": 105,
+   "block": "peak_rave_lighting",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker"
+   ],
+   "good_text": "The room chanted for more.",
+   "bad_text": "The lights flickered and the floor thinned."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the floor back",
+   "at_bar": 115,
+   "block": "last_bass_flourish",
+   "kind": "winback",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer"
+   ],
+   "bad": [],
+   "good_text": "You won the floor back after a rough patch.",
+   "bad_text": ""
+  }
+ ],
+ "endings": {
+  "legendary_set": {
+   "title": "Legendary Set",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "The room roared. Hands in the air, lights at full power: a night nobody will forget.",
+   "journey": []
+  },
+  "good_night": {
+   "title": "Good Night",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "Happy dancing and warm applause. A solid set and a good night out.",
+   "journey": []
+  },
+  "lost_the_floor": {
+   "title": "Lost the Floor",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The floor drifted away, with sparse applause. Tomorrow's another night.",
+   "journey": []
+  }
+ },
+ "ending_order": [
+  "legendary_set",
+  "good_night",
+  "lost_the_floor"
+ ],
+ "groups": {
+  "circle": [],
+  "all": []
+ },
+ "actors": [],
+ "silhouettes": [],
+ "art": "night_one",
+ "intro": "Open the room."
+}

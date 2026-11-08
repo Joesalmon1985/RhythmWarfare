@@ -81,6 +81,8 @@ var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
 var journey_log: Array = []  # every journey action given to a stage: {world, t0, action, args}
 var _passage_swap := -1.0  # song time of the downbeat a world swap walks through (-1: none under way)
+var _swap_world := ""  # a world swap that waits for a walk-out still under way past the boundary (ruling 42, RunJourney.swap_t): the art world shown at `_swap_world_t`
+var _swap_world_t := -1.0
 var _door_phase := -1  # the phase whose door walk (a path inside the world) was started
 var _run_world := ""  # the run world of the phase before the current one (a change closes the passage frame)
 var _passage: RunPassageView
@@ -114,12 +116,17 @@ var director: TransitionDirector  # the transition seam (src/transition/transiti
 var _track_stay_phase := -1  # the phase whose open window is not the last lap's (route_window.last false): touching nothing stays, so no door shows the way out
 
 
+## (tests only: the run's data for the next scene instead of content/run/run.json, e.g. tests/test_geography.gd's fixture; read and cleared by _ready)
+static var data_for_test: RunData = null
+
+
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var want_path := OS.get_environment("RW_RUN_PATH") if OS.get_environment("RW_RUN_PATH") != "" else Session.run_start_path
 	Session.run_start_path = ""
 	playtest = PlaytestMode.consume_launch()
-	data = RunData.load_path(want_path) if want_path != "" else RunData.load_default()
+	data = data_for_test if data_for_test != null else (RunData.load_path(want_path) if want_path != "" else RunData.load_default())
+	data_for_test = null
 	if not data.errors.is_empty():
 		_fatal("The run data is invalid:\n" + "\n".join(PackedStringArray(data.errors)))
 		return
@@ -890,13 +897,18 @@ func _update_passage(t: float, audio_t: float) -> void:
 		if data.nodes.has(to0) and _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
 			for a in journey.leave_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), to0, engine):
 				_journey_apply(a)
-		elif data.nodes.has(to0) and to0 != engine.node_id and journey.threshold_of(engine.node_id, to0) != "":  # another world by a threshold (H1.6): walk there, then the frame and the swap
-			for a in journey.threshold_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), engine.t_of(64.0), journey.threshold_of(engine.node_id, to0)):
+		elif data.nodes.has(to0) and to0 != engine.node_id:  # another world by a threshold (H1.6): walk there (the route's polyline when the rail has one), then the frame and the swap
+			for a in journey.threshold_leave(engine.t_of(64.0 - RunPassage.DOOR_BEATS), engine.t_of(64.0), engine.node_id, to0):
 				_journey_apply(a)
 	if engine.exit_pending() and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
 		if not data.nodes.has(to) or _run_world_of(to) != _run_world_of(engine.node_id):  # another world, or out of this run (a portal, an ending's way back): the frame closes
-			_passage_swap = engine.t_of(64.0)
+			_passage_swap = maxf(engine.t_of(64.0), journey.cut_t)  # (on the boundary, or when a walk-out at a walking pace runs on past it, as its hold ends: RunJourney.cut_t)
+	if _swap_world != "" and audio_t >= _swap_world_t:  # the walk-out's hold is over: the frame is shut, the new world is shown
+		var sw := _swap_world
+		_swap_world = ""
+		if sw != active_world and stages.has(sw):
+			_show_world(sw)
 	if _passage_swap >= 0.0 and audio_t > _passage_swap + RunPassage.OPEN_BEATS * engine.beat_s + 0.5:
 		_passage_swap = -1.0
 	_passage.set_aperture(RunPassage.aperture(audio_t, _passage_swap, engine.beat_s))
@@ -1089,13 +1101,19 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var first := int(ev["phase"]) == 1
 	var world_key := "%s/%s" % [run_path, node["world"]]
 	var world_changed := not first and world_key != _run_world
+	var t_show := journey.swap_t if world_changed and journey.swap_t > t0 else t0  # (a walk-out still under way past the boundary: the new world is shown when its hold ends, ruling 42)
 	if world_changed or first:
-		hud.show_title("%s   LEVEL %d" % [str(node["world_title"]).to_upper(), int(ev["phase"])], str(node["title"]).to_upper(), t0)
+		hud.show_title("%s   LEVEL %d" % [str(node["world_title"]).to_upper(), int(ev["phase"])], str(node["title"]).to_upper(), t_show)
 	else:
 		hud.show_title(str(node["world_title"]).to_upper(), str(node["title"]).to_upper(), t0)
 	if world_changed and _passage_swap < 0.0:
-		_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
-	if world != active_world:
+		_passage_swap = t_show  # the route changed in the last two beats: the frame opens from shut on the new world
+	_swap_world = ""
+	if t_show > t0 and world != active_world:
+		_build_stage(world)
+		_swap_world = world
+		_swap_world_t = t_show
+	elif world != active_world:
 		_show_world(world)
 	_run_world = world_key
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
@@ -1109,7 +1127,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 	_apply_pieces(st, node.get("pieces", {}), t0, true)  # the scene's own set pieces: those it lists are on from its downbeat, every other piece of the stage is off
 	_stage_action(st, "lights_low_pulse", t0)
 	if not first:
-		_stage_action(st, "room_swell", t0)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
+		_stage_action(st, "room_swell", t_show)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
 	if int(ev["phase"]) == 1:
 		_stage_action(st, "doors_open", t0)
 
@@ -1348,7 +1366,7 @@ func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 8 pick th
 ## selection_open() holds, from the scene's first beat to the lock, in every lap; not only in the engine's route window.
 func hotspot_items() -> Array:
 	var out: Array = []
-	if hotspots == null or trial_state != "" or engine == null or minigames.active():  # minigames: the table's view owns the touches
+	if hotspots == null or trial_state != "" or engine == null or minigames.active() or _swap_world != "":  # minigames: the table's view owns the touches; (a walk-out still under way: the new scene is not shown yet)
 		return out
 	var now: float = hud.now_t
 	for h in hotspots.shown(engine.block, selection_open()):
@@ -1451,6 +1469,8 @@ func hotspot_select(id: String) -> bool:
 			"again": same, "from": prev})
 		if not same:
 			_choice_picked(id, prev)
+		if hotspots.selected == id:
+			engine.tap_commit(hud.now_t)  # (ruling 39: in a geography world a guide's tap is the decision; nothing for any other hotspot)
 	return ok
 
 
@@ -1822,6 +1842,7 @@ func _claim_frame(t: float, t_commit: float) -> void:
 	if pl == null:
 		return
 	pl.release_faces(t, 2.0 * engine.beat_s)  # the head held on the window's hotspots (the look-pass window camera) lets go: the table is what the touch is about
+	pl.drop_herald_looks_from(t)  # (the heralds' looks of the blocks still to come: the table must not be swung out of the picture)
 	var span := 4.0 * engine.beat_s
 	pl._glances = pl._glances.filter(func(g: Dictionary) -> bool: return float(g["t1"]) <= t or float(g["t0"]) >= t_commit + span)
 	for k in int(ceil(maxf(t_commit - t, 0.0) / span)) + 1:
@@ -1986,6 +2007,12 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)
+	if _door_phase != engine.phase_n and trial_state == "":  # a chosen route to another world (H1.6, the lead's ruling): the threshold walk starts at the commit; the lock then walks nothing more
+		var walk := journey.commit_walk(ev, engine)
+		for a in walk:
+			_journey_apply(a)
+		if not walk.is_empty():
+			_door_phase = engine.phase_n
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
 		_trial_entry = {"way": "legacy", "object": str(out["hotspot"])}  # (the wizard: committed to the route state when the trial begins, commit_legacy)
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard

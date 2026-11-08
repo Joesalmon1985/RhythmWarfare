@@ -37,6 +37,7 @@ var done_t := -1.0  # song time the last activity reported done
 var resume_t := -1.0  # replace mode: the block start judging resumes on (B1), -1 until the activity is done
 var lead_in_s := 0.0  # replace mode: the pads come back this long before resume_t
 var finish_t := -1.0  # song time the last activity was finished (the hold released): B1 for a replace activity
+var world_port: Object = null  # the room the activity stages itself through (CONTRACTS.md 10: a WorldThings, the run's RunWorldPort), handed over as ctx["world"]; null: none
 
 var _registry: Dictionary = {}  # id -> {script: GDScript | String, config: Dictionary}
 var _fails := 0
@@ -128,7 +129,10 @@ func request(id: String, t_commit: float, t_seat: float, exits: Array = [], req:
 	begin_t = -1.0
 	seat_t = t_seat
 	last_route = ""
-	activity.setup({"wallet": wallet, "seed": last_seed, "beat_s": engine.beat_s if engine != null else 60.0 / 174.0, "config": _config, "exits": exits, "request": req})
+	var ctx := {"wallet": wallet, "seed": last_seed, "beat_s": engine.beat_s if engine != null else 60.0 / 174.0, "config": _config, "exits": exits, "request": req}
+	if world_port != null:
+		ctx["world"] = world_port
+	activity.setup(ctx)
 	if engine != null:
 		engine.hold = true
 	state = "entering"

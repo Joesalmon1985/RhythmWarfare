@@ -1,0 +1,227 @@
+{
+	"note": "Test fixture of tests/test_geography.gd (the walk-out at a walking pace, LEAD_RULINGS 42): one open hall, 60 by 38 m, holding the waypoints of three one-scene geography worlds. From each choice viewpoint the routes' authored legs are straight segments of exact lengths: pace_a up 24 m (a_view, a_turn, a_out), pace_b up 5 m (b_view, b_turn, b_out), pace_b left 40 m (b_view, b_far, b_out_far), pace_c up 7 m (c_view, c_turn, c_out).",
+	"units_per_m": 1,
+	"eye_height": 1.6,
+	"start": "a_home",
+	"textures": {
+		"wall": "textures/wall_brick.png",
+		"floor": "textures/floor_carpet.png",
+		"ceil": "textures/ceil_low.png"
+	},
+	"sectors": [
+		{
+			"id": "hall",
+			"polygon": [
+				[
+					-30,
+					-26
+				],
+				[
+					30,
+					-26
+				],
+				[
+					30,
+					12
+				],
+				[
+					-30,
+					12
+				]
+			],
+			"floor": 0,
+			"ceiling": 6,
+			"floor_tex": "floor",
+			"ceil_tex": "ceil",
+			"wall_tex": "wall",
+			"room": "hall"
+		}
+	],
+	"walls": [],
+	"waypoints": [
+		{
+			"id": "a_home",
+			"at": [
+				0,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "a_view",
+			"at": [
+				0,
+				0
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "a_side",
+			"at": [
+				4,
+				6
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "a_door",
+			"at": [
+				-4,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "a_turn",
+			"at": [
+				0,
+				-12
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "a_out",
+			"at": [
+				12,
+				-12
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_home",
+			"at": [
+				10,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_view",
+			"at": [
+				10,
+				4
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_side",
+			"at": [
+				14,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_door",
+			"at": [
+				8,
+				10
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_turn",
+			"at": [
+				13,
+				4
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_out",
+			"at": [
+				13,
+				2
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_far",
+			"at": [
+				10,
+				-24
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "b_out_far",
+			"at": [
+				-2,
+				-24
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_home",
+			"at": [
+				-20,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_view",
+			"at": [
+				-20,
+				4
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_side",
+			"at": [
+				-24,
+				8
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_door",
+			"at": [
+				-22,
+				10
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_turn",
+			"at": [
+				-20,
+				0
+			],
+			"yaw": 0,
+			"sector": "hall"
+		},
+		{
+			"id": "c_out",
+			"at": [
+				-17,
+				0
+			],
+			"yaw": 0,
+			"sector": "hall"
+		}
+	],
+	"fog": {
+		"color": "#0a0618",
+		"density": 0.02
+	}
+}

@@ -1,0 +1,79 @@
+{
+	"note": "Test fixture of tests/test_geography.gd: three one-scene geography worlds (docs/engine/GEOGRAPHY_WORLDS.md) merged into the main run the way the Doom overlay is. The Floor leads up to the Bar and right to the Lounge; the Bar leads up back to the Floor and left to the Lounge; the Lounge leads up to the Floor and left to the Bar. Each scene stays by its `down` loop.",
+	"worlds": [
+		{"id": "geo_floor", "title": "Geo Floor", "map": "night_one", "depth": 1, "geography": true, "blurb": "The test floor."},
+		{"id": "geo_bar", "title": "Geo Bar", "map": "mothership", "depth": 2, "geography": true, "blurb": "The test bar."},
+		{"id": "geo_lounge", "title": "Geo Lounge", "map": "underworld", "depth": 2, "geography": true, "blurb": "The test lounge."}
+	],
+	"nodes": [
+		{
+			"id": "geo_floor", "world": "geo_floor", "scene": "floor", "title": "The Floor", "entry": true, "exit_scene": true, "role": "dancer", "blurb": "The test floor.",
+			"next": [
+				{"to": "geo_floor", "dir": "down", "label": "Stay on the floor", "loop": true},
+				{"to": "geo_bar", "dir": "up", "label": "Up to the bar"},
+				{"to": "geo_lounge", "dir": "right", "label": "Through to the lounge"}
+			],
+			"place": {
+				"waypoint": "floor_centre",
+				"rail": {
+					"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3, "hold_bars": 3, "choice": true}],
+					"bad": [{"to": "floor_edge", "role": "queasy", "style": "walk", "bars": 2}],
+					"arrive": "door",
+					"exits": {"down": "floor_centre", "up": "to_balcony", "right": "to_bar"},
+					"routes": {
+						"up": {"to": "to_balcony", "via": ["floor_edge"], "style": "walk", "bars": 2, "hold_bars": 1},
+						"right": {"to": "to_bar", "via": ["floor_bar"], "style": "walk", "bars": 2, "hold_bars": 1}
+					},
+					"glances": [{"by": -20, "bars": 2}, {"by": 18, "bars": 2}],
+					"strolls": [{"fwd": 1.0, "bars": 3}]
+				}
+			}
+		},
+		{
+			"id": "geo_bar", "world": "geo_bar", "scene": "bar", "title": "The Bar", "entry": true, "exit_scene": true, "role": "dancer", "blurb": "The test bar.",
+			"next": [
+				{"to": "geo_bar", "dir": "down", "label": "Stay at the bar", "loop": true},
+				{"to": "geo_floor", "dir": "up", "label": "Back to the floor"},
+				{"to": "geo_lounge", "dir": "left", "label": "Round to the lounge"}
+			],
+			"place": {
+				"waypoint": "deck_centre",
+				"rail": {
+					"good": [{"to": "deck_ramp", "role": "dancer", "style": "walk", "bars": 3}],
+					"bad": [{"to": "deck_edge", "role": "queasy", "style": "walk", "bars": 2}],
+					"arrive": "deck_gallery_door",
+					"exits": {"down": "deck_centre", "up": "deck_reactor_door", "left": "deck_edge"},
+					"routes": {
+						"up": {"to": "deck_reactor_door", "via": ["deck_gallery_door"], "style": "walk", "bars": 2, "hold_bars": 1},
+						"left": {"to": "deck_edge", "via": ["deck_ramp"], "style": "walk", "bars": 3}
+					},
+					"glances": [{"by": -20, "bars": 2}, {"by": 18, "bars": 2}],
+					"strolls": [{"fwd": 1.0, "bars": 3}]
+				}
+			}
+		},
+		{
+			"id": "geo_lounge", "world": "geo_lounge", "scene": "lounge", "title": "The Lounge", "entry": true, "exit_scene": true, "role": "dancer", "blurb": "The test lounge.",
+			"next": [
+				{"to": "geo_lounge", "dir": "down", "label": "Stay in the lounge", "loop": true},
+				{"to": "geo_floor", "dir": "up", "label": "Back to the floor"},
+				{"to": "geo_bar", "dir": "left", "label": "Across to the bar"}
+			],
+			"place": {
+				"waypoint": "arena_floor",
+				"rail": {
+					"good": [{"to": "arena_tier_r", "role": "dancer", "style": "walk", "bars": 3}],
+					"bad": [{"to": "arena_edge", "role": "queasy", "style": "walk", "bars": 2}],
+					"arrive": "arena_edge",
+					"exits": {"down": "arena_floor", "up": "arena_gate", "left": "arena_tier_l"},
+					"routes": {
+						"up": {"to": "arena_gate", "via": ["arena_tier_r"], "style": "walk", "bars": 3, "hold_bars": 1},
+						"left": {"to": "arena_tier_l", "via": ["arena_edge"], "style": "walk", "bars": 2}
+					},
+					"glances": [{"by": -20, "bars": 2}, {"by": 18, "bars": 2}],
+					"strolls": [{"fwd": 1.0, "bars": 3}]
+				}
+			}
+		}
+	]
+}

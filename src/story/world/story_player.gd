@@ -24,6 +24,7 @@ const PATH_TURN_IN := 0.2
 const PATH_TURN_OUT := 0.3
 const PATH_LOOK_M := 2.0
 const PATH_BOB := 0.6
+const PITCH_HOLD_MAX := 35.0  # degrees: the most a held pitch (player_hold `pitch`) tips, as a glance
 
 var map: StoryMap
 var bpm := 174.0
@@ -39,6 +40,7 @@ var _sick: Array = []  # {t0, t1}
 var _glances: Array = []  # {t0, t1, by, pitch}: authored head turns (yaw `by` and/or pitch up) on top of the rail's facing
 var _faces: Array = []  # {t0, t1, pts: [Vector4 (x, z, 1 for the one to keep, height or NAN)], turn_s, release_s}: the head held on points of the room (player_look `face`), whatever the rail does underneath
 var _holds: Array = []  # {t0, t1}: the camera stands still (no bob, no drift, no glance), eased in and out over a beat inside the span: a leg's `hold_bars`, player_hold
+var _pitch_holds: Array = []  # {t0, t1, pitch, window}: a choice viewpoint's authored steady pitch (player_hold `pitch`, degrees, negative down), tipped in over the beat before t0, held, eased out over the last beat
 var start_at := ""  # a waypoint the rail starts at instead of the map's start (StoryRailCheck plays a move from any place)
 var _seq := 0
 var _face_memo := {"t": NAN}  # the last face facing worked out ({t, yaw}): pose_at is asked for the same t several times a frame
@@ -58,6 +60,7 @@ func reset() -> void:
 	_glances = []
 	_faces = []
 	_holds = []
+	_pitch_holds = []
 	_face_memo = {"t": NAN}
 	_seq = 0
 	errors = []
@@ -84,11 +87,15 @@ func apply_action(a: Dictionary) -> bool:
 			var via := via_of(args)
 			if not via.is_empty():  # a polyline: straight legs through these waypoints, then `to`
 				mv["via"] = via
+			if bool(args.get("threshold", false)):  # a walk out to another world (H1.6, ruling 39): a choice window's hold under way gives way to it, eased out over a beat
+				end_window_holds(t0)
 			if float(args.get("hold_bars", 0.0)) > 0.0:  # standing still at the end of the leg
 				_holds.append({"t0": float(mv["t1"]), "t1": float(mv["t1"]) + float(args["hold_bars"]) * bar_s()})
 			_add(mv)
-		"player_hold":  # the camera stands still: a choice window
-			_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001)})
+		"player_hold":  # the camera stands still: a choice window (`hold: "window"`, which a threshold walk may end early: end_window_holds)
+			_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "window": str(args.get("hold", "")) == "window"})
+			if float(args.get("pitch", 0.0)) != 0.0:  # a steady pitch held through the hold (a choice viewpoint looking down at its feature, RunRail place `pitch`): no bob, no drift
+				_pitch_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "pitch": clampf(float(args["pitch"]), -PITCH_HOLD_MAX, PITCH_HOLD_MAX), "window": str(args.get("hold", "")) == "window"})
 		"player_walk":  # a walk inside a room (relative to where the rail is when it starts): see _plan_walk
 			_add({"kind": "move", "walk": args.duplicate(), "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
@@ -428,6 +435,44 @@ func move_plan(t: float) -> Dictionary:
 	return ev if not ev.is_empty() and ev["kind"] == "move" else {}
 
 
+## Every choice window's hold (`player_hold` with `hold: "window"`) still under way at `t` ends one beat after it (still_at eases it out over that beat); one that has not begun is dropped.
+func end_window_holds(t: float) -> void:
+	var beat := 60.0 / bpm
+	var keep: Array = []
+	for h in _holds:
+		if bool(h.get("window", false)) and float(h["t1"]) > t:
+			if float(h["t0"]) >= t:
+				continue
+			h["t1"] = minf(float(h["t1"]), t + beat)
+		keep.append(h)
+	_holds = keep
+	var keep_p: Array = []
+	for h in _pitch_holds:  # (the held pitch eases out over the same beat; one that has not started tipping in is dropped)
+		if bool(h.get("window", false)) and float(h["t1"]) > t:
+			if float(h["t0"]) - beat >= t:
+				continue
+			h["t1"] = minf(float(h["t1"]), t + beat)
+		keep_p.append(h)
+	_pitch_holds = keep_p
+
+
+## The steady pitch (degrees, negative down) a hold with `pitch` gives at t: tipped in over the beat before the hold starts (so it is whole when the window opens), held, eased out
+## over the hold's last beat (or the beat after a threshold walk ends it); 0 outside. The latest hold in force wins.
+func held_pitch_at(t: float) -> float:
+	var beat := 60.0 / bpm
+	var out := 0.0
+	for h in _pitch_holds:
+		var t0 := float(h["t0"])
+		var t1 := float(h["t1"])
+		if t < t0 - beat or t > t1:
+			continue
+		var w := minf(_smooth((t - t0 + beat) / beat), _smooth((t1 - t) / beat))
+		if cut:
+			w = 0.0 if w < 0.5 else 1.0
+		out = float(h["pitch"]) * w
+	return out
+
+
 ## How still the camera is at t: 1 inside a hold (a leg's hold_bars, a player_hold), easing in and out over a beat inside its span; 0 elsewhere.
 func still_at(t: float) -> float:
 	var w := 0.0
@@ -673,6 +718,12 @@ func release_faces(t: float, over_s: float) -> void:
 	_face_memo = {"t": NAN}
 
 
+## Drops the heralds' looks (`herald`: the scene opening's turns to the quest entrances) that have not begun by `t`: a claim that takes the camera to a table keeps the table in the picture, a later block's herald look must not swing it away.
+func drop_herald_looks_from(t: float) -> void:
+	_faces = _faces.filter(func(f: Dictionary) -> bool: return not (bool(f.get("herald", false)) and float(f["t0"]) >= t))
+	_face_memo = {"t": NAN}
+
+
 ## How much a held `face` look owns the head at t (0 none, 1 fully on its points) and the points: {w, pts}. The latest one that is active wins.
 func face_at(t: float) -> Dictionary:
 	var out := {"w": 0.0, "pts": []}
@@ -746,6 +797,7 @@ func pose_at(t: float) -> Dictionary:
 	var rail_yaw := float(st["yaw"]) + glance
 	var yaw := rail_yaw
 	var face_pitch := 0.0
+	var held := held_pitch_at(t) if not _pitch_holds.is_empty() else 0.0
 	if not _faces.is_empty():
 		var fc := face_at(t)
 		var fy := NAN
@@ -763,8 +815,9 @@ func pose_at(t: float) -> Dictionary:
 				fw = float(_face_memo["cap"])
 			yaw = _lerp_yaw(yaw, fy, fw)
 			face_pitch = face_tip(fc["pts"], st["pos"], fy, float(st["ground"]) + map.eye_height) * fw
+			held *= 1.0 - fw  # (a look on points owns the pitch while it holds them; the head comes back to the held pitch as it hands back)
 	yaw += drift.x
-	var pitch := glance_pitch + drift.y + face_pitch
+	var pitch := glance_pitch + drift.y + face_pitch + held
 	var pos: Vector2 = st["pos"]
 	var ground := float(st["ground"])
 	var eye := ground + map.eye_height + bob.y - CROUCH_M * sick

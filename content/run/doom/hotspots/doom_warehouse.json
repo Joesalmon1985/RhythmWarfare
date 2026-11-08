@@ -1,0 +1,283 @@
+{
+ "world": "doom_warehouse",
+ "hotspots": [
+  {
+   "id": "doom_warehouse.exit_balcony",
+   "world": "doom_warehouse",
+   "scene": "doom_warehouse",
+   "map": "doom_warehouse",
+   "anchor": {
+    "thing": "wh_guide_stage"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_balcony"
+   },
+   "on_failure": {
+    "route": "doom_balcony",
+    "cinematic": "doom_warehouse.stagger_balcony",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "wh_guide_stage",
+       "sprite": "guide_stage_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "wh_guide_stage",
+       "sprite": "guide_stage_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "wh_guide_stage",
+       "sprite": "guide_stage_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "wh_guide_stage",
+       "sprite": "guide_stage_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "wh_guide_stage",
+       "sprite": "guide_stage_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_warehouse.exit_bar",
+   "world": "doom_warehouse",
+   "scene": "doom_warehouse",
+   "map": "doom_warehouse",
+   "anchor": {
+    "thing": "wh_guide_bar"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_bar"
+   },
+   "on_failure": {
+    "route": "doom_bar",
+    "cinematic": "doom_warehouse.stagger_bar",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "wh_guide_bar",
+       "sprite": "guide_bar_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "wh_guide_bar",
+       "sprite": "guide_bar_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "wh_guide_bar",
+       "sprite": "guide_bar_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "wh_guide_bar",
+       "sprite": "guide_bar_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "wh_guide_bar",
+       "sprite": "guide_bar_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_warehouse.exit_lounge",
+   "world": "doom_warehouse",
+   "scene": "doom_warehouse",
+   "map": "doom_warehouse",
+   "anchor": {
+    "thing": "wh_guide_lounge"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_lounge"
+   },
+   "on_failure": {
+    "route": "doom_lounge",
+    "cinematic": "doom_warehouse.stagger_lounge",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "wh_guide_lounge",
+       "sprite": "guide_lounge_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "wh_guide_lounge",
+       "sprite": "guide_lounge_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "wh_guide_lounge",
+       "sprite": "guide_lounge_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "wh_guide_lounge",
+       "sprite": "guide_lounge_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "wh_guide_lounge",
+       "sprite": "guide_lounge_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_warehouse.exit_stay",
+   "world": "doom_warehouse",
+   "scene": "doom_warehouse",
+   "map": "doom_warehouse",
+   "anchor": {
+    "pos": [
+     -17.7,
+     0.4,
+     17.05
+    ]
+   },
+   "kind": "exit",
+   "radius_m": 1.4,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_warehouse"
+   },
+   "on_failure": {
+    "route": "doom_warehouse",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "staging": {
+    "archetype": "none",
+    "touch": {
+     "w": 2.6,
+     "h": 1.4
+    }
+   }
+  }
+ ]
+}

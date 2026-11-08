@@ -52,6 +52,7 @@ var world: StoryWorld
 var free_look := StoryFreeLook.new()
 var world_active := false
 var fx3d: StoryWorldFx  # the light show in the 3D world (beams, pools, haze, LED, tiles, ...)
+var weather: StoryWeather  # rain, drips and wet floors in the 3D world (hook H10); null on a map without weather
 var _overlay: CanvasLayer
 var _vis: Dictionary = {}
 var _vis_geo: Dictionary = {}
@@ -163,20 +164,31 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	fx3d = StoryWorldFx.new()
 	world.add_child(fx3d)
 	fx3d.build(self, map, assets, world)
+	if StoryWeather.wanted(map):  # (a map without weather gets no node: it draws exactly what it drew before)
+		weather = StoryWeather.new()
+		world.add_child(weather)
+		weather.build(self, map, world)
 	for id in crowds:
 		(crowds[id] as StoryCrowd).tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 		(crowds[id] as StoryCrowd).light_fn = _figure_light
+	if world.dynamic != null:  # an activity's things stand with the crowd (H8.1): same overlay, same light, one sort
+		world.dynamic.light_fn = _figure_light
+		world.dynamic.high_contrast = high_contrast
+		_overlay.add_child(world.dynamic)
+		world.dynamic.set_things(_things)
 	var ppl: StoryPeople = (crowds["main"] as StoryCrowd).people
 	if ppl != null:
 		ppl.set_fog(Color.html(str(map.fog.get("color", "#08051a"))).darkened(0.35))
 	world_active = true
-	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx hides those parts to measure what each costs
+	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx,weather hides those parts to measure what each costs
 	if "crowd" in hide:
 		_overlay.visible = false
 	if "world" in hide:
 		world.visible = false
 	if "fx" in hide:
 		fx3d.visible = false
+	if "weather" in hide and weather != null:
+		weather.visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
 
 
@@ -363,9 +375,13 @@ func update(t: float, p_energy: float) -> void:
 				world.set_atmosphere(map.sector(_vis_sec))
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
+		if world_active and world.dynamic != null:
+			world.dynamic.set_camera(ppose, size, _vis)
 	_sec_light = {}
 	if world_active:  # the world first: the figures are lit by this frame's light
 		_update_world(t, p_energy, pose)
+		if world.dynamic != null:
+			world.dynamic.update(t)
 	for id in crowds:  # every room's crowd lives on; only the camera decides what is seen
 		var c: StoryCrowd = crowds[id]
 		c.reduced = reduced
@@ -379,8 +395,8 @@ func update(t: float, p_energy: float) -> void:
 	queue_redraw()
 
 
-## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
-## at an absolute ground point (any sector). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
+## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>[:<eye y>]]
+## at an absolute ground point (any sector; the eye at the sector's floor plus the eye height unless an absolute eye y is given: tools/doom/shoot_scene.py walk). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
 var _cam_override: String = OS.get_environment("RW_STORY_CAM")
 
 
@@ -400,6 +416,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	var yaw := 0.0
 	var pitch := 0.0
 	var sec := ""
+	var eye_y := NAN
 	if _cam_override.begins_with("actor:"):  # RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]]: the camera stands that far from the person (their current place), on the side the rail's camera stands, facing them
 		var q := _cam_override.substr(6).split(":")
 		var found: Variant = _person_pos(q[0])
@@ -454,6 +471,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 		at = Vector2(float(q[0]), float(q[1]))
 		yaw = float(q[2])
 		pitch = float(q[3]) if q.size() > 3 else 0.0
+		eye_y = float(q[4]) if q.size() > 4 else NAN
 		sec = map.sector_at(at)
 	else:
 		var parts := _cam_override.split(",")
@@ -473,7 +491,7 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	out["ground"] = ground
 	out["yaw"] = yaw
 	out["pitch"] = pitch
-	out["cam"] = Vector3(at.x, ground + map.eye_height, at.y)
+	out["cam"] = Vector3(at.x, ground + map.eye_height if is_nan(eye_y) else eye_y, at.y)
 	out["roll"] = 0.0
 	out["moving"] = false
 	var room := map.room_of(sec)
@@ -496,8 +514,13 @@ func _person_pos(id: String) -> Variant:
 func _order_crowds() -> void:
 	var keys: Array = []
 	var nodes: Array = []
+	var lists: Array = []
 	for id in crowds:
-		for it in (crowds[id] as StoryCrowd).sort_items:
+		lists.append((crowds[id] as StoryCrowd).sort_items)
+	if world_active and world.dynamic != null:
+		lists.append(world.dynamic.sort_items)  # the activity's things (H8.1) sort with the people
+	for l: Array in lists:
+		for it in l:
 			nodes.append(it[1])
 			keys.append((int(it[0]) << 12) | (nodes.size() - 1))
 	keys.sort()
@@ -527,6 +550,8 @@ func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": people_gain(t)}  # (the room swell and a darkening sky light the room as they light the people)
 	world.update(t, _world_ctx)
 	fx3d.update(t)
+	if weather != null:  # on the stage's clock: a paused song holds the rain still
+		weather.update(t, lowres.camera, world.light_of(map.sector(str(pose.get("sector", ""))), t, _world_ctx) if map.sector(str(pose.get("sector", ""))).size() > 0 else Color.WHITE, _vis_geo)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
 
 
@@ -812,3 +837,56 @@ func on_sequence(result: Dictionary, t0: float) -> void:
 	if _pulses.size() > 6:
 		_pulses.pop_front()
 	_pulses.append({"t0": t0, "passed": bool(result["passed"])})
+
+
+# --- world-staged activities (CONTRACTS.md 10, ruling 38) ----------------------------------------------------------------------------
+
+var _things: Array = []  # the activity's things last set (kept for a world built later)
+
+
+## H8.1 pass-through: the activity's dynamic things now (StoryWorld.set_dynamic_things; [] clears). Without a world (a headless stage without nodes) the list is kept.
+func set_things(arr: Array) -> void:
+	_things = arr
+	if world_active and world != null:
+		world.set_dynamic_things(arr)
+
+
+## A named crowd actor of any room plays an activity state from `t0` for `dur` seconds (0: until told otherwise): StoryCrowd.person (the per-activity states and
+## their fallbacks, StoryCrowd.ACTIVITY_STATES). Returns the resolution {state, face, fallback, sheet_state} ({} when no crowd here has that actor).
+func people(id: String, state: String, t0: float, dur: float = 0.0) -> Dictionary:
+	for rid in crowds:
+		var c: StoryCrowd = crowds[rid]
+		if c.actors.has(id):
+			return c.person(id, state, t0, dur)
+	if not _warned_people.has(id):  # an activity's actor this scene does not cast (customer_7 in a small room): a no-op, said once
+		_warned_people[id] = true
+		push_warning("StoryStage.people: no actor '%s' in %s (ignored)" % [id, data.id if data != null else "?"])
+	return {}
+
+
+var _warned_people: Dictionary = {}
+
+
+## Where thing `id` (a dynamic thing, a map thing or a piece) is on screen in this stage's own coordinates (the stage area's pixels, origin its top-left): the centre of its
+## drawn rect; null when it is not drawn. StoryWorld.thing_screen_point gives the same point in the low-res viewport's pixels (where the host draws feedback).
+func thing_screen_point(id: String) -> Variant:
+	var r: Variant = thing_screen_rect(id)
+	return (r as Rect2).get_center() if r != null else null
+
+
+## The rect thing `id` is drawn in, in the stage's own coordinates (null when it is not drawn). A world_regions tap target is this rect.
+func thing_screen_rect(id: String) -> Variant:
+	if not world_active or world == null or lowres == null:
+		return null
+	var r: Variant = world.thing_screen_rect(id)
+	if r == null:
+		return null
+	var k := lowres_scale()
+	return Rect2((r as Rect2).position * k, (r as Rect2).size * k)
+
+
+## Stage pixels per low-res pixel (x, y): the low-res picture is stretched over the whole stage.
+func lowres_scale() -> Vector2:
+	if lowres == null or lowres.sub.size.x <= 0 or lowres.sub.size.y <= 0:
+		return Vector2.ONE
+	return size / Vector2(lowres.sub.size)

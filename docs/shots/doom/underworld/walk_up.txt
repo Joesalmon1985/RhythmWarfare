@@ -1,0 +1,14 @@
+MOVE uw_gate via=4 length=22.9
+WALK up 0 t=0.00 @1.000:-0.600:8.0:0.0:2.100 sector=0_0 ground=0.500 above=1.60 still=0.00
+WALK up 1 t=0.63 @0.562:-0.903:28.4:0.0:2.094 sector=0_0 ground=0.500 above=1.59 still=0.00
+WALK up 2 t=1.25 @-0.638:-1.734:44.7:0.0:1.742 sector=1_0 ground=0.148 above=1.56 still=0.00
+WALK up 3 t=1.88 @-1.698:-3.405:17.3:0.0:1.597 sector=4_0 ground=0.000 above=1.60 still=0.00
+WALK up 4 t=2.51 @-1.960:-6.089:3.0:0.0:1.959 sector=14_0 ground=0.375 above=1.58 still=0.00
+WALK up 5 t=3.13 @-1.957:-9.091:-1.0:0.0:2.381 sector=15_0 ground=0.806 above=1.54 still=0.00
+WALK up 6 t=3.76 @-1.905:-12.199:-0.5:0.0:3.074 sector=17_0 ground=1.500 above=1.57 still=0.00
+WALK up 7 t=4.39 @-1.900:-15.203:0.5:0.0:3.084 sector=18_0 ground=1.500 above=1.58 still=0.00
+WALK up 8 t=5.02 @-2.051:-17.887:6.7:0.0:3.097 sector=19_0 ground=1.500 above=1.60 still=0.00
+WALK up 9 t=5.64 @-2.416:-20.036:5.0:0.0:3.094 sector=19_0 ground=1.500 above=1.59 still=0.00
+WALK up 10 t=6.27 @-2.661:-21.475:-0.9:0.0:3.094 sector=19_0 ground=1.500 above=1.59 still=0.00
+WALK up 11 t=6.90 @-2.750:-22.000:-3.9:0.0:3.100 sector=19_0 ground=1.500 above=1.60 still=0.00
+HOLD uw_gate 1.0 moved=0.0028 turned=0.000

@@ -17,8 +17,14 @@ const WINDOW_GLANCE_DEG := 8.0  # the glance of the hotspot window turns the hea
 const DENSE_PER_BAR := 4  # more notes than this in a bar (one per beat) is a dense bar
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered"]
 const STYLES := ["walk", "stagger", "run", "climb", "carried"]
+const ROUTE_KEYS := ["up", "left", "right", "stumble", "arrive"]  # rail.routes: one move per route direction (`down` is the stay: no move), the stumble and the arrival
 ## A choice viewpoint (a rail place with "choice": true, docs/story/HEIGHTS_AND_PATHS.md) holds at least this many bars: the whole choice window (RunJourney's beats 49 to 60.5).
 const CHOICE_HOLD_BARS := 3.0
+## A walk-out at a walking pace (LEAD_RULINGS 42): the walk from a choice tap along the route's authored leg takes as long as the leg needs at no more than WALK_PACE_MAX
+## metres a second, in whole bars, WALK_OFF_BARS_MIN to WALK_OFF_BARS_MAX (walk_off_bars). A leg that needs more than the most is the scene's fault (tools/story/check_rail_paths.gd warns).
+const WALK_PACE_MAX := 3.0
+const WALK_OFF_BARS_MIN := 2.0
+const WALK_OFF_BARS_MAX := 8.0
 
 var node_id := ""
 var home := ""
@@ -44,6 +50,49 @@ var places_seen: Dictionary = {}  # place waypoint -> times stood there
 
 func bar_s() -> float:
 	return 4.0 * 60.0 / bpm
+
+
+## The bars a walk-out of `length_m` metres takes (ruling 42): ceil(length / WALK_PACE_MAX / bar length), clamped to WALK_OFF_BARS_MIN..MAX.
+static func walk_off_bars(length_m: float, bar_len_s: float) -> float:
+	if bar_len_s <= 0.0:
+		return WALK_OFF_BARS_MIN
+	return clampf(ceilf(length_m / WALK_PACE_MAX / bar_len_s - 1.0e-6), WALK_OFF_BARS_MIN, WALK_OFF_BARS_MAX)
+
+
+## The bars a leg of `length_m` would need at WALK_PACE_MAX, unclamped (the rail check flags more than WALK_OFF_BARS_MAX).
+static func walk_off_bars_needed(length_m: float, bar_len_s: float) -> float:
+	return ceilf(length_m / WALK_PACE_MAX / maxf(bar_len_s, 1.0e-6) - 1.0e-6)
+
+
+## The length (metres) of a route's authored leg on `map`: the straight segments from waypoint `from_wp` through the move's `via` to its `to` (as StoryPlayer walks a polyline);
+## -1 when the map or a waypoint is missing.
+static func leg_length(map: StoryMap, from_wp: String, move: Dictionary) -> float:
+	if map == null or from_wp == "":
+		return -1.0
+	var chain: Array = [from_wp]
+	if typeof(move.get("via")) == TYPE_ARRAY:
+		chain.append_array((move["via"] as Array).map(func(x: Variant) -> String: return str(x)))
+	chain.append(str(move.get("to", "")))
+	var total := 0.0
+	var prev: Dictionary = map.waypoint(str(chain[0]))
+	if prev.is_empty():
+		return -1.0
+	for i in range(1, chain.size()):
+		var w: Dictionary = map.waypoint(str(chain[i]))
+		if w.is_empty():
+			return -1.0
+		total += (prev["at"] as Vector2).distance_to(w["at"])
+		prev = w
+	return total
+
+
+## Where a scene's walk-out starts when its rail is followed to the choice: its choice viewpoint (the first rail place with "choice": true, the good rail first), else home.
+static func walk_off_from(rail: Dictionary, home_wp: String) -> String:
+	for key in ["good", "bad"]:
+		for p in rail.get(key, []):
+			if typeof(p) == TYPE_DICTIONARY and bool(p.get("choice", false)):
+				return str(p.get("to", home_wp))
+	return home_wp
 
 
 ## Problems with one node's rail data (waypoint existence is checked against the map by tests/test_run_rail.gd).
@@ -73,6 +122,32 @@ static func validate(id: String, rail: Variant) -> Array:
 				errors.append("node %s: rail.%s place %s: hold_bars is not negative" % [id, key, p["to"]])
 			if bool(p.get("choice", false)) and float(p.get("hold_bars", 0.0)) < CHOICE_HOLD_BARS - 1.0e-6:
 				errors.append("node %s: rail.%s place %s is a choice viewpoint holding %.1f bars; a choice viewpoint holds at least %.1f (the whole choice window)" % [id, key, p["to"], float(p.get("hold_bars", 0.0)), CHOICE_HOLD_BARS])
+			if p.has("pitch"):  # a choice viewpoint's steady pitch through the window (degrees, negative looks down; StoryPlayer holds it)
+				if typeof(p["pitch"]) not in [TYPE_INT, TYPE_FLOAT] or absf(float(p["pitch"])) > StoryPlayer.PITCH_HOLD_MAX:
+					errors.append("node %s: rail.%s place %s: pitch is degrees within +-%.0f" % [id, key, p["to"], StoryPlayer.PITCH_HOLD_MAX])
+				elif not bool(p.get("choice", false)):
+					errors.append("node %s: rail.%s place %s: pitch is held only at a choice viewpoint (\"choice\": true)" % [id, key, p["to"]])
+	if r.has("routes"):  # a scene's route moves (docs/engine/GEOGRAPHY_WORLDS.md): {up|left|right|stumble|arrive: {to, via?, bars > 0, hold_bars?, style?, role?, from?}}; a world exit's walk plays its key's move
+		if typeof(r["routes"]) != TYPE_DICTIONARY:
+			errors.append("node %s: rail.routes is an object {direction: move}" % id)
+		else:
+			for k in (r["routes"] as Dictionary):
+				var m: Variant = r["routes"][k]
+				if str(k) not in ROUTE_KEYS:
+					errors.append("node %s: rail.routes.%s is not a route key (%s)" % [id, k, ", ".join(PackedStringArray(ROUTE_KEYS))])
+				if typeof(m) != TYPE_DICTIONARY or str((m as Dictionary).get("to", "")) == "":
+					errors.append("node %s: rail.routes.%s needs `to`" % [id, k])
+					continue
+				if float(m.get("bars", 3.0)) <= 0.0:  # (any length is accepted: the threshold walk clamps it to MOVE_BARS_MIN..MAX, then to the boundary)
+					errors.append("node %s: rail.routes.%s lasts %.1f bars; a move lasts some bars" % [id, k, float(m.get("bars", 3.0))])
+				if m.has("via") and (typeof(m["via"]) != TYPE_ARRAY or (m["via"] as Array).any(func(v: Variant) -> bool: return str(v) == "")):
+					errors.append("node %s: rail.routes.%s: via is a list of waypoints" % [id, k])
+				if float(m.get("hold_bars", 0.0)) < 0.0:
+					errors.append("node %s: rail.routes.%s: hold_bars is not negative" % [id, k])
+				if str(m.get("style", "walk")) not in STYLES:
+					errors.append("node %s: rail.routes.%s has unknown style %s" % [id, k, m.get("style")])
+				if str(m.get("role", "dancer")) not in ROLES:
+					errors.append("node %s: rail.routes.%s has unknown role %s" % [id, k, m.get("role")])
 	if (r.get("glances", []) as Array).is_empty() or (r.get("strolls", []) as Array).is_empty():
 		errors.append("node %s: every block needs a glance and a stroll to draw from (rail.glances and rail.strolls)" % id)
 	return errors

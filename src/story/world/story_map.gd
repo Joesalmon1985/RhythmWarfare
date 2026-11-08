@@ -12,6 +12,13 @@ extends RefCounted
 ## portals; chapter checks: every actor has a home, every player_move / player_look target is a waypoint or actor.
 
 const PATH := "res://content/story/maps/%s.json"
+
+
+## The file of map `chapter`: content/story/maps/<id>.json, or the id itself when it is a res:// path to a .json (a test fixture's map, e.g. tests/fixtures/walk_pace/hall.json).
+static func path_of(chapter: String) -> String:
+	return chapter if chapter.begins_with("res://") and chapter.ends_with(".json") else PATH % chapter
+
+
 const EPS := 1.0e-3
 const HOME_MARGIN := 0.25
 const WAYPOINT_MARGIN := 0.3
@@ -45,6 +52,11 @@ var rooms: Dictionary = {}  # room id -> {palette: the chapter palette the room'
 var palette_weight := 0.25  # how much the stage palette (one colour per bar) overrides the tint of a dance floor or stage sector: 1 in Night One (the club), a little elsewhere so a ward stays blue and a lab stays green
 var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (a hospital is light, the pit is red)
 var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
+## Weather (docs/engine/WEATHER.md, hook H10): {} for a dry map, else {rain: 0..1, wind: degrees of slant from vertical (positive leans toward +x), drips: [{at: Vector2, h: metres above
+## the floor, sector}]}. Rain falls only on open sectors (rain_open): a sky ceiling, unless the sector says "rain": false; a roofed sector only with "rain": true. A sector's "wet"
+## (0..1) is its floor gloss (wet_of: the authored value, else the map's rain on open sectors, else 0).
+var weather: Dictionary = {}
+const WIND_MAX := 60.0
 ## Heights (docs/story/HEIGHTS_AND_PATHS.md): a floor change across a portal of at most `max_step` metres is a step a walker takes (stairs are runs of them); a taller one,
 ## or any change into or out of a sector marked "drop", is a drop nobody walks (a "climb" move may take up to `max_climb`). A sector marked "void", or one whose floor lies
 ## `void_drop` metres or more below every neighbour and that holds no waypoint, home or spot, is a void: drawn far below, hazed by depth, never stood in (the depth rule is
@@ -67,7 +79,7 @@ var _portals: Array = []  # {a, b, p0, p1, mid}
 
 
 static func load_chapter(chapter: String, check_files := true) -> StoryMap:
-	var path := PATH % chapter
+	var path := path_of(chapter)
 	var m := StoryMap.new()
 	m.id = chapter
 	m.art = chapter
@@ -127,6 +139,7 @@ func build(d: Dictionary, check_files: bool) -> void:
 	vis_far = maxf(float(vis.get("far", 0.0)), 0.0)
 	_build_walls(d.get("walls", []))
 	_build_things(d.get("things", []))
+	_build_weather(d.get("weather", null))
 	_build_waypoints(d.get("waypoints", []))
 	start_id = str(d.get("start", ""))
 	if start_id == "" and not waypoints.is_empty():
@@ -178,6 +191,17 @@ func _build_sectors(list: Array) -> void:
 		sec["lip_tex"] = str(s.get("lip_tex", ""))  # the lip where this sector's ceiling is lower than its neighbour's (Doom's upper texture)
 		sec["drop"] = bool(s.get("drop", false))  # any floor change into or out of it is a drop, not a step
 		sec["void"] = bool(s.get("void", false))  # a pit: drawn far below, never stood in (see _find_voids for the depth rule)
+		sec["rain"] = s.get("rain", null)  # weather: true lets rain in under a roof (an open yard in a roofed map), false keeps an open sector dry; null: by its ceiling (rain_open)
+		if sec["rain"] != null and typeof(sec["rain"]) != TYPE_BOOL:
+			errors.append("sector %s: rain is true or false" % sid)
+			sec["rain"] = null
+		sec["wet"] = -1.0  # weather: the floor's gloss 0..1 (-1: not authored, wet_of decides)
+		if s.has("wet"):
+			var wv: Variant = s["wet"]
+			if (typeof(wv) != TYPE_FLOAT and typeof(wv) != TYPE_INT) or float(wv) < 0.0 or float(wv) > 1.0:
+				errors.append("sector %s: wet is 0..1" % sid)
+			else:
+				sec["wet"] = float(wv)
 		for k in ["step_tex", "lip_tex"]:
 			_tex_ok(str(sec[k]), "sector " + sid)
 		if pts.size() < 3:
@@ -717,6 +741,47 @@ func _find_voids() -> void:
 		s["void_top"] = maxf(top, float(s["floor"]))
 		if bool(s["void"]) and used.has(sid):
 			errors.append("sector %s is a void: no waypoint, home or spot may stand in it (the camera is never placed in a void)" % sid)
+	_group_void_tops()
+
+
+## A void split into several convex pieces (wedges of one pit) is one pit: each piece's `void_top` is the lowest floor around the whole connected group of void sectors that is
+## not itself a void (the rim), so no piece takes a sibling wedge at its own depth as its top (which would switch its haze off). A void with no void next to it is unchanged.
+func _group_void_tops() -> void:
+	var nb := {}  # sector id -> [neighbour ids through portals]
+	for p in portals():
+		var a := str(p["a"])
+		var b := str(p["b"])
+		if not nb.has(a):
+			nb[a] = []
+		if not nb.has(b):
+			nb[b] = []
+		(nb[a] as Array).append(b)
+		(nb[b] as Array).append(a)
+	var seen := {}
+	for s in sectors:
+		var sid := str(s["id"])
+		if not bool(s["void"]) or seen.has(sid):
+			continue
+		var group: Array = []
+		var todo: Array = [sid]
+		seen[sid] = true
+		var rim := INF
+		while not todo.is_empty():
+			var cur := str(todo.pop_back())
+			group.append(cur)
+			for o in nb.get(cur, []):
+				var os := sector(str(o))
+				if bool(os.get("void", false)):
+					if not seen.has(str(o)):
+						seen[str(o)] = true
+						todo.append(str(o))
+				else:
+					rim = minf(rim, float(os["floor"]))
+		if group.size() < 2 or rim == INF:
+			continue
+		for g in group:
+			var gs := sector(str(g))
+			gs["void_top"] = maxf(rim, float(gs["floor"]))
 
 
 func is_void(sid: String) -> bool:
@@ -966,6 +1031,89 @@ func sector_at(p: Vector2) -> String:
 		if poly.size() >= 3 and (Geometry2D.is_point_in_polygon(p, poly) or _dist_to_boundary(p, poly) < EPS):
 			return str(s["id"])
 	return ""
+
+
+## Weather: whether rain falls in sector `sid` (hook H10). Its own "rain" decides when authored; else an open ceiling does: the sky ("sky", no ceiling drawn) or a painted sky
+## tile (a ceiling texture named *_sky, the converted Doom maps' F_SKY1). Always false on a dry map (no `weather`) or with rain 0.
+func rain_open(sid: String) -> bool:
+	if weather.is_empty() or float(weather.get("rain", 0.0)) <= 0.0:
+		return false
+	var s := sector(sid)
+	if s.is_empty():
+		return false
+	if s.get("rain", null) != null:
+		return bool(s["rain"])
+	return sky_ceiling(s)
+
+
+## Whether a sector's ceiling is open sky (the sky at infinity, or a painted sky tile *_sky).
+static func sky_ceiling(s: Dictionary) -> bool:
+	var ct := str(s.get("ceil_tex", ""))
+	return ct == "sky" or ct.ends_with("_sky")
+
+
+## Weather: the floor gloss of sector `sid` 0..1: its authored "wet", else the map's rain where rain falls (rain_open), else 0.
+func wet_of(sid: String) -> float:
+	var s := sector(sid)
+	if s.is_empty():
+		return 0.0
+	if float(s.get("wet", -1.0)) >= 0.0:
+		return float(s["wet"])
+	return float(weather.get("rain", 0.0)) if rain_open(sid) else 0.0
+
+
+## Whether the map has any weather to draw: rain, or a wet floor authored on a dry map (a spilt-drink floor).
+func has_weather() -> bool:
+	if not weather.is_empty():
+		return true
+	for s in sectors:
+		if float(s.get("wet", -1.0)) > 0.0:
+			return true
+	return false
+
+
+func _build_weather(w: Variant) -> void:
+	weather = {}
+	if w == null:
+		return
+	if typeof(w) != TYPE_DICTIONARY:
+		errors.append("weather: an object {rain, wind, drips}")
+		return
+	var wd: Dictionary = w
+	for k in wd:
+		if str(k) not in ["rain", "wind", "drips"]:
+			errors.append("weather: unknown key %s" % k)
+	var out := {"rain": 0.0, "wind": 0.0, "drips": []}
+	var rv: Variant = wd.get("rain", 0.0)
+	if (typeof(rv) != TYPE_FLOAT and typeof(rv) != TYPE_INT) or float(rv) < 0.0 or float(rv) > 1.0:
+		errors.append("weather: rain is 0..1")
+	else:
+		out["rain"] = float(rv)
+	var wv: Variant = wd.get("wind", 0.0)
+	if (typeof(wv) != TYPE_FLOAT and typeof(wv) != TYPE_INT) or absf(float(wv)) > WIND_MAX:
+		errors.append("weather: wind is -%d..%d degrees of slant" % [int(WIND_MAX), int(WIND_MAX)])
+	else:
+		out["wind"] = float(wv)
+	var dl: Variant = wd.get("drips", [])
+	if typeof(dl) != TYPE_ARRAY:
+		errors.append("weather: drips is a list of {at, h}")
+		dl = []
+	for i in (dl as Array).size():
+		var dr: Variant = dl[i]
+		if typeof(dr) != TYPE_DICTIONARY:
+			errors.append("weather drip %d: an object {at: [x, z], h}" % i)
+			continue
+		var at := _pt(dr.get("at"), "weather drip %d" % i)
+		var hv: Variant = dr.get("h", null)
+		if (typeof(hv) != TYPE_FLOAT and typeof(hv) != TYPE_INT) or float(hv) <= 0.0 or float(hv) > 30.0:
+			errors.append("weather drip %d: h is metres above the floor, above 0 and at most 30" % i)
+			continue
+		var sid := sector_at(at)
+		if sid == "":
+			errors.append("weather drip %d: %s lies in no sector" % [i, at])
+			continue
+		(out["drips"] as Array).append({"at": at, "h": float(hv), "sector": sid})
+	weather = out
 
 
 ## The room (a view of the chapter: "main", "gallery"...) a sector belongs to.

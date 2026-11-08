@@ -265,7 +265,7 @@ func test_in_the_scene_a_replace_activity_owns_the_strip_and_the_run_resumes_on_
 	var moves0: int = (scene.journey_log as Array).size()
 	# the controls stand in the strip
 	assert_true(scene._mg.owns_strip(), "the controls own the strip")
-	assert_false(scene.pad_view.visible, "the pads are hidden")
+	assert_true(scene.pad_view.visible and (scene.pad_view.slot_fn as Callable).is_valid(), "the pads stay drawn and show the controls in their slots (contract 10)")
 	assert_false(scene.note_lane.visible, "the note lane is hidden")
 	assert_false(scene.lane_input.enabled, "the lane input is off")
 	var layer: RunActivityInput = scene._mg.controls_layer
@@ -304,6 +304,7 @@ func test_in_the_scene_a_replace_activity_owns_the_strip_and_the_run_resumes_on_
 	_run_to(scene, 160.0 * BEAT)
 	assert_eq(mg.state, "")
 	assert_false(scene.engine.hold)
+	assert_false((scene.pad_view.slot_fn as Callable).is_valid(), "the morph back is over a beat after the hand-back: the slots are the pads' again")
 	var fin: Dictionary = mg.log.filter(func(l: Dictionary) -> bool: return l["kind"] == "finished")[0]
 	assert_near(float(fin["t"]), 144.0 * BEAT, 1e-6, "released on the boundary")
 	var blocks: Array = (scene.event_log as Array).filter(func(x: Dictionary) -> bool: return x["kind"] == "block_result" and int(x["phase"]) == 3 and int(x["block"]) == 1)
