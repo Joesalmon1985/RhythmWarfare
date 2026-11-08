@@ -412,7 +412,7 @@
 {
 "v1":14,
 "v2":16,
-"flags":5,
+"flags":4,
 "special":0,
 "tag":0,
 "right":43,
@@ -1273,7 +1273,7 @@
 "ceil_tex":"CEIL3_5"
 },
 {
-"floor":32,
+"floor":0,
 "ceiling":88,
 "light":170,
 "special":0,
@@ -1282,7 +1282,7 @@
 "ceil_tex":"CEIL3_5"
 },
 {
-"floor":24,
+"floor":0,
 "ceiling":88,
 "light":160,
 "special":0,
@@ -1291,7 +1291,7 @@
 "ceil_tex":"CEIL3_5"
 },
 {
-"floor":12,
+"floor":0,
 "ceiling":88,
 "light":155,
 "special":0,

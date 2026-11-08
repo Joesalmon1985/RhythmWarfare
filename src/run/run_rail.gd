@@ -73,6 +73,11 @@ static func validate(id: String, rail: Variant) -> Array:
 				errors.append("node %s: rail.%s place %s: hold_bars is not negative" % [id, key, p["to"]])
 			if bool(p.get("choice", false)) and float(p.get("hold_bars", 0.0)) < CHOICE_HOLD_BARS - 1.0e-6:
 				errors.append("node %s: rail.%s place %s is a choice viewpoint holding %.1f bars; a choice viewpoint holds at least %.1f (the whole choice window)" % [id, key, p["to"], float(p.get("hold_bars", 0.0)), CHOICE_HOLD_BARS])
+			if p.has("pitch"):  # a choice viewpoint's steady pitch through the window (degrees, negative looks down; StoryPlayer holds it)
+				if typeof(p["pitch"]) not in [TYPE_INT, TYPE_FLOAT] or absf(float(p["pitch"])) > StoryPlayer.PITCH_HOLD_MAX:
+					errors.append("node %s: rail.%s place %s: pitch is degrees within +-%.0f" % [id, key, p["to"], StoryPlayer.PITCH_HOLD_MAX])
+				elif not bool(p.get("choice", false)):
+					errors.append("node %s: rail.%s place %s: pitch is held only at a choice viewpoint (\"choice\": true)" % [id, key, p["to"]])
 	if r.has("routes"):  # a scene's route moves (docs/engine/GEOGRAPHY_WORLDS.md): {up|left|right|stumble|arrive: {to, via?, bars > 0, hold_bars?, style?, role?, from?}}; a world exit's walk plays its key's move
 		if typeof(r["routes"]) != TYPE_DICTIONARY:
 			errors.append("node %s: rail.routes is an object {direction: move}" % id)

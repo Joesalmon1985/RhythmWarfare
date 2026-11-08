@@ -39,5 +39,17 @@ def main():
     return n
 
 
+CROPPED = {"floor": "floor_dock", "mothership": "mothership_booth", "booth": "booth_balcony8"}  # who: the crop (tools/doom/art/make_dock_crop.py CROPS)
+
+
+def main_cropped():
+    """Stage D polish (ruling 36): all three guides CROPPED from the paintings: the Booth guide from this scene's painting (225 px there, leaning in the cabin door); the Floor
+    guide from the Dock's painting (350 px there; in this one the stair's railing crosses her legs), the Mothership guide from the Booth's painting (200 px; 85 px in this one).
+    `main` above (the procedural placeholders) is kept for reference only."""
+    import make_dock_crop as mc
+    os.makedirs(OUT, exist_ok=True)
+    return sum(mc.write(mc.CROPS[key], OUT, who) for who, key in CROPPED.items())
+
+
 if __name__ == "__main__":
-    print("wrote %d guide frames to %s" % (main(), OUT))
+    print("wrote %d guide frames to %s" % (main_cropped(), OUT))

@@ -28,7 +28,19 @@ OWN = "textures/"
 MARGIN = 0.5
 MARGINS = {"dk_v_d": 0.33}
 MAX_STEP = 0.5
-LIGHT_GAIN, LIGHT_FLOOR, LAMP_GAIN = 1.4, 0.52, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+LIGHT_GAIN, LIGHT_FLOOR, LAMP_GAIN = 1.4, 0.72, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+# stage D polish, exposure (the brief's rule p50 0.25 to 0.38, p95 - p5 over 0.4): every sector's song-time light is raised to LIGHT (a gain of 1.5 on the baked light) and the
+# flat light away from the lamps is cut to AMBIENT of it, so the lamp pools and the emissives carry the picture and the dark between them stays dark (contrast, not a flat lift)
+LIGHT = {"apron": 1.0, "canopy": 1.0, "walk": 1.0, "street": 1.0, "walk_far": 0.95, "street_far": 0.95, "yard": 1.0, "floor_door": 1.0, "floor_hall": 1.0, "floor_run": 1.0}
+AMBIENT = {"apron": 0.5, "canopy": 0.5, "walk": 0.5, "street": 0.5, "walk_far": 0.5, "street_far": 0.5, "yard": 0.48, "floor_door": 0.7, "floor_hall": 0.7, "floor_run": 0.7}
+# the rain (docs/engine/WEATHER.md): it falls on the six sky sectors, the canopy and the club passage stay dry; drips from the canopy's edge and the club door's lintel
+WEATHER = {"rain": 0.8, "wind": 10, "drips": [{"at": [4.15, -1.2], "h": 3.2}, {"at": [3.9, -2.6], "h": 3.2}, {"at": [-3.7, -8.0], "h": 2.6}, {"at": [-3.7, -9.7], "h": 2.6}]}
+WET = {"canopy": 0.35, "floor_door": 0.2}
+
+
+SKY = {"tex": "textures/dk_sky.png", "mode": "cylinder"}  # stage D polish: the storm sky strip over the open sectors (make_dock_art.p_sky)
+LIP = {"floor_door": "dk_wall_brick", "canopy": "dk_wall_shutter", "floor_hall": "dk_wall_blue", "floor_run": "dk_wall_blue"}  # the wall above a lower-ceilinged opening (Doom's upper texture)
+SKY_SECTORS = ["apron", "walk", "street", "yard", "walk_far", "street_far"]
 
 
 def M(x, y):
@@ -49,9 +61,9 @@ WAYPOINTS = [
     ("dk_street_view", (0.6, 9.0), (-0.5, 19), 2, "reveal: up the street at the lamp, the towers and the Mothership guide"),
     ("dk_door_view", (-2.7, 6.2), (-8.0, 8.4), 2, "reveal: on the sidewalk at the club door, the blue passage and the Floor guide"),
     ("dk_yard_view", (5.0, 6.5), (11.0, 13.0), 2, "reveal: from the street's east side across to the yard, the van, the furnace and the Underworld guide"),
-    ("dk_moth", (0.8, 18.8), (0.8, 30), 1, "THRESHOLD ahead (Mothership): the street's far end, the world transition happens here"),
-    ("dk_floor_door", (-8.0, 9.0), (-20, 9.0), 1, "THRESHOLD left (Floor): in the blue passage behind the club door, the world transition happens here"),
-    ("dk_under", (12.2, 14.9), (20, 14.9), 1, "THRESHOLD right (Underworld): at the furnace, the world transition happens here"),
+    ("dk_moth", (0.8, 18.8), (1.6, 31), 1, "THRESHOLD ahead (Mothership): past the Mothership guide, looking on up the street to the far towers and the violet glow; the world transition happens here"),
+    ("dk_floor_door", (-8.0, 9.0), (-16, 8.75), 1, "THRESHOLD left (Floor): in the blue passage behind the club door, looking down it to the lit dance-floor door; the world transition happens here"),
+    ("dk_under", (8.3, 15.4), (12.5, 12.4), 1, "THRESHOLD right (Underworld): in the yard's north-west corner facing the furnace's glowing mouth (the way down), the guide before it; the world transition happens here"),
     # via points (corners of the polyline moves)
     ("dk_v_s1", (0.6, 5.5), (0.6, 12), 0, "via: the street, just past the apron's edge"),
     ("dk_v_s2", (0.8, 13.0), (0.8, 19), 0, "via: the street, mid way"),
@@ -62,7 +74,7 @@ WAYPOINTS = [
     ("dk_v_d", (-4.75, 9.0), (-8.0, 9.0), 0, "via: the club door"),
     ("dk_v_u1", (4.5, 5.5), (6.8, 10.0), 0, "via: the street, east of the apron"),
     ("dk_v_u2", (6.8, 10.0), (9.2, 10.0), 0, "via: the street's east edge, at the yard's mouth"),
-    ("dk_v_u3", (9.2, 10.0), (12.2, 14.9), 0, "via: the yard, past the van"),
+    ("dk_v_u3", (8.4, 11.6), (8.3, 15.4), 0, "via: the yard's west side, past the van"),
     ("dk_v_r1", (1.2, 3.2), (1.0, 1.5), 0, "via: the apron, back to the reference viewpoint"),
 ]
 ROUTES = {
@@ -75,17 +87,22 @@ ROUTES = {
 }
 # sector name -> floor, wall, ceiling texture, tint, step_tex (the riser of a step up onto it)
 STYLE = {
-    "apron": ("dk_floor_conc", "dk_wall_brick", "dk_ceil_sky", "#c8b4a8", "dk_trim"),
+    "apron": ("dk_floor_conc", "dk_wall_brick", "dk_ceil_sky", "#e4d0c4", "dk_trim"),
     "canopy": ("dk_floor_conc", "dk_wall_shutter", "dk_ceil_truss", "#ffc078", "dk_trim"),
-    "walk": ("dk_floor_walk", "dk_wall_brick", "dk_ceil_sky", "#b4aac8", "dk_trim"),
-    "street": ("dk_floor_asphalt", "dk_wall_tower", "dk_ceil_sky", "#a8b4d8", "dk_trim"),
-    "yard": ("dk_floor_asphalt", "dk_wall_ware", "dk_ceil_sky", "#d8b090", "dk_trim"),
+    "walk": ("dk_floor_walk", "dk_wall_brick", "dk_ceil_sky", "#d4cce8", "dk_trim"),
+    "street": ("dk_floor_asphalt", "dk_wall_tower", "dk_ceil_sky", "#ccd2f0", "dk_trim"),
+    "walk_far": ("dk_floor_walk", "dk_wall_tower_b", "dk_ceil_sky", "#ccc8e8", "dk_trim"),
+    "street_far": ("dk_floor_asphalt", "dk_wall_tower_c", "dk_ceil_sky", "#c8cef0", "dk_trim"),
+    "floor_run": ("dk_floor_blue", "dk_wall_blue", "dk_ceil_truss", "#8098ff", "dk_wall_steel"),
+    "yard": ("dk_floor_asphalt", "dk_wall_ware", "dk_ceil_sky", "#ecccb0", "dk_trim"),
     "floor_door": ("dk_floor_blue", "dk_wall_blue", "dk_ceil_truss", "#90a8ff", "dk_wall_steel"),
     "floor_hall": ("dk_floor_blue", "dk_wall_blue", "dk_ceil_truss", "#7a98ff", "dk_wall_steel"),
 }
 # explicit solid-wall textures where the sector's own wall texture is not the right one: sector, from (m), to (m), texture
 WALL_TEX = [
-    ("walk", (-4, 12), (-4, 20), "dk_wall_tower"), ("walk", (-4, 20), (-1.5, 20), "dk_wall_tower"),
+    ("walk", (-4, 12), (-4, 20), "dk_wall_tower"), ("walk", (-4, 4.5), (-4, 6), "dk_wall_brick_b"), ("walk", (-4, 10), (-4, 12), "dk_wall_brick_b"),
+    ("walk_far", (-4, 20), (-4, 31), "dk_wall_tower_b"), ("walk_far", (-4, 31), (-1.5, 31), "dk_wall_tower_c"),
+    ("street_far", (7.5, 20), (7.5, 31), "dk_wall_tower_c"), ("street_far", (-1.5, 31), (7.5, 31), "dk_wall_tower_b"),
     ("street", (7.5, 4.5), (7.5, 8.5), "dk_wall_shutter"),
     ("yard", (13.5, 8.5), (13.5, 16), "dk_wall_ware"), ("yard", (7.5, 8.5), (13.5, 8.5), "dk_wall_steel"),
 ]
@@ -93,18 +110,19 @@ STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
     "mothership": ((-0.6, 16.0), 2.3, (-0.6, 15.0)),
     "floor": ((-4.8, 7.3), 2.2, (-4.2, 7.3)),
-    "underworld": ((10.0, 12.6), 2.2, (9.0, 12.6)),
+    "underworld": ((10.0, 12.6), 2.3, (9.0, 12.6)),  # the crop leaves his hidden legs out: the seat crates stand in front of them
 }
 # billboards: id, sprite, point (m), size (height m); y is the centre (half the size) unless a fifth value is given (height of the centre above the floor)
 THINGS = [
-    ("dk_bollard_a", "dk_bollard", (-0.8, 2.6), 1.1), ("dk_bollard_b", "dk_bollard", (2.6, 3.9), 1.1),
+    ("dk_bollard_a", "dk_bollard", (-0.5, 4.3), 1.1), ("dk_bollard_b", "dk_bollard", (2.6, 3.9), 1.1), ("dk_bollard_c", "dk_bollard", (-0.9, 2.6), 1.1),
+    ("dk_pallets_near", "dk_pallets_near", (5.4, 5.3), 1.2), ("dk_case_e", "dk_case", (6.6, 6.4), 0.9),
     ("dk_case_a", "dk_case", (6.3, 0.9), 1.2), ("dk_case_b", "dk_case", (5.2, 0.8), 0.7),
     ("dk_pallet_a", "dk_pallet", (6.2, 2.6), 0.4), ("dk_pallet_stack_a", "dk_pallet_stack", (6.5, 3.6), 1.1), ("dk_crate_a", "dk_crate", (6.6, 1.8), 0.8),
     ("dk_hang_lamp", "dk_hang_lamp", (6.8, 2.2), 0.9, 2.95), ("dk_chain", "dk_chain", (4.7, 1.0), 1.5, 2.75),
     ("dk_van", "dk_van", (4.0, 14.0), 1.9), ("dk_stack_a", "dk_pallet_stack", (6.2, 17.8), 1.3), ("dk_stack_b", "dk_pallet_stack", (2.9, 18.6), 1.2), ("dk_pallet_b", "dk_pallet", (5.2, 18.0), 0.4),
-    ("dk_street_lamp_a", "dk_street_lamp", (-2.0, 11.0), 5.0), ("dk_street_lamp_b", "dk_street_lamp", (-2.6, 18.4), 4.6),
+    ("dk_street_lamp_a", "dk_street_lamp", (-2.0, 11.0), 5.0), ("dk_street_lamp_b", "dk_street_lamp", (-2.6, 18.4), 4.6), ("dk_street_lamp_c", "dk_street_lamp", (-2.4, 24.0), 4.6), ("dk_street_lamp_d", "dk_street_lamp", (6.9, 27.5), 4.6),
     ("dk_door_lamp", "dk_wall_lamp", (-3.75, 6.2), 0.5, 2.7),
-    ("dk_furnace", "dk_furnace", (12.7, 12.4), 3.2), ("dk_drum", "dk_drum", (10.9, 12.0), 0.55), ("dk_crate_b", "dk_crate", (10.3, 13.5), 0.7), ("dk_crate_c", "dk_crate", (11.1, 13.0), 0.9),
+    ("dk_furnace", "dk_furnace", (12.7, 12.4), 3.2), ("dk_seat_a", "dk_crate", (9.7, 12.3), 0.55), ("dk_seat_b", "dk_crate", (10.35, 12.35), 0.5), ("dk_crate_b", "dk_crate", (10.9, 13.6), 0.7), ("dk_crate_c", "dk_crate", (11.4, 13.2), 0.9),
     ("dk_case_c", "dk_case", (9.0, 9.4), 0.8),
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y, emissive (the wall's own yaw: StoryMap places it)
@@ -112,12 +130,13 @@ DECALS = [
     ("dk_dc_door_leaf", "dk_door_leaf", (-3.9, 5.25), 2.1, 0.0, False), ("dk_dc_clef", "dk_clef", (-3.9, 11.0), 2.2, 0.8, False),
     ("dk_dc_pipe_a", "dk_pipe_vert", (-3.9, 4.6), 3.6, 0.0, False), ("dk_dc_pipe_b", "dk_pipe_vert", (-3.9, 11.8), 3.6, 0.0, False), ("dk_dc_pipe_c", "dk_pipe_vert", (-3.9, 2.0), 3.6, 0.0, False),
     ("dk_dc_win_a", "dk_windows_lit", (-3.9, 14.0), 1.5, 2.0, True), ("dk_dc_win_b", "dk_windows_lit", (-3.9, 16.8), 1.5, 4.0, True), ("dk_dc_win_c", "dk_windows_lit", (-3.9, 19.0), 1.5, 2.2, True),
-    ("dk_dc_towers", "dk_towers", (3.0, 19.9), 4.4, 1.2, True),
+    ("dk_dc_towers", "dk_towers", (2.0, 30.9), 6.0, 1.0, True), ("dk_dc_win_g", "dk_windows_lit", (-3.9, 24.0), 1.5, 3.0, True), ("dk_dc_win_h", "dk_windows_lit", (7.4, 26.5), 1.5, 2.2, True),
+    ("dk_dc_end_glow", "dk_end_glow", (-15.9, 8.75), 2.6, 0.0, True), ("dk_dc_neon_d", "dk_neon_blue", (-13.0, 10.4), 0.6, 1.3, True), ("dk_dc_neon_e", "dk_neon_blue", (-13.0, 7.1), 0.6, 1.3, True),
     ("dk_dc_win_d", "dk_windows_lit", (7.4, 18.2), 1.5, 1.6, True), ("dk_dc_win_e", "dk_windows_lit", (7.4, 17.0), 1.5, 3.6, True),
     ("dk_dc_win_f", "dk_windows_lit", (8.8, 15.9), 1.5, 3.0, True), ("dk_dc_fence", "dk_fence", (11.2, 15.9), 2.4, 0.0, False),
     ("dk_dc_pipes_yard", "dk_pipes_yard", (13.4, 12.0), 2.8, 0.5, False), ("dk_dc_yard_shutter", "dk_shutter", (10.5, 8.6), 3.0, 0.0, False),
     ("dk_dc_shutter", "dk_shutter", (7.4, 2.3), 3.3, 0.0, False),
-    ("dk_dc_neon_a", "dk_neon_blue", (-9.9, 8.75), 0.6, 1.3, True), ("dk_dc_neon_b", "dk_neon_blue", (-8.0, 11.4), 0.6, 1.3, True), ("dk_dc_neon_c", "dk_neon_blue", (-8.0, 6.1), 0.6, 1.3, True),
+    ("dk_dc_neon_b", "dk_neon_blue", (-8.0, 11.4), 0.6, 1.3, True), ("dk_dc_neon_c", "dk_neon_blue", (-8.0, 6.1), 0.6, 1.3, True),
 ]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (sodium under the canopy and at the street lamps, blue spill from the club door, cold moonlight, the furnace's fire, violet round the Mothership guide)
     ("dk_lt_canopy", (6.8, 2.0), 3.0, 8.0, "#ffa850", 1.8), ("dk_lt_apron", (0.5, 2.2), 3.2, 8.0, "#d8a070", 1.1),
@@ -126,6 +145,12 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength   (sodium under the can
     ("dk_lt_moon", (3.0, 9.0), 6.0, 14.0, "#6a80c0", 1.0), ("dk_lt_win", (7.0, 17.5), 3.0, 6.0, "#ffa850", 1.0),
     ("dk_lt_furnace", (12.2, 12.4), 1.3, 9.0, "#ff7020", 2.0), ("dk_lt_yard", (9.5, 10.0), 3.0, 6.0, "#ffa850", 1.0),
     ("dk_lt_moth", (-0.6, 16.0), 1.6, 5.0, "#a070ff", 1.2), ("dk_lt_hall", (-7.8, 8.7), 2.0, 6.0, "#5a7aff", 1.4),
+    # stage D polish: lamp pools that lift the dock into the exposure rule (warm practicals against the cool rain light)
+    ("dk_lt_pool_apron", (2.0, 3.2), 2.8, 6.0, "#ffb060", 1.4), ("dk_lt_pool_door", (-3.0, 7.2), 2.4, 5.0, "#ffb868", 1.2), ("dk_lt_far", (2.0, 26.0), 5.0, 12.0, "#8a70e0", 1.2),
+    ("dk_lt_far_lamp", (-2.2, 24.0), 4.5, 8.0, "#ffb860", 1.4), ("dk_lt_run", (-13.5, 8.75), 2.0, 6.0, "#7a6aff", 1.6), ("dk_lt_mouth", (11.0, 13.4), 1.0, 5.0, "#ff9040", 1.6),
+    ("dk_lt_pool_s1", (-0.6, 9.5), 3.5, 9.0, "#ffa850", 1.6), ("dk_lt_pool_s2", (3.5, 12.0), 4.0, 10.0, "#7a90e0", 1.3), ("dk_lt_pool_s3", (-0.8, 17.5), 3.5, 8.0, "#ffa850", 1.4),
+    ("dk_lt_pool_s4", (4.5, 7.0), 3.0, 7.0, "#ffb060", 1.2), ("dk_lt_pool_walk", (-2.8, 13.0), 3.0, 6.0, "#ffb060", 1.2),
+    ("dk_lt_far_lamp_b", (6.5, 27.5), 4.4, 9.0, "#ffb860", 1.6), ("dk_lt_pool_far", (3.0, 24.0), 3.0, 8.0, "#ffa850", 1.4),
 ]
 
 
@@ -145,23 +170,34 @@ def main():
     for s in d["sectors"]:
         nm = names[int(s["doom_sector"])]
         f, w, c, tint, step = STYLE[nm]
-        s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, lift(tint), step
-        s["lip_tex"] = "dk_trim"
+        s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, ("sky" if nm in SKY_SECTORS else c), lift(tint), step
+        s["lip_tex"] = LIP.get(nm, "dk_trim")
         s["room"] = "main"
-        s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        s["light"] = LIGHT.get(nm, round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3))
+        if nm in AMBIENT:
+            s["ambient"] = AMBIENT[nm]
+        s.pop("wet", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
-            used[s[k]] = True
+            if s[k] != "sky":
+                used[s[k]] = True
     # explicit solid walls with their own texture (one record per stretch; the loader paints the rest of the edge with the sector's wall_tex)
     by_name = {names[int(s["doom_sector"])]: s for s in d["sectors"]}
     d["walls"] = [w for w in d["walls"] if not w.get("dock_solid")]
     for nm, a, b, tex in WALL_TEX:
         d["walls"].append({"from": list(M(*a)), "to": list(M(*b)), "sector": by_name[nm]["id"], "portal": "", "tex": tex, "lower_tex": "", "upper_tex": "", "dock_solid": True})
         used[tex] = True
+    sky_ids = {by_name[nm]["id"] for nm in SKY_SECTORS}
     for w in d["walls"]:
+        if w.get("portal") and w["sector"] in sky_ids and w["portal"] in sky_ids:
+            w["upper_tex"] = "sky"  # two open sectors with different wall heights: no lip band in the air between them, the sky shows
+        elif w.get("upper_tex") == "trim":
+            w["upper_tex"] = ""  # the loader paints the lip with the lower-ceilinged sector's lip_tex (LIP)
         for k in ("lower_tex", "upper_tex"):
             if w.get(k) == "trim":  # (convert.py's generic kerb name: this scene's own kerb tile)
                 w[k] = "dk_trim"
-            if w.get(k):
+            if w.get(k) and w[k] != "sky":
                 used[w[k]] = True
     tex = {}
     for k in sorted(used):
@@ -208,8 +244,9 @@ def main():
     d["waypoints"] = keep
     d["start"] = "dk_arrive"
     barriers(d)
-    d["sky"] = {}
-    d["fog"] = {"color": "#10122a", "density": 0.02}
+    d["sky"] = dict(SKY)
+    d["weather"] = json.loads(json.dumps(WEATHER))
+    d["fog"] = {"color": "#17152e", "density": 0.014}  # stage D: the rain haze is a lit violet-grey (the painting), thinner
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("dk_")]

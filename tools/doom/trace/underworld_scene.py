@@ -8,13 +8,16 @@ Why this does not start from tools/doom/trace/underworld.json: that trace is the
 painting (`art/reference/doom_worlds/Three Paths Across the Basalt Abyss-4.png`) is a viewer on a basalt plateau looking across a lava chasm at a stepped rock tower, with three ways on. So the
 scene is INVENTED FROM THE PAINTING, every sector below is a guess, flagged `approximate`; underworld.json stays as the record of what the render could and could not give.
 
-The painting's world (metres, x east, y north; the viewer stands at the south of the plateau and looks north; floors in metres, the cavern is open to a 22 m ceiling):
-  * the PLATEAU (floor 0, 12.5 x 7.5 m, its north edge only 4 m from the viewer so that the lava shows beyond it), foreground basalt slabs, a rock wall on the left (the cliff the bone chimes hang from) and one on the right;
+The painting's world (metres, x east, y north; the viewer stands at the south of the plateau and looks north; floors in metres; every piece but the cave is open to the map's red cloud sky, the walls
+stand 12 m, the height of the far cliffs):
+  * the PLATEAU (floor 0: 16 x 5 m, its west 11.5 m reaching 2.5 m further north and a 2 m strip up the west wall to y 9.5; its north edge only 3.9 m from the viewer so that the lava shows beyond it), foreground basalt slabs, a rock wall on the left
+    (the cliff the bone chimes hang from);
   * LEFT: the mouth of a blue-lit CAVE tunnel in the west wall (the Floor guide stands at its mouth);
   * AHEAD: a ledge (3.5 m wide, a 0.375 m step every 2 m up to +1.5) hugging the west cliff, then a gate pad and a causeway over the void to the foot of the TOWER (the Mothership guide stands on the
     ledge), four more steps up onto the tower terrace (+3 m) and a small stair to its top (+5 m);
   * RIGHT: a four-step stair (0.375 m risers) along the plateau's east side up to a SHELF at +1.5 m under a tent (the Dock guide stands on it);
-  * between and beyond them the ABYSS: a void 4 m down (the lava, drawn far below and hazed by the engine's void rule), made of rectangles by the decomposition below, every rim a railing.
+  * between and beyond them the ABYSS: a void 5 m down (the lava floor, -5 m) spanning x -4.5 to 30 and y 5.5 to 50 (`BOX`), made of rectangles by the decomposition below; every rim is a
+    railing (a low basalt kerb, `uw_rail`), one far rim behind the tower stays open for the loader's reachability rule; its far edge on the walls is the far cliff (12 m, lava falls on it).
 Everything is on a 0.5 m grid (walkable pieces on 0.25 m) so every Doom coordinate is an integer.
 """
 import json
@@ -23,41 +26,41 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "underworld_pilot.json")
 U = 32.0
-CEIL = 22.0
-ABYSS_FLOOR = -4.0
-BOX = (-4.5, 5.5, 24.0, 39.5)  # the abyss's bounding box (x0, y0, x1, y1): its edge on the walls is the far cliff  # (west of x = -4.5 the ledge and the tower stand against the solid cliff wall)
+CEIL = 12.0  # (every ceiling but the cave's is the map's red cloud sky: 12 m is the height of the far cliffs)
+ABYSS_FLOOR = -5.0
+BOX = (-4.5, 5.5, 30.0, 50.0)  # the abyss's bounding box (x0, y0, x1, y1): its edge on the walls is the far cliff  # (west of x = -4.5 the ledge and the tower stand against the solid cliff wall)
 
 # name, rect (x0, y0, x1, y1) in m, floor, ceiling, light 0..255
 WALK = [
-    ("plateau_s", (-6.5, -2, 7.5, 3), 0.0, CEIL, 150),
-    ("plateau_n", (-6.5, 3, 3, 5.5), 0.0, CEIL, 150),
+    ("plateau_s", (-6.5, -2, 9.5, 3), 0.0, CEIL, 150),
+    ("plateau_n", (-6.5, 3, 5, 5.5), 0.0, CEIL, 150),
     ("plateau_w", (-6.5, 5.5, -4.5, 9.5), 0.0, CEIL, 150),
     ("cave_mouth", (-8.5, 4.5, -6.5, 9.5), 0.0, 4.5, 130),
     ("cave", (-16, 4.5, -8.5, 9.5), 0.0, 3.5, 110),
     # the right: stair up to the shelf
-    ("dstair_1", (3, 3, 7.5, 4.5), 0.375, CEIL, 150),
-    ("dstair_2", (3, 4.5, 7.5, 6), 0.75, CEIL, 150),
-    ("dstair_3", (3, 6, 7.5, 7.5), 1.125, CEIL, 150),
-    ("dstair_4", (3, 7.5, 7.5, 9), 1.5, CEIL, 150),
-    ("shelf", (3, 9, 12, 16), 1.5, CEIL, 160),
+    ("dstair_1", (5, 3, 9.5, 4.5), 0.375, CEIL, 150),
+    ("dstair_2", (5, 4.5, 9.5, 6), 0.75, CEIL, 150),
+    ("dstair_3", (5, 6, 9.5, 7.5), 1.125, CEIL, 150),
+    ("dstair_4", (5, 7.5, 9.5, 9), 1.5, CEIL, 150),
+    ("shelf", (5, 9, 14, 16), 1.5, CEIL, 160),
     # ahead: the ledge, the gate pad, the causeway, the tower's stair and terrace
     ("ledge_1", (-4.5, 5.5, -1, 7.5), 0.375, CEIL, 150),
     ("ledge_2", (-4.5, 7.5, -1, 9.5), 0.75, CEIL, 150),
     ("ledge_3", (-4.5, 9.5, -1, 11.5), 1.125, CEIL, 150),
     ("ledge_4", (-4.5, 11.5, -1, 13.5), 1.5, CEIL, 150),
     ("gate_pad", (-4.5, 13.5, -1, 17.5), 1.5, CEIL, 160),
-    ("causeway", (-4.5, 17.5, -1, 23.5), 1.5, CEIL, 150),
-    ("tstair_1", (-4.5, 23.5, -1, 24.5), 1.875, CEIL, 150),
-    ("tstair_2", (-4.5, 24.5, -1, 25.5), 2.25, CEIL, 150),
-    ("tstair_3", (-4.5, 25.5, -1, 26.5), 2.625, CEIL, 150),
-    ("tstair_4", (-4.5, 26.5, -1, 27.5), 3.0, CEIL, 150),
-    ("tower_s", (-6.5, 27.5, 9, 31.5), 3.0, CEIL, 170),
-    ("tower_w", (-6.5, 31.5, -3, 35.5), 3.0, CEIL, 170),
-    ("tower_e", (3, 31.5, 9, 35.5), 3.0, CEIL, 170),
-    ("ttop_1", (-3, 31.5, 3, 32.5), 3.5, CEIL, 170),
-    ("ttop_2", (-3, 32.5, 3, 33.5), 4.0, CEIL, 170),
-    ("ttop_3", (-3, 33.5, 3, 34.5), 4.5, CEIL, 170),
-    ("ttop_4", (-3, 34.5, 3, 35.5), 5.0, CEIL, 170),
+    ("causeway", (-4.5, 17.5, -1, 27.5), 1.5, CEIL, 150),
+    ("tstair_1", (-4.5, 27.5, -1, 28.5), 1.875, CEIL, 150),
+    ("tstair_2", (-4.5, 28.5, -1, 29.5), 2.25, CEIL, 150),
+    ("tstair_3", (-4.5, 29.5, -1, 30.5), 2.625, CEIL, 150),
+    ("tstair_4", (-4.5, 30.5, -1, 31.5), 3.0, CEIL, 150),
+    ("tower_s", (-6.5, 31.5, 9, 35.5), 3.0, CEIL, 170),
+    ("tower_w", (-6.5, 35.5, -3, 39.5), 3.0, CEIL, 170),
+    ("tower_e", (3, 35.5, 9, 39.5), 3.0, CEIL, 170),
+    ("ttop_1", (-3, 35.5, 3, 36.5), 3.5, CEIL, 170),
+    ("ttop_2", (-3, 36.5, 3, 37.5), 4.0, CEIL, 170),
+    ("ttop_3", (-3, 37.5, 3, 38.5), 4.5, CEIL, 170),
+    ("ttop_4", (-3, 38.5, 3, 39.5), 5.0, CEIL, 170),
 ]
 
 
