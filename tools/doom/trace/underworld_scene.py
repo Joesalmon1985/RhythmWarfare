@@ -26,23 +26,32 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "underworld_pilot.json")
 U = 32.0
+CEIL_E = 6.0  # round 2: the east side (stair, shelf, the plateau east of the dais) stands 6 m: the red sky shows over its rock in the reference view (its lips are sky)
 CEIL = 12.0  # (every ceiling but the cave's is the map's red cloud sky: 12 m is the height of the far cliffs)
-ABYSS_FLOOR = -5.0
+ABYSS_FLOOR = -3.0  # round 2: 3 m down (was 5): the cliff faces are shorter, so more of the lava shows below the rim in the pitched view
+ABYSS_CEIL = 2.0  # round 2: the abyss's (sky) ceiling, so its far cliffs stand 7 m over the lava and the red sky shows above them in the pitched reference view; its lips are `sky` (not drawn)
 BOX = (-4.5, 5.5, 30.0, 50.0)  # the abyss's bounding box (x0, y0, x1, y1): its edge on the walls is the far cliff  # (west of x = -4.5 the ledge and the tower stand against the solid cliff wall)
 
 # name, rect (x0, y0, x1, y1) in m, floor, ceiling, light 0..255
 WALK = [
-    ("plateau_s", (-6.5, -2, 9.5, 3), 0.0, CEIL, 150),
-    ("plateau_n", (-6.5, 3, 5, 5.5), 0.0, CEIL, 150),
+    # round 2: the viewer's DAIS (+0.5 m, a raised outcrop of slabs, the painting looks down from high) reaches the rim; the plateau round it; plateau_n stops at the ledge's foot so the
+    # abyss comes to the dais (the POCKET, x -1 to 5, y 3 to 5.5): from the reference viewpoint the lava is 2 m ahead and fills the lower half of the pitched choice view
+    ("plateau_dais", (-0.5, -1, 2.5, 3), 0.5, CEIL, 150),
+    ("plateau_s", (-6.5, -2, -0.5, 3), 0.0, CEIL, 150),
+    ("plateau_se", (2.5, -2, 9.5, 3), 0.0, CEIL_E, 150),
+    ("plateau_ss", (-0.5, -2, 2.5, -1), 0.0, CEIL, 150),
+    ("plateau_n", (-6.5, 3, -1, 5.5), 0.0, CEIL, 150),
     ("plateau_w", (-6.5, 5.5, -4.5, 9.5), 0.0, CEIL, 150),
     ("cave_mouth", (-8.5, 4.5, -6.5, 9.5), 0.0, 4.5, 130),
     ("cave", (-16, 4.5, -8.5, 9.5), 0.0, 3.5, 110),
+    # round 2: the tunnel runs on: a narrower, lower passage 4 m deep past the cave's end (its lip a rock frame), the dark way on with one lantern at its far end (the decal)
+    ("cave_deep", (-20, 5.625, -16, 8.375), 0.0, 2.75, 90),
     # the right: stair up to the shelf
-    ("dstair_1", (5, 3, 9.5, 4.5), 0.375, CEIL, 150),
-    ("dstair_2", (5, 4.5, 9.5, 6), 0.75, CEIL, 150),
-    ("dstair_3", (5, 6, 9.5, 7.5), 1.125, CEIL, 150),
-    ("dstair_4", (5, 7.5, 9.5, 9), 1.5, CEIL, 150),
-    ("shelf", (5, 9, 14, 16), 1.5, CEIL, 160),
+    ("dstair_1", (5, 3, 9.5, 4.5), 0.375, CEIL_E, 150),
+    ("dstair_2", (5, 4.5, 9.5, 6), 0.75, CEIL_E, 150),
+    ("dstair_3", (5, 6, 9.5, 7.5), 1.125, CEIL_E, 150),
+    ("dstair_4", (5, 7.5, 9.5, 9), 1.5, CEIL_E, 150),
+    ("shelf", (5, 9, 14, 16), 1.5, CEIL_E, 160),
     # ahead: the ledge, the gate pad, the causeway, the tower's stair and terrace
     ("ledge_1", (-4.5, 5.5, -1, 7.5), 0.375, CEIL, 150),
     ("ledge_2", (-4.5, 7.5, -1, 9.5), 0.75, CEIL, 150),
@@ -61,6 +70,10 @@ WALK = [
     ("ttop_2", (-3, 36.5, 3, 37.5), 4.0, CEIL, 170),
     ("ttop_3", (-3, 37.5, 3, 38.5), 4.5, CEIL, 170),
     ("ttop_4", (-3, 38.5, 3, 39.5), 5.0, CEIL, 170),
+    # round 2: the lava SHORE, a 2 x 1 m piece of the lake behind the tower at the lava's own level, NOT a void (nobody stands in it): StoryMap gives the abyss's connected void group
+    # the lowest floor round it as `void_top` (docs/story/HEIGHTS_AND_PATHS.md, split voids), and with the shore at the lava's depth that is the lava itself, so the void's depth haze
+    # (a multiplier toward 30 % of the fog colour) does not turn the lava dark red: the lake glows as the painting's does. The tower's open rim edge (the one the loader needs) is onto it.
+    ("lavashore", (5, 39.5, 7, 40.5), ABYSS_FLOOR, ABYSS_CEIL, 190),
 ]
 
 
@@ -98,8 +111,8 @@ def abyss_rects():
 
 
 SECTORS = list(WALK)
-for k, rc in enumerate(abyss_rects()):
-    SECTORS.append(("abyss_%02d" % k, rc, ABYSS_FLOOR, CEIL, 190))
+for k, rc in enumerate([(-1.0, 3.0, 5.0, 5.5)] + abyss_rects()):  # (the pocket below the dais first)
+    SECTORS.append(("abyss_%02d" % k, rc, ABYSS_FLOOR, ABYSS_CEIL, 190))
 START = (0.0, 1.6)
 
 

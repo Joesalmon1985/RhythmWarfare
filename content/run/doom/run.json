@@ -1020,42 +1020,23 @@
        "to": "uw_ledge_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 2,
        "via": [
         "uw_v_s1"
        ],
-       "hold_bars": 2
-      },
-      {
-       "to": "uw_cave_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "uw_v_s2"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "uw_stair_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "uw_v_s1"
-       ],
-       "hold_bars": 2
+       "hold_bars": 1
       },
       {
        "to": "uw_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 3,
        "via": [
         "uw_v_s1"
        ],
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -14.0
       }
      ],
      "bad": [
@@ -1200,33 +1181,11 @@
        "to": "ms_hub_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 3,
+       "bars": 2,
        "via": [
         "ms_v_a1"
        ],
-       "hold_bars": 2
-      },
-      {
-       "to": "ms_stair_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "ms_v_a3"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "ms_bridge_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "ms_v_a3",
-        "ms_v_a2",
-        "ms_v_a1"
-       ],
-       "hold_bars": 2
+       "hold_bars": 1
       },
       {
        "to": "ms_ref",
@@ -1237,7 +1196,8 @@
         "ms_v_a1"
        ],
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -14.0
       }
      ],
      "bad": [

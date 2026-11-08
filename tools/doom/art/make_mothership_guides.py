@@ -1,7 +1,8 @@
 """The Mothership's three guides (docs/doom/scenes/mothership.md), 160 x 256 billboard sprites, idle 1, available 5, selected 2, committed 2 (the Warehouse guides' sheet layout):
 `booth` (left, the DJ in the painting: teal hair, headphones, an orange jacket over black), `underworld` (ahead, the red horned figure with a brass drum on a strap, a red robe) and `dock`
 (right, the broad bald man in the long green coat with the yellow armband: CROPPED from this painting, about 335 px tall in it, by tools/doom/art/make_underworld_guides.py's crop helper).
-`booth` and `underworld` are PROCEDURAL (about 110 px in the painting, under ruling 36's 180 px): placeholders toward the sprite standard.
+`booth` is PROCEDURAL (about 110 px in the painting, under ruling 36's 180 px): a placeholder toward the sprite standard. `underworld` is CROPPED (round 2) from
+`Three Visitors in the Basalt Underworld-6.png` (the drummer seated at his two drums, about 330 px tall there): UW_DRUM_FIG.
 
     python -I tools/doom/art/make_mothership_guides.py     writes assets/story/doom_mothership/textures/guide_<who>_<state>_<n>.png and docs/shots/doom/mothership/guides_sheet.png
 
@@ -21,6 +22,17 @@ from PIL import Image, ImageDraw  # noqa: E402
 OUT = os.path.join(mg.ROOT, "assets", "story", "doom_mothership", "textures")
 SHEET = os.path.join(mg.ROOT, "docs", "shots", "doom", "mothership", "guides_sheet.png")
 hexc = mg.hexc
+
+
+# round 2: the Underworld guide (the red horned drummer) is CROPPED from `Three Visitors in the Basalt Underworld-6.png`, where he sits at his two drums about 330 px tall (the Mothership
+# painting shows him at about 110 px, under ruling 36's 180 px). The outline is traced on a 2x view of the box (340, 600)-(700, 941): horns, head, the bare back, the arms and both sticks,
+# the two drums, the trousers and boot down to the seat rock (the rock itself is left out).
+VISITORS = os.path.join(mg.ROOT, "art", "reference", "doom_worlds", "Three Visitors in the Basalt Underworld-6.png")
+_G = [(162, 98), (172, 52), (200, 32), (228, 26), (214, 46), (206, 72), (232, 80), (300, 78), (330, 86), (348, 62), (338, 42), (308, 30), (302, 20), (345, 25), (372, 55),
+      (374, 96), (342, 108), (332, 140), (324, 176), (296, 190), (290, 232), (300, 282), (340, 300), (372, 292), (396, 250), (424, 214), (446, 232), (424, 262), (440, 280), (466, 258), (500, 262), (494, 288), (450, 322), (470, 324),
+      (600, 320), (662, 344), (682, 372), (674, 520), (642, 590), (546, 602), (532, 642), (420, 652), (398, 664), (300, 664), (284, 600), (262, 494), (240, 480), (60, 470),
+      (38, 420), (48, 330), (80, 258), (110, 200), (150, 176), (198, 160), (212, 112), (176, 112)]
+UW_DRUM_FIG = dict(painting=VISITORS, lit=1, hand=(540, 700, 595, 735), poly=[(int(x / 2 + 340), int(y / 2 + 600)) for x, y in _G])
 
 
 def decorate_booth(im, state, i):
@@ -71,6 +83,8 @@ def main():
     for who in ["booth", "underworld", "dock"]:
         if who == "dock":
             fr = uwg.crop_frames(uwg.DOCK_FIG)
+        elif who == "underworld":
+            fr = uwg.crop_frames(UW_DRUM_FIG)  # (round 2: cropped, see UW_DRUM_FIG)
         else:
             arch, patch, deco, cloth = variants[who]
             fr = {}

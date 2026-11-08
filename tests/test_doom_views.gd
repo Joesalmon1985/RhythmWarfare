@@ -1186,6 +1186,11 @@ func test_underworld_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_
 		fail("underworld map did not load")
 		return
 	var pose := _uw_pose(m, "uw_ref")
+	# round 2: the choice hold at uw_ref carries a steady pitch (the run's rail place `pitch`, docs/engine/GEOGRAPHY_WORLDS.md): the guides are checked at the PITCHED pose the window holds
+	var good: Array = _doom_run().nodes["doom_underworld"]["rail"]["good"]
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
+	assert_true(pitch <= -10.0 and pitch >= -35.0, "underworld: uw_ref holds a downward pitch over the lava (%.1f)" % pitch)
+	pose["pitch"] = pitch
 	for asp in ASPECTS:
 		var view: Vector2 = ASPECTS[asp]
 		var rects := {}
@@ -1255,12 +1260,13 @@ func test_underworld_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
 		assert_eq([str(routes["up"]["to"]), str(routes["left"]["to"]), str(routes["right"]["to"])], UW_EXITS, "%s: the thresholds are the exits' waypoints" % id)
 	var good: Array = on.nodes["doom_underworld"]["rail"]["good"]
-	assert_eq(good.size(), 4, "underworld: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "underworld: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+	# round 2: one reveal and the choice viewpoint (the rail steps a place per passed block: the choice place must be reached by block 2, when the window opens)
+	assert_eq(good.size(), 2, "underworld: the stay loop is one reveal and the choice viewpoint")
+	for i in 1:
+		assert_true(float(good[i]["hold_bars"]) > 0.0 and float(good[i]["bars"]) + float(good[i]["hold_bars"]) <= 4.0, "underworld: reveal viewpoint %s holds still and is over within a block" % good[i]["to"])
 		assert_false(bool(good[i].get("choice", false)), "underworld: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "uw_ref", "underworld: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "underworld: uw_ref is a choice viewpoint holding the whole window")
+	assert_eq(str(good[1]["to"]), "uw_ref", "underworld: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "underworld: uw_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_underworld", [])
 	assert_eq(hs.size(), 4, "underworld: three guides and the stay hotspot")
 	var dests := []
@@ -1303,14 +1309,29 @@ func test_underworld_the_abyss_is_a_void_shut_by_railings_and_the_art_is_in_the_
 		return
 	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % UW_MAP))
 	var abyss := {}
+	var lava_floor := 0.0
 	for s in doc["sectors"]:
 		if str(s.get("room_name", "")).begins_with("abyss"):
 			abyss[str(s["id"])] = true
+			lava_floor = float(s["floor"])
 			assert_true(m.is_void(str(s["id"])), "underworld: abyss piece %s is a void" % s["id"])
 			assert_true(float(s["floor"]) <= -3.0, "underworld: abyss piece %s lies below the paths" % s["id"])
 	assert_true(abyss.size() >= 3, "underworld: the abyss has pieces (%d)" % abyss.size())
+	# round 2: the lava SHORE (behind the tower, at the lava's level, not a void) makes the abyss group's void_top the lava itself, so the depth haze leaves the lake glowing;
+	# for the rim count it is part of the lake (its edges onto the abyss are level, not a rim)
+	var shore := 0
+	for s in doc["sectors"]:
+		if str(s.get("room_name", "")) == "lavashore":
+			shore += 1
+			abyss[str(s["id"])] = true
+			assert_false(m.is_void(str(s["id"])), "underworld: the lava shore is not a void")
+			assert_eq(float(s["floor"]), lava_floor, "underworld: the lava shore lies at the lava's level")
+	assert_eq(shore, 1, "underworld: one lava shore piece")
+	for s in doc["sectors"]:
+		if str(s.get("room_name", "")).begins_with("abyss"):
+			assert_eq(float(m.sector(str(s["id"])).get("void_top", 99.0)), lava_floor, "underworld: abyss piece %s has void_top at the lava (no depth haze on the lake)" % s["id"])
 	for w in m.waypoints.values():
-		assert_false(abyss.has(str(w["sector"])), "underworld: no waypoint stands in the abyss")
+		assert_false(abyss.has(str(w["sector"])), "underworld: no waypoint stands in the abyss or on the shore")
 	var rim := 0
 	var open_rim := 0
 	for w in doc["walls"]:
@@ -1391,6 +1412,11 @@ func test_mothership_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_
 		fail("mothership map did not load")
 		return
 	var pose := _ms_pose(m, "ms_ref")
+	# round 2: the choice hold at ms_ref carries a steady pitch (the run's rail place `pitch`): the guides are checked at the PITCHED pose the window holds
+	var good: Array = _doom_run().nodes["doom_mothership"]["rail"]["good"]
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
+	assert_true(pitch <= -8.0 and pitch >= -35.0, "mothership: ms_ref holds a downward pitch over the pool (%.1f)" % pitch)
+	pose["pitch"] = pitch
 	for asp in ASPECTS:
 		var view: Vector2 = ASPECTS[asp]
 		var rects := {}
@@ -1460,12 +1486,13 @@ func test_mothership_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
 			assert_eq(str(routes[k]["to"]), str((rail["exits"] as Dictionary)[k]), "%s: route %s ends at rail.exits.%s (the doorway)" % [id, k, k])
 	var good: Array = on.nodes["doom_mothership"]["rail"]["good"]
-	assert_eq(good.size(), 4, "mothership: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "mothership: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+	# round 2: one reveal and the choice viewpoint (the rail steps a place per passed block: the choice place must be reached by block 2, when the window opens)
+	assert_eq(good.size(), 2, "mothership: the stay loop is one reveal and the choice viewpoint")
+	for i in 1:
+		assert_true(float(good[i]["hold_bars"]) > 0.0 and float(good[i]["bars"]) + float(good[i]["hold_bars"]) <= 4.0, "mothership: reveal viewpoint %s holds still and is over within a block" % good[i]["to"])
 		assert_false(bool(good[i].get("choice", false)), "mothership: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "ms_ref", "mothership: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "mothership: ms_ref is a choice viewpoint holding the whole window")
+	assert_eq(str(good[1]["to"]), "ms_ref", "mothership: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "mothership: ms_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_mothership", [])
 	assert_eq(hs.size(), 4, "mothership: three guides and the stay hotspot")
 	var dests := []
@@ -1532,9 +1559,23 @@ func test_mothership_the_void_is_shut_by_railings_visibility_decals_and_the_art_
 		for p in m.portals():
 			if (str(p["a"]) == str(s["id"]) or str(p["b"]) == str(s["id"])) and not bool(p["blocked"]):
 				var other := str(p["b"]) if str(p["a"]) == str(s["id"]) else str(p["a"])
-				if not m.is_void(other):
+				if not m.is_void(other) and absf(float(m.sector(other)["floor"]) - float(s["floor"])) > 0.01:  # (round 2: the pool shore, at the pool's own level, is part of the pool)
 					open_to_void += 1
 					assert_eq(str(m.floor_change(other, str(s["id"]))["kind"]), "void", "mothership: the open edge to the void %s is a void crossing (the rail never takes it)" % s["id"])
+		assert_eq(float(s.get("void_top", 99.0)), float(s["floor"]), "mothership: void %s has void_top at the pool (the pool shore: no depth haze darkens the pool)" % s["id"])
+	# round 2: the POOL SHORE: one wedge of the pool at the pool's level that is not a void (StoryMap's split-void void_top is then the pool, the engine haze leaves it glowing);
+	# its one edge onto the walk is the drop the loader needs, and the rail never takes a drop
+	var shore := 0
+	for s in m.sectors:
+		if not m.is_void(str(s["id"])) and float(s["floor"]) <= -3.0:
+			shore += 1
+			for p in m.portals():
+				if (str(p["a"]) == str(s["id"]) or str(p["b"]) == str(s["id"])) and not bool(p["blocked"]):
+					var other := str(p["b"]) if str(p["a"]) == str(s["id"]) else str(p["a"])
+					if not m.is_void(other):
+						open_to_void += 1
+						assert_eq(str(m.floor_change(other, str(s["id"]))["kind"]), "drop", "mothership: the open edge onto the pool shore is a drop (the rail never takes it)")
+	assert_eq(shore, 1, "mothership: one pool shore piece")
 	assert_true(voids >= 10, "mothership: the void is made of marked sectors (%d)" % voids)
 	assert_true(open_to_void <= 1, "mothership: at most one unrailed edge into the void (%d)" % open_to_void)
 	for wid in m.waypoints:
