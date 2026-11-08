@@ -26,6 +26,14 @@ if [ ! -d "$data" ]; then
         cp -r "$real" "$data/Godot/app_userdata/" && echo "copied the save and settings from $real"
     fi
 fi
+# A checkout whose scripts changed since Godot last imported it (a merge, a pull, a new worktree) has a stale global class cache: a class_name the
+# cache does not know makes the scene that uses it fail to parse, and the menu's Play shows a grey screen. Import first when any script or scene is
+# newer than the cache (quick when nothing changed; the first import after a big merge takes a while).
+cache="$here/.godot/global_script_class_cache.cfg"
+if [ ! -f "$cache" ] || [ -n "$(find "$here/src" "$here/tests" "$here/tools" \( -name '*.gd' -o -name '*.tscn' \) -newer "$cache" -print -quit 2>/dev/null)" ]; then
+    echo "importing first: scripts changed since the last import (this takes a while after a merge)..."
+    APPDATA="$data" "$bin" --headless --path "$here" --import >/dev/null 2>&1 || echo "import returned $? (continuing)" >&2
+fi
 scene=()
 [ "${1:-}" = "--run" ] && scene=(res://src/run/run_play.tscn)
 echo "packs: $packs ($(ls "$packs" | wc -l) folders)   save: $data"
