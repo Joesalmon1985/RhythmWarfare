@@ -199,3 +199,10 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     the door = up) with the pads staying rhythm. The owner chose to keep it as built: while seated the pads
     are the card controls and judging is suspended; B6/B7 are superseded for the card table (contracts 4/5:
     blackjack is `replace`).
+
+41. **How the opening ends (lead, 9 November; the owner may overrule).** The bedsit's way out (`bedsit.way_out`
+    → `bedsit.end` → the Warehouse) opens once any ONE rave's three activities are done in the save
+    (`raves.<theme>.bass_fixed`, `cloakroom_done`, `bar_done`); a visit alone does not open it; once open it
+    stays open and the other raves stay reachable. This follows the brief (line 279: the player does not have
+    to visit all four flavours to complete the opening) and replaces the raves agent's stand-in that needed
+    all four `bedsit_been_<theme>` flags.
