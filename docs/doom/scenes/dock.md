@@ -27,15 +27,39 @@ door, passage to `dk_floor_door`), `right` (street, yard to `dk_under`), `stumbl
 
 `contact.jpg` (the painting beside `dk_ref`, then every viewpoint as a 16:9 | 20:9 pair) and `walk_strip.jpg` (three routes; pose tables `walk_up.txt`, `walk_left.txt`, `walk_right.txt`). Regenerate: `python3 tools/doom/shoot_dock.py`.
 
-**What matches the painting:** the composition at `dk_ref`: brick wall and open club door with a figure at left, the street running to a violet figure at its end, the van and the lit furnace-side figure at right, the shutter wall and bollard in the near right,
-yellow apron edge; the palette (red brick, dark blue towers with amber windows, sodium and blue light).
+## Stage D polish, round 1 (docs/briefs/DOOM_POLISH_BRIEF.md)
 
-**What does not:** no rain falls and there are no wet reflections (only painted gloss on the floor tiles); the street is straight, the painting's curves left; the sky is a dark ceiling tile 7.5 m up, not a sky; the fence is a wall decal, the two near
-bollards are small and the far-right pallets and case are fewer than the painting's; the Underworld guide stands (the painting seats him with a drum, which is a separate prop beside him); the Floor guide is the Lounge's sprite, not leaning on the door;
-the wall tiles repeat. The three threshold shots (`route_*`) look at a wall a metre or two ahead (the street's end wall, the passage's end, the yard wall), so they read as blank surfaces.
-Exposure (frame_check over the seven kept shots): p50 0.22, p95-p5 0.45, crushed 0 %, blown 0.2 %, under the 0.25 to 0.38 target in the median.
+**The five biggest differences from the painting at `dk_ref`, written before the second half of the work (the first agent had done the sky, the street, the passage, the tiles and the crops):**
+
+1. Exposure and contrast: the painting has deep darks (the towers, the corners) and bright warm reflections; the scene was a flat violet mid-grey (p50 0.22, p95 - p5 0.32 over the shots).
+2. The wet floor: the painting's lamps throw long vertical reflections on standing water; the baked gloss broke into grain at mid distance (1-texel dither under nearest sampling, no mipmaps) and no rain fell.
+3. The towers: the painting's buildings are dark masses with a few lit windows; ours were evenly gridded with many lit windows and a lifted haze.
+4. The club passage behind the door: the painting's blue doorway is a dark blue with a bright light; ours was a flat bright-blue wash with no contrast.
+5. The far street (the ahead hold): dark and lamp-less beyond the second street lamp, so the threshold read as a dim corridor.
+
+**What was done about each:** (1) every sector's song-time light is 1.0 and the flat light away from the lamps is cut to `ambient` 0.4-0.5 (0.7 in the passage), the fog and the sky are darker (`#17152e`, sky lift 0.04); (2) the gloss and the floors' ramps dither in 2 x 2 texel blocks, a solid bright core in each smear, two-texel ripple rings, 2 x 2 grit (`make_dock_art.wet_gloss`, `ramp(cell=2)`); the map's `weather` (rain 0.8, wind 10, drips at the canopy's edge and the club door's lintel) adds the rain streaks and the engine's gloss bands; (3) tower faces darker with fewer lit windows (11 to 17 %), brighter mid-tones so the median holds; (4) the passage's panels dark navy with a bright LED strip and its glow, the floor dark rubber with the strip's long blue reflections; (5) a fourth street lamp (east side, 27.5 m) and two lamp pools on the far street.
+
+**Matches now:** the composition at `dk_ref` as before (brick wall and lit club door with the Floor guide left, the street to the violet Mothership guide, the van, the furnace and the seated Underworld guide right, the bollards and the yellow apron edge); rain falling on the six open sectors, lit by the lamps (orange by the sodium lamps, blue in the open), the canopy and the passage dry, drips at the eaves; the wet gloss bands under the lamps; the storm sky; the palette (red brick, dark blue towers with amber windows, sodium against the cool rain light).
+
+**Does not match:** the street is straight (the painting's curves left); the near right of the painting (a big flight case, more pallets, the shutter close by) is thinner here; the fence is a wall decal; the caged hanging lamp and the chain read small; the floor gloss is the engine's bands, not a mirror (nothing is reflected); the furnace and van are flat billboards; `route_ahead` stays dark (it looks up the street at the dark towers, p50 0.2) and `route_left` (the blue passage) is low in contrast.
+
+**Guides (ruling 36):** all three CROPPED (`tools/doom/art/make_dock_crop.py`): Floor from this painting (350 px there), Mothership from the Booth's painting (200 px there; 130 px in this one), Underworld from `Rainy Dock of Three Paths-7.png` (seated behind crates; his legs are hidden in that painting). No rings or beacons.
+
+**Exposure (tools/doom/frame_check.py, 16:9 shots, the picture only):** before this round's second half (same tool, 8 Nov): ALL p50 0.22, p95 - p5 0.32. Now:
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.15  0.29  0.54  0.34    0.0%   0.0%  off
+hold_door               0.13  0.28  0.50  0.51    0.0%   0.1%  off
+hold_street             0.13  0.25  0.61  0.38    0.0%   0.1%  ok
+hold_yard               0.12  0.33  0.60  0.25    0.0%   0.0%  ok
+ref                     0.14  0.29  0.54  0.35    0.0%   0.0%  ok
+route_ahead             0.12  0.22  0.48  0.43    0.0%   0.0%  off
+route_left              0.13  0.26  0.40  0.64    0.0%   0.1%  off
+route_right             0.11  0.29  0.58  0.29    0.0%   0.1%  ok
+ALL                     0.13  0.28  0.56  0.40    0.0%   0.1%  contrast p95-p5 0.43
+```
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_dock_art.py`, `make_dock_guides.py`, procedural); the music (Warehouse arrangements). Hooks needed: a real sky (the map's `sky` is empty, the
-ceiling tile stands in), rain particles and wet-floor reflection. No `src/` change was made.
+Placeholders: the textures, props and decals are procedural (`tools/doom/art/make_dock_art.py`; the 256 px tiles drawn to the style guide, the props older); the music (Warehouse arrangements). The guides are crops of the paintings, not placeholders. No `src/` change was made. Regenerate: `python -I tools/doom/art/make_dock_art.py; python -I tools/doom/author_dock.py`, then `--import`, then `python tools/doom/shoot_dock.py`.

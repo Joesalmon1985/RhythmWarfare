@@ -27,15 +27,39 @@ hatch), `left` (aisle, landing, door, porch, up the stair), `right` (aisle, thro
 
 `contact.jpg` (the painting beside `bt_ref`, then every viewpoint as a 16:9 | 20:9 pair) and `walk_strip.jpg` (the three routes, six frames each; the pose tables in `walk_*.txt`). Regenerate: `python3 tools/doom/shoot_booth.py`.
 
-**What matches the painting:** the narrow aisle with the guides at left (through the window), centre (the hatch, violet) and right (the open door onto a wet, striped dock); olive foam walls, caged lamps, red LED strips, wall screens, the
-wire-mesh window, dense rack and case billboards, the violet chamber with crystals; the warm, dark exposure (frame_check over all shots: p50 0.23, p95-p5 0.40, slightly under the 0.25 to 0.38 target: sector light is already near its 1.0 ceiling, so only the lamp pools could lift it).
+## Stage D polish, round 1 (docs/briefs/DOOM_POLISH_BRIEF.md)
 
-**What does not:** the desk is a lattice-railed 1 m dais seen from 2 m back, not the painting's big foreground desk (decks and mixer are small flat billboards, no big record turntable, no headphones, mug or sleeves in close-up); the balcony guide is
-small and half hidden by the crowd and the mesh; the walls are flat tiles (no pipe runs along the ceiling, no thick door leaf, no puddle reflections); the painting's rain and wet-floor gloss are absent; the dock guide's beard and the Mothership guide's horns are not drawn (procedural placeholder sprites,
-far below `art/reference/standard/guide_floor_sprite_standard.png`); the balcony route's stair is three plain steps. The brief's "dance pit in front" is not in the painting and is not modelled: the Night One crowd dances on the **balcony outside the window** instead (57 homes, kept off the line of sight to the balcony guide).
+**The five biggest differences from the painting at `bt_ref`, written before changing anything:**
+
+1. The big desk: the painting's foreground is the desk (turntable with a red record, the mixer, the angled lamp, the mug, the headphones, the record crate); the scene had a 1 m railed dais with small flat turntable and mixer billboards, seen side-on.
+2. The guides were procedural placeholders (no beard, no horns, flat colours).
+3. The window: the painting shows rain and an empty iron balcony with the white-haired guide; the scene's Night One crowd danced outside the window and no rain fell.
+4. The surfaces: flat 128 px tiles (no wedge foam, no tread plate, no corrugated cladding) and no wet floor in the dock annex.
+5. The dock threshold held on a blank shutter wall (`route_right`), and the exposure was low (p50 0.23, p95 - p5 0.40).
+
+**What was done about each:** (1) the desk is CROPPED from the painting (`tools/doom/art/make_booth_polish.py`, an outline polygon, hard alpha, 256 px tall) and stands as one foreground billboard `bt_desk_big` (1.6 m, in the aisle's west half, 3.4 m before `bt_ref`), so from the reference viewpoint it fills the lower left as the painting's desk does, the balcony guide visible through the window to its left; the dais is lowered to the floor (`booth_scene.py`) and its handrail removed (the painting has none); the window mesh runs floor to ceiling behind the desk; the old desk billboards (decks, mixer, lamp, records) are gone, the stool stands before the desk; a warm lamp light over it; (2) the three guides cropped (below); (3) the cast is empty; the balcony outside (terrace, porch, its stair) is open to a storm sky (`bt_sky`) with rain 0.85, wind 8, drips at the window's lintel and the balcony door; (4) 256 px olive wedge foam (ribs alternating per panel), diamond tread plate, the aisle's worn grate, corrugated steel cladding, riveted plate, a joisted ceiling; the dock annex wet (`wet` 0.6, roofed so no rain falls) with sodium and yellow-stripe gloss; (5) the annex's far wall carries an open roller shutter onto the rainy street (`bt_shutter_open`, emissive, a sodium light before it), the threshold hold faces it; light 1.0, `ambient` 0.7-0.75, lamps at the window, the desk and the terrace.
+
+**Matches now:** the composition at `bt_ref`: the big desk in the lower left with its lamp lit, the window with the balcony guide in the rain beyond it, the aisle to the violet hatch with the Mothership guide, the dock door on the right with the Dock guide (bald, beard, green coat, yellow armband) in the sodium light; olive foam, caged lamps, red LEDs and screens; an empty booth.
+
+**Does not match:** the desk is a flat cut-out: it turns with the camera and reads right only from about `bt_ref` (on the walks up the aisle it looms and turns); the steel door leaf of the dock door is not drawn (the painting's thick door with its louvre); no pipe runs along the ceiling; the shutter decal's street is crude; the Mothership's chamber is the earlier flat ribbed placeholder; `hold_window` and `route_left` (the rainy balcony) are under the median.
+
+**Guides (ruling 36):** all three CROPPED from this painting (`tools/doom/art/make_dock_crop.py` CROPS `balcony_booth` 250 px, `mothership_booth` 216 px, `dock_booth` 466 px tall in the painting; `make_booth_polish.main` writes the four states). No rings or beacons.
+
+**Exposure (tools/doom/frame_check.py, 16:9 shots, the picture only):** before (8 Nov, the same tool): ALL p50 0.23, p95 - p5 0.40. Now:
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.10  0.24  0.45  0.43    0.1%   0.0%  off
+hold_dock               0.14  0.26  0.40  0.40    0.0%   0.0%  off
+hold_hatch              0.11  0.27  0.49  0.44    0.1%   0.0%  off
+hold_window             0.11  0.20  0.34  0.36    0.0%   0.0%  off
+ref                     0.10  0.23  0.45  0.43    0.1%   0.0%  off
+route_ahead             0.16  0.33  0.67  0.46    0.0%   0.1%  ok
+route_left              0.10  0.21  0.34  0.38    0.0%   0.0%  off
+route_right             0.13  0.24  0.40  0.42    0.0%   0.0%  off
+ALL                     0.11  0.24  0.47  0.42    0.0%   0.1%  contrast p95-p5 0.36
+```
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_booth_art.py`, procedural); the music (Warehouse arrangements). Not done: no state-driven guide animation beyond the sprite per state; no `src/` hook was needed.
-
-Regenerate: see `docs/doom/LAUNCH.md` (booth block).
+Placeholders: the textures, props and decals are procedural (`tools/doom/art/make_booth_art.py`, overwritten in part by `make_booth_polish.py`; the racks, cases, crystals, console, screens and the Mothership chamber's tiles are the earlier flat placeholders); the music (Warehouse arrangements). The desk and the guides are crops of the painting. No `src/` change was made. Regenerate: `python -I tools/doom/trace/booth_scene.py; python -I tools/doom/convert.py --scene booth --trace tools/doom/trace/booth_pilot.json; python -I tools/doom/art/make_booth_art.py; python -I tools/doom/author_booth.py`, then `--import`, then `python tools/doom/shoot_booth.py`.

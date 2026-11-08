@@ -285,12 +285,201 @@ DECALS = {"bc_eq_pink": lambda: eq_graffiti("#d03a9a", "#ff9ad8", 3), "bc_eq_vio
           "bc_skyline": mb.skyline, "bc_lace": lace_dome, "bc_pipes": mb.pipe_run, "bc_shutters": shutters_blue, "bc_led": mb.led_strip, "bc_windows": windows_lit}
 
 
+# --- stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): 256 px tiles (128 texels per metre) on the Dock's numpy helpers (ordered dither, tileable noise, wet gloss in 2 x 2
+# blocks), the moon sky with the city's skyline, the alley's lit side door and the cabin's stairwell glow. The PIL tiles above stay for the props and decals not redrawn.
+import make_dock_art as dk  # noqa: E402
+import numpy as np  # noqa: E402
+
+T = dk.T
+
+
+def p_sky():
+    """The painting's sky: a full moon in torn storm cloud (upper left of the view north), a searchlight beam, the violet-lit city skyline with red mast lamps on the horizon."""
+    return dk.to_img(dk.sky_strip(461, clouds=("#060a18", "#0c1428", "#142038", "#1e2c4a", "#2c3c60", "#465a80"), glow="#3a4a90", lift=0.0, moon=(968, 132, 18),
+                                  beams=((930, 20, 7), (120, -14, 6)), stars=0,
+                                  skyline={"layers": (("#141c34", 20, 70, 0.10), ("#0c1226", 30, 110, 0.12), ("#070a18", 40, 150, 0.08)),
+                                           "win": ("#e0a448", "#ffc068", "#5ad0ff", "#d070ff", "#ff5ab0"), "street": "#0a0c1a"}))
+
+
+def p_wall_brick():
+    return dk.to_img(dk.brick_tile(471, base=("#3a1814", "#62281f", "#7e362b", "#9c4636")))
+
+
+def p_wall_brick_b():
+    return dk.to_img(dk.brick_tile(472, base=("#3a1814", "#62281f", "#7e362b", "#9c4636")))
+
+
+def p_wall_conc():
+    """Rain-darkened concrete (the far roofs and the deck's parapet): board marks, stains, long rain streaks."""
+    rng = np.random.default_rng(481)
+    arr = dk.ramp(dk.vnoise(T, T, 481, ((3, 0.4), (12, 0.4), (40, 0.2))) * 0.7 + 0.15, ("#10141e", "#20283a", "#30394c", "#445066"), cell=2)
+    for y in range(0, T, 64):
+        arr[y:y + 2, :] *= 0.55
+    yy, xx = np.indices((T, T))
+    for _ in range(24):
+        x0, y0, ln = rng.integers(T), rng.integers(T), rng.integers(30, 140)
+        dk.mix_dither(arr, np.where((np.abs(xx - x0) < 1) & ((yy - y0) % T < ln), 0.6, 0), "#5a6680", k=0.4)
+    return dk.to_img(arr)
+
+
+def p_wall_steel():
+    """Riveted steel plate, rust bleeding from the seams, wet sheen."""
+    arr = dk.ramp(dk.vnoise(T, T, 491, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#141820", "#20262e", "#2e3640", "#3e4854"), cell=2)
+    for k in range(0, T, 64):
+        arr[k:k + 2, :] = dk.hexa("#0a0c10")
+        arr[:, k:k + 2] = dk.hexa("#0a0c10")
+        for r in range(8, T, 16):
+            arr[k + 4:k + 6, r:r + 2] = dk.hexa("#6a7280")
+            arr[r:r + 2, k + 4:k + 6] = dk.hexa("#6a7280")
+    rust = dk.vnoise(T, T, 492, ((6, 0.5), (24, 0.5)))
+    dk.mix_dither(arr, np.clip((rust - 0.55) * 2.0, 0, 0.6), "#6a3418", k=0.5, cell=2)
+    return dk.to_img(arr)
+
+
+def p_wall_cabin():
+    """The control cabin inside: warm-lit panelled wall with rack lights and cable trays."""
+    arr = dk.ramp(dk.vnoise(T, T, 501, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#24160c", "#4a3018", "#6e4824", "#9a6a38"), cell=2)
+    for x in range(0, T, 64):
+        arr[:, x:x + 2] = dk.hexa("#140c08")
+    arr[40:44, :] = dk.hexa("#8a6a40")
+    rng = np.random.default_rng(502)
+    for _ in range(40):
+        x, y = int(rng.integers(4, T - 4)), int(rng.integers(60, 200))
+        arr[y:y + 2, x:x + 2] = dk.hexa(["#5aff9a", "#ff5a4a", "#ffc048", "#5ad0ff"][int(rng.integers(4))])
+    return dk.to_img(arr)
+
+
+def p_floor_wet():
+    """The roof deck: wet diamond plate in big plates with welded seams, puddles that hold the cabin's amber, the window's violet and the red and cyan of the city (gloss in 2 x 2
+    blocks), ripple rings from the rain."""
+    arr = dk.ramp(dk.vnoise(T, T, 511, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.7 + 0.15, ("#141822", "#262e3e", "#384256", "#4e5a72"), cell=2)
+    yy, xx = np.indices((T, T))
+    dia = ((xx // 2 + yy // 2) % 8 == 0) & ((xx // 2 - yy // 2) % 8 == 4)
+    arr[dia] = arr[dia] * 0.6 + dk.hexa("#6a7488") * 0.4
+    for k in range(0, T, 128):
+        arr[k:k + 2, :] *= 0.45
+        arr[:, k:k + 2] *= 0.45
+    dk.wet_gloss(arr, 512, ("#ff5ab0", "#5ad0ff", "#ff3a3a", "#ffa850", "#a060ff"), n=12, length=(70, 200), width=(3, 10), ripples=9, sheen="#4a5a88")
+    return dk.to_img(arr)
+
+
+def p_floor_stair():
+    """Iron stair treads: chequer plate, a worn front edge catching the wall lamp, wet."""
+    arr = dk.ramp(dk.vnoise(T, T, 521, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#1a1414", "#2a201c", "#3a2c24", "#4e3a2e"), cell=2)
+    yy, xx = np.indices((T, T))
+    arr[((xx // 2) % 6 == 0) & ((yy // 2) % 6 == 3)] = dk.hexa("#6a5040")
+    for k in range(0, T, 64):
+        arr[k:k + 4, :] = dk.hexa("#a06a3a")
+        arr[k + 4:k + 6, :] = dk.hexa("#0c0808")
+    dk.wet_gloss(arr, 522, ("#ff8a40", "#ff5ab0"), n=5, length=(40, 100), width=(3, 7), ripples=3, sheen="#5a4a6a")
+    return dk.to_img(arr)
+
+
+def p_floor_grate():
+    """The bridge's steel grating: a bar grid with the dark drop showing through, wet highlights on the bars."""
+    arr = np.tile(dk.hexa("#06080e"), (T, T, 1)).astype(np.float32)
+    yy, xx = np.indices((T, T))
+    bars = (xx % 16 < 4) | (yy % 32 < 4)
+    v = dk.vnoise(T, T, 531, ((8, 0.5), (32, 0.5)))
+    arr[bars] = dk.ramp(v[bars][None, :] * 0.6 + 0.3, ("#1e242e", "#323a48", "#4a5466", "#6a7690"))[0]
+    dk.mix_dither(arr, np.where(bars, np.clip((v - 0.6) * 2.5, 0, 0.8), 0), "#9ab0e0", k=0.5, cell=2)
+    return dk.to_img(arr)
+
+
+def p_floor_cabin():
+    arr = dk.ramp(dk.vnoise(T, T, 541, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#1e1612", "#2c2018", "#3c2c20", "#4e3a2a"), cell=2)
+    for k in range(0, T, 64):
+        arr[k:k + 2, :] *= 0.5
+    dk.wet_gloss(arr, 542, ("#ffa850", "#ffc070"), n=5, length=(60, 140), width=(4, 9), ripples=0, sheen="#5a4030")
+    return dk.to_img(arr)
+
+
+def p_floor_alley():
+    return dk.to_img(dk.conc_tile(551, base=("#14141c", "#1e1e2a", "#2a2a38", "#363646"), gloss_cols=("#ff8a40", "#ff5ab0", "#5ad0ff")))
+
+
+def _door_glow(seed, cols, beams, frame="#2a2420"):
+    """A lit doorway seen from outside (emissive): a frame, the light inside in a dithered ramp, a few beams."""
+    W_, H_ = 128, 256
+    arr = dk.ramp(dk.vnoise(W_, H_, seed, ((4, 0.5), (16, 0.5)), False, False) * 0.5 + 0.3, cols)
+    yy, xx = np.indices((H_, W_))
+    for bx, ang, col in beams:
+        cx = bx + yy * np.tan(np.radians(ang))
+        dk.mix_dither(arr, np.clip(1 - np.abs(xx - cx) / (6 + yy * 0.08), 0, 1) * 0.7, col)
+    arr[:, :10] = dk.hexa(frame)
+    arr[:, -10:] = dk.hexa(frame)
+    arr[:14, :] = dk.hexa(frame)
+    return arr
+
+
+def p_alley_door():
+    """The alley's end: the club's side door open on the dance floor (blue and magenta light, the Floor's way)."""
+    return dk.to_img(_door_glow(561, ("#0a0c2a", "#18205a", "#2a3a9a", "#4a6ae0", "#8aa8ff"), ((40, 14, "#ff5ab0"), (90, -12, "#a070ff"))))
+
+
+def p_stair_glow():
+    """The cabin's back door: a warm-lit stairwell going down (the Booth's way), the treads as dark bars."""
+    arr = _door_glow(571, ("#2a140a", "#5a3014", "#a05a20", "#e09040", "#ffd080"), ())
+    for i, y in enumerate(range(120, 246, 18)):
+        arr[y:y + 5, 10 + i * 6:118] *= 0.3
+    return dk.to_img(arr)
+
+
+def p_tower(seed=581, lit=0.16):
+    """A building across the drop (billboard, 256 x 512): a dark concrete mass in floor bands with dark glass and a few lit windows (amber, a violet and a cyan one), a
+    lit penthouse band, roof plant and a mast with a red lamp; the silhouette is its alpha."""
+    from PIL import Image as _I
+    W_, H_ = 256, 512
+    rng = np.random.default_rng(seed)
+    arr = np.zeros((H_, W_, 3), np.float32)
+    top = 60
+    body = dk.ramp(dk.vnoise(W_, H_ - top, seed, ((4, 0.4), (16, 0.6)), False, False) * 0.55 + 0.15, ("#0a0e1a", "#182032", "#262f46", "#36425e"), cell=2)
+    arr[top:] = body
+    for y in range(top + 30, H_ - 10, 22):
+        arr[y + 16:y + 18, 12:W_ - 12] = dk.hexa("#2c3650")
+        for x in range(18, W_ - 30, 18):
+            if rng.random() < lit:
+                c = ("#e0a448", "#ffc068", "#c88a3a", "#a070ff", "#5ad0ff")[int(rng.integers(5))]
+                v = np.full((14, 12), 0.4 + rng.random() * 0.4) + dk.vnoise(12, 14, int(rng.integers(1 << 30)), ((2, 1.0),), False, False) * 0.3
+                arr[y:y + 14, x:x + 12] = dk.ramp(v, (dk.hx(dk.shade(dk.hexc(c), 0.5)), c, dk.hx(dk.shade(dk.hexc(c), 1.25))))
+            else:
+                arr[y:y + 14, x:x + 12] = arr[y:y + 14, x:x + 12] * 0.5 + dk.hexa("#080a14") * 0.5
+    arr[top + 4:top + 20, 20:W_ - 20] = dk.ramp(np.full((16, W_ - 40), 0.6) + dk.vnoise(W_ - 40, 16, seed + 2, ((8, 1.0),), False, False) * 0.3, ("#5a3a20", "#c88a3a", "#ffc068"))
+    alpha = np.zeros((H_, W_), bool)
+    alpha[top:, 8:W_ - 8] = True
+    arr[top - 24:top, 40:110] = dk.hexa("#141a28")
+    alpha[top - 24:top, 40:110] = True
+    arr[top - 14:top, 150:200] = dk.hexa("#1a2030")
+    alpha[top - 14:top, 150:200] = True
+    arr[8:top - 24, 74:78] = dk.hexa("#1a2030")
+    alpha[8:top - 24, 74:78] = True
+    arr[4:10, 72:80] = dk.hexa("#ff2a20")
+    alpha[4:10, 72:80] = True
+    for x in (8, W_ - 12):
+        arr[top - 4:top, x:x + 4] = dk.hexa("#ff2a20")
+        alpha[top - 4:top, x:x + 4] = True
+    rgba = np.dstack([np.clip(arr, 0, 255).astype(np.uint8), np.where(alpha, 255, 0).astype(np.uint8)])
+    return _I.fromarray(rgba, "RGBA")
+
+
+PROPS.update({"bc_tower": p_tower, "bc_tower_b": lambda: p_tower(582, 0.22), "bc_tower_c": lambda: p_tower(583, 0.12)})
+TEXTURES.update({"bc_wall_brick": p_wall_brick, "bc_wall_brick_b": p_wall_brick_b, "bc_wall_conc": p_wall_conc, "bc_wall_steel": p_wall_steel, "bc_wall_cabin": p_wall_cabin,
+                 "bc_floor_wet": p_floor_wet, "bc_floor_stair": p_floor_stair, "bc_floor_grate": p_floor_grate, "bc_floor_cabin": p_floor_cabin, "bc_floor_alley": p_floor_alley,
+                 "bc_sky": p_sky})
+def p_tower_door():
+    """The tower's door on the platform: violet light and a pale beam up (the Mothership's way)."""
+    return dk.to_img(_door_glow(591, ("#1a0c30", "#3a1a6a", "#6a3ab0", "#a070ff", "#e0c8ff"), ((64, 0, "#f0e0ff"),), frame="#1a1c28"))
+
+
+DECALS.update({"bc_alley_door": p_alley_door, "bc_stair_glow": p_stair_glow, "bc_tower_door": p_tower_door})
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, fn in {**TEXTURES, **PROPS, **DECALS}.items():
         fn().save(os.path.join(OUT, name + ".png"))
     import make_balcony_guides as bg
-    n = bg.main()
+    n = bg.main_cropped()
     print("wrote %d textures, %d props, %d decals and %d guide frames to %s" % (len(TEXTURES), len(PROPS), len(DECALS), n, OUT))
 
 

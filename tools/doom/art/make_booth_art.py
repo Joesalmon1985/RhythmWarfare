@@ -495,6 +495,9 @@ def main():
         fn().save(os.path.join(OUT, name + ".png"))
     n = guides()
     print("wrote %d textures, %d props, %d decals and %d guide frames to %s" % (len(TEXTURES), len(PROPS), len(DECALS), n, OUT))
+    import make_booth_polish as bp  # stage D polish: the cropped desk and guides, 256 px foam/grate/concrete, the sky, the open shutter (they overwrite the placeholders above)
+    k, g = bp.main()
+    print("polish: %d images and %d guide frames (cropped from the painting)" % (k, g))
 
 
 if __name__ == "__main__":

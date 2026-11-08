@@ -31,9 +31,10 @@ def r(x0, y0, x1, y1):
 # name, rect (m), floor (m), ceiling (m), light 0..255, floor flat, ceil flat
 SECTORS = [
     ("aisle", r(-1.75, 0, 1.75, 11), 0.0, 2.75, 150, "FLOOR5_1", "CEIL3_5"),
-    ("dais", r(-4, 0, -1.75, 7.5), 1.0, 2.75, 170, "FLOOR5_1", "CEIL3_5"),
-    ("dstep_b", r(-4, 7.5, -1.75, 8.0), 0.75, 2.75, 160, "STEP1", "CEIL3_5"),
-    ("dstep_a", r(-4, 8.0, -1.75, 8.5), 0.375, 2.75, 155, "STEP1", "CEIL3_5"),
+    # stage D polish: the desk stands on the floor as in the painting (the dais was +1 m with a handrail; the painting's big desk is a foreground billboard now, author_booth.py)
+    ("dais", r(-4, 0, -1.75, 7.5), 0.0, 2.75, 170, "FLOOR5_1", "CEIL3_5"),
+    ("dstep_b", r(-4, 7.5, -1.75, 8.0), 0.0, 2.75, 160, "STEP1", "CEIL3_5"),
+    ("dstep_a", r(-4, 8.0, -1.75, 8.5), 0.0, 2.75, 155, "STEP1", "CEIL3_5"),
     ("landing", r(-4, 8.5, -1.75, 11), 0.0, 2.75, 150, "FLOOR5_1", "CEIL3_5"),
     ("bal_door", r(-4.75, 8.5, -4, 11), 0.0, 2.25, 140, "FLOOR5_1", "CEIL3_5"),
     ("porch", r(-6, 8.5, -4.75, 11), 0.0, 3.5, 120, "FLOOR5_1", "CEIL3_5"),
@@ -47,7 +48,7 @@ SECTORS = [
     ("dock", r(2.5, 0, 9, 9), 0.0, 4.0, 150, "FLOOR0_1", "CEIL3_5"),
 ]
 # railings (flags impassable): the desk's edge on the aisle and on the landing, and the window onto the balcony (pairs of sector names)
-RAILS = [("dais", "aisle"), ("dais", "terrace"), ("dstep_a", "terrace"), ("dstep_b", "terrace")]
+RAILS = [("dais", "terrace"), ("dstep_a", "terrace"), ("dstep_b", "terrace")]
 START = (0.5, 1.75)
 
 
