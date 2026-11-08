@@ -117,7 +117,7 @@ func test_activity_configs() -> void:
 	assert_eq(ActivityMode.of_config(_fx("activity_bar.json")), ActivityMode.Mode.REPLACE)
 	assert_eq(ActivityMode.of_config(_fx("activity_race.json")), ActivityMode.Mode.OVERLAY)
 	var bj: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/minigames/blackjack.json"))
-	assert_eq(ActivityMode.of_config(bj), ActivityMode.Mode.RHYTHM, "the blackjack table names no mode: rhythm, as today")
+	assert_eq(ActivityMode.of_config(bj), ActivityMode.Mode.REPLACE, "the card table names replace (ruling 40, owner, 8 November: judging suspended while the table runs)")
 	var bad := _fx("activity_cloakroom.json")
 	bad["controls"] = 3
 	assert_false(ContractShapes.activity_config(bad).is_empty(), "2 or 4 controls in the pad strip")
