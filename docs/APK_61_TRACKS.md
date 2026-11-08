@@ -65,3 +65,11 @@ Export command (Git Bash, from the worktree root, after `--import`):
 ## Desktop suites on this branch (loader change, with the 61-pack bundle present in the worktree)
 
 `--filter run_`: 16,705 checks, 0 failures, 0 SCRIPT ERROR lines. `--filter playtest`: 2,982 checks, 0 failures, 0 SCRIPT ERROR lines (both exit 0). The tests set packs_dir_override or run with track scenes off, so they do not exercise the res:// fallback itself.
+
+## Fix after the merge (fa43278c) and re-export
+
+`packs_root()` and `load_for()` no longer globalize the bundled `res://track_packs` (inside an APK a globalized path is not a disk folder); user:// and fixture res:// paths still go through `_absolute()`.
+Read by code: `RunData.load_files` is not a consumer (it reads `songs/packs`, not track packs); `TrackPack.load_pack` uses `simplify_path` (keeps `res://`), `DirAccess.dir_exists_absolute`, `FileAccess` and `path_join`, all fine on `res://`;
+`run_track_audio.gd _decode` joins the pack dir and stem and calls `AudioStreamOggVorbis.load_from_file`, which reads through `FileAccess` and so works on `res://` (and the `keep`-imported originals are in the APK). No `globalize_path` remains on that path. Not run on a device.
+New test `tests/test_run_tracks_bundled.gd` (does nothing where `track_packs/`, a user folder or `RW_TRACKS_DIR` says otherwise): `packs_root()` is `"res://track_packs"`, `DirAccess.open` lists 61 packs with `track.json`, `TrackPack.load_pack` accepts one. 4 checks, 0 failures.
+Re-run: `--filter track` 3,167 checks, `--filter run_` 16,705 checks, both 0 failures and 0 SCRIPT ERROR lines. Re-export of the full APK: exit 0, 1,225,141,764 bytes (unchanged: the fix is script only), 256 stems and 61 `track.json` listed in `assets/track_packs/`.
