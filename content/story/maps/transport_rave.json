@@ -1,0 +1,2550 @@
+{
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "art": "rave_transport",
+ "start": "transport_arrive",
+ "max_step": 0.5,
+ "void_drop": 3.0,
+ "visibility": {
+  "mode": "clip",
+  "depth": 48,
+  "far": 0
+ },
+ "geography": {
+  "source": "content/story/maps/doom_dock.json",
+  "note": "the Dock (a rain-slick forecourt, a warehouse with its shutter up on the crowd, sodium lamps), approximate: a forecourt, a pair of tracks and a depot hall with three bays"
+ },
+ "textures": {
+  "tr_floor_asphalt": "textures/tr_floor_asphalt.png",
+  "tr_floor_conc": "textures/tr_floor_conc.png",
+  "tr_floor_walk": "textures/tr_floor_walk.png",
+  "tr_floor_blue": "textures/tr_floor_blue.png",
+  "tr_floor_rails": "textures/tr_floor_rails.png",
+  "tr_floor_dock": "textures/tr_floor_dock.png",
+  "tr_wall_brick": "textures/tr_wall_brick.png",
+  "tr_wall_steel": "textures/tr_wall_steel.png",
+  "tr_wall_ware": "textures/tr_wall_ware.png",
+  "tr_wall_shutter": "textures/tr_wall_shutter.png",
+  "tr_wall_blue": "textures/tr_wall_blue.png",
+  "tr_wall_tile": "textures/tr_wall_tile.png",
+  "tr_trim": "textures/tr_trim.png",
+  "tr_ceil_truss": "textures/tr_ceil_truss.png",
+  "tr_bollard": "textures/tr_bollard.png",
+  "tr_street_lamp": "textures/tr_street_lamp.png",
+  "tr_hang_lamp": "textures/tr_hang_lamp.png",
+  "tr_wall_lamp": "textures/tr_wall_lamp.png",
+  "tr_neon": "textures/tr_neon.png",
+  "tr_crate": "textures/tr_crate.png",
+  "tr_case": "textures/tr_case.png",
+  "tr_drum": "textures/tr_drum.png",
+  "tr_pallet": "textures/tr_pallet.png",
+  "tr_pallet_stack": "textures/tr_pallet_stack.png",
+  "tr_van": "textures/tr_van.png",
+  "tr_fence": "textures/tr_fence.png",
+  "tr_windows": "textures/tr_windows.png",
+  "tr_towers": "textures/tr_towers.png",
+  "tr_shutter_rave": "textures/tr_shutter_rave.png",
+  "tr_loco": "textures/tr_loco.png",
+  "tr_bus": "textures/tr_bus.png",
+  "tr_racer": "textures/tr_racer.png",
+  "tr_signal": "textures/tr_signal.png",
+  "tr_board": "textures/tr_board.png",
+  "tr_garage_door": "textures/tr_garage_door.png",
+  "tr_timetable": "textures/tr_timetable.png",
+  "tr_counter": "textures/tr_counter.png",
+  "tr_desk": "textures/tr_desk.png",
+  "tr_lockers": "textures/tr_lockers.png",
+  "tr_rack": "textures/tr_rack.png",
+  "tr_console": "textures/tr_console.png",
+  "tr_deck": "textures/tr_deck.png",
+  "tr_hatch": "textures/tr_hatch.png",
+  "tr_cone": "textures/tr_cone.png",
+  "tr_glow": "textures/tr_glow.png",
+  "tr_knob_0": "textures/tr_knob_0.png",
+  "tr_knob_1": "textures/tr_knob_1.png",
+  "tr_knob_2": "textures/tr_knob_2.png",
+  "tr_knob_3": "textures/tr_knob_3.png",
+  "pc_glass_lit": "textures/pc_glass_lit.png",
+  "pc_lamp_lit": "textures/pc_lamp_lit.png"
+ },
+ "sky": {
+  "tex": "textures/tr_sky.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#141822",
+  "density": 0.008
+ },
+ "sectors": [
+  {
+   "id": "yard",
+   "polygon": [
+    [
+     -9,
+     4
+    ],
+    [
+     9,
+     4
+    ],
+    [
+     9,
+     18
+    ],
+    [
+     -9,
+     18
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 14.0,
+   "floor_tex": "tr_floor_asphalt",
+   "ceil_tex": "sky",
+   "wall_tex": "tr_wall_brick",
+   "light": 0.8,
+   "tint": "#c8b8a0",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "tr_trim",
+   "lip_tex": "tr_wall_steel"
+  },
+  {
+   "id": "tracks",
+   "polygon": [
+    [
+     -13,
+     0
+    ],
+    [
+     13,
+     0
+    ],
+    [
+     13,
+     4
+    ],
+    [
+     -13,
+     4
+    ]
+   ],
+   "floor": -0.2,
+   "ceiling": 14.0,
+   "floor_tex": "tr_floor_rails",
+   "ceil_tex": "sky",
+   "wall_tex": "tr_wall_brick",
+   "light": 0.8,
+   "tint": "#b8b0a8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "tr_trim",
+   "lip_tex": "tr_wall_steel"
+  },
+  {
+   "id": "hall",
+   "polygon": [
+    [
+     -13,
+     -17
+    ],
+    [
+     13,
+     -17
+    ],
+    [
+     13,
+     0
+    ],
+    [
+     -13,
+     0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 9.0,
+   "floor_tex": "tr_floor_conc",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_tile",
+   "light": 0.96,
+   "tint": "#d8c8b0",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "tr_trim",
+   "lip_tex": "tr_wall_steel"
+  },
+  {
+   "id": "home",
+   "polygon": [
+    [
+     -2.5,
+     18.0
+    ],
+    [
+     2.5,
+     18.0
+    ],
+    [
+     2.5,
+     23.0
+    ],
+    [
+     -2.5,
+     23.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "tr_floor_walk",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_brick",
+   "light": 0.88,
+   "tint": "#ffd8a8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "ap6_a",
+   "polygon": [
+    [
+     4.4,
+     -17.0
+    ],
+    [
+     -4.4,
+     -17.0
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     4.96,
+     -19.2
+    ]
+   ],
+   "floor": 0.3,
+   "ceiling": 7.5,
+   "floor_tex": "tr_floor_dock",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_steel",
+   "light": 0.88,
+   "tint": "#e8d0b0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "tr_trim"
+  },
+  {
+   "id": "ap6_b",
+   "polygon": [
+    [
+     4.96,
+     -19.2
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     5.52,
+     -21.4
+    ]
+   ],
+   "floor": 0.6,
+   "ceiling": 7.5,
+   "floor_tex": "tr_floor_dock",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_steel",
+   "light": 0.928,
+   "tint": "#e8d0b0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "tr_trim"
+  },
+  {
+   "id": "stage",
+   "polygon": [
+    [
+     5.52,
+     -21.4
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     -7.2,
+     -28.0
+    ],
+    [
+     7.2,
+     -28.0
+    ]
+   ],
+   "floor": 0.9,
+   "ceiling": 8.5,
+   "floor_tex": "tr_floor_dock",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_steel",
+   "light": 0.992,
+   "tint": "#ffe0b8",
+   "room": "main",
+   "flags": [
+    "stage"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "mix",
+     "point"
+    ],
+    "dancing": [
+     "mix",
+     "dance",
+     "point",
+     "wave"
+    ],
+    "hype": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ]
+   },
+   "step_tex": "tr_trim"
+  },
+  {
+   "id": "cloak",
+   "polygon": [
+    [
+     -13.0,
+     -13.6
+    ],
+    [
+     -13.0,
+     -6.4
+    ],
+    [
+     -19.0,
+     -5.4
+    ],
+    [
+     -19.0,
+     -14.6
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "tr_floor_blue",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_tile",
+   "light": 0.88,
+   "tint": "#c8d8f0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "bar",
+   "polygon": [
+    [
+     13.0,
+     -6.4
+    ],
+    [
+     13.0,
+     -13.6
+    ],
+    [
+     19.0,
+     -14.6
+    ],
+    [
+     19.0,
+     -5.4
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "tr_floor_walk",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_ware",
+   "light": 0.88,
+   "tint": "#ffd0a0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "hangar",
+   "polygon": [
+    [
+     11.7,
+     -17.0
+    ],
+    [
+     7.3,
+     -17.0
+    ],
+    [
+     6.9,
+     -22.5
+    ],
+    [
+     12.1,
+     -22.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "tr_floor_conc",
+   "ceil_tex": "tr_ceil_truss",
+   "wall_tex": "tr_wall_shutter",
+   "light": 0.96,
+   "tint": "#d8e8f0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -9.0,
+    4.0
+   ],
+   "to": [
+    9.0,
+    4.0
+   ],
+   "sector": "yard",
+   "portal": "tracks"
+  },
+  {
+   "from": [
+    -13.0,
+    0.0
+   ],
+   "to": [
+    13.0,
+    0.0
+   ],
+   "sector": "tracks",
+   "portal": "hall"
+  },
+  {
+   "from": [
+    2.5,
+    18.0
+   ],
+   "to": [
+    -2.5,
+    18.0
+   ],
+   "sector": "yard",
+   "portal": "home"
+  },
+  {
+   "from": [
+    -4.4,
+    -17.0
+   ],
+   "to": [
+    4.4,
+    -17.0
+   ],
+   "sector": "hall",
+   "portal": "ap6_a"
+  },
+  {
+   "from": [
+    -4.96,
+    -19.2
+   ],
+   "to": [
+    4.96,
+    -19.2
+   ],
+   "sector": "ap6_a",
+   "portal": "ap6_b"
+  },
+  {
+   "from": [
+    -5.52,
+    -21.4
+   ],
+   "to": [
+    5.52,
+    -21.4
+   ],
+   "sector": "ap6_b",
+   "portal": "stage"
+  },
+  {
+   "from": [
+    -13.0,
+    -6.4
+   ],
+   "to": [
+    -13.0,
+    -13.6
+   ],
+   "sector": "hall",
+   "portal": "cloak"
+  },
+  {
+   "from": [
+    13.0,
+    -13.6
+   ],
+   "to": [
+    13.0,
+    -6.4
+   ],
+   "sector": "hall",
+   "portal": "bar"
+  },
+  {
+   "from": [
+    7.3,
+    -17.0
+   ],
+   "to": [
+    11.7,
+    -17.0
+   ],
+   "sector": "hall",
+   "portal": "hangar"
+  }
+ ],
+ "homes": [
+  {
+   "actor": "dj",
+   "sector": "stage",
+   "at": [
+    -0.9,
+    -26.2
+   ]
+  },
+  {
+   "actor": "s1",
+   "sector": "ap6_a",
+   "at": [
+    3.0,
+    -18.0
+   ]
+  },
+  {
+   "actor": "s2",
+   "sector": "stage",
+   "at": [
+    4.6,
+    -24.0
+   ]
+  },
+  {
+   "actor": "s3",
+   "sector": "stage",
+   "at": [
+    -4.8,
+    -24.0
+   ]
+  },
+  {
+   "actor": "attendant",
+   "sector": "cloak",
+   "at": [
+    -17.8,
+    -9.2
+   ]
+  },
+  {
+   "actor": "customer_0",
+   "sector": "cloak",
+   "at": [
+    -15.6,
+    -11.3
+   ]
+  },
+  {
+   "actor": "customer_1",
+   "sector": "cloak",
+   "at": [
+    -15.6,
+    -12.0
+   ]
+  },
+  {
+   "actor": "customer_2",
+   "sector": "cloak",
+   "at": [
+    -15.6,
+    -12.7
+   ]
+  },
+  {
+   "actor": "customer_3",
+   "sector": "cloak",
+   "at": [
+    -15.6,
+    -13.4
+   ]
+  },
+  {
+   "actor": "customer_4",
+   "sector": "cloak",
+   "at": [
+    -16.4,
+    -11.7
+   ]
+  },
+  {
+   "actor": "customer_5",
+   "sector": "cloak",
+   "at": [
+    -16.4,
+    -12.4
+   ]
+  },
+  {
+   "actor": "customer_6",
+   "sector": "cloak",
+   "at": [
+    -16.4,
+    -13.1
+   ]
+  },
+  {
+   "actor": "customer_7",
+   "sector": "cloak",
+   "at": [
+    -16.4,
+    -13.8
+   ]
+  },
+  {
+   "actor": "bartender",
+   "sector": "bar",
+   "at": [
+    18.0,
+    -10.0
+   ]
+  },
+  {
+   "actor": "b1",
+   "sector": "bar",
+   "at": [
+    16.0,
+    -12.6
+   ]
+  },
+  {
+   "actor": "b2",
+   "sector": "bar",
+   "at": [
+    15.2,
+    -13.4
+   ]
+  },
+  {
+   "actor": "customer",
+   "sector": "bar",
+   "at": [
+    15.2,
+    -8.4
+   ]
+  },
+  {
+   "actor": "pilot",
+   "sector": "hangar",
+   "at": [
+    8.7,
+    -20.4
+   ]
+  },
+  {
+   "actor": "a00",
+   "sector": "hall",
+   "at": [
+    -9.0,
+    -3.0
+   ]
+  },
+  {
+   "actor": "a01",
+   "sector": "hall",
+   "at": [
+    -5.4,
+    -3.8
+   ]
+  },
+  {
+   "actor": "a02",
+   "sector": "hall",
+   "at": [
+    -1.7999999999999998,
+    -3.0
+   ]
+  },
+  {
+   "actor": "a03",
+   "sector": "hall",
+   "at": [
+    1.8000000000000007,
+    -3.8
+   ]
+  },
+  {
+   "actor": "a04",
+   "sector": "hall",
+   "at": [
+    5.4,
+    -3.0
+   ]
+  },
+  {
+   "actor": "a05",
+   "sector": "hall",
+   "at": [
+    9.0,
+    -3.8
+   ]
+  },
+  {
+   "actor": "a06",
+   "sector": "hall",
+   "at": [
+    -7.8,
+    -6.2
+   ]
+  },
+  {
+   "actor": "a07",
+   "sector": "hall",
+   "at": [
+    -4.2,
+    -7.0
+   ]
+  },
+  {
+   "actor": "a08",
+   "sector": "hall",
+   "at": [
+    -0.5999999999999999,
+    -6.2
+   ]
+  },
+  {
+   "actor": "a09",
+   "sector": "hall",
+   "at": [
+    3.000000000000001,
+    -7.0
+   ]
+  },
+  {
+   "actor": "a10",
+   "sector": "hall",
+   "at": [
+    6.6000000000000005,
+    -6.2
+   ]
+  },
+  {
+   "actor": "a11",
+   "sector": "hall",
+   "at": [
+    10.2,
+    -7.0
+   ]
+  },
+  {
+   "actor": "a12",
+   "sector": "hall",
+   "at": [
+    -6.6,
+    -9.4
+   ]
+  },
+  {
+   "actor": "a13",
+   "sector": "hall",
+   "at": [
+    -3.0000000000000004,
+    -10.200000000000001
+   ]
+  },
+  {
+   "actor": "a14",
+   "sector": "hall",
+   "at": [
+    0.6000000000000001,
+    -9.4
+   ]
+  },
+  {
+   "actor": "a15",
+   "sector": "hall",
+   "at": [
+    4.200000000000001,
+    -10.200000000000001
+   ]
+  },
+  {
+   "actor": "a16",
+   "sector": "hall",
+   "at": [
+    7.800000000000001,
+    -9.4
+   ]
+  },
+  {
+   "actor": "a17",
+   "sector": "hall",
+   "at": [
+    11.4,
+    -10.200000000000001
+   ]
+  },
+  {
+   "actor": "a18",
+   "sector": "hall",
+   "at": [
+    -2.6,
+    -14.6
+   ]
+  },
+  {
+   "actor": "a19",
+   "sector": "hall",
+   "at": [
+    2.6,
+    -14.2
+   ]
+  },
+  {
+   "actor": "a20",
+   "sector": "hall",
+   "at": [
+    -5.6,
+    -15.6
+   ]
+  },
+  {
+   "actor": "a21",
+   "sector": "yard",
+   "at": [
+    -4.0,
+    9.0
+   ]
+  },
+  {
+   "actor": "a22",
+   "sector": "yard",
+   "at": [
+    4.0,
+    11.0
+   ]
+  },
+  {
+   "actor": "a23",
+   "sector": "yard",
+   "at": [
+    -2.0,
+    12.4
+   ]
+  },
+  {
+   "actor": "a24",
+   "sector": "yard",
+   "at": [
+    5.4,
+    15.0
+   ]
+  },
+  {
+   "actor": "a25",
+   "sector": "tracks",
+   "at": [
+    -8.0,
+    2.2
+   ]
+  },
+  {
+   "actor": "a26",
+   "sector": "tracks",
+   "at": [
+    8.0,
+    1.8
+   ]
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "waypoints": [
+  {
+   "id": "transport_arrive",
+   "at": [
+    0.0,
+    21.4
+   ],
+   "yaw": 0,
+   "sector": "home"
+  },
+  {
+   "id": "home_door",
+   "at": [
+    0.0,
+    20.0
+   ],
+   "yaw": 180,
+   "sector": "home"
+  },
+  {
+   "id": "stage_foot",
+   "at": [
+    0.0,
+    -15.2
+   ],
+   "yaw": 0,
+   "sector": "hall"
+  },
+  {
+   "id": "stage_steps",
+   "at": [
+    0.0,
+    -20.3
+   ],
+   "yaw": 0,
+   "sector": "ap6_b"
+  },
+  {
+   "id": "deck_view",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "yaw": 0,
+   "sector": "stage"
+  },
+  {
+   "id": "cloak_door",
+   "at": [
+    -11.2,
+    -10.0
+   ],
+   "yaw": 90,
+   "sector": "hall"
+  },
+  {
+   "id": "cloak_view",
+   "at": [
+    -16.0,
+    -10.0
+   ],
+   "yaw": 90,
+   "sector": "cloak"
+  },
+  {
+   "id": "cloak_hold",
+   "at": [
+    -12.4,
+    -10.0
+   ],
+   "yaw": 90,
+   "sector": "hall"
+  },
+  {
+   "id": "bar_door",
+   "at": [
+    11.2,
+    -10.0
+   ],
+   "yaw": -90,
+   "sector": "hall"
+  },
+  {
+   "id": "bar_view",
+   "at": [
+    16.0,
+    -10.0
+   ],
+   "yaw": -90,
+   "sector": "bar"
+  },
+  {
+   "id": "bar_hold",
+   "at": [
+    12.4,
+    -10.0
+   ],
+   "yaw": -90,
+   "sector": "hall"
+  },
+  {
+   "id": "hangar_door",
+   "at": [
+    9.5,
+    -15.2
+   ],
+   "yaw": 0,
+   "sector": "hall"
+  },
+  {
+   "id": "hangar_view",
+   "at": [
+    9.5,
+    -19.8
+   ],
+   "yaw": 0,
+   "sector": "hangar"
+  },
+  {
+   "id": "hub_view",
+   "at": [
+    0.0,
+    15.0
+   ],
+   "yaw": 0.0,
+   "sector": "yard",
+   "choice_view": true
+  },
+  {
+   "id": "cross",
+   "at": [
+    0.0,
+    2.0
+   ],
+   "yaw": 0.0,
+   "sector": "tracks"
+  },
+  {
+   "id": "hall_c",
+   "at": [
+    0.0,
+    -7.0
+   ],
+   "yaw": 0.0,
+   "sector": "hall"
+  },
+  {
+   "id": "hall_w",
+   "at": [
+    -8.0,
+    -10.0
+   ],
+   "yaw": 90.0,
+   "sector": "hall"
+  },
+  {
+   "id": "hall_e",
+   "at": [
+    8.0,
+    -10.0
+   ],
+   "yaw": -90.0,
+   "sector": "hall"
+  }
+ ],
+ "things": [
+  {
+   "id": "home_hatch",
+   "kind": "billboard",
+   "sprite": "tr_hatch",
+   "at": [
+    0.0,
+    20.9
+   ],
+   "size": 2.3,
+   "anim": "none",
+   "y": 1.15
+  },
+  {
+   "id": "deck",
+   "kind": "billboard",
+   "sprite": "tr_deck",
+   "at": [
+    0.0,
+    -25.2
+   ],
+   "size": 1.05,
+   "anim": "none",
+   "y": 0.525
+  },
+  {
+   "id": "stage_ball",
+   "kind": "billboard",
+   "sprite": "disco_ball",
+   "at": [
+    0.0,
+    -24.0
+   ],
+   "size": 1.4,
+   "anim": "rotate",
+   "y": 5.6
+  },
+  {
+   "id": "woofer_0",
+   "kind": "billboard",
+   "sprite": "tr_drum",
+   "at": [
+    4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "woofer_1",
+   "kind": "billboard",
+   "sprite": "tr_drum",
+   "at": [
+    -4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "stage_beams_l",
+   "kind": "billboard",
+   "sprite": "tr_signal_beams",
+   "at": [
+    4.4,
+    -25.8
+   ],
+   "size": 4.2,
+   "anim": "none",
+   "y": 3.0,
+   "piece": "tr_signal_beams"
+  },
+  {
+   "id": "stage_ring",
+   "kind": "billboard",
+   "sprite": "tr_track_lights",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "size": 2.6,
+   "anim": "none",
+   "y": 0.9,
+   "piece": "tr_track_lights"
+  },
+  {
+   "id": "stage_dome",
+   "kind": "billboard",
+   "sprite": "tr_headlamp_dome",
+   "at": [
+    0.0,
+    -26.4
+   ],
+   "size": 3.4,
+   "anim": "none",
+   "y": 2.6,
+   "piece": "tr_headlamp_dome"
+  },
+  {
+   "id": "glow_stage",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    0.0,
+    -25.5
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "cloak_counter",
+   "kind": "billboard",
+   "sprite": "tr_desk",
+   "at": [
+    -16.6,
+    -10.0
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "y": 0.6
+  },
+  {
+   "id": "cloak_lamp",
+   "kind": "billboard",
+   "sprite": "pc_lamp_lit",
+   "at": [
+    -16.5,
+    -10.55
+   ],
+   "size": 0.5,
+   "anim": "none",
+   "y": 1.5,
+   "piece": "cloak_lamp",
+   "emissive": true
+  },
+  {
+   "id": "cloak_rail",
+   "kind": "billboard",
+   "sprite": "tr_rack",
+   "at": [
+    -18.95,
+    -10.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "coat_cabinet",
+   "kind": "billboard",
+   "sprite": "tr_lockers",
+   "at": [
+    -18.2,
+    -13.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "glow_bar",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    18.5,
+    -10.0
+   ],
+   "size": 2.2,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "bar_counter",
+   "kind": "billboard",
+   "sprite": "tr_counter",
+   "at": [
+    16.6,
+    -10.0
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "bar_cab_1",
+   "kind": "billboard",
+   "sprite": "tr_lockers",
+   "at": [
+    18.9,
+    -7.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_1",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    18.5,
+    -7.0
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_1",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_2",
+   "kind": "billboard",
+   "sprite": "tr_lockers",
+   "at": [
+    18.9,
+    -9.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_2",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    18.5,
+    -9.0
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_2",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_3",
+   "kind": "billboard",
+   "sprite": "tr_lockers",
+   "at": [
+    18.9,
+    -11.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_3",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    18.5,
+    -11.0
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_3",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_4",
+   "kind": "billboard",
+   "sprite": "tr_lockers",
+   "at": [
+    18.9,
+    -13.0
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_4",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    18.5,
+    -13.0
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_4",
+   "emissive": true
+  },
+  {
+   "id": "glow_hangar",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    9.5,
+    -21.6
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "hangar_racer",
+   "kind": "billboard",
+   "sprite": "tr_racer",
+   "at": [
+    9.5,
+    -21.4
+   ],
+   "size": 1.6,
+   "anim": "none",
+   "y": 0.8
+  },
+  {
+   "id": "hangar_console",
+   "kind": "billboard",
+   "sprite": "tr_console",
+   "at": [
+    11.1,
+    -21.6
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "bus",
+   "kind": "billboard",
+   "sprite": "tr_bus",
+   "at": [
+    -6.6,
+    8.0
+   ],
+   "size": 4.2,
+   "anim": "none",
+   "y": 2.1
+  },
+  {
+   "id": "van",
+   "kind": "billboard",
+   "sprite": "tr_van",
+   "at": [
+    6.4,
+    7.4
+   ],
+   "size": 2.6,
+   "anim": "none",
+   "y": 1.3
+  },
+  {
+   "id": "bollard_0",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    -3.0,
+    4.6
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "bollard_1",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    3.0,
+    4.6
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "bollard_2",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    -8.4,
+    14.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "bollard_3",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    8.4,
+    14.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "bollard_4",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    -8.4,
+    17.4
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "bollard_5",
+   "kind": "billboard",
+   "sprite": "tr_bollard",
+   "at": [
+    8.4,
+    17.4
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "lamp_0",
+   "kind": "billboard",
+   "sprite": "tr_street_lamp",
+   "at": [
+    -8.3,
+    16.0
+   ],
+   "size": 5.6,
+   "anim": "none",
+   "y": 2.8
+  },
+  {
+   "id": "lamp_glow_0",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    -8.3,
+    16.0
+   ],
+   "size": 2.6,
+   "anim": "pulse",
+   "y": 5.2,
+   "blend": "add"
+  },
+  {
+   "id": "lamp_1",
+   "kind": "billboard",
+   "sprite": "tr_street_lamp",
+   "at": [
+    8.3,
+    9.0
+   ],
+   "size": 5.6,
+   "anim": "none",
+   "y": 2.8
+  },
+  {
+   "id": "lamp_glow_1",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    8.3,
+    9.0
+   ],
+   "size": 2.6,
+   "anim": "pulse",
+   "y": 5.2,
+   "blend": "add"
+  },
+  {
+   "id": "signal_0",
+   "kind": "billboard",
+   "sprite": "tr_signal",
+   "at": [
+    -12.2,
+    0.4
+   ],
+   "size": 3.2,
+   "anim": "none",
+   "y": 1.4
+  },
+  {
+   "id": "signal_glow_0",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    -12.2,
+    0.4
+   ],
+   "size": 1.0,
+   "anim": "pulse",
+   "y": 2.7,
+   "blend": "add"
+  },
+  {
+   "id": "signal_1",
+   "kind": "billboard",
+   "sprite": "tr_signal",
+   "at": [
+    12.2,
+    0.4
+   ],
+   "size": 3.2,
+   "anim": "none",
+   "y": 1.4
+  },
+  {
+   "id": "signal_glow_1",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    12.2,
+    0.4
+   ],
+   "size": 1.0,
+   "anim": "pulse",
+   "y": 2.7,
+   "blend": "add"
+  },
+  {
+   "id": "cone_0",
+   "kind": "billboard",
+   "sprite": "tr_cone",
+   "at": [
+    -11.6,
+    3.4
+   ],
+   "size": 0.7,
+   "anim": "none",
+   "y": 0.15
+  },
+  {
+   "id": "cone_1",
+   "kind": "billboard",
+   "sprite": "tr_cone",
+   "at": [
+    11.6,
+    3.4
+   ],
+   "size": 0.7,
+   "anim": "none",
+   "y": 0.15
+  },
+  {
+   "id": "cone_2",
+   "kind": "billboard",
+   "sprite": "tr_cone",
+   "at": [
+    -4.4,
+    0.6
+   ],
+   "size": 0.7,
+   "anim": "none",
+   "y": 0.15
+  },
+  {
+   "id": "cone_3",
+   "kind": "billboard",
+   "sprite": "tr_cone",
+   "at": [
+    4.4,
+    0.6
+   ],
+   "size": 0.7,
+   "anim": "none",
+   "y": 0.15
+  },
+  {
+   "id": "pallets_w",
+   "kind": "billboard",
+   "sprite": "tr_pallet_stack",
+   "at": [
+    -12.0,
+    -1.2
+   ],
+   "size": 1.6,
+   "anim": "none",
+   "y": 0.8
+  },
+  {
+   "id": "crate_e",
+   "kind": "billboard",
+   "sprite": "tr_crate",
+   "at": [
+    12.0,
+    -1.4
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "case_e",
+   "kind": "billboard",
+   "sprite": "tr_case",
+   "at": [
+    12.2,
+    -15.6
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 0.45
+  },
+  {
+   "id": "drum_w",
+   "kind": "billboard",
+   "sprite": "tr_drum",
+   "at": [
+    -12.2,
+    -15.4
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "y": 0.45
+  },
+  {
+   "id": "hang_lamp_0",
+   "kind": "billboard",
+   "sprite": "tr_hang_lamp",
+   "at": [
+    -6.0,
+    -3.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 6.6
+  },
+  {
+   "id": "hang_glow_0",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    -6.0,
+    -3.0
+   ],
+   "size": 2.4,
+   "anim": "pulse",
+   "y": 6.4,
+   "blend": "add"
+  },
+  {
+   "id": "hang_lamp_1",
+   "kind": "billboard",
+   "sprite": "tr_hang_lamp",
+   "at": [
+    6.0,
+    -3.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 6.6
+  },
+  {
+   "id": "hang_glow_1",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    6.0,
+    -3.0
+   ],
+   "size": 2.4,
+   "anim": "pulse",
+   "y": 6.4,
+   "blend": "add"
+  },
+  {
+   "id": "hang_lamp_2",
+   "kind": "billboard",
+   "sprite": "tr_hang_lamp",
+   "at": [
+    -6.0,
+    -12.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 6.6
+  },
+  {
+   "id": "hang_glow_2",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    -6.0,
+    -12.0
+   ],
+   "size": 2.4,
+   "anim": "pulse",
+   "y": 6.4,
+   "blend": "add"
+  },
+  {
+   "id": "hang_lamp_3",
+   "kind": "billboard",
+   "sprite": "tr_hang_lamp",
+   "at": [
+    6.0,
+    -12.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 6.6
+  },
+  {
+   "id": "hang_glow_3",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    6.0,
+    -12.0
+   ],
+   "size": 2.4,
+   "anim": "pulse",
+   "y": 6.4,
+   "blend": "add"
+  },
+  {
+   "id": "hang_lamp_4",
+   "kind": "billboard",
+   "sprite": "tr_hang_lamp",
+   "at": [
+    0.0,
+    -9.0
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 6.6
+  },
+  {
+   "id": "hang_glow_4",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    0.0,
+    -9.0
+   ],
+   "size": 2.4,
+   "anim": "pulse",
+   "y": 6.4,
+   "blend": "add"
+  },
+  {
+   "id": "glow_hall",
+   "kind": "billboard",
+   "sprite": "tr_glow",
+   "at": [
+    0.0,
+    -8.0
+   ],
+   "size": 6.0,
+   "anim": "pulse",
+   "y": 0.4,
+   "blend": "add"
+  },
+  {
+   "id": "lt_home",
+   "kind": "light",
+   "at": [
+    0.0,
+    21.0
+   ],
+   "y": 3.0,
+   "radius": 6.0,
+   "color": "#fff2c8",
+   "strength": 1.4
+  },
+  {
+   "id": "lt_stage_a",
+   "kind": "light",
+   "at": [
+    3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#ff8a1f",
+   "strength": 1.68
+  },
+  {
+   "id": "lt_stage_b",
+   "kind": "light",
+   "at": [
+    -3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#5ad8ff",
+   "strength": 1.68
+  },
+  {
+   "id": "lt_cloak",
+   "kind": "light",
+   "at": [
+    -17.0,
+    -10.0
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#d8e8ff",
+   "strength": 1.54
+  },
+  {
+   "id": "lt_bar",
+   "kind": "light",
+   "at": [
+    17.0,
+    -10.0
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#ffab4a",
+   "strength": 1.68
+  },
+  {
+   "id": "lt_hangar",
+   "kind": "light",
+   "at": [
+    9.5,
+    -22.0
+   ],
+   "y": 3.6,
+   "radius": 8.0,
+   "color": "#e8f4ff",
+   "strength": 1.82
+  },
+  {
+   "id": "lt_lamp_0",
+   "kind": "light",
+   "at": [
+    -7.500000000000001,
+    16.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#ffab4a",
+   "strength": 1.96
+  },
+  {
+   "id": "lt_lamp_1",
+   "kind": "light",
+   "at": [
+    7.500000000000001,
+    9.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#ffab4a",
+   "strength": 1.96
+  },
+  {
+   "id": "lt_hall_a",
+   "kind": "light",
+   "at": [
+    -6.0,
+    -6.0
+   ],
+   "y": 6.4,
+   "radius": 11.0,
+   "color": "#ffd8a8",
+   "strength": 1.54
+  },
+  {
+   "id": "lt_hall_b",
+   "kind": "light",
+   "at": [
+    6.0,
+    -6.0
+   ],
+   "y": 6.4,
+   "radius": 11.0,
+   "color": "#ffd8a8",
+   "strength": 1.54
+  },
+  {
+   "id": "lt_hall_c",
+   "kind": "light",
+   "at": [
+    0.0,
+    -13.0
+   ],
+   "y": 6.4,
+   "radius": 10.0,
+   "color": "#a04cff",
+   "strength": 1.26
+  },
+  {
+   "id": "lt_tracks",
+   "kind": "light",
+   "at": [
+    0.0,
+    2.0
+   ],
+   "y": 4.0,
+   "radius": 9.0,
+   "color": "#ff3a2a",
+   "strength": 0.98
+  },
+  {
+   "id": "lt_yard",
+   "kind": "light",
+   "at": [
+    0.0,
+    10.0
+   ],
+   "y": 4.0,
+   "radius": 9.0,
+   "color": "#8aa8d8",
+   "strength": 0.84
+  },
+  {
+   "id": "home_window",
+   "kind": "decal",
+   "sprite": "tr_timetable",
+   "at": [
+    0.0,
+    22.985
+   ],
+   "y": 1.6,
+   "size": 1.0,
+   "yaw": 0,
+   "emissive": true
+  },
+  {
+   "id": "stage_arch",
+   "kind": "decal",
+   "sprite": "tr_loco",
+   "at": [
+    0.0,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 4.6,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_l",
+   "kind": "decal",
+   "sprite": "tr_signal",
+   "at": [
+    5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_r",
+   "kind": "decal",
+   "sprite": "tr_signal",
+   "at": [
+    -5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_0",
+   "kind": "decal",
+   "sprite": "tr_wall_lamp",
+   "at": [
+    -18.985,
+    -12.6
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_1",
+   "kind": "decal",
+   "sprite": "tr_wall_lamp",
+   "at": [
+    -18.985,
+    -10.0
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_2",
+   "kind": "decal",
+   "sprite": "tr_wall_lamp",
+   "at": [
+    -18.985,
+    -7.4
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "bar_screen",
+   "kind": "decal",
+   "sprite": "tr_board",
+   "at": [
+    18.985,
+    -10.0
+   ],
+   "y": 2.2,
+   "size": 0.9,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "bar_window",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    18.985,
+    -7.0
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "bar_window_b",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    18.985,
+    -13.0
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "hangar_door",
+   "kind": "decal",
+   "sprite": "tr_garage_door",
+   "at": [
+    9.5,
+    -22.485
+   ],
+   "y": 0.0,
+   "size": 3.0,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "yard_shutter_w",
+   "kind": "decal",
+   "sprite": "tr_shutter_rave",
+   "at": [
+    -8.985,
+    11.0
+   ],
+   "y": 0.0,
+   "size": 5.2,
+   "yaw": -90.0,
+   "emissive": true
+  },
+  {
+   "id": "yard_shutter_e",
+   "kind": "decal",
+   "sprite": "tr_shutter_rave",
+   "at": [
+    8.985,
+    11.0
+   ],
+   "y": 0.0,
+   "size": 5.2,
+   "yaw": 90.0,
+   "emissive": true
+  },
+  {
+   "id": "yard_towers_w",
+   "kind": "decal",
+   "sprite": "tr_towers",
+   "at": [
+    -8.985,
+    6.2
+   ],
+   "y": 3.0,
+   "size": 3.6,
+   "yaw": -90.0,
+   "emissive": true
+  },
+  {
+   "id": "yard_towers_e",
+   "kind": "decal",
+   "sprite": "tr_towers",
+   "at": [
+    8.985,
+    6.2
+   ],
+   "y": 3.0,
+   "size": 3.6,
+   "yaw": 90.0,
+   "emissive": true
+  },
+  {
+   "id": "track_mouth_w",
+   "kind": "decal",
+   "sprite": "tr_garage_door",
+   "at": [
+    -12.985,
+    2.0
+   ],
+   "y": -0.2,
+   "size": 4.0,
+   "yaw": -90.0,
+   "emissive": true
+  },
+  {
+   "id": "track_mouth_e",
+   "kind": "decal",
+   "sprite": "tr_garage_door",
+   "at": [
+    12.985,
+    2.0
+   ],
+   "y": -0.2,
+   "size": 4.0,
+   "yaw": 90.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_board_0",
+   "kind": "decal",
+   "sprite": "tr_board",
+   "at": [
+    -9.0,
+    -16.985
+   ],
+   "y": 3.4,
+   "size": 2.4,
+   "yaw": 0.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_board_1",
+   "kind": "decal",
+   "sprite": "tr_board",
+   "at": [
+    9.0,
+    -16.985
+   ],
+   "y": 3.4,
+   "size": 2.4,
+   "yaw": 0.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_win_w_0",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    -12.985,
+    -15.0
+   ],
+   "y": 3.2,
+   "size": 2.6,
+   "yaw": -90.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_win_e_0",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    12.985,
+    -15.0
+   ],
+   "y": 3.2,
+   "size": 2.6,
+   "yaw": 90.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_win_w_1",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    -12.985,
+    -4.0
+   ],
+   "y": 3.2,
+   "size": 2.6,
+   "yaw": -90.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_win_e_1",
+   "kind": "decal",
+   "sprite": "tr_windows",
+   "at": [
+    12.985,
+    -4.0
+   ],
+   "y": 3.2,
+   "size": 2.6,
+   "yaw": 90.0,
+   "emissive": true
+  },
+  {
+   "id": "hall_neon_n",
+   "kind": "decal",
+   "sprite": "tr_neon",
+   "at": [
+    -5.6,
+    -16.985
+   ],
+   "y": 4.6,
+   "size": 1.2,
+   "yaw": 0.0,
+   "emissive": true
+  }
+ ],
+ "weather": {
+  "rain": 0.75,
+  "wind": 8,
+  "drips": [
+   {
+    "at": [
+     -7.0,
+     0.3
+    ],
+    "h": 8.8
+   },
+   {
+    "at": [
+     7.0,
+     0.3
+    ],
+    "h": 8.8
+   },
+   {
+    "at": [
+     -2.5,
+     0.3
+    ],
+    "h": 8.8
+   }
+  ]
+ }
+}

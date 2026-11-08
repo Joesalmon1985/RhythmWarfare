@@ -3,7 +3,7 @@ rem Launches the game at the bedsit (the new opening, docs/bedsit/LAUNCH.md) fro
 rem Works from PowerShell, cmd, or a double-click:
 rem     tools\dev\play_bedsit.cmd            the bedsit, facing north
 rem     tools\dev\play_bedsit.cmd E          look from the east (N, E, S or W): the camera stands at that viewpoint (RW_STORY_CAM), a development aid until the turn hook lands
-rem     tools\dev\play_bedsit.cmd --rave space   start inside the Space rave (RW_RUN_START=space_rave); add --fixed to start with the bass already fixed (RW_SPACE_BASS_FIXED=1)
+rem     tools\dev\play_bedsit.cmd --rave space   start inside a rave (space, magic, dinos or transport: RW_RUN_START=<prefix>_rave); add --fixed to start with the bass already fixed (RW_SPACE_BASS_FIXED=1)
 rem     tools\dev\play_bedsit.cmd --race space  start in the Space rave's hangar (RW_RUN_START=space_race): touch the racer for the street race (docs/bedsit/RACE.md)
 rem F3 shows the overlay line (compass letter and theme name). The save is the play copy of play_tracks.sh, never the real one.
 setlocal
@@ -17,6 +17,9 @@ if not exist "%GITBASH%" (
 set "RW_BEDSIT=1"
 set "RW_RUN_PATH=bedsit"
 if /i "%~1"=="--rave" if /i "%~2"=="space" set "RW_RUN_START=space_rave"
+if /i "%~1"=="--rave" if /i "%~2"=="magic" set "RW_RUN_START=magic_rave"
+if /i "%~1"=="--rave" if /i "%~2"=="dinos" set "RW_RUN_START=dino_rave"
+if /i "%~1"=="--rave" if /i "%~2"=="transport" set "RW_RUN_START=transport_rave"
 if /i "%~1"=="--race" if /i "%~2"=="space" set "RW_RUN_START=space_race"
 if /i "%~3"=="--fixed" set "RW_SPACE_BASS_FIXED=1"
 if /i "%~1"=="--fixed" set "RW_SPACE_BASS_FIXED=1"

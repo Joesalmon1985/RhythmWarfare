@@ -1,0 +1,318 @@
+{
+ "id": "transport",
+ "scene_id": "transport_rave",
+ "geography": "doom_dock",
+ "map": "transport_rave",
+ "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+ "arrival": "transport_arrive",
+ "props": [
+  {
+   "id": "deck",
+   "role": "stage_deck",
+   "sprite": "tr_deck",
+   "spot": "deck_view"
+  },
+  {
+   "id": "bass_knob",
+   "role": "bass_knob",
+   "sprite": "tr_knob_0",
+   "spot": "deck_view"
+  },
+  {
+   "id": "left_luggage",
+   "role": "cloakroom",
+   "sprite": "tr_desk",
+   "spot": "cloak_view"
+  },
+  {
+   "id": "bar_counter",
+   "role": "bar",
+   "sprite": "tr_counter",
+   "spot": "bar_view"
+  },
+  {
+   "id": "garage_door",
+   "role": "race_entrance",
+   "sprite": "tr_garage_door",
+   "spot": "hangar_view"
+  },
+  {
+   "id": "home_hatch",
+   "role": "home_threshold",
+   "sprite": "tr_hatch",
+   "spot": "home_door"
+  },
+  {
+   "id": "signals",
+   "role": "decor",
+   "sprite": "tr_signal",
+   "at": [
+    0.0,
+    0.0
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "transport_floor",
+   "sprite_set": "rave_transport/clubgoers",
+   "count": 27,
+   "spot": "hall_c"
+  },
+  {
+   "id": "transport_queue",
+   "sprite_set": "rave_transport/clubgoers",
+   "count": 3,
+   "spot": "cloak_view"
+  }
+ ],
+ "guides": [
+  {
+   "id": "dj",
+   "sprite": "rave_transport/tentacle_a",
+   "spot": "deck_view",
+   "for": "stage"
+  },
+  {
+   "id": "attendant",
+   "sprite": "rave_transport/cyclops_a",
+   "spot": "cloak_view",
+   "for": "cloakroom"
+  },
+  {
+   "id": "bartender",
+   "sprite": "rave_transport/blob_a",
+   "spot": "bar_view",
+   "for": "bar"
+  },
+  {
+   "id": "pilot",
+   "sprite": "rave_transport/insect_b",
+   "spot": "hangar_view",
+   "for": "race"
+  },
+  {
+   "id": "home_hatch",
+   "sprite": "tr_hatch",
+   "spot": "home_door",
+   "for": "home"
+  }
+ ],
+ "ingredients": [
+  {
+   "id": "diesel_cola",
+   "icon": "transport/ing_cola",
+   "color": "#6b3a1e"
+  },
+  {
+   "id": "tyre_liquorice",
+   "icon": "transport/ing_liquorice",
+   "color": "#2a2a33"
+  },
+  {
+   "id": "road_salt",
+   "icon": "transport/ing_salt",
+   "color": "#e8e8ea"
+  },
+  {
+   "id": "headlamp_lemon",
+   "icon": "transport/ing_lemon",
+   "color": "#ffe84a"
+  }
+ ],
+ "cloakroom_symbols": [
+  {
+   "id": "bus",
+   "icon": "transport/sym_bus"
+  },
+  {
+   "id": "bike",
+   "icon": "transport/sym_bike"
+  },
+  {
+   "id": "train",
+   "icon": "transport/sym_train"
+  },
+  {
+   "id": "boat",
+   "icon": "transport/sym_boat"
+  }
+ ],
+ "stations": {
+  "stage": {
+   "waypoint": "deck_view",
+   "route": "transport.to_stage"
+  },
+  "cloakroom": {
+   "waypoint": "cloak_hold",
+   "route": "transport.to_cloak"
+  },
+  "bar": {
+   "waypoint": "bar_hold",
+   "route": "transport.to_bar"
+  }
+ },
+ "race": {
+  "entrance": "hangar_view",
+  "course": "race_space",
+  "activity": "race"
+ },
+ "home": {
+  "threshold": "home_door",
+  "route": "home"
+ },
+ "activities": {
+  "stage": "bass_knob",
+  "cloakroom": "cloakroom",
+  "bar": "bar",
+  "race": "race"
+ },
+ "routes": {
+  "transport.to_stage": {
+   "id": "transport.to_stage",
+   "map": "transport_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "hall_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cross"
+     ]
+    },
+    {
+     "to": "stage_foot",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "stage_steps",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "deck_view",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "deck"
+    }
+   ],
+   "arrive": {
+    "waypoint": "deck_view",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "transport.to_cloak": {
+   "id": "transport.to_cloak",
+   "map": "transport_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "hall_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cross"
+     ]
+    },
+    {
+     "to": "cloak_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "hall_w"
+     ]
+    },
+    {
+     "to": "cloak_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "attendant"
+    }
+   ],
+   "arrive": {
+    "waypoint": "cloak_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "transport.to_bar": {
+   "id": "transport.to_bar",
+   "map": "transport_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "hall_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cross"
+     ]
+    },
+    {
+     "to": "bar_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "hall_e"
+     ]
+    },
+    {
+     "to": "bar_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "bartender"
+    }
+   ],
+   "arrive": {
+    "waypoint": "bar_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  }
+ },
+ "hub": {
+  "viewpoint": "hub_view",
+  "choice_view": true,
+  "hold_bars": 8,
+  "choices": {
+   "stage": {
+    "actor": "dj",
+    "node": "transport_stage"
+   },
+   "cloakroom": {
+    "actor": "attendant",
+    "node": "transport_cloakroom"
+   },
+   "bar": {
+    "actor": "bartender",
+    "node": "transport_bar"
+   },
+   "race": {
+    "actor": "pilot",
+    "node": "transport_race"
+   },
+   "home": {
+    "thing": "home_hatch",
+    "node": "bedsit"
+   }
+  }
+ }
+}

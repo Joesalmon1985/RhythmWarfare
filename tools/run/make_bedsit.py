@@ -40,7 +40,7 @@ FACING = {
     "S": ("magic", "magic_rave", "bedsit_s", "threshold_s", 180, "the wardrobe door ajar with iridescent light leaking out, a unicorn figure on the shelf, fairy lights"),
     "W": ("transport", "transport_rave", "bedsit_w", "threshold_w", 90, "the door with a bus timetable pinned to it, a toy car, a blinking indicator light, orange street light under the door"),
 }
-LANDED = {"space_rave": "N", "magic_rave": "S", "dino_rave": "E"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_<theme>_rave.py)
+LANDED = {"space_rave": "N", "magic_rave": "S", "dino_rave": "E", "transport_rave": "W"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_<theme>_rave.py)
 PLACEHOLDER_RAVES = {FACING[f][1]: f for f in FACINGS if FACING[f][1] not in LANDED}  # scene id -> facing it leaves from (resolve to the bedsit)
 # the raves that are real worlds: theme -> (scene id prefix, title, world blurb, hub blurb, stage blurb, race station title, race hub label, cloakroom blurb, bar blurb, race blurb)
 RAVES = {
@@ -62,8 +62,17 @@ RAVES = {
               "The coat check in a cave on the west island: a stone desk, a rack of hides and an attendant who wants the right hide for each symbol.",
               "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks.",
               "The ranger garage off the ledge: an off-road racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
+    "transport": ("transport", "The Transport Rave", "A wet street forecourt, a pair of tracks and a depot hall: a stage, a cloakroom, a bar and a garage.",
+              "A rave in a railway depot off a wet street: across the tracks the hall opens under its roof. A DJ waves from the loading dock; the left-luggage bay, the ticket-office bar and the garage are round the hall.",
+              "The loading dock at the north of the hall: two steps up to the DJ deck under a locomotive's face. The bass knob is stuck.", "Garage", "The garage: a race",
+              "The coat check in the left-luggage bay off the hall's west wall: a desk, a rail of hi-vis vests and an attendant who wants the right vest for each symbol.",
+              "The bar in the ticket office off the hall's east wall: a ticket counter, a shelf of lockers and a bartender who remembers the drinks.",
+              "The garage beside the stage: a rally hatchback and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
 }
-ORDER = ["space", "magic", "dinos"]  # the order the raves' nodes are written in
+ORDER = ["space", "magic", "dinos", "transport"]  # the order the raves' nodes are written in
+# WAY_OUT. A path must end somewhere (tests/test_run_matrix.gd); while a rave was a placeholder its one-scene ending was that end. With all four landed, the bedsit's way out to the
+# Warehouse (bedsit.end, the development exit's scene) opens once the player has come home from every rave this run: each rave's routes home set the run flag BEEN % theme.
+BEEN = "bedsit_been_%s"
 
 
 def stations(theme: str) -> dict:
@@ -214,6 +223,9 @@ def hotspots_json() -> dict:
         rows.append(hotspot_row("bedsit.threshold_" + f.lower(), "bedsit", {"waypoint": thr}, scene_id, f == "N"))
     rows.append(hotspot_row("bedsit.dev_exit", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
                             {"flags_all": ["bedsit_dev_exit"], "flags_none": [], "energy_min": 0, "once": False}))
+    if not PLACEHOLDER_RAVES:  # every rave has landed, so no placeholder ending is left: the way out to the Warehouse opens once the player has come home from all four (WAY_OUT)
+        rows.append(hotspot_row("bedsit.way_out", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
+                                {"flags_all": [BEEN % FACING[f][0] for f in FACINGS], "flags_none": [], "energy_min": 0, "once": False}))
     for scene_id, f in PLACEHOLDER_RAVES.items():
         ph = hotspot_row("%s.back" % scene_id, scene_id, {"waypoint": FACING[f][3]}, "run:warehouse", True)
         flag = ["keep:path_bedsit_%s_placeholder" % FACING[f][0]]
@@ -276,6 +288,10 @@ def rave_hotspots(theme: str) -> list:
             rows.append(h)
         rows.append(row("%s.back" % sid, sid, {"waypoint": door}, "exit", world, default=True))
         rows.append(row("%s.home" % sid, sid, {"waypoint": door}, "exit", "bedsit"))  # (the door is behind the camera at the hold: a door staged at the station's view point stood in front of the counter)
+    for h in rows:  # going home from this rave marks it as been to (the bedsit's way out opens once all four have been: hotspots_json, WAY_OUT)
+        for k in ("on_success", "on_failure"):
+            if h[k].get("route") == "bedsit":
+                h[k]["flags_set"] = [BEEN % theme]
     return rows
 
 

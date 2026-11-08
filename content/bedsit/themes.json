@@ -423,7 +423,85 @@
      "skin": "#8a5a3a",
      "extra": "#ffffff"
     }
-   ]
+   ],
+   "layout": {
+    "sector": "cloak",
+    "customer_slots": [
+     [
+      -15.6,
+      -11.3
+     ],
+     [
+      -15.6,
+      -12.0
+     ],
+     [
+      -15.6,
+      -12.7
+     ],
+     [
+      -15.6,
+      -13.4
+     ],
+     [
+      -16.4,
+      -11.7
+     ],
+     [
+      -16.4,
+      -12.4
+     ],
+     [
+      -16.4,
+      -13.1
+     ],
+     [
+      -16.4,
+      -13.8
+     ]
+    ],
+    "hand_off": [
+     0.3,
+     0.0
+    ],
+    "attendant_at": [
+     -17.8,
+     -9.2
+    ],
+    "rail_at": [
+     -18.7,
+     -8.95
+    ],
+    "rail_step": [
+     0.0,
+     -0.3
+    ],
+    "rail_y": 0.8,
+    "coat_size": [
+     0.5,
+     0.8
+    ],
+    "symbol_at": [
+     -16.5,
+     -10.0
+    ],
+    "symbol_y": 1.35,
+    "symbol_size": [
+     0.8,
+     0.8
+    ],
+    "prev_at": [
+     -16.5,
+     -9.1
+    ],
+    "prev_y": 1.45,
+    "prev_size": [
+     0.5,
+     0.5
+    ],
+    "counter_piece": "cloak_counter",
+    "lamp_piece": "cloak_lamp"
+   }
   }
  },
  "bar": {
@@ -837,7 +915,39 @@
      "body": "#e8c84f",
      "kind": "cap"
     }
-   ]
+   ],
+   "layout": {
+    "map": "rave_transport",
+    "sector": "bar",
+    "customer_at": [
+     15.2,
+     -8.4
+    ],
+    "customer_glass_at": [
+     16.0,
+     -9.0
+    ],
+    "glass_at": [
+     16.3,
+     -10.5
+    ],
+    "glass_y": 1.55,
+    "glass_size": [
+     0.3,
+     0.5
+    ],
+    "bubble_at": [
+     15.2,
+     -8.4
+    ],
+    "bubble_y": 2.25,
+    "bubble_size": [
+     0.9,
+     0.9
+    ],
+    "counter_piece": "bar_counter",
+    "shelf_prefix": "bar_shelf_"
+   }
   }
  }
 }

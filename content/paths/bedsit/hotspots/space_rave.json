@@ -225,10 +225,16 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "default": true,
    "repeatable": true
@@ -290,10 +296,16 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "default": false,
    "repeatable": true
@@ -419,10 +431,16 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "default": false,
    "repeatable": true
@@ -516,10 +534,16 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "default": false,
    "repeatable": true
@@ -611,10 +635,16 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "on_failure": {
-    "route": "bedsit"
+    "route": "bedsit",
+    "flags_set": [
+     "bedsit_been_space"
+    ]
    },
    "default": false,
    "repeatable": true

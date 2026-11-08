@@ -164,18 +164,23 @@
    "repeatable": true
   },
   {
-   "id": "transport_rave.back",
+   "id": "bedsit.way_out",
    "world": "bedsit",
-   "scene": "transport_rave",
+   "scene": "bedsit",
    "map": "bedsit",
    "anchor": {
-    "waypoint": "threshold_w"
+    "waypoint": "threshold_s"
    },
    "kind": "exit",
    "radius_m": 1.0,
    "min_px": 88,
    "available": {
-    "flags_all": [],
+    "flags_all": [
+     "bedsit_been_space",
+     "bedsit_been_dinos",
+     "bedsit_been_magic",
+     "bedsit_been_transport"
+    ],
     "flags_none": [],
     "energy_min": 0,
     "once": false
@@ -187,51 +192,10 @@
    },
    "challenge": null,
    "on_success": {
-    "route": "run:warehouse",
-    "flags_set": [
-     "keep:path_bedsit_transport_placeholder"
-    ]
+    "route": "bedsit.end"
    },
    "on_failure": {
-    "route": "run:warehouse",
-    "flags_set": [
-     "keep:path_bedsit_transport_placeholder"
-    ]
-   },
-   "default": true,
-   "repeatable": true
-  },
-  {
-   "id": "transport_rave.look",
-   "world": "bedsit",
-   "scene": "transport_rave",
-   "map": "bedsit",
-   "anchor": {
-    "thing": "w_car"
-   },
-   "kind": "object",
-   "radius_m": 1.0,
-   "min_px": 88,
-   "available": {
-    "flags_all": [],
-    "flags_none": [],
-    "energy_min": 0,
-    "once": false
-   },
-   "look": {
-    "available": "glow",
-    "selected": "ring",
-    "committed": "flash"
-   },
-   "challenge": null,
-   "on_success": {
-    "flags_set": [
-     "bedsit_placeholder_looked"
-    ],
-    "energy": 4
-   },
-   "on_failure": {
-    "energy": -2
+    "route": "bedsit.end"
    },
    "default": false,
    "repeatable": true
