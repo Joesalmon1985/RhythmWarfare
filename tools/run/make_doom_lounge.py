@@ -55,7 +55,7 @@ def rail() -> dict:
     ]
     bad = [P("lg_ref_back", "queasy", "walk", 2), P("lg_sw_corner", "queasy", "stagger", 3)]
     routes = {
-        "up": P("lg_ahead_door", bars=5, hold=1, via=["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne", "lg_v_n"]),
+        "up": P("lg_ahead_door", bars=5, hold=1, via=["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne"]),
         "left": P("lg_bar_door", bars=4, hold=1, via=["lg_v_ssw", "lg_v_wsw", "lg_v_wnw"]),
         "right": P("lg_floor_door", bars=4, hold=1, via=["lg_v_sse", "lg_v_ese", "lg_v_ene"]),
         "stumble": P("lg_ref", "recovered", "stagger", bars=3, via=["lg_ref_back", "lg_sw_corner"]),

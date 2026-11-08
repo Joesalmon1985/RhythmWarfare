@@ -50,7 +50,7 @@ WAYPOINTS = [
     ("wh_plinths", (-640, 100), (0, 0), 2, "reveal: the west band north of the bar, the platforms across the railing"),
     ("wh_platform", (66, 22), (-300, -190), 2, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
     # round 2: the stay rail's two near reveals (the first window must find the camera at wh_ref: see tools/run/make_doom.py GOOD)
-    ("wh_gate_view", (-372, -552), (-250, -150), 1.5, "reveal: the walkway outside the south gate, the floor and the stage's wall across the railing"),
+    ("wh_gate_view", (-470, -552), (-250, -150), 1.5, "reveal: the walkway along the lounge's north wall, the floor and the stage's wall across the railing (round 2: 3 m from the via, so the up walk-out from here stays under 8 bars at 3 m/s)"),
     ("wh_bar_side", (-540, -450), (66, 22), 1.5, "reveal: the walkway beside the bar's mouth, looking across the floor at the lit cube"),
     ("wh_stage_approach", (-360, -470), (-300, -190), 2, "approach to the stage, leg 1: through the south gate onto the floor"),
     ("wh_stage_steps", (-410, -150), (-300, -190), 0, "approach to the stage, leg 2: the foot of the stage steps (west side)"),

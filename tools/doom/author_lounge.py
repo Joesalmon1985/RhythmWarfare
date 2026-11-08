@@ -30,7 +30,7 @@ SHARED = "res://assets/story/doom_warehouse/textures/"  # the Bar guide's sprite
 NIGHT = "res://assets/story/night_one/textures/"
 MARGIN = 0.5
 MAX_STEP = 0.5
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.85, 0.72, 2.5
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.85, 0.8, 2.5  # round 2: tints lifted 0.8 (was 0.72)
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 m, face, lift, sector_of, dist_to_edges = aw.m, aw.face, aw.lift, aw.sector_of, aw.dist_to_edges
 aw.TINT_LIFT = TINT_LIFT
@@ -49,8 +49,8 @@ def style(names, floor, wall, ceil, tint, step=None, lip=None, light=None):
         S[n] = (floor, wall, ceil, tint, step or wall, lip or wall, light)
 
 
-style("concourse", "floor_marble", "wall_stone", "ceil_beam", "#e8c890", step="wall_marble", lip="wall_beam", light=0.9)
-style("step_ring", "floor_marble", "wall_marble", "ceil_beam", "#ffd8a0", step="wall_marble", lip="wall_beam", light=0.9)
+style("concourse", "floor_marble", "wall_stone", "ceil_beam", "#e8c890", step="wall_marble", lip="wall_beam", light=1.0)  # round 2: 1.0 (was 0.9)
+style("step_ring", "floor_marble", "wall_marble", "ceil_beam", "#ffd8a0", step="wall_marble", lip="wall_beam", light=1.0)
 style("back_n back_s", "floor_sofa", "wall_sofa", "ceil_beam", "#ffe0a0", step="wall_sofa", light=0.95)
 style("seat_n seat_s", "floor_sofa", "wall_sofa", "ceil_beam", "#ffe0a0", step="wall_sofa", light=0.95)
 style("gap_e gap_w", "floor_marble", "wall_stone", "ceil_beam", "#ffd8a0", step="wall_marble", light=0.9)
@@ -59,13 +59,13 @@ style("rug_stripe_a rug_stripe_b", "floor_rug_cream", "wall_sofa", "ceil_beam", 
 style("rug_in", "floor_rug_orange", "wall_sofa", "ceil_beam", "#ffe0b0", step="wall_table", light=0.95)
 style("table", "floor_table", "wall_table", "ceil_beam", "#ffe8c0", step="wall_table", light=1.0)
 style("ahead_step_a ahead_step_b", "floor_marble", "wall_stone", "ceil_street", "#c8d4e8", step="wall_stone", lip="wall_stone", light=0.85)
-style("ahead_street", "floor_street", "wall_street", "ceil_street", "#b8c8e8", step="wall_stone", lip="wall_stone", light=1.0)
+style("ahead_street", "floor_street", "wall_street", "ceil_street", "#e0e8f8", step="wall_stone", lip="wall_stone", light=1.0)
 style("left_vest", "floor_wood", "wall_wood", "ceil_beam", "#ffd0a0", step="wall_wood", lip="wall_stone", light=0.9)
 style("left_bar", "floor_wood", "wall_wood", "ceil_beam", "#ffc890", step="wall_copper", lip="wall_stone", light=0.9)
 style("left_counter", "floor_table", "wall_copper", "ceil_beam", "#ffd8a8", step="wall_copper", light=1.0)
-style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#a8c0ff", step="wall_blue", lip="wall_stone", light=1.0)
-style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#8ca8ff", step="wall_blue", lip="wall_blue", light=1.0)
-style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtain", "ceil_beam", "#ffc8a0", step="wall_curtain", lip="wall_stone", light=0.85)
+style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#d0dcff", step="wall_blue", lip="wall_stone", light=1.0)
+style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#c0d0ff", step="wall_blue", lip="wall_blue", light=1.0)
+style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtain", "ceil_beam", "#ffc8a0", step="wall_curtain", lip="wall_stone", light=0.95)
 OWN_TEX = ["wall_stone", "wall_marble", "wall_sofa", "wall_curtain", "wall_wood", "wall_copper", "wall_table", "wall_street", "wall_blue", "wall_beam",
            "floor_marble", "floor_rug_red", "floor_rug_cream", "floor_rug_orange", "floor_sofa", "floor_table", "floor_wood", "floor_street", "floor_blue", "floor_curtain",
            "ceil_beam", "ceil_street", "thing_plant", "thing_lamp", "thing_vase", "thing_cushion", "thing_cushion_b",
@@ -82,10 +82,10 @@ WAYPOINTS = [
     ("lg_ref_back", (40, -214), (0, 300), 0, "recovery: a stumble back to the south wall"),
     ("lg_sw_corner", (-100, -200), (0, 300), 0, "recovery: along the south-west walkway"),
     ("lg_west", (-196, -50), (150, 0), 2, "reveal: the west walkway, the pit and its sofas across to the blue passage"),
-    ("lg_north", (0, 200), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
+    ("lg_north", (0, 180), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
     ("lg_east", (196, 45), (-175, 175), 2, "reveal: the east walkway looking back across the pit to the Bar arch"),
     ("lg_se_view", (200, -100), (-175, 175), 1.5, "reveal (round 2, the stay rail's second): the south-east walkway looking across the pit to the Bar arch"),
-    ("lg_ahead_door", W("n", 0, -32), (0, 330), 0, "THRESHOLD ahead (Dock): inside the octagon before the steps, 1.25 m before the Dock guide on the first step (round 2: the guide brought forward); the world transition happens here"),
+    ("lg_ahead_door", W("n", 0, -77), (0, 330), 0, "THRESHOLD ahead (Dock): inside the octagon before the steps, 2.6 m before the Dock guide on the first step (round 2: the guide brought forward); the world transition happens here"),
     ("lg_bar_door", W("nw", 0, 0), (-220, 262), 0, "THRESHOLD left (Bar): at the arch's face, 1.3 m before the Bar guide (round 2: both brought forward)"),
     ("lg_floor_door", W("ne", 0, 2), (233, 205), 0, "THRESHOLD right (Floor): at the blue passage's mouth, a step back from the Floor guide (stage D)"),
     # via points: the ring round the pit (octagon of inradius 196), and the way in at each door
@@ -100,7 +100,7 @@ WAYPOINTS = [
     ("lg_v_n", (0, 190), (0, 330), 0, "via: in front of the Dock door"),
 ]
 ROUTES = {  # the three routes and the stay loop as waypoint ids, via points included; tools/run/make_doom_lounge.py cuts them into moves
-    "ahead": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne", "lg_v_n", "lg_ahead_door"],
+    "ahead": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne", "lg_ahead_door"],
     "left": ["lg_v_ssw", "lg_v_wsw", "lg_v_wnw", "lg_bar_door"],
     "right": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_floor_door"],
     "stay": ["lg_v_ssw", "lg_v_wsw", "lg_west", "lg_v_wsw", "lg_v_ssw", "lg_ref", "lg_v_sse", "lg_se_view", "lg_v_sse", "lg_ref"],  # round 2: two near reveals, each back to lg_ref
@@ -134,8 +134,10 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the h
     ("lg_lt_bar", W("nw", 0, 110), 2.8, 7.0, "#ffa040", 1.8), ("lg_lt_bar2", W("nw", 60, 150), 2.6, 5.0, "#ffb860", 1.4),
     # stage D: the Dock guide is lit from the street lamp over him and the hub's amber behind the viewer (the first pass left him a silhouette in the doorway)
     ("lg_lt_dock_key", W("n", 0, 14), 2.7, 3.5, "#dce6ff", 1.8), ("lg_lt_dock_warm", W("n", 0, 30), 2.2, 4.0, "#ffc080", 1.4),
-    ("lg_lt_st_w", (-60, 330), 2.2, 4.5, "#ffd090", 1.6), ("lg_lt_st_e", (60, 390), 2.2, 4.5, "#c8d8ff", 1.6), ("lg_lt_st_n", (-40, 420), 2.4, 4.5, "#ffd090", 1.4),
+    ("lg_lt_st_w", (-60, 330), 2.2, 4.5, "#ffd090", 1.6), ("lg_lt_st_e", (60, 390), 2.2, 4.5, "#c8d8ff", 1.6), ("lg_lt_st_n", (-40, 420), 2.4, 4.5, "#ffd090", 1.4), ("lg_lt_st_w2", (-60, 280), 2.2, 3.5, "#ffd090", 1.6), ("lg_lt_st_e2", (60, 300), 2.2, 3.5, "#ffd090", 1.6),
     ("lg_lt_floor", W("ne", 0, 100), 2.8, 8.0, "#3c64ff", 1.7), ("lg_lt_floor2", W("ne", 0, 40), 2.6, 5.0, "#5a80ff", 1.3),
+    # round 2: the dark glass passage keeps its LED strip and a cool key on the Floor guide, and a far violet-blue glow down the passage gives it depth
+    ("lg_lt_floor_key", W("ne", -26, 40), 2.4, 3.0, "#c8d0ff", 1.6), ("lg_lt_floor_far", W("ne", 0, 160), 1.2, 4.0, "#6a5aff", 2.0),
 ]
 DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, height m, emissive
     ("lg_sc_n1", "deco_sconce", (-74, 237), 1.6, 1.25, True), ("lg_sc_n2", "deco_sconce", (74, 237), 1.6, 1.25, True),
@@ -152,6 +154,8 @@ DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, he
     # stage D: the street's wall lamps (the painting's rain street is lined with them), each with a cool pool (LIGHTS)
     ("lg_st_lamp_w", "deco_sconce", (-78, 330), 2.2, 0.8, True), ("lg_st_lamp_e", "deco_sconce", (78, 390), 2.2, 0.8, True),
     ("lg_st_lamp_n", "deco_sconce", (-40, 438), 2.4, 0.8, True),
+    ("lg_sc_bar1", "deco_sconce", W("nw", -90, 188), 1.7, 1.0, True), ("lg_sc_bar2", "deco_sconce", W("nw", 100, 188), 1.7, 1.0, True),  # round 2: the bar's wall lamps
+    ("lg_st_lamp_w2", "deco_sconce", (-78, 280), 2.2, 0.8, True), ("lg_st_lamp_e2", "deco_sconce", (78, 300), 2.2, 0.8, True),  # round 2: two more street lamps near the door
 ]
 
 # round 2: the painting's warm coffered panelling under the vault, as fixed-yaw decals (no wall needed): a coffer frieze over each of the eight faces and a stone pilaster
@@ -286,12 +290,15 @@ def main():
         if did.startswith("lg_st_lamp"):  # (the street lamps: on the street's walls, not round the hub)
             hx, hy = at[0] - 10 * (1 if at[0] > 0 else -1), at[1]
         x, z = m(hx, hy)
-        things.append({"id": did + "_halo", "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": y + size * 0.55, "size": 1.3, "anim": "none", "blend": "add"})
+        things.append({"id": did + "_halo", "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": y + size * 0.55, "size": 1.6, "anim": "none", "blend": "add"})
+    for hid, hx, hy, hs in (("lg_street_glow", 0, 430, 3.0), ("lg_street_glow_w", -60, 360, 1.8)):  # round 2: the lit far end of the rain street (a warm glow down it)
+        x, z = m(hx, hy)
+        things.append({"id": hid, "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": 1.6, "size": hs, "anim": "none", "blend": "add"})
     x, z = m(0, 0)
     things.append({"id": "lg_lamp_table_halo", "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": 0.4, "size": 1.2, "anim": "none", "blend": "add"})
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = m(*at)
-        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
+        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.6, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
     for who, (at, size, lamp) in GUIDES.items():  # the lamp over each guide (the choice layer brightens it)
         x, z = m(*lamp)
         things.append({"id": "lg_lamp_" + who, "kind": "light", "at": [x, z], "y": 2.8, "radius": 3.0, "color": "#ffd9a0", "strength": 0.6})

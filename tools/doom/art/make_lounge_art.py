@@ -68,7 +68,7 @@ CREAM = ["#5a4a3a", "#8a7658", "#b8a07a", "#d8c8a0", "#f0e6c4"]
 COPPER = ["#3a1a0a", "#74371a", "#b0612c", "#dc8c42", "#ffc070"]
 WOOD = ["#1a0f0a", "#33201a", "#54362a", "#7a5036", "#a47448"]
 BLUE = ["#0a1030", "#142266", "#2438b0", "#3c64ff", "#80a8ff"]
-STREET = ["#0c1018", "#1a2230", "#2e3a4c", "#4a5a70", "#7a8ca8"]
+STREET = ["#141a24", "#26303e", "#3c4a5e", "#5e7088", "#90a4c0"]  # round 2: a step lighter (the rain street read as one dark grey)
 
 
 def blocks(seed, bw=64, bh=32, cols=BROWN, mortar=0.18):
@@ -181,14 +181,16 @@ def street(seed, wall=False):
 def blue_deck(seed, wall=False):
     deep = ["#03040c", "#060a1e", "#0c1640", "#16287a", "#2a4cd0", "#7aa0ff"]
     if wall:  # round 2: DARK cobalt glass (the lead: the stage-D tile still read as a bright striped box): near-black panes, one thin diagonal streak, the LED strip at the foot
-        f = 0.12 + noise(12, seed) * 0.10
+        f = 0.40 + noise(12, seed) * 0.14
         glass = (XX % 64 > 2) & (YY % 128 > 2)
         streak = (np.abs(((XX + YY // 5) % 128) - 70) < 2) & glass
         f = np.where(glass, f + 0.10 * (1 - (YY % 128) / 128.0), 0.02)
-        f = np.where(streak, f + 0.30, f)
+        f = np.where(streak, f + 0.40, f)
         f = np.where((YY % 128 > 122) & (YY % 128 < 125), 0.92, f)  # the LED strip along the foot
+        lights = (noise(32, seed + 5) > 0.72) & (XX % 6 < 3) & (YY % 8 < 3) & glass  # the city's lit windows beyond the glass, as the painting's passage shows
+        f = np.where(lights, 0.9, f)
         return quant(f, deep)
-    f = 0.14 + noise(24, seed) * 0.14  # round 2: a dark wet deck, the LED strip's reflection a thin line
+    f = 0.30 + noise(24, seed) * 0.16  # round 2: a dark wet deck, the LED strip's reflection a thin line
     f = np.where((XX % 64 < 2) | (YY % 64 < 2), 0.04, f)
     f = np.where((YY % 128 > 62) & (YY % 128 < 64), 0.8, f)
     return quant(f, deep)

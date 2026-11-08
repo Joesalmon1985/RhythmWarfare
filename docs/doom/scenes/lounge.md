@@ -27,7 +27,7 @@ rain in the street (`weather`: rain 0.8, only `ahead_street` lets it in). Measur
 
 ## The camera (rail data: `tools/run/make_doom_lounge.py`)
 
-* Stay loop (via polylines with holds, round the ring of walkway at inradius 6.1 m, via points `lg_v_*`): west reveal `lg_west` (hold 2 bars), north reveal `lg_north` under the Dock door (2), east reveal `lg_east` looking back across the pit (2), then `lg_ref`, the choice viewpoint (`"choice": true`, hold 8, still).
+* Stay rail (round 2): west reveal `lg_west` (2 bars out, 1.5 still), `lg_ref` (choice viewpoint, 3 bars back, hold 8 still, **pitch -12**), south-east reveal `lg_se_view` (2 out, 1.5 still), `lg_ref` again. Round 1's north and east reveals are off the rail (their waypoints stay for the shots).
 * `rail.routes`: `up` (ahead: round the east side to `lg_ahead_door`, at the foot of the street steps 3.2 m before the Dock guide), `left` (west side to `lg_bar_door`), `right` (east side to `lg_floor_door`, at the blue passage's mouth), each ending with a 1 bar hold; `stumble`, `arrive` (from the blue passage mouth `lg_arrive`).
 * `check_rail_paths`: 0 problems (8 November run). The doorway thresholds are where the world transition happens; the walks are checked as data.
 
@@ -52,11 +52,11 @@ Guides: the Dock guide and the Floor guide are CROPS from the paintings (stage D
 MATCHES (read by eye on `contact_lounge.jpg`): the sunken octagonal pit with the mustard tufted sofa ring, the oxblood and cream octagonal rug, the low table with its glowing lamp and flowers; three openings with a guide in each (the Dock guide lit in the rain street straight ahead, the Bar guide in his waistcoat with bottle shelves and a record behind the copper counter on the left, the Floor guide in magenta and silver in the dark cobalt glass passage on the right); brass sconces and gold studded panels on the stone pilasters; palms in copper pots; warm amber against the cool doorways; rain in the street.
 
 DOES NOT MATCH:
-* **The foreground sofa and cushion.** `lg_p_sofa` (cut from the painting) stands 1.4 m before `lg_ref`, but at a 1.6 m eye its top is 26 degrees below the horizon, under the pad strip: it is never seen. The pad strip covers the bottom third of the frame, where the painting puts its foreground; only the palms' tops show at the edges. Seeing it would need the camera pitched down at the choice hold (an engine/rail decision, not made here).
+* (Round 1.) The foreground sofa and the pit were under the pad strip at a level eye; round 2 pitches the choice hold -12 degrees (below): the pit and the near sofa ring are in the picture; the cut-out near sofa with its cushion still sits mostly under the pads.
 * The camera is 6 m back (the painting's is much closer, the Floor guide 3 m away and large); the room is larger than the painting's.
 * Flat walls (no arched lintels, fat pilasters, octagonal beam ribs), no glowing ceiling coffer (a flat coffered tile), no hanging vines, a straight bar counter, a straight passage (no curving glass bridge with a rail), a straight street.
-* The guides are small at `lg_ref` (the painting shows them large; `tests/test_doom_views.gd` asks 60 px and passes).
-* The ALL contrast is 0.39 (rule: over 0.40); 9 of 13 shots are off by p50 or contrast.
+* (Round 1: the guides were 66 to 86 px at `lg_ref`. Round 2: 83 to 88 px at the pitched pose, below.)
+* (Round 1: ALL contrast 0.39; 9 of 13 shots off. Round 2: below.)
 
 ## Placeholders
 
@@ -65,9 +65,76 @@ Every texture, decal and prop is procedural placeholder pixel art or a cut from 
 ## Hooks wanted (nothing in `src/` was touched)
 
 * The lounge is the geography world `doom_lounge` (one scene); the Warehouse's right guide leads straight here, and its guides lead straight to `doom_dock` (up), `doom_bar` (left), `doom_warehouse` (right).
-* A steady downward pitch at the choice viewpoint (or a lower pad strip) would put the painting's foreground sofa in the picture.
+* (Done in round 2 with the engine's `pitch` hook.)
 
 ## Shots (8 November, `docs/shots/doom/lounge/`)
 
 `contact_lounge.jpg` (the painting, then the reference viewpoint, the three reveals, the arrival, the three thresholds, the stumble and the stay loop at four song times, each at 16:9 and 20:9), `walk_strip.jpg` (ahead, left, right and the stay loop, 6 frames each at the eye's real height),
 `walk_*.txt` (pose tables), `art_sheet.png` and `guides_sheet.png`.
+
+## Polish round 2 (9 November, `docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md`)
+
+**The choice window and the reference viewpoint.** The rail climbs one place per block decision (phase beats 12.5, 28.5, 44.5) and the window opens at beat 49: with round 1's
+four-place loop the first phase's window found the camera walking to `lg_east` (a drive of the run data), so a first visit never chose from `lg_ref` and an authored pitch would
+never have been seen there. The stay rail is now a near reveal and back (above). `tests/test_doom_views.gd`
+`test_lounge_first_window_finds_the_camera_at_the_reference_viewpoint_with_its_pitch` drives three phases (still window hold at `lg_ref` each time; the first hold carries pitch
+-12), and the guide-state captures of a real run (`RW_RUN_VIRTUAL`, the bot, a tap at beat 50) show the camera at `lg_ref` looking down into the pit.
+
+Done:
+* **The sunken sofa pit in the reference shot**: `lg_ref` holds a steady **-12 degree pitch** through the choice window (`tools/run/make_doom_lounge.py` `REF_PITCH`; the engine's
+  `pitch` hook). At 16:9 the sofa ring, the rug and the table with its lamp fill the middle of the picture above the pads; `ref` in the shot set is shot at that pitch
+  (`RW_STORY_CAM=lg_ref,0,-12`), `ref_level` without it. The viewpoint's floor was not lowered nor the pit raised (not needed).
+* **The guides brought forward** (66 to 86 px before, the smallest in any scene): the Dock guide stands on the first street step (2.6 m in front of his threshold, which moved
+  back into the hub), the Bar guide straight in his arch's mouth (the threshold at the arch's face). At the pitched pose they are Dock 83, Bar 84, Floor 88 px at 16:9, at least
+  60 px apart, clear of the HUD and the pads (`test_lounge_guides_read_at_the_pitched_reference_pose`, which asks 80).
+* **Coffered panelling, columns, a vault frieze**: the gold studded panels (the "gold cubes") are warm coffered timber panels now (`deco_coffer`), a coffer frieze runs over each
+  of the eight faces under the vault (`deco_frieze`, fixed-yaw decals) and a carved stone pilaster with a brass capital stands on each corner (`deco_pilaster`). The ceiling ribs
+  stay the round 1 coffered tile (with the pitch, the vault is above the picture).
+* **The Floor threshold**: the passage's glass is redrawn as cobalt glass with the city's lit windows beyond it, a thin streak and the LED strip at the foot (the bright striped
+  tile is gone), a cool key on the Floor guide and a far violet-blue light down the passage. It is still the round 1 passage geometry.
+* **Exposure**: tints lifted 0.8 (was 0.72), lamp pools wider (x1.6), the walkway and step ring at light 1.0, two more street lamps and a warm glow at the street's far end,
+  two wall lamps in the bar, the street a step lighter, and a warm halo (`lg_halo`, additive) on every sconce and over the table lamp.
+
+Exposure (16:9, `frame_check.py` on the `RW_KEEP` frames of `shoot_lounge.sh`, `frame_check.txt`), p50 / contrast before (round 1) and after:
+
+| shot | before | after |
+| --- | --- | --- |
+| `approach_bar` | 0.28 / 0.35 | 0.30 / 0.40 |
+| `approach_dock` | 0.23 / 0.27 | 0.26 / 0.36 |
+| `approach_floor` | 0.25 / 0.34 | 0.19 / 0.31 |
+| `arrive_passage` | 0.24 / 0.37 | 0.28 / 0.42 |
+| `ref` | 0.25 / 0.42 | 0.29 / 0.49 |
+| `ref_level` | (new) | 0.27 / 0.47 |
+| `reveal_east` | 0.26 / 0.41 | 0.29 / 0.47 |
+| `reveal_north` | 0.24 / 0.28 | 0.26 / 0.37 |
+| `reveal_se` | (new) | 0.26 / 0.43 |
+| `reveal_west` | 0.25 / 0.39 | 0.26 / 0.42 |
+| `state_bar_committed` | (new) | 0.28 / 0.40 |
+| `state_bar_selected` | (new) | 0.28 / 0.47 |
+| `state_dock_committed` | (new) | 0.28 / 0.42 |
+| `state_dock_selected` | (new) | 0.29 / 0.47 |
+| `state_floor_committed` | (new) | 0.29 / 0.43 |
+| `state_floor_selected` | (new) | 0.29 / 0.47 |
+| `stay_1` | 0.26 / 0.38 | 0.28 / 0.49 |
+| `stay_2` | 0.27 / 0.45 | 0.30 / 0.53 |
+| `stay_3` | 0.26 / 0.43 | 0.30 / 0.51 |
+| `stay_4` | 0.27 / 0.47 | 0.29 / 0.51 |
+| `stumble` | 0.24 / 0.40 | 0.26 / 0.45 |
+
+After: **17 of 21** inside the rule; ALL p50 0.27, contrast 0.45 (before: 4 of 13, ALL 0.25 / 0.39). Off: `approach_floor` (p50 0.19, contrast 0.31: the dark glass passage;
+lightening its glass until it passed made it the bright blue box again, so the darker glass is kept), `approach_dock` and `reveal_north` (0.26 / 0.36 and 0.26 / 0.37: the grey
+rain street behind the Dock guide), `state_bar_committed` (0.28 / 0.40, a walk frame).
+
+Guides: unchanged sprites (Dock and Floor CROPS from the paintings, the Bar guide the Warehouse's bar CROP). No ring or beacon. The lounge block of `test_doom_views.gd` already had
+the wall-sightline check; it passes with the guides moved.
+
+Shots (`docs/shots/doom/lounge/`): `contact_lounge.jpg` (the painting, `ref` at the held pitch and `ref_level`, the reveals, the arrival, the thresholds, the stumble, the stay rail
+at four song times, and the guide-state captures `state_<guide>_selected` (beat 50.4) and `_committed` (beat 52) of a real run), `walk_strip.jpg` and `walk_*.txt`, `frame_check.txt`, `art_sheet.png`.
+
+### The lead's list
+
+- [x] The sunken sofa pit in the reference shot: pitch -12 at `lg_ref`, held through the window, and the first window now happens there.
+- [x] The gold cubes: coffered timber panels, a coffer frieze under the vault, stone pilasters with brass capitals. CARRIED: the ceiling ribs as geometry or sky (the pitched view does not show the vault).
+- [~] The Floor threshold: dark cobalt glass with city lights and a far light; CARRIED: its shot is under the exposure rule (above), and the passage is still straight (no curving glass bridge).
+- [~] Contrast: 17 of 21 shots in (was 4 of 13); four CARRIED (above).
+- [x] Added (the independent review): the guides 66 to 86 px: now 83 to 88 px at the pitched reference pose.

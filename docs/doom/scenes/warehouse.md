@@ -79,7 +79,7 @@ Regenerate: see `docs/doom/LAUNCH.md`. Trace result: 22 Doom sectors, 72 convex 
 ## Heights, rail and the camera path (7 November)
 
 * `max_step` 0.5 and `visibility` clip (72 pieces) are set in the map. Every portal whose floors differ by more than 0.5 m is shut to walkers (`blocked`) when the map stays reachable without it (the sides of the stage and pedestal stairs, the pits, the terrace); `tools/doom/author_warehouse.py` does this after every convert (`barriers`).
-* Rail data (`tools/run/make_doom.py`), since round 2: the stay rail is a near reveal and back, twice: `wh_gate_view` (the walkway outside the south gate; 2 bars out, 1.5 still), `wh_ref` (choice viewpoint, 3 bars back, hold 8), `wh_bar_side` (beside the bar's mouth looking across the floor), `wh_ref` again. Round 1's tour (plinths, pedestal, the floor's railing) is off the rail; its waypoints stay for the shots. `rail.routes` carries the other routes as moves: `up` (the walk to the stage: out past the lounge, through the south gate, up the west steps), `left`, `right`, `stumble`, `arrive`. Via points are the `wh_v_*` waypoints (corners only, never stood on).
+* Rail data (`tools/run/make_doom.py`), since round 2: the stay rail is a near reveal and back, twice: `wh_gate_view` (the walkway along the lounge's north wall; 2 bars out, 1.5 still), `wh_ref` (choice viewpoint, 3 bars back, hold 8), `wh_bar_side` (beside the bar's mouth looking across the floor), `wh_ref` again. Round 1's tour (plinths, pedestal, the floor's railing) is off the rail; its waypoints stay for the shots. `rail.routes` carries the other routes as moves: `up` (the walk to the stage: out past the lounge, through the south gate, up the west steps), `left`, `right`, `stumble`, `arrive`. Via points are the `wh_v_*` waypoints (corners only, never stood on).
 * `check_rail_paths.gd` (and `StoryRailCheck.check_rail`, which now also checks `rail.routes`) reports 0 problems on the Doom scenes. The Warehouse is one geography scene (`doom_warehouse`, depth 1): its guides lead straight to `doom_balcony` (up), `doom_bar` (left), `doom_lounge` (right); no stand-ins.
 * `python3 tools/doom/shoot_scene.py walk docs/shots/doom/warehouse` (or `RW_WALK=1` with shoot_scene.sh) writes `walk_ahead.jpg` and `walk_stay.jpg` (12 frames each along the move, the eye's real height; the pose tables and hold figures are in `walk_*.txt`).
 
@@ -144,7 +144,10 @@ beat 50, shot at beat 50.4 on the hold) and `state_<guide>_committed` (beat 52, 
 - [x] The warm practicals win near the bar corner and the lounge wall: the cobalt flood is smaller and weaker there, the bar has a hatch and a key light, the lounge a hanging lamp, every lamp a halo.
 - [x] The four shots under the rule on contrast (`approach_bar_b`, `approach_stage_c`, `stay_2`, `stumble`): all inside now (table).
 - [~] The stage guide: a proper crop now (no blocky coat); CARRIED: still 64 px at `wh_ref`, because the stage is 16 m out on the render's floor.
-- [~] Added: the walk legs (ruling 42 is not in this branch): `up` is 28.3 m in 4 bars (`check_rail_paths.gd` passes); CARRIED to the ruling-42 merge.
+- [x] Added: the walk-out legs (rulings 42/43 are not in this branch; measured from the map as polylines through each route's via points, from every place the rail can stand:
+  `wh_ref`, `wh_gate_view`, `wh_bar_side`, `wh_ref_back`, `wh_sw_corner`). Worst cases: `up` 31.5 m (from `wh_ref_back`; 28.3 m from `wh_ref`), `left` 7.9 m, `right` 8.0 m:
+  all under 8 bars at 3 m/s (33.1 m). The rail no longer stands on `wh_platform` (round 1's worst, 53.7 m to the stage); `wh_gate_view` sits 3 m from the `up` route's first via
+  so its walk-out stays at 30.5 m. To re-check with the rail check's WALKOFF lines after the merge.
 
 DOES NOT MATCH (still): the room is the render's, three times the painting's; the stage stands on the floor, not against a far wall (the wall flat stands in for it); the trusses are
 flat decals (seen edge-on from the side); no glazed roof; the railing has no posts; the floor's gloss is the engine's.
