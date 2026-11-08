@@ -1,21 +1,31 @@
 class_name SpaceRaveHost
 extends RefCounted
-## The Space rave's gameplay side (docs/briefs/BEDSIT_RAVES_BRIEF.md section 4, CONTRACTS.md 7): the bass puzzle's lock and its release, the rave's theme in the save, and the visible
-## change (the stage lights come up, the crowd stands about until then and dances after). RunPlay owns one (a few lines: see docs/bedsit/LAUNCH.md) and calls `enter` on every scene start
-## and `step` every frame; nothing here touches a node: the track audio, the progress and the stage actions are handed in.
+## The raves' gameplay side (docs/briefs/BEDSIT_RAVES_BRIEF.md section 4, CONTRACTS.md 7): the bass puzzle's lock and its release, the rave's theme in the save, and the visible
+## change (the stage lights come up, the crowd stands about until then and dances after). One host serves every rave: the theme is read from the scene id (`space_*`, `magic_*`, `dino_*`,
+## `transport_*`, see theme_of), the light group and the finished-activity pieces come from the theme's table below. RunPlay owns one (a few lines: see docs/bedsit/LAUNCH.md) and calls `enter`
+## on every scene start and `step` every frame; nothing here touches a node: the track audio, the progress and the stage actions are handed in. (The class keeps its first name, SpaceRaveHost.)
 ##
-## On entering the rave (`space_rave`, `space_stage`) with `bass_fixed` false for the theme, the bass stem is LOCKED (RunTrackAudio.lock_stems: availability, apart from the mix) and the
+## On entering a rave scene (`space_rave`, `space_stage`, `magic_rave`...) with `bass_fixed` false for the theme, the bass stem is LOCKED (RunTrackAudio.lock_stems: availability, apart from the mix) and the
 ## stage starts dim (light group off) with the crowd capped at the quiet band. When the knob comes free (BassKnobActivity `freed_t`) the host schedules, at the next bar boundary
 ## (ContractShapes.unlock_time), `unlock_stem_at("bass", t_u, one bar)` and, at the same time, the stage lights and the crowd's dancing. The flag lands with the activity's result
 ## (RunMinigameHost.apply_result -> RunProgress.apply_activity_flag) and is kept for the run: re-entering the stage finds the bass free and the lights up. Leaving the rave frees the stem.
 ## Dev flag: RW_SPACE_BASS_FIXED=1 starts with the bass already fixed.
 
 const THEME := "space"
-const NODES := ["space_rave", "space_stage", "space_cloakroom", "space_bar", "space_race"]
+const PREFIXES := {"space": "space", "magic": "magic", "dino": "dinos", "transport": "transport"}  # scene id prefix -> theme id (RaveSave.THEMES)
+const SCENES := ["rave", "stage", "cloakroom", "bar", "race"]
+const NODES := ["space_rave", "space_stage", "space_cloakroom", "space_bar", "space_race"]  # (the Space rave's, kept for callers of the first version)
 const TRACK := "origin_unknown_valley_of_the_shadows_chase_status_remix"
 const STEM := "bass"
-const LIGHT_GROUP := ["pylon_beams", "ring_lights", "hologram_dome"]  # the stage's set pieces (content/story/maps/space_rave.json): the light group
+const LIGHT_GROUPS := {  # each theme's stage set pieces (content/story/maps/<theme>_rave.json, the art manifest's pieces): the light group
+	"space": ["pylon_beams", "ring_lights", "hologram_dome"],
+	"magic": ["mg_aurora", "mg_sparkle_ring", "mg_orb_dome"],
+	"dinos": ["dn_lava_sheets", "dn_fire_ring", "dn_ember_dome"],
+	"transport": ["tr_signal_beams", "tr_track_lights", "tr_headlamp_dome"],
+}
+const LIGHT_GROUP := ["pylon_beams", "ring_lights", "hologram_dome"]  # (the Space rave's, kept for callers of the first version)
 const ACTIVITY_PIECES := {"cloakroom": ["cloak_lamp"], "bar": ["bar_shelf_1", "bar_shelf_2", "bar_shelf_3", "bar_shelf_4"]}  # what a finished activity leaves lit (the maps' pieces)
+const WAY_OUT_FLAG := "bedsit_way_out"  # ruling 41: the run flag the bedsit's way out (hotspot bedsit.way_out) needs; set while ANY one rave has its three activities done
 const QUIET_CAP := 25.0  # the crowd shows at most this energy (the quiet band) until the bass is back
 const RAMP_BEATS := 4.0  # one bar
 
@@ -25,36 +35,68 @@ var apply_fn: Callable = Callable()  # (action: Dictionary {t0, action, args}) -
 var beat_s := 60.0 / 174.0
 var phase_t0_fn: Callable = Callable()  # () -> float: the song time of the current phase's start (the bar grid)
 var track := TRACK  # the track whose bass stem is locked (a test uses its fixture's)
+var theme := THEME  # the rave being played (set by `enter` from the scene id)
 var in_rave := false
 var locked := false
 var unlock_t := -1.0  # the bar line the bass comes in on once the knob is freed (-1: not scheduled)
 var log: Array = []  # [{kind: enter | lock | unlock | leave | lights, t, ...}] for tests and playtests
 
 
+## The theme of a rave scene id ("magic_stage" -> "magic", "dino_rave" -> "dinos"); "" for anything else.
+static func theme_of(id: String) -> String:
+	var parts := id.split("_")
+	if parts.size() != 2 or not PREFIXES.has(parts[0]) or parts[1] not in SCENES:
+		return ""
+	return str(PREFIXES[parts[0]])
+
+
 static func is_rave_node(id: String) -> bool:
-	return id in NODES
+	return theme_of(id) != ""
 
 
 static func dev_bass_fixed() -> bool:
-	return OS.get_environment("RW_SPACE_BASS_FIXED") == "1"
+	return OS.get_environment("RW_SPACE_BASS_FIXED") == "1" or OS.get_environment("RW_RAVE_BASS_FIXED") == "1"
 
 
 func bass_fixed() -> bool:
-	return progress != null and bool(progress.puzzle_done(THEME, "bass_fixed"))
+	return progress != null and bool(progress.puzzle_done(theme, "bass_fixed"))
+
+
+func light_group() -> Array:
+	return LIGHT_GROUPS.get(theme, LIGHT_GROUP)
+
+
+## Ruling 41: the opening is complete once ANY one rave has all three activities done in the save (raves.<theme>.bass_fixed, cloakroom_done, bar_done). Visiting is not enough;
+## the puzzles are kept for the run, so once open the way out stays open for the run.
+static func opening_done(p: Variant) -> bool:
+	if p == null:
+		return false
+	for th: String in RaveSave.THEMES:
+		var all := true
+		for pz: String in RaveSave.PUZZLES:
+			all = all and bool(p.puzzle_done(th, pz))
+		if all:
+			return true
+	return false
 
 
 ## A scene starts at song time `t` (every phase start, and the run's first scene).
 func enter(node_id: String, t: float) -> void:
+	if progress != null and opening_done(progress):  # (every scene, the bedsit included: its way out reads the flag)
+		progress.set_flag(WAY_OUT_FLAG)
 	if not is_rave_node(node_id):
 		if in_rave:
 			leave(t)
 		return
+	if in_rave and theme_of(node_id) != theme:  # straight from one rave to another: the first is left properly
+		leave(t)
 	var first := not in_rave
 	in_rave = true
-	if progress != null and str(progress.rave_theme()) != THEME:
-		progress.set_rave_theme(THEME)
+	theme = theme_of(node_id)
+	if progress != null and str(progress.rave_theme()) != theme:
+		progress.set_rave_theme(theme)
 	if dev_bass_fixed() and not bass_fixed() and progress != null:
-		progress.apply_activity_flag("rave.%s.bass_fixed" % THEME)
+		progress.apply_activity_flag("rave.%s.bass_fixed" % theme)
 	_activity_marks(t)
 	if bass_fixed():
 		_set_run_flag()
@@ -78,8 +120,8 @@ func _activity_marks(t: float) -> void:
 		return
 	for act in ACTIVITY_PIECES:
 		var puzzle: String = "%s_done" % act
-		if progress.puzzle_done(THEME, puzzle):
-			progress.set_flag("%s_%s" % [THEME, puzzle])
+		if progress.puzzle_done(theme, puzzle):
+			progress.set_flag("%s_%s" % [theme, puzzle])
 			if apply_fn.is_valid():
 				for p: String in ACTIVITY_PIECES[act]:
 					apply_fn.call({"t0": t, "action": "piece_on", "args": {"piece": p}})
@@ -89,7 +131,7 @@ func _activity_marks(t: float) -> void:
 ## The rave is left (home, or the run goes on elsewhere): the bass stem is free again for whatever plays next.
 func leave(t: float) -> void:
 	in_rave = false
-	if progress != null and str(progress.rave_theme()) == THEME:
+	if progress != null and str(progress.rave_theme()) == theme:
 		progress.set_rave_theme("")
 	if locked and unlock_t < 0.0 and track_audio != null:
 		track_audio.unlock_stem_at(STEM, _bar_after(t), RAMP_BEATS * beat_s)
@@ -127,7 +169,7 @@ func _bar_after(t: float) -> float:
 func _stage(t0: float, up: bool) -> void:
 	if not apply_fn.is_valid():
 		return
-	for p in LIGHT_GROUP:
+	for p in light_group():
 		apply_fn.call({"t0": t0, "action": "piece_on" if up else "piece_off", "args": {"piece": p}})
 	apply_fn.call({"t0": t0, "action": "crowd_cap", "args": {"cap": 100.0 if up else QUIET_CAP}})
 	log.append({"kind": "lights", "t": t0, "up": up})
@@ -135,7 +177,7 @@ func _stage(t0: float, up: bool) -> void:
 
 func _set_run_flag() -> void:
 	if progress != null:
-		progress.set_flag("%s_bass_fixed" % THEME)
+		progress.set_flag("%s_bass_fixed" % theme)
 
 
 # --- ruling 38: the knob is a thing in the room ---------------------------------------------------------------------------------

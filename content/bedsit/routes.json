@@ -8,9 +8,9 @@
  },
  "landed": {
   "space_rave": true,
-  "dino_rave": false,
-  "magic_rave": false,
-  "transport_rave": false
+  "dino_rave": true,
+  "magic_rave": true,
+  "transport_rave": true
  },
  "routes": {
   "N": {

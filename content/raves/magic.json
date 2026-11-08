@@ -1,0 +1,306 @@
+{
+ "id": "magic",
+ "scene_id": "magic_rave",
+ "geography": "doom_lounge",
+ "map": "magic_rave",
+ "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+ "arrival": "magic_arrive",
+ "props": [
+  {
+   "id": "deck",
+   "role": "stage_deck",
+   "sprite": "mg_deck",
+   "spot": "deck_view"
+  },
+  {
+   "id": "bass_knob",
+   "role": "bass_knob",
+   "sprite": "mg_knob_0",
+   "spot": "deck_view"
+  },
+  {
+   "id": "coat_panel",
+   "role": "cloakroom",
+   "sprite": "mg_panel",
+   "spot": "cloak_view"
+  },
+  {
+   "id": "bar_counter",
+   "role": "bar",
+   "sprite": "mg_counter",
+   "spot": "bar_view"
+  },
+  {
+   "id": "stable_door",
+   "role": "race_entrance",
+   "sprite": "mg_stable_door",
+   "spot": "hangar_view"
+  },
+  {
+   "id": "home_hatch",
+   "role": "home_threshold",
+   "sprite": "mg_hatch",
+   "spot": "home_door"
+  },
+  {
+   "id": "lanterns",
+   "role": "decor",
+   "sprite": "mg_lantern",
+   "at": [
+    0.0,
+    0.0
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "unicorns_floor",
+   "sprite_set": "rave_magic/clubgoers",
+   "count": 31,
+   "spot": "well_s"
+  },
+  {
+   "id": "unicorns_queue",
+   "sprite_set": "rave_magic/clubgoers",
+   "count": 3,
+   "spot": "cloak_view"
+  }
+ ],
+ "guides": [
+  {
+   "id": "dj",
+   "sprite": "rave_magic/tentacle_a",
+   "spot": "deck_view",
+   "for": "stage"
+  },
+  {
+   "id": "attendant",
+   "sprite": "rave_magic/cyclops_a",
+   "spot": "cloak_view",
+   "for": "cloakroom"
+  },
+  {
+   "id": "bartender",
+   "sprite": "rave_magic/blob_a",
+   "spot": "bar_view",
+   "for": "bar"
+  },
+  {
+   "id": "pilot",
+   "sprite": "rave_magic/insect_b",
+   "spot": "hangar_view",
+   "for": "race"
+  },
+  {
+   "id": "home_hatch",
+   "sprite": "mg_hatch",
+   "spot": "home_door",
+   "for": "home"
+  }
+ ],
+ "ingredients": [
+  {
+   "id": "rainbow_nectar",
+   "icon": "magic/ing_nectar",
+   "color": "#ff7ac8"
+  },
+  {
+   "id": "unicorn_foam",
+   "icon": "magic/ing_foam",
+   "color": "#fff0fa"
+  },
+  {
+   "id": "glitter_sugar",
+   "icon": "magic/ing_glitter",
+   "color": "#ffe27a"
+  },
+  {
+   "id": "dragonfruit",
+   "icon": "magic/ing_dragonfruit",
+   "color": "#e8368f"
+  }
+ ],
+ "cloakroom_symbols": [
+  {
+   "id": "unicorn",
+   "icon": "magic/sym_unicorn"
+  },
+  {
+   "id": "wand",
+   "icon": "magic/sym_wand"
+  },
+  {
+   "id": "potion",
+   "icon": "magic/sym_potion"
+  },
+  {
+   "id": "crown",
+   "icon": "magic/sym_crown"
+  }
+ ],
+ "stations": {
+  "stage": {
+   "waypoint": "deck_view",
+   "route": "magic.to_stage"
+  },
+  "cloakroom": {
+   "waypoint": "cloak_hold",
+   "route": "magic.to_cloak"
+  },
+  "bar": {
+   "waypoint": "bar_hold",
+   "route": "magic.to_bar"
+  }
+ },
+ "race": {
+  "entrance": "hangar_view",
+  "course": "race_space",
+  "activity": "race"
+ },
+ "home": {
+  "threshold": "home_door",
+  "route": "home"
+ },
+ "activities": {
+  "stage": "bass_knob",
+  "cloakroom": "cloakroom",
+  "bar": "bar",
+  "race": "race"
+ },
+ "routes": {
+  "magic.to_stage": {
+   "id": "magic.to_stage",
+   "map": "magic_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "well_n",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "well_s"
+     ]
+    },
+    {
+     "to": "stage_foot",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "stage_steps",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "deck_view",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "deck"
+    }
+   ],
+   "arrive": {
+    "waypoint": "deck_view",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "magic.to_cloak": {
+   "id": "magic.to_cloak",
+   "map": "magic_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "well_sw",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk"
+    },
+    {
+     "to": "cloak_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk"
+    },
+    {
+     "to": "cloak_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "attendant"
+    }
+   ],
+   "arrive": {
+    "waypoint": "cloak_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "magic.to_bar": {
+   "id": "magic.to_bar",
+   "map": "magic_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "well_se",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk"
+    },
+    {
+     "to": "bar_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk"
+    },
+    {
+     "to": "bar_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "bartender"
+    }
+   ],
+   "arrive": {
+    "waypoint": "bar_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  }
+ },
+ "hub": {
+  "viewpoint": "hub_view",
+  "choice_view": true,
+  "hold_bars": 8,
+  "choices": {
+   "stage": {
+    "actor": "dj",
+    "node": "magic_stage"
+   },
+   "cloakroom": {
+    "actor": "attendant",
+    "node": "magic_cloakroom"
+   },
+   "bar": {
+    "actor": "bartender",
+    "node": "magic_bar"
+   },
+   "race": {
+    "actor": "pilot",
+    "node": "magic_race"
+   },
+   "home": {
+    "thing": "home_hatch",
+    "node": "bedsit"
+   }
+  }
+ }
+}

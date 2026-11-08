@@ -1,0 +1,320 @@
+{
+ "id": "dinos",
+ "scene_id": "dino_rave",
+ "geography": "doom_underworld",
+ "map": "dino_rave",
+ "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+ "arrival": "dino_arrive",
+ "props": [
+  {
+   "id": "deck",
+   "role": "stage_deck",
+   "sprite": "dn_deck",
+   "spot": "deck_view"
+  },
+  {
+   "id": "bass_knob",
+   "role": "bass_knob",
+   "sprite": "dn_knob_0",
+   "spot": "deck_view"
+  },
+  {
+   "id": "coat_gate",
+   "role": "cloakroom",
+   "sprite": "dn_gate",
+   "spot": "cloak_view"
+  },
+  {
+   "id": "bar_counter",
+   "role": "bar",
+   "sprite": "dn_counter",
+   "spot": "bar_view"
+  },
+  {
+   "id": "garage_gate",
+   "role": "race_entrance",
+   "sprite": "dn_gate",
+   "spot": "hangar_view"
+  },
+  {
+   "id": "home_hatch",
+   "role": "home_threshold",
+   "sprite": "dn_hatch",
+   "spot": "home_door"
+  },
+  {
+   "id": "torches",
+   "role": "decor",
+   "sprite": "dn_torch",
+   "at": [
+    0.0,
+    0.0
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dinos_floor",
+   "sprite_set": "rave_dinos/clubgoers",
+   "count": 26,
+   "spot": "cause_a"
+  },
+  {
+   "id": "dinos_queue",
+   "sprite_set": "rave_dinos/clubgoers",
+   "count": 3,
+   "spot": "cloak_view"
+  }
+ ],
+ "guides": [
+  {
+   "id": "dj",
+   "sprite": "rave_dinos/tentacle_a",
+   "spot": "deck_view",
+   "for": "stage"
+  },
+  {
+   "id": "attendant",
+   "sprite": "rave_dinos/cyclops_a",
+   "spot": "cloak_view",
+   "for": "cloakroom"
+  },
+  {
+   "id": "bartender",
+   "sprite": "rave_dinos/blob_a",
+   "spot": "bar_view",
+   "for": "bar"
+  },
+  {
+   "id": "pilot",
+   "sprite": "rave_dinos/insect_b",
+   "spot": "hangar_view",
+   "for": "race"
+  },
+  {
+   "id": "home_hatch",
+   "sprite": "dn_hatch",
+   "spot": "home_door",
+   "for": "home"
+  }
+ ],
+ "ingredients": [
+  {
+   "id": "fern_juice",
+   "icon": "dinos/ing_fern",
+   "color": "#4fc760"
+  },
+  {
+   "id": "lava_sauce",
+   "icon": "dinos/ing_lava",
+   "color": "#ff5a2a"
+  },
+  {
+   "id": "amber_resin",
+   "icon": "dinos/ing_amber",
+   "color": "#ffb52e"
+  },
+  {
+   "id": "egg_cream",
+   "icon": "dinos/ing_egg",
+   "color": "#fff1d0"
+  }
+ ],
+ "cloakroom_symbols": [
+  {
+   "id": "egg",
+   "icon": "dinos/sym_egg"
+  },
+  {
+   "id": "claw",
+   "icon": "dinos/sym_claw"
+  },
+  {
+   "id": "fern",
+   "icon": "dinos/sym_fern"
+  },
+  {
+   "id": "skull",
+   "icon": "dinos/sym_skull"
+  }
+ ],
+ "stations": {
+  "stage": {
+   "waypoint": "deck_view",
+   "route": "dinos.to_stage"
+  },
+  "cloakroom": {
+   "waypoint": "cloak_hold",
+   "route": "dinos.to_cloak"
+  },
+  "bar": {
+   "waypoint": "bar_hold",
+   "route": "dinos.to_bar"
+  }
+ },
+ "race": {
+  "entrance": "hangar_view",
+  "course": "race_space",
+  "activity": "race"
+ },
+ "home": {
+  "threshold": "home_door",
+  "route": "home"
+ },
+ "activities": {
+  "stage": "bass_knob",
+  "cloakroom": "cloakroom",
+  "bar": "bar",
+  "race": "race"
+ },
+ "routes": {
+  "dinos.to_stage": {
+   "id": "dinos.to_stage",
+   "map": "dino_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "cause_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cause_a"
+     ]
+    },
+    {
+     "to": "stage_foot",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "stage_steps",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "look": "deck"
+    },
+    {
+     "to": "deck_view",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "deck"
+    }
+   ],
+   "arrive": {
+    "waypoint": "deck_view",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "dinos.to_cloak": {
+   "id": "dinos.to_cloak",
+   "map": "dino_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "cause_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cause_a"
+     ]
+    },
+    {
+     "to": "cloak_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "br_w",
+      "isle_w_s"
+     ]
+    },
+    {
+     "to": "cloak_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "attendant"
+    }
+   ],
+   "arrive": {
+    "waypoint": "cloak_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  },
+  "dinos.to_bar": {
+   "id": "dinos.to_bar",
+   "map": "dino_rave",
+   "from": "hub_view",
+   "legs": [
+    {
+     "to": "cause_c",
+     "bars": 4,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "cause_a"
+     ]
+    },
+    {
+     "to": "bar_door",
+     "bars": 2,
+     "hold_bars": 1,
+     "style": "walk",
+     "via": [
+      "br_e",
+      "isle_e_s"
+     ]
+    },
+    {
+     "to": "bar_hold",
+     "bars": 2,
+     "hold_bars": 4,
+     "style": "walk",
+     "look": "bartender"
+    }
+   ],
+   "arrive": {
+    "waypoint": "bar_hold",
+    "choice_view": true,
+    "hold": "window"
+   },
+   "eye_m": 1.6
+  }
+ },
+ "hub": {
+  "viewpoint": "hub_view",
+  "choice_view": true,
+  "hold_bars": 8,
+  "choices": {
+   "stage": {
+    "actor": "dj",
+    "node": "dino_stage"
+   },
+   "cloakroom": {
+    "actor": "attendant",
+    "node": "dino_cloakroom"
+   },
+   "bar": {
+    "actor": "bartender",
+    "node": "dino_bar"
+   },
+   "race": {
+    "actor": "pilot",
+    "node": "dino_race"
+   },
+   "home": {
+    "thing": "home_hatch",
+    "node": "bedsit"
+   }
+  }
+ }
+}

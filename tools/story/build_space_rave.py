@@ -26,6 +26,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 
+from rave_builder import (QUIET, STANDING, STAGEACT, loc, pol, sec, width_at, write, yaw_in, yaw_out, Frame, write_activity_layouts as _write_layouts,  # noqa: E402
+                          BAR_BAYS, BAR_BUBBLE, BAR_CUSTOMER, BAR_CUSTOMER_GLASS, BAR_GLASS, BAR_HOLD_U, CLOAK_ATTENDANT, CLOAK_CUSTOMER_SLOTS, CLOAK_HOLD_U, CLOAK_LAMP,
+                          CLOAK_PREV, CLOAK_RAIL, CLOAK_SYMBOL, STAGE_D, STAGE_W0, STAGE_W1, STEP1_U, STEP2_U)
+
 TEX = os.path.join(ROOT, "assets", "story", "mothership", "textures")
 MAP = os.path.join(ROOT, "content", "story", "maps", "space_rave.json")
 STORY = os.path.join(ROOT, "content", "story", "space_rave.json")
@@ -39,25 +43,7 @@ CEIL = 6.0
 VOID_FLOOR = -9.0
 
 
-def loc(phi: float, u: float, s: float = 0.0):
-    """Local frame of ring piece at `phi` degrees (from south through east): u outward, s along the ring (towards increasing phi)."""
-    a = math.radians(phi)
-    return [round(u * math.sin(a) + s * math.cos(a), 3), round(u * math.cos(a) - s * math.sin(a), 3)]
-
-
-def pol(r: float, phi: float):
-    a = math.radians(phi)
-    return [round(r * math.sin(a), 3), round(r * math.cos(a), 3)]
-
-
-def yaw_out(phi: float) -> float:
-    """The yaw of looking outward (away from the middle) at piece `phi`: the way e_r points; yaw 0 looks -z, 90 looks -x."""
-    y = (phi + 180) % 360
-    return round(y - 360 if y > 180 else y, 3)
-
-
-def yaw_in(phi: float) -> float:
-    return round(phi if phi <= 180 else phi - 360, 3)
+# loc, pol, yaw_out, yaw_in: tools/story/rave_builder.py (shared by every rave generator)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------- placeholder art
@@ -185,18 +171,6 @@ def sheet(path: str, names: list) -> None:
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------- the map
-def sec(sid, poly, floor, ceiling, floor_tex, ceil_tex, light, tint, flags=None, room="main", **kw):
-    d = {"id": sid, "polygon": poly, "floor": floor, "ceiling": ceiling, "floor_tex": floor_tex, "ceil_tex": ceil_tex, "wall_tex": "wall_hull", "light": light, "tint": tint, "room": room,
-         "flags": flags or []}
-    d.update(kw)
-    return d
-
-
-QUIET = {"quiet": ["stand", "chat", "drink", "lean_wall", "point"], "dancing": ["dance", "dance", "dance", "chat", "drink"], "hype": ["dance", "dance", "dance", "wave", "point"],
-         "euphoric": ["dance", "dance", "wave", "point", "toast"]}
-STANDING = {"quiet": ["stand", "chat", "lean_wall"], "dancing": ["stand", "chat", "drink", "watch"], "hype": ["watch", "wave", "chat", "drink"], "euphoric": ["wave", "watch", "chat", "toast"]}
-STAGEACT = {"quiet": ["stand", "mix", "point"], "dancing": ["mix", "dance", "point", "wave"], "hype": ["mix", "dance", "wave", "point"], "euphoric": ["mix", "dance", "wave", "point"]}
-
 # (id, piece, depth D, half width at the ring w0, half width at the far end w1, floor_tex, tint, light, flags)
 APSES = {
     "airlock": (0, 5.0, 2.5, 2.5, "floor_airlock", "#7fe8ff", 0.55, []),
@@ -204,19 +178,6 @@ APSES = {
     "cloak": (210, 6.0, 3.6, 4.6, "floor_lounge", "#9fb8ff", 0.55, []),
     "hangar": (240, 7.5, 3.8, 5.0, "floor_airlock", "#ffb066", 0.6, []),
 }
-STAGE_W0, STAGE_W1, STAGE_D = 4.4, 7.2, 11.0
-STEP1_U, STEP2_U = 19.2, 21.4
-CLOAK_HOLD_U = BAR_HOLD_U = 16.4  # in the ring just outside the alcove's mouth: the whole alcove is in the picture
-CLOAK_CUSTOMER_SLOTS = [(19.6, -1.3), (19.6, -2.0), (19.6, -2.7), (19.6, -3.4), (20.4, -1.7), (20.4, -2.4), (20.4, -3.1), (20.4, -3.8)]  # (u, s) of customer_0..7: a queue to the camera's right
-CLOAK_ATTENDANT = (21.8, 0.8)
-CLOAK_RAIL = (22.7, 1.05, -0.3)  # (u, s of coat 0, s step per coat): eight coats along the back wall
-CLOAK_SYMBOL, CLOAK_PREV, CLOAK_LAMP = (20.5, 0.0), (20.5, 0.9), (20.5, -0.55)
-BAR_CUSTOMER, BAR_GLASS, BAR_CUSTOMER_GLASS, BAR_BUBBLE = (19.2, -1.6), (20.3, 0.5), (20.0, -1.0), (19.2, -1.6)
-BAR_BAYS = (-3.0, -1.0, 1.0, 3.0)
-
-
-def width_at(w0, w1, d, du):
-    return w0 + (w1 - w0) * du / d
 
 
 def build_map() -> dict:
@@ -487,33 +448,8 @@ def theme_json() -> dict:
 
 
 def write_activity_layouts() -> None:
-    """Where the cloakroom's and the bar's things stand in THIS map: content/bedsit/themes.json cloakroom.space.layout and bar.space.layout (the activities read them: CloakroomActivity.layout, BarData.layout).
-    The blocks are merged into the file, nothing else in it changes (tools/run/make_bedsit.py keeps them too)."""
-    path = os.path.join(ROOT, "content", "bedsit", "themes.json")
-    d = json.loads(open(path, encoding="utf-8").read())
-    r2 = lambda v: [round(v[0], 3), round(v[1], 3)]
-    c = 210
-    d["cloakroom"]["space"]["layout"] = {
-        "sector": "cloak", "customer_slots": [r2(loc(c, u, s_)) for (u, s_) in CLOAK_CUSTOMER_SLOTS], "hand_off": r2(loc(c, -0.3, 0.0)), "attendant_at": r2(loc(c, *CLOAK_ATTENDANT)),
-        "rail_at": r2(loc(c, CLOAK_RAIL[0], CLOAK_RAIL[1])), "rail_step": r2(loc(c, 0.0, CLOAK_RAIL[2])), "rail_y": 0.8, "coat_size": [0.5, 0.8],
-        "symbol_at": r2(loc(c, *CLOAK_SYMBOL)), "symbol_y": 1.35, "symbol_size": [0.8, 0.8], "prev_at": r2(loc(c, *CLOAK_PREV)), "prev_y": 1.45, "prev_size": [0.5, 0.5],
-        "counter_piece": "cloak_counter", "lamp_piece": "cloak_lamp",
-    }
-    b = 150
-    d["bar"]["space"]["layout"] = {
-        "map": "mothership", "sector": "bar", "customer_at": r2(loc(b, *BAR_CUSTOMER)), "customer_glass_at": r2(loc(b, *BAR_CUSTOMER_GLASS)), "glass_at": r2(loc(b, *BAR_GLASS)), "glass_y": 1.55,
-        "glass_size": [0.3, 0.5], "bubble_at": r2(loc(b, *BAR_BUBBLE)), "bubble_y": 2.25, "bubble_size": [0.9, 0.9], "counter_piece": "bar_counter", "shelf_prefix": "bar_shelf_",
-    }
-    with open(path, "w", encoding="utf-8", newline=chr(10)) as fh:
-        json.dump(d, fh, indent=1)
-        fh.write(chr(10))
-
-
-def write(path: str, data: dict) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8", newline="\n") as fh:
-        json.dump(data, fh, indent=1)
-        fh.write("\n")
+    """The Space rave's cloakroom and bar layouts (content/bedsit/themes.json): the shared writer, frames of the west and east alcoves of the ring."""
+    _write_layouts("space", Frame(210), Frame(150), "mothership")
 
 
 def split_knob_sheet() -> None:

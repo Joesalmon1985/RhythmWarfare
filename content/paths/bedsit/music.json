@@ -83,6 +83,90 @@
    "chart": "bedsit_room",
    "treatment": "none",
    "temporary": false
+  },
+  {
+   "id": "magic_stage",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_cloakroom",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_bar",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_race",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "dino_stage",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "dino_cloakroom",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "dino_bar",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "dino_race",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "transport_stage",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "transport_cloakroom",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "transport_bar",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "transport_race",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

@@ -151,3 +151,53 @@ Brief sections 8 to 10; the whole account is `docs/bedsit/RACE.md`.
   race on the next block start; it stays available after a race (replay), and needs none of the three tasks.
 - The race plays on the street stage `race_space` (cut on the seat's downbeat, no fade), pads judged, the four regions of the picture drive; afterwards the hangar is back,
   `raves.space.race` (runs, wins, best) is saved, and the way back to the hub is selected.
+
+
+## The other three raves (branch `wip/play-raves`): Magic, Dinosaurs, Transport
+
+All four raves are real nodes now (`LANDED` in `tools/run/make_bedsit.py`: N space, S magic, E dinos, W transport; `routes.json` `landed` is true for each). One shared generator
+(`tools/story/rave_builder.py`, art kit `rave_art.py`, themed rigs `rave_people.py`) builds every rave; `SpaceRaveHost` serves every theme (the theme is read from the scene id prefix);
+`tests/rave_theme_test.gd` is the shared test body.
+
+    tools\dev\play_bedsit.cmd --rave magic          start in the Magic rave (RW_RUN_START=magic_rave)
+    tools\dev\play_bedsit.cmd --rave dinos          start in the Dinosaur rave (RW_RUN_START=dino_rave)
+    tools\dev\play_bedsit.cmd --rave transport      start in the Transport rave (RW_RUN_START=transport_rave); add --fixed for the bass already fixed
+    python3 tools/story/build_<magic|dinos|transport>_rave.py    the map, story file, theme file, activity layouts and art of that rave
+    python3 tools/run/make_bedsit.py --bedsit                    the path (every landed rave's nodes and hotspots; keeps every theme's cloakroom/bar blocks in themes.json)
+    bash tools/dev/shoot_rave.sh <theme>                         docs/shots/bedsit/<theme>/<theme>_contact.jpg (hub, approach, deck before/after, cloakroom and bar holds)
+    bash tools/dev/shoot_activities.sh <theme>                   docs/shots/bedsit/<theme>/activities.jpg (the three activities in the run scene, 16:9 and 20:9)
+
+| Rave | Scene prefix | Geography (approximate, hand-built) | Shape | Stations |
+| --- | --- | --- | --- | --- |
+| Magic and unicorns | `magic_` | the Chill-out lounge | an octagonal bowl of stepped tiers round a sunken dance well | stage N, cloakroom NW, bar NE, carriage house beside the cloakroom |
+| Dinosaurs | `dino_` | the Underworld | a basalt ledge, a railed causeway over a lava gulf, two islands | stage N at the causeway's end, cloakroom cave and garage on the west island, tent bar on the east island |
+| Transport | `transport_` | the Dock | a wet street forecourt (rain, `weather` on the map), a pair of tracks a step down, a long roofed depot hall | stage N (a loading dock, a locomotive's face behind the DJ), left-luggage cloakroom bay W, ticket-office bar bay E, garage beside the stage |
+
+- Every stage is north (frame phi 180, origin 0): `BassKnobActivity` puts the knob at world (0, -25.12) in the sector `stage`.
+- The race entrance of magic, dinos and transport is the `<prefix>_race` PLACEHOLDER node (the hold `hangar_view` facing the racer, looping back to the hub). It becomes a real race scene,
+  exactly like `space_race`, as soon as `content/races/<theme>.json` exists (`activity_scenes` in `make_bedsit.py`; the race hotspot is replayable). Every theme file's `race.course` is
+  `race_space` until per-theme courses exist (`tools/story/build_race.py --theme <x>`).
+- **The bedsit's way out (ruling 41).** The opening is finished once ANY ONE rave has all three of its activities done: the bass fixed, the cloakroom done and the bar done
+  (the save's `raves.<theme>.bass_fixed`, `cloakroom_done`, `bar_done`). The player does not have to visit all four raves (brief section 10), and a visit alone, or two of the
+  three activities, does not open it. `SpaceRaveHost.opening_done` checks this at every scene start and sets the run flag `bedsit_way_out`; the bedsit's hotspot `bedsit.way_out`
+  (anchored on `threshold_s`) needs that flag and leads to `bedsit.end`, then the Warehouse. Once open it stays open for the run (the puzzles are kept for the run, and a new run
+  starts them over); the four raves stay reachable from the bedsit all the while. The development exit `bedsit.dev_exit` (flag `bedsit_dev_exit`) is unchanged. The path declares
+  the gate (`run.json` `path.ending_gate`), so `tests/test_run_matrix.gd`, whose bot plays no activities, lets the bedsit live in its loop; `tests/test_bedsit_opening_end.gd`
+  proves the gate (`--filter bedsit`).
+
+### Transport (`tools/story/build_transport_rave.py`)
+
+- Map `content/story/maps/transport_rave.json` (10 sectors): `yard` (x -9..9, z 4..18, open sky, `weather` rain 0.75 with drips off the hall roof's edge), `tracks` (x -13..13, z 0..4,
+  floor -0.2), `hall` (x -13..13, z -17..0, a truss roof at 9 m), the stage alcoves `ap6_a`, `ap6_b`, `stage`, `cloak` (phi 270), `bar` (phi 90), `hangar` (phi 180 at x 9.5) and `home` (a
+  bus-stop door behind the forecourt). Routes from `hub_view` (0, 15): over the crossing (`cross`) to `hall_c`, then to each station. Hub bearings: attendant 36, bartender -36, pilot -14 degrees.
+- Art in `assets/story/rave_transport/`. **Borrowed** from the Dock (`tools/story/borrowed/doom_dock/`): asphalt, concrete, walkway and blue floors, brick, steel, warehouse, shutter and blue walls,
+  trim, truss roof, bollard, street, hanging and wall lamps, neon, crate, case, drum, pallets, van, fence, lit windows, towers. **Drawn here, all PLACEHOLDER** (procedural, not
+  hand-finished; ruling 36): the track ballast and rails, the station wall tiles, the dock chequer plate, the warehouse shutter up on a purple-lit crowd (after the Dock painting), the
+  locomotive's face, the double-decker, the rally racer, the colour-light signals, the departures board, the garage door, the bus-stop timetable, the cone, the left-luggage hatch,
+  the ticket counter, the left-luggage desk, the lockers, the hi-vis vest rail, the console, the deck, the door home, the knob frames, the sky and the three stage pieces
+  (`tr_signal_beams`, `tr_track_lights`, `tr_headlamp_dome`). **People**: the Mothership's alien rigs recoloured hi-vis with a hard hat (`rave_people.py`): PLACEHOLDER figures, not the
+  256 px Floor-guide standard.
+- Activity sheets (copied PLACEHOLDERS): `cloak_symbols_transport` (bus, bike, train, boat), `bar_glass_transport`, `bar_order_transport` (diesel cola, tyre liquorice, road salt, headlamp lemon), `cloak_coat`, `sr_knob`.
+- Shots: `docs/shots/bedsit/transport/transport_contact.jpg`, `docs/shots/bedsit/transport/activities.jpg`. The rain cannot be judged from the preview stills (the preview pipeline
+  draws no motion); people are absent from the map preview (the activity sheet shows them).
+- Test: `tests/test_transport_rave.gd` (the shared body, `--filter test_transport_rave`).
