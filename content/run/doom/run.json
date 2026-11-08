@@ -905,11 +905,9 @@
        "to": "dk_moth",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 5,
        "via": [
-        "dk_v_s1",
-        "dk_v_s2",
-        "dk_v_s3"
+        "dk_v_s1"
        ],
        "hold_bars": 1
       },

@@ -27,7 +27,7 @@ def _rail(P):
     ]
     bad = [P("dk_ref_back", "queasy", "walk", 2), P("dk_sw_corner", "queasy", "stagger", 3)]
     routes = {
-        "up": P("dk_moth", "dancer", bars=6, hold=1, via=["dk_v_s1", "dk_v_s2", "dk_v_s3"]),
+        "up": P("dk_moth", "dancer", bars=5, hold=1, via=["dk_v_s1"]),
         "left": P("dk_floor_door", "dancer", bars=5, hold=1, via=["dk_v_a1", "dk_v_w1", "dk_v_w2", "dk_v_d"]),
         "right": P("dk_under", "dancer", bars=5, hold=1, via=["dk_v_u1", "dk_v_u2", "dk_v_u3"]),
         "stumble": P("dk_ref", "recovered", "stagger", bars=3, via=["dk_ref_back", "dk_sw_corner"]),

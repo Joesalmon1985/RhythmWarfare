@@ -717,11 +717,11 @@ def p_floor_conc():
     return to_img(arr)
 
 
-def p_floor_asphalt():
+def p_floor_asphalt(base=("#222232", "#363650", "#4a4a68", "#5e5e84")):
     """The street: wet asphalt in broad low-frequency patches (no fine sparkle: it aliases into confetti at distance), sparse grit, a worn lane dash, the sodium and blue lamps'
     long smeared reflections, a few ripples."""
     rng = np.random.default_rng(343)
-    arr = ramp(vnoise(T, T, 341, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.8 + 0.1, ("#222232", "#363650", "#4a4a68", "#5e5e84"), cell=2)
+    arr = ramp(vnoise(T, T, 341, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.8 + 0.1, base, cell=2)
     g = np.kron(rng.random((T // 2, T // 2)) < 0.02, np.ones((2, 2), bool))
     arr[g] = arr[g] * 0.6 + hexa("#4a4a5c") * 0.4
     arr[20:80, 120:132] = arr[20:80, 120:132] * 0.4 + hexa("#6a6a72") * 0.6
@@ -842,6 +842,153 @@ TEXTURES.update({"dk_wall_brick": p_wall_brick, "dk_wall_brick_b": lambda: p_wal
                  "dk_floor_walk": p_floor_walk, "dk_sky": p_sky})
 PROPS.update({"dk_bollard": p_bollard, "dk_furnace": p_furnace, "dk_crate_drum": p_crate_drum, "dk_pallets_near": p_pallets_near})
 DECALS.update({"dk_end_glow": p_end_glow})
+
+
+
+
+# --- round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md, Dock): the near walls are brick and corrugated steel, the far buildings dark facades with FEW lit windows as decals placed
+# one by one (no window grid in a tile, so nothing repeats every 2 m), a silhouette skyline in the sky strip, the brown building at the street's end with its lit doorway, and the club
+# passage as a dark brick tunnel to a violet-lit door
+
+def p_wall_bldg(seed, base=("#0c0e1a", "#151826", "#1e2234", "#2a3044")):
+    """A dark city facade (2 m tile, no windows: they are decals): stained concrete in broad patches, one floor slab line, soot runs and rain streaks."""
+    rng = np.random.default_rng(seed)
+    arr = ramp(vnoise(T, T, seed, ((2, 0.4), (6, 0.35), (24, 0.25))) * 0.7 + 0.15, base, cell=2)
+    arr[176:182, :] = arr[176:182, :] * 0.55 + hexa("#2a3048") * 0.45
+    arr[182:184, :] *= 0.5
+    yy, xx = np.indices((T, T))
+    for _ in range(10):
+        x0, y0, ln, wd = rng.integers(T), rng.integers(T), rng.integers(60, 200), rng.integers(2, 6)
+        mix_dither(arr, np.where((np.abs((xx - x0 + T // 2) % T - T // 2) < wd) & ((yy - y0) % T < ln), 0.45, 0), "#07080e", k=0.5, cell=2)
+    for _ in range(12):
+        x0, y0, ln = rng.integers(T), rng.integers(T), rng.integers(30, 110)
+        mix_dither(arr, np.where((xx == x0) & ((yy - y0) % T < ln), 0.6, 0), "#3a4466", k=0.4)
+    return to_img(arr)
+
+
+def p_wall_corr(seed=411):
+    """Corrugated steel cladding (2 m tile): vertical ribs every 16 texels lit on one flank, rust blooms low down, rain streaks."""
+    rng = np.random.default_rng(seed)
+    xx = np.arange(T)[None, :].repeat(T, 0)
+    rib = (np.sin(xx / 16.0 * 2 * np.pi) * 0.5 + 0.5) * 0.45
+    v = np.clip(rib + vnoise(T, T, seed, ((4, 0.5), (16, 0.5))) * 0.4 + 0.05, 0, 1)
+    arr = ramp(v, ("#14161e", "#22262f", "#323743", "#454b58", "#5c6370"), cell=2)
+    yy = np.indices((T, T))[0]
+    rust_w = np.clip((vnoise(T, T, seed + 1, ((3, 0.5), (12, 0.5))) - 0.5) * 2.0 + (yy / T - 0.6), 0, 0.7)
+    mix_dither(arr, rust_w, "#6a3418", k=0.5, cell=2)
+    for _ in range(14):
+        x0, y0, ln = rng.integers(T), rng.integers(T), rng.integers(40, 140)
+        mix_dither(arr, np.where((xx == x0) & ((yy - y0) % T < ln), 0.6, 0), "#7480a0", k=0.4)
+    arr[0:3, :] *= 0.5
+    return to_img(arr)
+
+
+def p_wall_brown(seed=421):
+    """The brown building at the street's end (the painting's): stained render in broad patches, a string course, rain streaks; its windows and lit door are decals."""
+    return p_wall_bldg(seed, base=("#24180f", "#342418", "#463222", "#5a422e"))
+
+
+def p_wall_tunnel(seed=431):
+    """The club passage: dark sooty brick (the Dock's brick tile, darker and cooler), wet."""
+    arr = brick_tile(seed, base=("#3e1e16", "#562c20", "#6c3a2a", "#844a36"), mortar=("#1a1010", "#281c18", "#382a22"), wet=0.3)
+    return to_img(arr)
+
+
+def p_ceil_tunnel(seed=432):
+    """The passage's ceiling: dark sooty concrete with a cable run and damp stains (no grid: the old truss tile read as a lattice overhead)."""
+    arr = ramp(vnoise(T, T, seed, ((3, 0.5), (12, 0.5))) * 0.6 + 0.15, ("#060508", "#0c0a10", "#141018", "#1c1620"), cell=2)
+    arr[120:126, :] = hexa("#1a1a20")
+    arr[121:123, :] = hexa("#3a3a44")
+    return to_img(arr)
+
+
+def p_window(lit, seed, w=96, h=128):
+    """One window (decal; 0.75 x 1.0 m at size 1.0): a dark frame and sill, the glass lit (a warm or cold dithered glow, a curtain edge, a mullion) or dark (a cold sheen)."""
+    rng = np.random.default_rng(seed)
+    arr = ramp(vnoise(w, h, seed, ((2, 0.5), (6, 0.5)), False, False) * 0.4 + 0.2, ("#0a0a10", "#14141c", "#20202a"))
+    g = (slice(8, h - 14), slice(8, w - 8))
+    gh, gw = h - 22, w - 16
+    if lit:
+        c = hexc(lit)
+        v = np.clip(vnoise(gw, gh, seed + 1, ((2, 0.6), (4, 0.4)), False, False) * 0.5 + np.linspace(0.45, 0.85, gh)[:, None], 0, 1)
+        arr[g] = ramp(v, (hx(shade(c, 0.35)), hx(shade(c, 0.7)), hx(c), hx(shade(c, 1.25))))
+        cx = int(rng.integers(gw // 3, 2 * gw // 3))
+        arr[8:h - 14, 8 + cx:8 + cx + 3] *= 0.4
+        arr[8:h - 14, 8:8 + int(rng.integers(6, 20))] *= 0.45
+    else:
+        v = np.clip(vnoise(gw, gh, seed + 2, ((2, 0.6), (6, 0.4)), False, False) * 0.5 + np.linspace(0.5, 0.1, gh)[:, None] * 0.5, 0, 1)
+        arr[g] = ramp(v, ("#06070e", "#0e1220", "#1a2234", "#2a3650"))
+        arr[8:h - 14, w // 2 - 1:w // 2 + 2] *= 0.5
+    arr[h - 14:h - 8, 4:w - 4] = hexa("#3a3a44")
+    im = to_img(arr).convert("RGBA")
+    a = np.zeros((h, w), np.uint8)
+    a[2:h - 6, 2:w - 2] = 255
+    im.putalpha(Image.fromarray(a))
+    return im
+
+
+def p_far_door():
+    """The lit doorway at the street's end (decal, 2.6 m tall): a recessed warm-lit opening, a steel frame, a caged lamp over it and its glow on the
+    wet render; emissive."""
+    W_, H_ = 208, 336
+    yy, xx = np.indices((H_, W_))
+    d = np.sqrt(((xx - W_ / 2) / 90.0) ** 2 + ((yy - 40) / 70.0) ** 2)
+    glow = np.clip(1.2 - d, 0, 1) * 0.8
+    arr = ramp(np.clip(glow, 0, 1), ("#1a120c", "#3a2410", "#6a4018", "#b07028"))
+    ox0, ox1, oy0 = 44, W_ - 44, 96
+    v = np.clip(np.linspace(1.0, 0.55, H_ - oy0)[:, None] + vnoise(ox1 - ox0, H_ - oy0, 441, ((2, 0.5), (5, 0.5)), False, False) * 0.25 - 0.1, 0, 1)
+    arr[oy0:, ox0:ox1] = ramp(v, ("#5a3010", "#a86020", "#e09a40", "#ffd080", "#fff0c8"))
+    arr[oy0 - 6:oy0, ox0 - 8:ox1 + 8] = hexa("#2a2a30")
+    arr[oy0:, ox0 - 8:ox0] = hexa("#2a2a30")
+    arr[oy0:, ox1:ox1 + 8] = hexa("#2a2a30")
+    arr[H_ - 6:, :] = hexa("#5a5a60")
+    arr[30:50, W_ // 2 - 10:W_ // 2 + 10] = ramp(np.full((20, 20), 0.9), ("#ffb050", "#fff0b0"))
+    arr[28:30, W_ // 2 - 14:W_ // 2 + 14] = hexa("#202020")
+    im = to_img(arr).convert("RGBA")
+    a = np.full((H_, W_), 255, np.uint8)
+    a[:oy0 - 6] = np.where(glow[:oy0 - 6] > _bayer(oy0 - 6, W_), 255, 0)
+    a[28:50, W_ // 2 - 14:W_ // 2 + 14] = 255
+    im.putalpha(Image.fromarray(a))
+    return im
+
+
+def p_violet_door():
+    """The end of the club passage (decal, 2.6 m): a door open on violet light, a dark steel frame in the brick, the light's spill dithered round it; emissive."""
+    W_, H_ = 320, 336
+    yy, xx = np.indices((H_, W_))
+    d = np.sqrt(((xx - W_ / 2) / 150.0) ** 2 + ((yy - 200) / 170.0) ** 2)
+    arr = ramp(np.clip(1.1 - d, 0, 1) * 0.7, ("#120c16", "#24143a", "#3c1e66", "#5a2c98"))
+    ox0, ox1, oy0 = 84, W_ - 84, 70
+    v = np.clip(1.0 - np.abs(np.linspace(-1, 1, ox1 - ox0))[None, :] * 0.5 + vnoise(ox1 - ox0, H_ - oy0, 451, ((2, 0.5), (6, 0.5)), False, False) * 0.2
+                - np.linspace(0, 0.35, H_ - oy0)[:, None], 0, 1)
+    arr[oy0:, ox0:ox1] = ramp(v, ("#2a1048", "#5a26a0", "#9a50f0", "#d0a0ff", "#f4e4ff"))
+    arr[oy0 - 8:oy0, ox0 - 10:ox1 + 10] = hexa("#1a1820")
+    arr[oy0:, ox0 - 10:ox0] = hexa("#1a1820")
+    arr[oy0:, ox1:ox1 + 10] = hexa("#1a1820")
+    arr[oy0 - 30:oy0 - 18, W_ // 2 - 24:W_ // 2 + 24] = ramp(np.full((12, 48), 0.85), ("#a060ff", "#f0d8ff"))
+    im = to_img(arr).convert("RGBA")
+    a = np.where(np.clip(1.1 - d, 0, 1) * 1.3 > _bayer(H_, W_), 255, 0).astype(np.uint8)
+    a[oy0 - 30:, ox0 - 10:ox1 + 10] = 255
+    im.putalpha(Image.fromarray(a))
+    return im
+
+
+def p_sky2():
+    """Round 2: the storm sky over a SILHOUETTE skyline (the painting's dark mid-rise and towers, a few lit windows), so the city is the sky behind the near walls, not a tile on them."""
+    return to_img(sky_strip(362, clouds=("#0a0a1c", "#100f28", "#181636", "#221e48", "#30295e", "#423878"), glow="#5a4490", lift=0.0,
+                            skyline={"layers": (("#1e1c3a", 26, 70, 0.025), ("#151530", 40, 110, 0.035), ("#0d0d22", 34, 90, 0.03)),
+                                     "win": ("#e0a448", "#ffc068", "#c88a3a", "#9ac0e8"), "street": "#120e1c"}))
+
+
+TEXTURES.update({"dk_wall_bldg_a": lambda: p_wall_bldg(401), "dk_wall_bldg_b": lambda: p_wall_bldg(402, ("#0e0e18", "#181a26", "#242636", "#30344a")),
+                 "dk_wall_bldg_c": lambda: p_wall_bldg(403, ("#100c16", "#1a1624", "#262034", "#322a44")), "dk_wall_corr": p_wall_corr,
+                 "dk_wall_corr_b": lambda: p_wall_corr(412), "dk_wall_brown_a": p_wall_brown, "dk_wall_brown_b": lambda: p_wall_brown(422),
+                 "dk_floor_asphalt": lambda: p_floor_asphalt(("#282838", "#3e3e5a", "#545474", "#6a6a92")),  # round 2: a little lighter (the exposure rule)
+                 "dk_wall_tunnel": p_wall_tunnel, "dk_ceil_tunnel": p_ceil_tunnel, "dk_sky": p_sky2})
+TEXTURES.update({"dk_wall_brick": lambda: to_img(brick_tile(301, base=("#56241c", "#723228", "#8a4032", "#a2503e"), mortar=("#2a1a14", "#3c2c24", "#4e3c32"))),
+                 "dk_wall_brick_b": lambda: to_img(brick_tile(302, base=("#56241c", "#723228", "#8a4032", "#a2503e"), mortar=("#2a1a14", "#3c2c24", "#4e3c32")))})  # round 2: a lighter red (the exposure rule)
+DECALS.update({"dk_win_amber": lambda: p_window("#ffb050", 461), "dk_win_amber_b": lambda: p_window("#e09040", 462), "dk_win_cold": lambda: p_window("#9ab8e8", 463),
+               "dk_win_dark": lambda: p_window(None, 464), "dk_win_dark_b": lambda: p_window(None, 465), "dk_far_door": p_far_door, "dk_violet_door": p_violet_door})
 
 
 def main():

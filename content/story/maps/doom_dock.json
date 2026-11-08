@@ -5,20 +5,23 @@
  "start": "dk_arrive",
  "textures": {
   "dk_ceil_truss": "textures/dk_ceil_truss.png",
+  "dk_ceil_tunnel": "textures/dk_ceil_tunnel.png",
   "dk_floor_asphalt": "textures/dk_floor_asphalt.png",
-  "dk_floor_blue": "textures/dk_floor_blue.png",
   "dk_floor_conc": "textures/dk_floor_conc.png",
   "dk_floor_walk": "textures/dk_floor_walk.png",
   "dk_trim": "textures/dk_trim.png",
-  "dk_wall_blue": "textures/dk_wall_blue.png",
+  "dk_wall_bldg_a": "textures/dk_wall_bldg_a.png",
+  "dk_wall_bldg_b": "textures/dk_wall_bldg_b.png",
+  "dk_wall_bldg_c": "textures/dk_wall_bldg_c.png",
   "dk_wall_brick": "textures/dk_wall_brick.png",
   "dk_wall_brick_b": "textures/dk_wall_brick_b.png",
+  "dk_wall_brown_a": "textures/dk_wall_brown_a.png",
+  "dk_wall_brown_b": "textures/dk_wall_brown_b.png",
+  "dk_wall_corr": "textures/dk_wall_corr.png",
+  "dk_wall_corr_b": "textures/dk_wall_corr_b.png",
   "dk_wall_shutter": "textures/dk_wall_shutter.png",
   "dk_wall_steel": "textures/dk_wall_steel.png",
-  "dk_wall_tower": "textures/dk_wall_tower.png",
-  "dk_wall_tower_b": "textures/dk_wall_tower_b.png",
-  "dk_wall_tower_c": "textures/dk_wall_tower_c.png",
-  "dk_wall_ware": "textures/dk_wall_ware.png",
+  "dk_wall_tunnel": "textures/dk_wall_tunnel.png",
   "dk_bollard": "textures/dk_bollard.png",
   "dk_pallets_near": "textures/dk_pallets_near.png",
   "dk_case": "textures/dk_case.png",
@@ -34,10 +37,14 @@
   "dk_door_leaf": "textures/dk_door_leaf.png",
   "dk_clef": "textures/dk_clef.png",
   "dk_pipe_vert": "textures/dk_pipe_vert.png",
-  "dk_windows_lit": "textures/dk_windows_lit.png",
-  "dk_towers": "textures/dk_towers.png",
-  "dk_end_glow": "textures/dk_end_glow.png",
+  "dk_win_dark": "textures/dk_win_dark.png",
+  "dk_win_amber": "textures/dk_win_amber.png",
+  "dk_win_dark_b": "textures/dk_win_dark_b.png",
+  "dk_win_amber_b": "textures/dk_win_amber_b.png",
+  "dk_far_door": "textures/dk_far_door.png",
+  "dk_win_cold": "textures/dk_win_cold.png",
   "dk_neon_blue": "textures/dk_neon_blue.png",
+  "dk_violet_door": "textures/dk_violet_door.png",
   "dk_fence": "textures/dk_fence.png",
   "dk_pipes_yard": "textures/dk_pipes_yard.png",
   "dk_shutter": "textures/dk_shutter.png",
@@ -113,7 +120,8 @@
    "doom_sector": 0,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.5
+   "ambient": 0.42,
+   "wet": 1.0
   },
   {
    "id": "1_0",
@@ -155,11 +163,11 @@
    "polygon": [
     [
      -4.0,
-     -20.0
+     -17.0
     ],
     [
      -1.5,
-     -20.0
+     -17.0
     ],
     [
      -1.5,
@@ -179,7 +187,7 @@
     ]
    ],
    "floor": 0.25,
-   "ceiling": 7.5,
+   "ceiling": 6.5,
    "floor_tex": "dk_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_brick",
@@ -190,7 +198,8 @@
    "doom_sector": 2,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.5
+   "ambient": 0.36,
+   "wet": 1.0
   },
   {
    "id": "3_0",
@@ -209,11 +218,11 @@
     ],
     [
      -1.5,
-     -20.0
+     -17.0
     ],
     [
      7.5,
-     -20.0
+     -17.0
     ],
     [
      7.5,
@@ -225,10 +234,10 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 7.5,
+   "ceiling": 6.5,
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
-   "wall_tex": "dk_wall_tower",
+   "wall_tex": "dk_wall_corr",
    "light": 1.0,
    "tint": "#dde1f5",
    "room": "main",
@@ -236,67 +245,73 @@
    "doom_sector": 3,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.5
+   "ambient": 0.55,
+   "wet": 1.0
   },
   {
    "id": "4_0",
    "polygon": [
     [
-     -1.5,
-     -31.0
+     7.5,
+     -17.0
     ],
     [
      -1.5,
-     -20.0
+     -17.0
     ],
     [
-     -4.0,
-     -20.0
+     -1.5,
+     -24.0
     ],
     [
-     -4.0,
-     -31.0
+     7.5,
+     -24.0
     ]
    ],
-   "floor": 0.25,
-   "ceiling": 5.5,
-   "floor_tex": "dk_floor_walk",
+   "floor": 0.0,
+   "ceiling": 5.0,
+   "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
-   "wall_tex": "dk_wall_tower_b",
-   "light": 0.95,
-   "tint": "#dddbf0",
+   "wall_tex": "dk_wall_brown_a",
+   "light": 1.0,
+   "tint": "#eae0e8",
    "room": "main",
    "flags": [],
    "doom_sector": 4,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.5
+   "ambient": 0.62,
+   "wet": 1.0
   },
   {
    "id": "5_0",
    "polygon": [
     [
-     7.5,
-     -20.0
+     -1.5,
+     -24.0
     ],
     [
      -1.5,
-     -20.0
+     -17.0
     ],
     [
-     -1.5,
-     -31.0
+     -4.0,
+     -17.0
     ],
     [
-     7.5,
-     -31.0
+     -14.0,
+     -17.0
+    ],
+    [
+     -14.0,
+     -24.0
     ]
    ],
    "floor": 0.0,
-   "ceiling": 5.5,
+   "ceiling": 5.0,
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
-   "wall_tex": "dk_wall_tower_c",
+   "wall_tex": "dk_wall_bldg_a",
    "light": 0.95,
    "tint": "#dbdff5",
    "room": "main",
@@ -304,7 +319,8 @@
    "doom_sector": 5,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.5
+   "ambient": 0.5,
+   "wet": 1.0
   },
   {
    "id": "6_0",
@@ -330,7 +346,7 @@
    "ceiling": 7.5,
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
-   "wall_tex": "dk_wall_ware",
+   "wall_tex": "dk_wall_bldg_a",
    "light": 1.0,
    "tint": "#f2ddcb",
    "room": "main",
@@ -338,7 +354,8 @@
    "doom_sector": 6,
    "step_tex": "dk_trim",
    "lip_tex": "dk_trim",
-   "ambient": 0.48
+   "ambient": 0.46,
+   "wet": 0.9
   },
   {
    "id": "7_0",
@@ -362,18 +379,18 @@
    ],
    "floor": 0.25,
    "ceiling": 2.75,
-   "floor_tex": "dk_floor_blue",
-   "ceil_tex": "dk_ceil_truss",
-   "wall_tex": "dk_wall_blue",
+   "floor_tex": "dk_floor_walk",
+   "ceil_tex": "dk_ceil_tunnel",
+   "wall_tex": "dk_wall_brick",
    "light": 1.0,
-   "tint": "#b6c6ff",
+   "tint": "#bcc6ff",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
    "step_tex": "dk_wall_steel",
    "lip_tex": "dk_wall_brick",
-   "ambient": 0.7,
-   "wet": 0.2
+   "ambient": 0.5,
+   "wet": 0.4
   },
   {
    "id": "8_0",
@@ -409,17 +426,18 @@
    ],
    "floor": 0.25,
    "ceiling": 3.1875,
-   "floor_tex": "dk_floor_blue",
-   "ceil_tex": "dk_ceil_truss",
-   "wall_tex": "dk_wall_blue",
+   "floor_tex": "dk_floor_walk",
+   "ceil_tex": "dk_ceil_tunnel",
+   "wall_tex": "dk_wall_tunnel",
    "light": 1.0,
-   "tint": "#a8bcff",
+   "tint": "#ffeae0",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_wall_blue",
-   "ambient": 0.7
+   "lip_tex": "dk_wall_tunnel",
+   "ambient": 0.34,
+   "wet": 0.8
   },
   {
    "id": "9_0",
@@ -443,17 +461,18 @@
    ],
    "floor": 0.25,
    "ceiling": 3.0,
-   "floor_tex": "dk_floor_blue",
-   "ceil_tex": "dk_ceil_truss",
-   "wall_tex": "dk_wall_blue",
+   "floor_tex": "dk_floor_walk",
+   "ceil_tex": "dk_ceil_tunnel",
+   "wall_tex": "dk_wall_tunnel",
    "light": 1.0,
-   "tint": "#acbcff",
+   "tint": "#ffede0",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_wall_blue",
-   "ambient": 0.7
+   "lip_tex": "dk_wall_tunnel",
+   "ambient": 0.34,
+   "wet": 1.0
   }
  ],
  "walls": [
@@ -516,21 +535,21 @@
   {
    "from": [
     -4.0,
-    -20.0
+    -17.0
    ],
    "to": [
     -1.5,
-    -20.0
+    -17.0
    ],
    "sector": "2_0",
-   "portal": "4_0",
-   "lower_tex": "",
+   "portal": "5_0",
+   "lower_tex": "dk_trim",
    "upper_tex": "sky"
   },
   {
    "from": [
     -1.5,
-    -20.0
+    -17.0
    ],
    "to": [
     -1.5,
@@ -558,28 +577,28 @@
   {
    "from": [
     -1.5,
-    -31.0
+    -17.0
    ],
    "to": [
     -1.5,
-    -20.0
+    -24.0
    ],
    "sector": "4_0",
    "portal": "5_0",
-   "lower_tex": "dk_trim",
+   "lower_tex": "",
    "upper_tex": "sky"
   },
   {
    "from": [
     -1.5,
-    -20.0
+    -17.0
    ],
    "to": [
     7.5,
-    -20.0
+    -17.0
    ],
    "sector": "3_0",
-   "portal": "5_0",
+   "portal": "4_0",
    "lower_tex": "",
    "upper_tex": "sky"
   },
@@ -628,22 +647,6 @@
   {
    "from": [
     -4,
-    -12
-   ],
-   "to": [
-    -4,
-    -20
-   ],
-   "sector": "2_0",
-   "portal": "",
-   "tex": "dk_wall_tower",
-   "lower_tex": "",
-   "upper_tex": "",
-   "dock_solid": true
-  },
-  {
-   "from": [
-    -4,
     -4.5
    ],
    "to": [
@@ -664,75 +667,11 @@
    ],
    "to": [
     -4,
-    -12
+    -13.5
    ],
    "sector": "2_0",
    "portal": "",
    "tex": "dk_wall_brick_b",
-   "lower_tex": "",
-   "upper_tex": "",
-   "dock_solid": true
-  },
-  {
-   "from": [
-    -4,
-    -20
-   ],
-   "to": [
-    -4,
-    -31
-   ],
-   "sector": "4_0",
-   "portal": "",
-   "tex": "dk_wall_tower_b",
-   "lower_tex": "",
-   "upper_tex": "",
-   "dock_solid": true
-  },
-  {
-   "from": [
-    -4,
-    -31
-   ],
-   "to": [
-    -1.5,
-    -31
-   ],
-   "sector": "4_0",
-   "portal": "",
-   "tex": "dk_wall_tower_c",
-   "lower_tex": "",
-   "upper_tex": "",
-   "dock_solid": true
-  },
-  {
-   "from": [
-    7.5,
-    -20
-   ],
-   "to": [
-    7.5,
-    -31
-   ],
-   "sector": "5_0",
-   "portal": "",
-   "tex": "dk_wall_tower_c",
-   "lower_tex": "",
-   "upper_tex": "",
-   "dock_solid": true
-  },
-  {
-   "from": [
-    -1.5,
-    -31
-   ],
-   "to": [
-    7.5,
-    -31
-   ],
-   "sector": "5_0",
-   "portal": "",
-   "tex": "dk_wall_tower_b",
    "lower_tex": "",
    "upper_tex": "",
    "dock_solid": true
@@ -755,6 +694,166 @@
   },
   {
    "from": [
+    7.5,
+    -16
+   ],
+   "to": [
+    7.5,
+    -17
+   ],
+   "sector": "3_0",
+   "portal": "",
+   "tex": "dk_wall_corr_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    7.5,
+    -17
+   ],
+   "to": [
+    7.5,
+    -20
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_corr_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    7.5,
+    -20
+   ],
+   "to": [
+    7.5,
+    -24
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_bldg_c",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -1.5,
+    -24
+   ],
+   "to": [
+    1.5,
+    -24
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_brown_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    4.5,
+    -24
+   ],
+   "to": [
+    7.5,
+    -24
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_brown_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -14,
+    -24
+   ],
+   "to": [
+    -10,
+    -24
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_bldg_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -6,
+    -24
+   ],
+   "to": [
+    -1.5,
+    -24
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_bldg_c",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -14,
+    -17
+   ],
+   "to": [
+    -14,
+    -24
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_bldg_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -14,
+    -17
+   ],
+   "to": [
+    -10,
+    -17
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_bldg_c",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -10,
+    -17
+   ],
+   "to": [
+    -4,
+    -17
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_brick_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
     13.5,
     -8.5
    ],
@@ -764,7 +863,7 @@
    ],
    "sector": "6_0",
    "portal": "",
-   "tex": "dk_wall_ware",
+   "tex": "dk_wall_corr",
    "lower_tex": "",
    "upper_tex": "",
    "dock_solid": true
@@ -972,8 +1071,8 @@
    "kind": "billboard",
    "sprite": "dk_van",
    "at": [
-    4.0,
-    -14.0
+    5.0,
+    -14.6
    ],
    "y": 0.95,
    "size": 1.9,
@@ -1032,8 +1131,8 @@
    "kind": "billboard",
    "sprite": "dk_street_lamp",
    "at": [
-    -2.6,
-    -18.4
+    -2.2,
+    -18.0
    ],
    "y": 2.3,
    "size": 4.6,
@@ -1044,8 +1143,8 @@
    "kind": "billboard",
    "sprite": "dk_street_lamp",
    "at": [
-    -2.4,
-    -24.0
+    -8.0,
+    -23.3
    ],
    "y": 2.3,
    "size": 4.6,
@@ -1056,8 +1155,8 @@
    "kind": "billboard",
    "sprite": "dk_street_lamp",
    "at": [
-    6.9,
-    -27.5
+    6.8,
+    -19.6
    ],
    "y": 2.3,
    "size": 4.6,
@@ -1073,6 +1172,42 @@
    ],
    "y": 2.7,
    "size": 0.5,
+   "anim": "none"
+  },
+  {
+   "id": "dk_tunnel_lamp",
+   "kind": "billboard",
+   "sprite": "dk_wall_lamp",
+   "at": [
+    -11.5,
+    -10.2
+   ],
+   "y": 2.5,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "dk_tunnel_lamp_b",
+   "kind": "billboard",
+   "sprite": "dk_wall_lamp",
+   "at": [
+    -8.0,
+    -6.2
+   ],
+   "y": 2.5,
+   "size": 0.45,
+   "anim": "none"
+  },
+  {
+   "id": "dk_tunnel_lamp_c",
+   "kind": "billboard",
+   "sprite": "dk_wall_lamp",
+   "at": [
+    -14.0,
+    -7.2
+   ],
+   "y": 2.4,
+   "size": 0.45,
    "anim": "none"
   },
   {
@@ -1205,146 +1340,319 @@
   {
    "id": "dk_dc_win_a",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_dark",
    "at": [
     -3.9,
-    -14.0
+    -13.4
    ],
-   "y": 2.0,
-   "size": 1.5,
-   "emissive": true
+   "y": 3.4,
+   "size": 1.1
   },
   {
    "id": "dk_dc_win_b",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_amber",
    "at": [
     -3.9,
-    -16.8
+    -15.6
    ],
-   "y": 4.0,
-   "size": 1.5,
+   "y": 4.4,
+   "size": 1.1,
    "emissive": true
   },
   {
    "id": "dk_dc_win_c",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
-   "at": [
-    -3.9,
-    -19.0
-   ],
-   "y": 2.2,
-   "size": 1.5,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_towers",
-   "kind": "decal",
-   "sprite": "dk_towers",
-   "at": [
-    2.0,
-    -30.9
-   ],
-   "y": 1.0,
-   "size": 6.0,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_win_g",
-   "kind": "decal",
-   "sprite": "dk_windows_lit",
-   "at": [
-    -3.9,
-    -24.0
-   ],
-   "y": 3.0,
-   "size": 1.5,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_win_h",
-   "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_dark_b",
    "at": [
     7.4,
-    -26.5
+    -18.6
    ],
-   "y": 2.2,
-   "size": 1.5,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_end_glow",
-   "kind": "decal",
-   "sprite": "dk_end_glow",
-   "at": [
-    -15.9,
-    -8.75
-   ],
-   "y": 0.0,
-   "size": 2.6,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_neon_d",
-   "kind": "decal",
-   "sprite": "dk_neon_blue",
-   "at": [
-    -13.0,
-    -10.4
-   ],
-   "y": 1.3,
-   "size": 0.6,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_neon_e",
-   "kind": "decal",
-   "sprite": "dk_neon_blue",
-   "at": [
-    -13.0,
-    -7.1
-   ],
-   "y": 1.3,
-   "size": 0.6,
-   "emissive": true
+   "y": 3.0,
+   "size": 1.0
   },
   {
    "id": "dk_dc_win_d",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_amber_b",
    "at": [
     7.4,
-    -18.2
+    -21.4
    ],
-   "y": 1.6,
-   "size": 1.5,
+   "y": 2.6,
+   "size": 1.0,
    "emissive": true
   },
   {
    "id": "dk_dc_win_e",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_dark",
    "at": [
     7.4,
-    -17.0
+    -22.9
    ],
    "y": 3.6,
-   "size": 1.5,
+   "size": 1.0
+  },
+  {
+   "id": "dk_dc_far_door",
+   "kind": "decal",
+   "sprite": "dk_far_door",
+   "at": [
+    3.0,
+    -23.9
+   ],
+   "y": 0.0,
+   "size": 3.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_g",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    0.1,
+    -23.9
+   ],
+   "y": 3.0,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_h",
+   "kind": "decal",
+   "sprite": "dk_win_dark",
+   "at": [
+    5.6,
+    -23.9
+   ],
+   "y": 3.0,
+   "size": 1.0
+  },
+  {
+   "id": "dk_dc_win_i",
+   "kind": "decal",
+   "sprite": "dk_win_amber_b",
+   "at": [
+    6.7,
+    -23.9
+   ],
+   "y": 3.7,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_j",
+   "kind": "decal",
+   "sprite": "dk_win_cold",
+   "at": [
+    -4.2,
+    -23.9
+   ],
+   "y": 3.0,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_k",
+   "kind": "decal",
+   "sprite": "dk_win_dark_b",
+   "at": [
+    -7.0,
+    -23.9
+   ],
+   "y": 2.4,
+   "size": 1.0
+  },
+  {
+   "id": "dk_dc_win_l",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    -10.6,
+    -23.9
+   ],
+   "y": 3.3,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_m",
+   "kind": "decal",
+   "sprite": "dk_win_dark",
+   "at": [
+    -12.4,
+    -23.9
+   ],
+   "y": 2.4,
+   "size": 1.0
+  },
+  {
+   "id": "dk_dc_win_n",
+   "kind": "decal",
+   "sprite": "dk_win_amber_b",
+   "at": [
+    -13.9,
+    -20.4
+   ],
+   "y": 2.8,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_p",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    1.3,
+    -23.9
+   ],
+   "y": 3.7,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_q",
+   "kind": "decal",
+   "sprite": "dk_win_amber_b",
+   "at": [
+    -2.6,
+    -23.9
+   ],
+   "y": 2.6,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_r",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    -8.8,
+    -23.9
+   ],
+   "y": 2.5,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_s",
+   "kind": "decal",
+   "sprite": "dk_win_cold",
+   "at": [
+    7.4,
+    -19.9
+   ],
+   "y": 2.5,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_t",
+   "kind": "decal",
+   "sprite": "dk_win_amber_b",
+   "at": [
+    -3.9,
+    -14.6
+   ],
+   "y": 2.4,
+   "size": 1.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_shop_a",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    0.7,
+    -23.9
+   ],
+   "y": 0.35,
+   "size": 1.9,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_shop_b",
+   "kind": "decal",
+   "sprite": "dk_win_amber_b",
+   "at": [
+    5.6,
+    -23.9
+   ],
+   "y": 0.35,
+   "size": 1.9,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_shop_c",
+   "kind": "decal",
+   "sprite": "dk_win_amber",
+   "at": [
+    -5.6,
+    -23.9
+   ],
+   "y": 0.4,
+   "size": 1.7,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_led_a",
+   "kind": "decal",
+   "sprite": "dk_neon_blue",
+   "at": [
+    -4.8,
+    -6.1
+   ],
+   "y": 0.7,
+   "size": 0.9,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_led_b",
+   "kind": "decal",
+   "sprite": "dk_neon_blue",
+   "at": [
+    -4.8,
+    -9.9
+   ],
+   "y": 0.7,
+   "size": 0.9,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_violet_door",
+   "kind": "decal",
+   "sprite": "dk_violet_door",
+   "at": [
+    -15.9,
+    -8.75
+   ],
+   "y": 0.0,
+   "size": 2.9,
    "emissive": true
   },
   {
    "id": "dk_dc_win_f",
    "kind": "decal",
-   "sprite": "dk_windows_lit",
+   "sprite": "dk_win_amber",
    "at": [
-    8.8,
+    8.9,
     -15.9
    ],
-   "y": 3.0,
-   "size": 1.5,
+   "y": 3.6,
+   "size": 1.0,
    "emissive": true
+  },
+  {
+   "id": "dk_dc_win_o",
+   "kind": "decal",
+   "sprite": "dk_win_dark_b",
+   "at": [
+    12.6,
+    -15.9
+   ],
+   "y": 3.2,
+   "size": 1.0
   },
   {
    "id": "dk_dc_fence",
@@ -1391,30 +1699,6 @@
    "size": 3.3
   },
   {
-   "id": "dk_dc_neon_b",
-   "kind": "decal",
-   "sprite": "dk_neon_blue",
-   "at": [
-    -8.0,
-    -11.4
-   ],
-   "y": 1.3,
-   "size": 0.6,
-   "emissive": true
-  },
-  {
-   "id": "dk_dc_neon_c",
-   "kind": "decal",
-   "sprite": "dk_neon_blue",
-   "at": [
-    -8.0,
-    -6.1
-   ],
-   "y": 1.3,
-   "size": 0.6,
-   "emissive": true
-  },
-  {
    "id": "dk_lt_canopy",
    "kind": "light",
    "at": [
@@ -1458,7 +1742,7 @@
     -8.0
    ],
    "y": 1.8,
-   "radius": 7.8,
+   "radius": 6.5,
    "color": "#3a60ff",
    "strength": 2.5
   },
@@ -1482,7 +1766,7 @@
     -11.0
    ],
    "y": 4.6,
-   "radius": 13.0,
+   "radius": 7.8,
    "color": "#ffb860",
    "strength": 2.5
   },
@@ -1490,11 +1774,11 @@
    "id": "dk_lt_lamp_b",
    "kind": "light",
    "at": [
-    -2.5,
-    -18.4
+    -2.1,
+    -18.0
    ],
    "y": 4.4,
-   "radius": 10.4,
+   "radius": 7.8,
    "color": "#ffb860",
    "strength": 2.5
   },
@@ -1508,19 +1792,7 @@
    "y": 6.0,
    "radius": 18.2,
    "color": "#6a80c0",
-   "strength": 2.4
-  },
-  {
-   "id": "dk_lt_win",
-   "kind": "light",
-   "at": [
-    7.0,
-    -17.5
-   ],
-   "y": 3.0,
-   "radius": 7.8,
-   "color": "#ffa850",
-   "strength": 2.4
+   "strength": 0.72
   },
   {
    "id": "dk_lt_furnace",
@@ -1566,9 +1838,9 @@
     -8.7
    ],
    "y": 2.0,
-   "radius": 7.8,
-   "color": "#5a7aff",
-   "strength": 2.5
+   "radius": 3.9,
+   "color": "#6a48d0",
+   "strength": 1.44
   },
   {
    "id": "dk_lt_pool_apron",
@@ -1578,7 +1850,7 @@
     -3.2
    ],
    "y": 2.8,
-   "radius": 7.8,
+   "radius": 9.1,
    "color": "#ffb060",
    "strength": 2.5
   },
@@ -1599,19 +1871,19 @@
    "kind": "light",
    "at": [
     2.0,
-    -26.0
+    -21.0
    ],
-   "y": 5.0,
-   "radius": 15.6,
+   "y": 4.0,
+   "radius": 10.4,
    "color": "#8a70e0",
-   "strength": 2.5
+   "strength": 2.16
   },
   {
    "id": "dk_lt_far_lamp",
    "kind": "light",
    "at": [
-    -2.2,
-    -24.0
+    -8.0,
+    -23.0
    ],
    "y": 4.5,
    "radius": 10.4,
@@ -1622,12 +1894,12 @@
    "id": "dk_lt_run",
    "kind": "light",
    "at": [
-    -13.5,
+    -14.6,
     -8.75
    ],
-   "y": 2.0,
-   "radius": 7.8,
-   "color": "#7a6aff",
+   "y": 2.2,
+   "radius": 4.7,
+   "color": "#9a5aff",
    "strength": 2.5
   },
   {
@@ -1646,11 +1918,11 @@
    "id": "dk_lt_pool_s1",
    "kind": "light",
    "at": [
-    -0.6,
-    -9.5
+    -1.0,
+    -11.2
    ],
-   "y": 3.5,
-   "radius": 11.7,
+   "y": 3.0,
+   "radius": 8.5,
    "color": "#ffa850",
    "strength": 2.5
   },
@@ -1662,19 +1934,19 @@
     -12.0
    ],
    "y": 4.0,
-   "radius": 13.0,
+   "radius": 11.7,
    "color": "#7a90e0",
-   "strength": 2.5
+   "strength": 0.72
   },
   {
    "id": "dk_lt_pool_s3",
    "kind": "light",
    "at": [
-    -0.8,
-    -17.5
+    -1.4,
+    -18.0
    ],
-   "y": 3.5,
-   "radius": 10.4,
+   "y": 3.0,
+   "radius": 7.8,
    "color": "#ffa850",
    "strength": 2.5
   },
@@ -1686,7 +1958,7 @@
     -7.0
    ],
    "y": 3.0,
-   "radius": 9.1,
+   "radius": 7.8,
    "color": "#ffb060",
    "strength": 2.5
   },
@@ -1697,8 +1969,8 @@
     -2.8,
     -13.0
    ],
-   "y": 3.0,
-   "radius": 7.8,
+   "y": 2.0,
+   "radius": 4.5,
    "color": "#ffb060",
    "strength": 2.5
   },
@@ -1707,23 +1979,83 @@
    "kind": "light",
    "at": [
     6.5,
-    -27.5
+    -19.6
    ],
    "y": 4.4,
-   "radius": 11.7,
+   "radius": 9.1,
    "color": "#ffb860",
    "strength": 2.5
   },
   {
-   "id": "dk_lt_pool_far",
+   "id": "dk_lt_far_door",
    "kind": "light",
    "at": [
     3.0,
-    -24.0
+    -22.8
    ],
-   "y": 3.0,
-   "radius": 10.4,
-   "color": "#ffa850",
+   "y": 2.4,
+   "radius": 7.8,
+   "color": "#ffb060",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_tunnel_door",
+   "kind": "light",
+   "at": [
+    -15.2,
+    -8.75
+   ],
+   "y": 0.3,
+   "radius": 4.2,
+   "color": "#b070ff",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_tunnel_lamp",
+   "kind": "light",
+   "at": [
+    -11.5,
+    -9.7
+   ],
+   "y": 2.5,
+   "radius": 3.4,
+   "color": "#ffa860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_tunnel_lamp_b",
+   "kind": "light",
+   "at": [
+    -8.0,
+    -6.6
+   ],
+   "y": 2.5,
+   "radius": 3.4,
+   "color": "#ffa860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_tunnel_lamp_c",
+   "kind": "light",
+   "at": [
+    -14.0,
+    -7.5
+   ],
+   "y": 2.4,
+   "radius": 3.1,
+   "color": "#ffa860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_doorway",
+   "kind": "light",
+   "at": [
+    -4.8,
+    -8.0
+   ],
+   "y": 2.0,
+   "radius": 4.5,
+   "color": "#4a6aff",
    "strength": 2.5
   },
   {
@@ -1869,21 +2201,21 @@
   {
    "id": "dk_moth",
    "at": [
-    0.8,
-    -18.8
+    0.4,
+    -12.4
    ],
-   "yaw": -3.8,
+   "yaw": 14.8,
    "sector": "3_0",
    "hold_bars": 1
   },
   {
    "id": "dk_floor_door",
    "at": [
-    -8.0,
-    -9.0
+    -11.8,
+    -8.75
    ],
-   "yaw": 91.8,
-   "sector": "8_0",
+   "yaw": 90.0,
+   "sector": "9_0",
    "hold_bars": 1
   },
   {
@@ -1903,24 +2235,6 @@
     -5.5
    ],
    "yaw": -0.0,
-   "sector": "3_0"
-  },
-  {
-   "id": "dk_v_s2",
-   "at": [
-    0.8,
-    -13.0
-   ],
-   "yaw": -0.0,
-   "sector": "3_0"
-  },
-  {
-   "id": "dk_v_s3",
-   "at": [
-    1.9,
-    -16.5
-   ],
-   "yaw": 23.7,
    "sector": "3_0"
   },
   {
@@ -2031,7 +2345,7 @@
      "2_0"
     ],
     "floor": 8,
-    "ceiling": 240,
+    "ceiling": 208,
     "light": 110,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
@@ -2043,7 +2357,7 @@
      "3_0"
     ],
     "floor": 0,
-    "ceiling": 240,
+    "ceiling": 208,
     "light": 100,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2054,10 +2368,10 @@
     "pieces": [
      "4_0"
     ],
-    "floor": 8,
-    "ceiling": 176,
+    "floor": 0,
+    "ceiling": 160,
     "light": 100,
-    "floor_flat": "FLOOR5_1",
+    "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -2067,7 +2381,7 @@
      "5_0"
     ],
     "floor": 0,
-    "ceiling": 176,
+    "ceiling": 160,
     "light": 100,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -2134,7 +2448,7 @@
   "uncertain": [
    "INVENTED FROM THE PAINTING (tools/doom/trace/dock_scene.py), not read from the render or the WAD (the supplied WAD has empty map lumps; the render of MAP13 gives only the street grid, see tools/doom/trace/dock.json).",
    "Every size, height and place is a guess from the painting: an 11.5 x 4.5 m concrete apron (the east third under a 3.5 m canopy), a sidewalk and a 9 m wide street running 15 m north, a service yard on the east, the club's brick wall with a 4 m door and a short blue passage on the west.",
-   "The painting's street curves left and its fence runs behind the van; here the street is straight and the fence is a wall decal."
+   "The painting's fence runs behind the van; here it is a wall decal. The street's curve to the left is a square turn (`bend`) in front of the building at its end."
   ],
   "stats": {
    "doom_sectors": 10,
@@ -2149,6 +2463,40 @@
   "depth": 48,
   "far": 0
  },
+ "weather": {
+  "rain": 0.8,
+  "wind": 10,
+  "drips": [
+   {
+    "at": [
+     4.15,
+     -1.2
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     3.9,
+     -2.6
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     -3.7,
+     -8.0
+    ],
+    "h": 2.6
+   },
+   {
+    "at": [
+     -3.7,
+     -9.7
+    ],
+    "h": 2.6
+   }
+  ]
+ },
  "fog": {
   "color": "#17152e",
   "density": 0.014
@@ -2160,8 +2508,6 @@
   "routes": {
    "ahead": [
     "dk_v_s1",
-    "dk_v_s2",
-    "dk_v_s3",
     "dk_moth"
    ],
    "left": [
@@ -2198,39 +2544,5 @@
    ]
   },
   "note": "authored by tools/doom/author_dock.py; routes are lists of waypoint ids (the polyline); hold_bars on a waypoint is the still hold at a choice window"
- },
- "weather": {
-  "rain": 0.8,
-  "wind": 10,
-  "drips": [
-   {
-    "at": [
-     4.15,
-     -1.2
-    ],
-    "h": 3.2
-   },
-   {
-    "at": [
-     3.9,
-     -2.6
-    ],
-    "h": 3.2
-   },
-   {
-    "at": [
-     -3.7,
-     -8.0
-    ],
-    "h": 2.6
-   },
-   {
-    "at": [
-     -3.7,
-     -9.7
-    ],
-    "h": 2.6
-   }
-  ]
  }
 }
