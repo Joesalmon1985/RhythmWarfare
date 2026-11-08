@@ -63,3 +63,64 @@ ALL                     0.08  0.24  0.46  0.47    0.0%   0.1%  contrast p95-p5 0
 ## Placeholders and not done
 
 Placeholders: the textures, props and decals are procedural (`tools/doom/art/make_balcony_art.py`: the stage D 256 px tiles, sky and tower billboards on the Dock's helpers; the dish, lace dome, forklift, racks and cases are the earlier flat placeholders); the music (Warehouse arrangements). The guides are crops. Two plain drops (`isle` to `vw2`, `isle` to `ve2`) stay open without a railing because the loader needs every void joined to the map by one open portal. No `src/` change was made. Regenerate: `python -I tools/doom/trace/balcony_scene.py; python -I tools/doom/convert.py --scene balcony --trace tools/doom/trace/balcony_pilot.json; python -I tools/doom/art/make_balcony_art.py; python -I tools/doom/author_balcony.py`, then `--import`, then `python tools/doom/shoot_balcony.py`.
+
+## Stage D polish, round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md)
+
+**Correction to round 1:** the round 1 section above claims "the moon and the city over the drop" as matching. The round 1 sheet did not show that: at `bc_ref` the towers hid the moon and the drops were dark pits.
+
+**The lead's list, ticked or carried:**
+
+- [~] **The drop and the city must dominate the reference view (lower the parapets, the moon in frame, the wet deck reflecting the city, the brick box open on three sides).**
+  - Done: the drop's walls stop at 1.25 m, under the eye. They were 2.4 m, a dark band across the view. Seen over them, the drop's far walls are the lit facades of the buildings below: concrete in three variants with single windows on a jittered grid (`facade_windows()`, about half lit) and the yard's blue-lit shutters at their feet.
+  - Done: the drop is wider (32 x 24 m, five voids). The deck's own walls (the cabin front) stop at 4 m and the brick stair-house at 7 m, so the box is open ahead and over both sides.
+  - Done: the tower billboards that hid the moon are gone. The moon is redrawn over a lower skyline (az -21, 16 degrees up) and is in the 16:9 and 20:9 reference shots. The choice viewpoint holds a pitch of -4 (`make_doom_balcony.PITCH`).
+  - Carried: from `bc_ref`, 7 m back from the deck's edge, the eye cannot see down into the drop. It shows as the far facades and the yard's lights, not as the painting's plunging view, which would need the viewpoint at the edge and the stair and cabin guides would then be out of frame. The deck's gloss is the engine's lamp bands, not a reflection of the city.
+- [x] **The pink equaliser shapes at `hold_stair` go.** All four `bc_eq_*` decals are removed. The stair view now looks over the landing towards the drop, the lace dome and the city.
+- [x] **`hold_bridge` and `route_ahead` at p50 0.17: the drop needs its own light.** The drop is lit by its lit windows, the blue shutter lamps and sodium lamps on the yard floor. The skyline and storm sky are lighter (moonlit blue), the fog is thinner (0.008) and the bridge grating shows the hazy drop, not black. All eight shots are inside the rule (table below).
+- [~] **The dish and lace dome are flat placeholders; the Mothership guide is 85 px; the moon is hidden.**
+  - Done: the lace dome is new (`p_lace`: a cream filigree half-dome with open holes and warm lamps at its foot, emissive) and is 4.2 m over the tower's violet door.
+  - Done: the moon is in frame (above).
+  - Carried: the Mothership guide is 76 px at 16:9 (`test_doom_views`). The dish moved onto the cabin's roof but is still the flat placeholder.
+- [x] **(Review) 0 of 8 shots in the rule; the Mothership guide cannot be picked out by eye.** All 8 shots are in the rule now. She stands at the platform's front edge (-0.7, 16.7) under a warm key light, with a violet rim light and the violet door behind her.
+- [x] **(Review) Selected and committed guide-state captures.** They are the last row of `contact.jpg` (`tools/doom/guide_states.py`, the Mothership guide tapped).
+- [x] **(Found in round 2) The choice window was not held at the reference viewpoint on a real run.** The stay loop is now one reveal (`bc_bridge_view`) and the choice viewpoint. A real-run timeline shows `bc_ref` held from beat 44 to 62. `bc_stair_view` and `bc_cabin_view` are views in the map, no longer on the rail.
+
+**Other changes:**
+- The bridge and the platform are level with the deck. The three 1 m steps went: the drop's walls must stay above a railing's top.
+- The left threshold is at the alley's end, before the club's side door (the door's light is brighter).
+- The right threshold is at the cabin's back door.
+- The cabin view turns to the painting's composition: the lit cabin window with its equaliser glow, the Booth guide in the door, the drop and the city on the left.
+
+**Guides at the reference viewpoint (`test_doom_views`, 16:9 and 20:9 alike):** Mothership 76 px, Floor 190 px, Booth 206 px (at the pitched pose, -4); all three CROPPED (unchanged from round 1). No rings or beacons.
+
+**Exposure (`tools/doom/frame_check.py`, 16:9 shots, the picture only), 8 of 8 shots inside the rule (p50 0.25 to 0.38, p95 - p5 over 0.4).** Before round 2 (the merged head, same tool):
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.09  0.24  0.44  0.46    0.0%   0.0%  off
+hold_bridge             0.07  0.17  0.59  0.52    0.0%   0.1%  off
+hold_cabin              0.12  0.24  0.43  0.40    0.0%   0.0%  off
+hold_stair              0.10  0.28  0.48  0.47    0.0%   0.1%  off
+ref                     0.09  0.24  0.43  0.44    0.0%   0.1%  off
+route_ahead             0.06  0.17  0.49  0.56    0.0%   0.4%  off
+route_left              0.13  0.27  0.42  0.46    0.0%   0.0%  off
+route_right             0.14  0.29  0.43  0.44    0.0%   0.0%  off
+ALL                     0.08  0.24  0.46  0.47    0.0%   0.1%  contrast p95-p5 0.39
+```
+
+After:
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.11  0.26  0.53  0.43    0.0%   0.6%  ok
+hold_bridge             0.11  0.26  0.66  0.43    0.0%   1.5%  ok
+hold_cabin              0.11  0.25  0.53  0.43    0.0%   0.0%  ok
+hold_stair              0.13  0.27  0.55  0.45    0.0%   0.1%  ok
+ref                     0.12  0.26  0.53  0.41    0.0%   0.7%  ok
+route_ahead             0.11  0.26  0.70  0.44    0.0%   1.9%  ok
+route_left              0.14  0.26  0.70  0.36    0.0%   0.0%  ok
+route_right             0.13  0.25  0.59  0.35    0.0%   0.0%  ok
+ALL                     0.12  0.26  0.62  0.41    0.0%   0.6%  contrast p95-p5 0.50
+```
+
+**Shots:** `docs/shots/doom/balcony/contact.jpg` (the painting beside the reference shot, every viewpoint at 16:9 and 20:9, and a last row of guide states on the real rail: selected at beat 47, committed at 51.5 and the walk at 52.5. The tap commits at its own beat (ruling 39), so the committed frame is already on the walk-off. At the reference view the tapped guide's state sprite is small) and `walk_strip.jpg` with `walk_*.txt`. Regenerate them with `python3 tools/doom/shoot_balcony.py` (`RW_KEEP=<dir>` keeps the full-size frames for `frame_check`). The hold views that left the rail (see above) are still shot as views.

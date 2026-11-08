@@ -63,3 +63,56 @@ ALL                     0.11  0.24  0.47  0.42    0.0%   0.1%  contrast p95-p5 0
 ## Placeholders and not done
 
 Placeholders: the textures, props and decals are procedural (`tools/doom/art/make_booth_art.py`, overwritten in part by `make_booth_polish.py`; the racks, cases, crystals, console, screens and the Mothership chamber's tiles are the earlier flat placeholders); the music (Warehouse arrangements). The desk and the guides are crops of the painting. No `src/` change was made. Regenerate: `python -I tools/doom/trace/booth_scene.py; python -I tools/doom/convert.py --scene booth --trace tools/doom/trace/booth_pilot.json; python -I tools/doom/art/make_booth_art.py; python -I tools/doom/author_booth.py`, then `--import`, then `python tools/doom/shoot_booth.py`.
+
+## Stage D polish, round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md)
+
+**The lead's list, ticked or carried:**
+
+- [x] **The desk is a camera-facing cut-out that looms on the aisle walk: anchor it.** `bt_desk_big` is now a decal with an explicit yaw (`FREE_DECALS` in `author_booth.py`): a fixed quad facing `bt_ref`. From the reference viewpoint it reads exactly as before. On the walks it stays put instead of turning to the camera. `test_booth_the_desk_is_anchored_facing_the_reference_viewpoint` checks it.
+- [x] **The Mothership chamber is a garish violet box with crystal spires.** The crystals and the console are gone. The chamber is dark riveted steel with a wet floor, lit by one violet portal (`bt_moth_portal`, 4 m) behind the guide and a soft key light on her.
+- [~] **The window wall: the balcony and the skyline with rain on the glass; the steel leaf of the dock door; the crude shutter street.**
+  - Done: the window is glass, not mesh (`window_glass`: a frame, mullion and transom, clear panes with rain streaks and drops).
+  - Done: through it the iron balcony now stands over a drop (`drop_a`, `drop_b`: voids behind the Balcony's iron rail). Across the drop is a lit facade (windows placed one by one), with a lighter moonlit storm sky and skyline over it.
+  - Done: the dock door's thick steel leaf (louvre, push bar, rivets) is a decal against the aisle wall.
+  - Done: the shutter's street is redrawn in perspective (dark walls, a sodium lamp and its long reflection, tail lights, rain).
+  - Carried: the drop's facade reads as a flat blue wall in `route_left`. The shutter street is still a decal, not geometry.
+- [~] **Contrast 0.36 aggregate; `hold_window` and `route_left` at p50 0.20-0.21.** Raised but not inside the rule: 2 of 8 shots in it (table below). Lamp gain, reach, ambient and wet gloss moved the booth's numbers by 0.01 at most. The remaining gap is in the textures (olive foam, corrugated brown, flat mid-tones) and the few large bright areas. It is carried to an art pass on the booth's tiles.
+- [x] **(Review) The booth block of `test_doom_views.gd` lacks the wall-sightline check.** Added: `test_booth_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between`.
+- [x] **(Review) Selected and committed guide-state captures.** They are the last row of `contact.jpg` (`tools/doom/guide_states.py`, the Mothership guide tapped).
+- [x] **(Found in round 2) The choice window was not held at the reference viewpoint on a real run.** The stay loop is now one reveal (`bt_hatch_view`) and the choice viewpoint. A real-run timeline shows `bt_ref` held from beat 44 to 62. `bt_window_view` and `bt_dock_view` are views in the map, no longer on the rail.
+
+**Other changes:** the right threshold stands in the dock (5.4, 4.4), facing the open shutter.
+
+**Guides at the reference viewpoint (`test_doom_views`, 16:9 and 20:9 alike):** Mothership 84 px, Balcony 174 px, Dock 213 px; all three CROPPED (unchanged from round 1). No rings or beacons.
+
+**Exposure (`tools/doom/frame_check.py`, 16:9 shots, the picture only), 2 of 8 shots inside the rule (p50 0.25 to 0.38, p95 - p5 over 0.4).** Before round 2 (the merged head, same tool):
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.10  0.24  0.45  0.43    0.1%   0.0%  off
+hold_dock               0.14  0.26  0.40  0.40    0.0%   0.0%  off
+hold_hatch              0.11  0.27  0.49  0.44    0.1%   0.0%  off
+hold_window             0.11  0.20  0.34  0.36    0.0%   0.0%  off
+ref                     0.10  0.23  0.45  0.43    0.1%   0.0%  off
+route_ahead             0.16  0.33  0.67  0.46    0.0%   0.1%  ok
+route_left              0.10  0.21  0.34  0.38    0.0%   0.0%  off
+route_right             0.13  0.24  0.40  0.42    0.0%   0.0%  off
+ALL                     0.11  0.24  0.47  0.42    0.0%   0.1%  contrast p95-p5 0.36
+```
+
+After:
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.11  0.26  0.51  0.37    0.1%   0.1%  ok
+hold_dock               0.14  0.26  0.44  0.42    0.0%   0.0%  off
+hold_hatch              0.11  0.27  0.50  0.42    0.1%   0.2%  off
+hold_window             0.11  0.24  0.47  0.35    0.0%   0.1%  off
+ref                     0.11  0.24  0.49  0.41    0.0%   0.1%  off
+route_ahead             0.12  0.25  0.55  0.26    0.1%   0.9%  ok
+route_left              0.12  0.24  0.45  0.39    0.0%   0.0%  off
+route_right             0.10  0.22  0.39  0.44    0.0%   0.1%  off
+ALL                     0.12  0.25  0.48  0.38    0.0%   0.2%  contrast p95-p5 0.36
+```
+
+**Shots:** `docs/shots/doom/booth/contact.jpg` (the painting beside the reference shot, every viewpoint at 16:9 and 20:9, and a last row of guide states on the real rail: selected at beat 47, committed at 51.5 and the walk at 52.5. The tap commits at its own beat (ruling 39), so the committed frame is already on the walk-off. At the reference view the tapped guide's state sprite is small) and `walk_strip.jpg` with `walk_*.txt`. Regenerate them with `python3 tools/doom/shoot_booth.py` (`RW_KEEP=<dir>` keeps the full-size frames for `frame_check`). The hold views that left the rail (see above) are still shot as views.
