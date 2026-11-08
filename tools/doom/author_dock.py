@@ -29,6 +29,13 @@ MARGIN = 0.5
 MARGINS = {"dk_v_d": 0.33}
 MAX_STEP = 0.5
 LIGHT_GAIN, LIGHT_FLOOR, LAMP_GAIN = 1.4, 0.72, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+# stage D polish, exposure (the brief's rule p50 0.25 to 0.38, p95 - p5 over 0.4): every sector's song-time light is raised to LIGHT (a gain of 1.5 on the baked light) and the
+# flat light away from the lamps is cut to AMBIENT of it, so the lamp pools and the emissives carry the picture and the dark between them stays dark (contrast, not a flat lift)
+LIGHT = {"apron": 1.0, "canopy": 1.0, "walk": 1.0, "street": 1.0, "walk_far": 0.95, "street_far": 0.95, "yard": 1.0, "floor_door": 1.0, "floor_hall": 1.0, "floor_run": 1.0}
+AMBIENT = {"apron": 0.5, "canopy": 0.5, "walk": 0.5, "street": 0.5, "walk_far": 0.5, "street_far": 0.5, "yard": 0.48, "floor_door": 0.7, "floor_hall": 0.7, "floor_run": 0.7}
+# the rain (docs/engine/WEATHER.md): it falls on the six sky sectors, the canopy and the club passage stay dry; drips from the canopy's edge and the club door's lintel
+WEATHER = {"rain": 0.8, "wind": 10, "drips": [{"at": [4.15, -1.2], "h": 3.2}, {"at": [3.9, -2.6], "h": 3.2}, {"at": [-3.7, -8.0], "h": 2.6}, {"at": [-3.7, -9.7], "h": 2.6}]}
+WET = {"canopy": 0.35, "floor_door": 0.2}
 
 
 SKY = {"tex": "textures/dk_sky.png", "mode": "cylinder"}  # stage D polish: the storm sky strip over the open sectors (make_dock_art.p_sky)
@@ -113,7 +120,7 @@ THINGS = [
     ("dk_pallet_a", "dk_pallet", (6.2, 2.6), 0.4), ("dk_pallet_stack_a", "dk_pallet_stack", (6.5, 3.6), 1.1), ("dk_crate_a", "dk_crate", (6.6, 1.8), 0.8),
     ("dk_hang_lamp", "dk_hang_lamp", (6.8, 2.2), 0.9, 2.95), ("dk_chain", "dk_chain", (4.7, 1.0), 1.5, 2.75),
     ("dk_van", "dk_van", (4.0, 14.0), 1.9), ("dk_stack_a", "dk_pallet_stack", (6.2, 17.8), 1.3), ("dk_stack_b", "dk_pallet_stack", (2.9, 18.6), 1.2), ("dk_pallet_b", "dk_pallet", (5.2, 18.0), 0.4),
-    ("dk_street_lamp_a", "dk_street_lamp", (-2.0, 11.0), 5.0), ("dk_street_lamp_b", "dk_street_lamp", (-2.6, 18.4), 4.6), ("dk_street_lamp_c", "dk_street_lamp", (-2.4, 24.0), 4.6),
+    ("dk_street_lamp_a", "dk_street_lamp", (-2.0, 11.0), 5.0), ("dk_street_lamp_b", "dk_street_lamp", (-2.6, 18.4), 4.6), ("dk_street_lamp_c", "dk_street_lamp", (-2.4, 24.0), 4.6), ("dk_street_lamp_d", "dk_street_lamp", (6.9, 27.5), 4.6),
     ("dk_door_lamp", "dk_wall_lamp", (-3.75, 6.2), 0.5, 2.7),
     ("dk_furnace", "dk_furnace", (12.7, 12.4), 3.2), ("dk_seat_a", "dk_crate", (9.7, 12.3), 0.55), ("dk_seat_b", "dk_crate", (10.35, 12.35), 0.5), ("dk_crate_b", "dk_crate", (10.9, 13.6), 0.7), ("dk_crate_c", "dk_crate", (11.4, 13.2), 0.9),
     ("dk_case_c", "dk_case", (9.0, 9.4), 0.8),
@@ -143,6 +150,7 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength   (sodium under the can
     ("dk_lt_far_lamp", (-2.2, 24.0), 4.5, 8.0, "#ffb860", 1.4), ("dk_lt_run", (-13.5, 8.75), 2.0, 6.0, "#7a6aff", 1.6), ("dk_lt_mouth", (11.0, 13.4), 1.0, 5.0, "#ff9040", 1.6),
     ("dk_lt_pool_s1", (-0.6, 9.5), 3.5, 9.0, "#ffa850", 1.6), ("dk_lt_pool_s2", (3.5, 12.0), 4.0, 10.0, "#7a90e0", 1.3), ("dk_lt_pool_s3", (-0.8, 17.5), 3.5, 8.0, "#ffa850", 1.4),
     ("dk_lt_pool_s4", (4.5, 7.0), 3.0, 7.0, "#ffb060", 1.2), ("dk_lt_pool_walk", (-2.8, 13.0), 3.0, 6.0, "#ffb060", 1.2),
+    ("dk_lt_far_lamp_b", (6.5, 27.5), 4.4, 9.0, "#ffb860", 1.6), ("dk_lt_pool_far", (3.0, 24.0), 3.0, 8.0, "#ffa850", 1.4),
 ]
 
 
@@ -165,7 +173,12 @@ def main():
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, ("sky" if nm in SKY_SECTORS else c), lift(tint), step
         s["lip_tex"] = LIP.get(nm, "dk_trim")
         s["room"] = "main"
-        s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        s["light"] = LIGHT.get(nm, round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3))
+        if nm in AMBIENT:
+            s["ambient"] = AMBIENT[nm]
+        s.pop("wet", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
             if s[k] != "sky":
                 used[s[k]] = True
@@ -232,7 +245,8 @@ def main():
     d["start"] = "dk_arrive"
     barriers(d)
     d["sky"] = dict(SKY)
-    d["fog"] = {"color": "#262446", "density": 0.012}  # stage D: the rain haze is a lit violet-grey (the painting), thinner
+    d["weather"] = json.loads(json.dumps(WEATHER))
+    d["fog"] = {"color": "#17152e", "density": 0.014}  # stage D: the rain haze is a lit violet-grey (the painting), thinner
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("dk_")]

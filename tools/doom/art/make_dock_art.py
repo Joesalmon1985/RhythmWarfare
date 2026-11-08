@@ -128,13 +128,19 @@ def wall_steel():
 
 
 def wall_blue():
-    """The passage behind the club door: panels washed in blue light, a lit strip, scuffs (256 px, 128 texels per metre)."""
-    arr = ramp(vnoise(T, T, 131, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#1c2a64", "#26388a", "#3048a8", "#3c5ac8"))
+    """The passage behind the club door: dark panels (stage D: darker, so the light is in the LED strips, not a flat blue wash), a bright LED strip at hand height and a
+    dimmer one low, panel seams with a lit edge, scuffs (256 px, 128 texels per metre)."""
+    arr = ramp(vnoise(T, T, 131, ((4, 0.5), (16, 0.5))) * 0.6 + 0.15, ("#0a1030", "#24327a", "#3448a4", "#4a64cc"), cell=2)
     for x in range(0, T, 64):
-        arr[:, x:x + 2] = hexa("#101a44")
-        arr[:, x + 2:x + 6] = arr[:, x + 2:x + 6] * 0.4 + hexa("#6a8aff") * 0.6
-    arr[84:90, :] = hexa("#8aa8ff")
-    arr[180:184, :] = arr[180:184, :] * 0.5 + hexa("#5a7aff") * 0.5
+        arr[:, x:x + 2] = hexa("#060a24")
+        arr[:, x + 2:x + 4] = arr[:, x + 2:x + 4] * 0.4 + hexa("#4a6ae0") * 0.6
+    arr[82:84, :] = hexa("#6a8aff")
+    arr[84:90, :] = hexa("#c8d8ff")
+    arr[90:92, :] = hexa("#6a8aff")
+    glow = np.clip(1 - np.abs(np.arange(T) - 87) / 26.0, 0, 1)[:, None] * np.ones((1, T)) * 0.5
+    glow[82:92] = 0
+    mix_dither(arr, glow, "#3a58d0", k=0.45, cell=2)
+    arr[180:184, :] = arr[180:184, :] * 0.4 + hexa("#5a7aff") * 0.6
     return to_img(arr)
 
 
@@ -172,6 +178,17 @@ def floor_walk():
 
 
 def floor_blue():
+    """The passage floor (stage D): dark rubber tiles, wet, the LED strip's long blue reflections and a lit centre line."""
+    arr = ramp(vnoise(T, T, 171, ((4, 0.5), (16, 0.5))) * 0.6 + 0.15, ("#0a0e26", "#121a3c", "#1a2652", "#22326a"), cell=2)
+    for k in range(0, T, 64):
+        arr[k:k + 2, :] *= 0.5
+        arr[:, k:k + 2] *= 0.5
+    arr[:, 124:132] = arr[:, 124:132] * 0.3 + hexa("#8aa8ff") * 0.7
+    wet_gloss(arr, 172, ("#4a6ae0", "#6a8aff", "#c070ff"), n=10, length=(80, 200), width=(3, 8), ripples=4, sheen="#3a4a9a")
+    return to_img(arr)
+
+
+def _floor_blue_old():
     im = Image.new("RGB", (S, S), hexc("#141c40"))
     d = ImageDraw.Draw(im)
     for k in range(0, S, 32):
@@ -489,12 +506,14 @@ def vnoise(w, h, seed, cells=((8, 0.5), (16, 0.3), (32, 0.2)), wrap_x=True, wrap
     return np.clip(out / sum(wt for _, wt in cells), 0, 1)
 
 
-def _bayer(h, w, ox=0, oy=0):
-    th = np.tile(BAYER4, (h // 4 + 1, w // 4 + 1))[:h, :w]
+def _bayer(h, w, ox=0, oy=0, cell=1):
+    b = np.kron(BAYER4, np.ones((cell, cell), np.float32)) if cell > 1 else BAYER4
+    n = 4 * cell
+    th = np.tile(b, (h // n + 1, w // n + 1))[:h, :w]
     return np.roll(np.roll(th, oy, 0), ox, 1)
 
 
-def ramp(v, cols, ox=0, oy=0):
+def ramp(v, cols, ox=0, oy=0, cell=1):
     """Map v (H x W in [0, 1]) onto the colour ramp `cols` with an ordered dither between neighbouring steps (no smooth blends: style guide section 1)."""
     pal = np.stack([hexa(c) for c in cols])
     v = np.atleast_2d(v)
@@ -502,14 +521,15 @@ def ramp(v, cols, ox=0, oy=0):
     t = np.clip(v, 0, 1) * (len(cols) - 1)
     i = np.floor(t).astype(int)
     f = t - i
-    i = np.clip(i + (f > _bayer(h, w, ox, oy)), 0, len(cols) - 1)
+    i = np.clip(i + (f > _bayer(h, w, ox, oy, cell)), 0, len(cols) - 1)
     return pal[i]
 
 
-def mix_dither(arr, mask_w, col, ox=0, oy=0, k=0.65):
-    """Glaze `col` into arr where the weight mask_w (0..1) beats the Bayer threshold (in place, returns arr)."""
+def mix_dither(arr, mask_w, col, ox=0, oy=0, k=0.65, cell=1):
+    """Glaze `col` into arr where the weight mask_w (0..1) beats the Bayer threshold (in place, returns arr). `cell` 2 dithers in 2 x 2 texel blocks: a floor seen at a
+    grazing angle with nearest sampling and no mipmaps turns a 1-texel checker into grain, a 2-texel one survives (stage D polish: the Dock's gloss grain)."""
     h, w = mask_w.shape
-    sel = mask_w > _bayer(h, w, ox, oy)
+    sel = mask_w > _bayer(h, w, ox, oy, cell)
     arr[sel] = arr[sel] * (1 - k) + hexa(col) * k
     return arr
 
@@ -518,9 +538,10 @@ def to_img(arr):
     return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGB")
 
 
-def wet_gloss(arr, seed, cols=("#e09040", "#4a68d0", "#c04a3a"), n=8, length=(60, 180), width=(3, 9), ripples=6, sheen="#8a96c0"):
-    """Wet floor gloss baked in: vertical smears of light that fade from their bright end (the lamps' reflections), dithered, small ripple rings, and a cool sheen in the low
-    spots. In place on the H x W x 3 array; it wraps, so the tile stays tileable."""
+def wet_gloss(arr, seed, cols=("#e09040", "#4a68d0", "#c04a3a"), n=8, length=(60, 180), width=(3, 9), ripples=6, sheen="#8a96c0", cell=2):
+    """Wet floor gloss baked in: vertical smears of light that fade from their bright end (the lamps' reflections), a solid bright core and a dithered fringe, small ripple
+    rings, and a cool sheen in the low spots. In place on the H x W x 3 array; it wraps, so the tile stays tileable. The dither runs in `cell` x `cell` blocks and the rings are
+    two texels wide, so the floor does not break into grain at mid distance (nearest sampling, no mipmaps)."""
     rng = np.random.default_rng(seed)
     h, w, _ = arr.shape
     yy, xx = np.indices((h, w))
@@ -531,18 +552,19 @@ def wet_gloss(arr, seed, cols=("#e09040", "#4a68d0", "#c04a3a"), n=8, length=(60
         dx = (xx - x0 + w // 2) % w - w // 2
         dy = (yy - y0) % h
         k = np.where((np.abs(dx) <= wd) & (dy < ln), (1 - dy / ln) * (1 - np.abs(dx) / (wd + 1)) * 0.8, 0)
-        mix_dither(arr, k, col, k=0.4)
+        core = k > 0.42
+        arr[core] = arr[core] * 0.55 + hexa(col) * 0.45
+        mix_dither(arr, np.where(core, 0, k * 1.6), col, k=0.4, cell=cell)
     for _ in range(ripples):
-        cx, cy, r = rng.integers(w), rng.integers(h), rng.integers(3, 9)
+        cx, cy, r = rng.integers(w), rng.integers(h), rng.integers(5, 12)
         dx = (xx - cx + w // 2) % w - w // 2
         dy = ((yy - cy + h // 2) % h - h // 2) * 2.2
         d = np.sqrt(dx * dx + dy * dy)
-        ring = np.abs(d - r) < 0.7
-        arr[ring] = arr[ring] * 0.5 + hexa(sheen) * 0.5
+        ring = np.abs(d - r) < 1.2
+        arr[ring] = arr[ring] * 0.6 + hexa(sheen) * 0.4
     low = vnoise(w, h, seed + 7, ((4, 0.6), (8, 0.4)))
-    mix_dither(arr, np.clip((low - 0.62) * 2.2, 0, 0.55), sheen, k=0.4)
+    mix_dither(arr, np.clip((low - 0.62) * 2.2, 0, 0.55), sheen, k=0.4, cell=cell)
     return arr
-
 
 def brick_tile(seed, base=("#4a1e18", "#662a24", "#7c342a", "#904234"), mortar=("#24140f", "#3a2a22", "#4a3a30"), wet=1.0):
     """Red brick at 128 texels per metre (a brick 0.22 x 0.07 m = 28 x 9 px): each brick its own tone and grain, mortar of varying depth, soot, and rain streaks down the face."""
@@ -567,7 +589,7 @@ def brick_tile(seed, base=("#4a1e18", "#662a24", "#7c342a", "#904234"), mortar=(
     return arr
 
 
-def tower_tile(seed, lit=0.12, base=("#1a2036", "#242e4a", "#30405e", "#3e5072"), win_lit=("#e0a448", "#ffc068", "#c88a3a", "#9ac0e8"), floor_h=24, bay_w=20):
+def tower_tile(seed, lit=0.12, base=("#0e1224", "#242c46", "#38466a", "#52648e"), win_lit=("#e0a448", "#ffc068", "#c88a3a", "#9ac0e8"), floor_h=24, bay_w=20):
     """A dark tower face: concrete bands and dark glass in a grid with only a few windows lit (the paintings' dark towers); a lit window is a dithered glow with a curtain line."""
     rng = np.random.default_rng(seed)
     arr = ramp(vnoise(T, T, seed, ((8, 0.4), (32, 0.6))) * 0.55 + 0.15, base)
@@ -581,7 +603,7 @@ def tower_tile(seed, lit=0.12, base=("#1a2036", "#242e4a", "#30405e", "#3e5072")
                 win[:] = ramp(v, (hx(shade(c, 0.5)), hx(c), hx(shade(c, 1.2))))
                 win[:, int(rng.integers(2, bay_w - 8))] *= 0.55
             else:
-                win[:] = win * 0.6 + hexa("#141a2c") * 0.4
+                win[:] = win * 0.45 + hexa("#0a0e1c") * 0.55
                 win[0, :] = win[0, :] * 0.6 + hexa("#3a4a6a") * 0.4
     yy, xx = np.indices((T, T))
     for _ in range(14):
@@ -592,12 +614,12 @@ def tower_tile(seed, lit=0.12, base=("#1a2036", "#242e4a", "#30405e", "#3e5072")
 
 def conc_tile(seed, base=("#2c2c38", "#3a3a48", "#4a4a5a", "#5a5a6c"), joints=128, gloss=True, gloss_cols=("#e09040", "#4a68d0", "#c04a3a")):
     """Wet concrete slabs (joints every `joints` px, stains) with puddle gloss baked in."""
-    arr = ramp(vnoise(T, T, seed, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.75 + 0.15, base)
+    arr = ramp(vnoise(T, T, seed, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.75 + 0.15, base, cell=2)
     for k in range(0, T, joints):
         arr[k:k + 2, :] *= 0.45
         arr[:, k:k + 2] *= 0.45
     stain = vnoise(T, T, seed + 5, ((3, 0.5), (6, 0.5)))
-    mix_dither(arr, np.clip((stain - 0.6) * 1.8, 0, 0.6), "#141418", k=0.5)
+    mix_dither(arr, np.clip((stain - 0.6) * 1.8, 0, 0.6), "#141418", k=0.5, cell=2)
     if gloss:
         wet_gloss(arr, seed + 9, gloss_cols)
     return arr
@@ -660,7 +682,7 @@ def p_wall_brick(seed=301):
     return to_img(brick_tile(seed))
 
 
-def p_wall_tower(seed=311, lit=0.18):
+def p_wall_tower(seed=311, lit=0.15):
     return to_img(tower_tile(seed, lit))
 
 
@@ -699,11 +721,11 @@ def p_floor_asphalt():
     """The street: wet asphalt in broad low-frequency patches (no fine sparkle: it aliases into confetti at distance), sparse grit, a worn lane dash, the sodium and blue lamps'
     long smeared reflections, a few ripples."""
     rng = np.random.default_rng(343)
-    arr = ramp(vnoise(T, T, 341, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.8 + 0.1, ("#262636", "#323246", "#404058", "#50506a"))
-    g = rng.random((T, T)) < 0.02
+    arr = ramp(vnoise(T, T, 341, ((3, 0.4), (8, 0.4), (24, 0.2))) * 0.8 + 0.1, ("#222232", "#363650", "#4a4a68", "#5e5e84"), cell=2)
+    g = np.kron(rng.random((T // 2, T // 2)) < 0.02, np.ones((2, 2), bool))
     arr[g] = arr[g] * 0.6 + hexa("#4a4a5c") * 0.4
     arr[20:80, 120:132] = arr[20:80, 120:132] * 0.4 + hexa("#6a6a72") * 0.6
-    wet_gloss(arr, 342, ("#ffa848", "#e08a38", "#5070e0", "#c84a3a", "#ffa848"), n=9, length=(90, 220), width=(3, 10), ripples=6)
+    wet_gloss(arr, 342, ("#ffb858", "#f09a48", "#6080f0", "#d85a4a", "#ffc068"), n=13, length=(90, 220), width=(3, 10), ripples=6)
     return to_img(arr)
 
 
@@ -713,7 +735,7 @@ def p_floor_walk():
 
 def p_sky():
     """The Dock's storm sky: violet-lit cloud banks over the city, and far tower tops on the horizon."""
-    return to_img(sky_strip(361, clouds=("#1a1838", "#24224c", "#302c60", "#403878", "#564a92", "#7462b0"), glow="#8a6ac0", lift=0.18,
+    return to_img(sky_strip(361, clouds=("#1a1838", "#24224c", "#302c60", "#403878", "#564a92", "#7462b0"), glow="#8a6ac0", lift=0.04,
                             skyline={"layers": (("#2a2c4c", 8, 26, 0.05), ("#1e2240", 12, 38, 0.08)), "street": "#141020"}))
 
 
@@ -815,8 +837,8 @@ DECALS = {"dk_door_leaf": door_leaf, "dk_clef": clef, "dk_pipe_vert": pipe_vert,
 
 
 # stage D polish: 256 px tiles (128 texels per metre), three tower faces and two brick faces so no wall repeats its neighbour, the sky strip, the new props
-TEXTURES.update({"dk_wall_brick": p_wall_brick, "dk_wall_brick_b": lambda: p_wall_brick(302), "dk_wall_tower": p_wall_tower, "dk_wall_tower_b": lambda: p_wall_tower(312, 0.14),
-                 "dk_wall_tower_c": lambda: p_wall_tower(313, 0.22), "dk_wall_ware": p_wall_ware, "dk_floor_conc": p_floor_conc, "dk_floor_asphalt": p_floor_asphalt,
+TEXTURES.update({"dk_wall_brick": p_wall_brick, "dk_wall_brick_b": lambda: p_wall_brick(302), "dk_wall_tower": p_wall_tower, "dk_wall_tower_b": lambda: p_wall_tower(312, 0.13),
+                 "dk_wall_tower_c": lambda: p_wall_tower(313, 0.17), "dk_wall_ware": p_wall_ware, "dk_floor_conc": p_floor_conc, "dk_floor_asphalt": p_floor_asphalt,
                  "dk_floor_walk": p_floor_walk, "dk_sky": p_sky})
 PROPS.update({"dk_bollard": p_bollard, "dk_furnace": p_furnace, "dk_crate_drum": p_crate_drum, "dk_pallets_near": p_pallets_near})
 DECALS.update({"dk_end_glow": p_end_glow})

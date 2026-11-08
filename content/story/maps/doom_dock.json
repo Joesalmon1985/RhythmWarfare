@@ -106,13 +106,14 @@
    "floor_tex": "dk_floor_conc",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_brick",
-   "light": 0.741,
+   "light": 1.0,
    "tint": "#ede0d8",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "1_0",
@@ -139,13 +140,15 @@
    "floor_tex": "dk_floor_conc",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_shutter",
-   "light": 0.818,
+   "light": 1.0,
    "tint": "#ffd6a7",
    "room": "main",
    "flags": [],
    "doom_sector": 1,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_wall_shutter"
+   "lip_tex": "dk_wall_shutter",
+   "ambient": 0.5,
+   "wet": 0.35
   },
   {
    "id": "2_0",
@@ -180,13 +183,14 @@
    "floor_tex": "dk_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_brick",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#e3ddf0",
    "room": "main",
    "flags": [],
    "doom_sector": 2,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "3_0",
@@ -225,13 +229,14 @@
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_tower",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#dde1f5",
    "room": "main",
    "flags": [],
    "doom_sector": 3,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "4_0",
@@ -258,13 +263,14 @@
    "floor_tex": "dk_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_tower_b",
-   "light": 0.72,
+   "light": 0.95,
    "tint": "#dddbf0",
    "room": "main",
    "flags": [],
    "doom_sector": 4,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "5_0",
@@ -291,13 +297,14 @@
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_tower_c",
-   "light": 0.72,
+   "light": 0.95,
    "tint": "#dbdff5",
    "room": "main",
    "flags": [],
    "doom_sector": 5,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "6_0",
@@ -324,13 +331,14 @@
    "floor_tex": "dk_floor_asphalt",
    "ceil_tex": "sky",
    "wall_tex": "dk_wall_ware",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#f2ddcb",
    "room": "main",
    "flags": [],
    "doom_sector": 6,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.48
   },
   {
    "id": "7_0",
@@ -357,13 +365,15 @@
    "floor_tex": "dk_floor_blue",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_blue",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#b6c6ff",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_wall_brick"
+   "lip_tex": "dk_wall_brick",
+   "ambient": 0.7,
+   "wet": 0.2
   },
   {
    "id": "8_0",
@@ -402,13 +412,14 @@
    "floor_tex": "dk_floor_blue",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_blue",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#a8bcff",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_wall_blue"
+   "lip_tex": "dk_wall_blue",
+   "ambient": 0.7
   },
   {
    "id": "9_0",
@@ -435,13 +446,14 @@
    "floor_tex": "dk_floor_blue",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_blue",
-   "light": 0.72,
+   "light": 1.0,
    "tint": "#acbcff",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_wall_blue"
+   "lip_tex": "dk_wall_blue",
+   "ambient": 0.7
   }
  ],
  "walls": [
@@ -1034,6 +1046,18 @@
    "at": [
     -2.4,
     -24.0
+   ],
+   "y": 2.3,
+   "size": 4.6,
+   "anim": "none"
+  },
+  {
+   "id": "dk_street_lamp_d",
+   "kind": "billboard",
+   "sprite": "dk_street_lamp",
+   "at": [
+    6.9,
+    -27.5
    ],
    "y": 2.3,
    "size": 4.6,
@@ -1679,6 +1703,30 @@
    "strength": 2.5
   },
   {
+   "id": "dk_lt_far_lamp_b",
+   "kind": "light",
+   "at": [
+    6.5,
+    -27.5
+   ],
+   "y": 4.4,
+   "radius": 11.7,
+   "color": "#ffb860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_far",
+   "kind": "light",
+   "at": [
+    3.0,
+    -24.0
+   ],
+   "y": 3.0,
+   "radius": 10.4,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
    "id": "dk_lamp_mothership",
    "kind": "light",
    "at": [
@@ -2102,8 +2150,8 @@
   "far": 0
  },
  "fog": {
-  "color": "#262446",
-  "density": 0.012
+  "color": "#17152e",
+  "density": 0.014
  },
  "palette_weight": 1.0,
  "scene": {
@@ -2150,5 +2198,39 @@
    ]
   },
   "note": "authored by tools/doom/author_dock.py; routes are lists of waypoint ids (the polyline); hold_bars on a waypoint is the still hold at a choice window"
+ },
+ "weather": {
+  "rain": 0.8,
+  "wind": 10,
+  "drips": [
+   {
+    "at": [
+     4.15,
+     -1.2
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     3.9,
+     -2.6
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     -3.7,
+     -8.0
+    ],
+    "h": 2.6
+   },
+   {
+    "at": [
+     -3.7,
+     -9.7
+    ],
+    "h": 2.6
+   }
+  ]
  }
 }
