@@ -168,3 +168,8 @@ Ordered lead work:
 4. Merge contracts 25e53f48 into play (observe-once); play list.
 5. Stage D close: draft PRs for the two feature branches (bodies disclose the reviewers' lists and every placeholder), rewrite `docs/HANDOVER.md` (incl. the whole-run rail check's 533 pre-existing problems, the music mapping to audition, phone never run), refresh `docs/doom/LAUNCH.md`, copy this log to the branches, update memory `rhythm-warfare-status.md`.
 Owner items unchanged: audition `docs/doom/MUSIC.md`, play one-pc, rulings 41/42/42b open to overrule, `main` only on the owner's word.
+
+### Resumed after the usage limit (9 November, 14:10)
+
+- The four agents (polish A/B/C, cuts-pace) were cut off by the 5-hour limit mid-work; the lead resumed each by message (their transcripts are kept; they commit WIP checkpoints first). The "STOPPED HERE" list above stays valid as the plan.
+- Blackjack view regression: `wip/play-blackjack-view` (Sonnet, new worktree `MusicGame-bj` from 0be1589d) bisects 329d6aa6 → b3c784d6 → 0be1589d and fixes the cause.
