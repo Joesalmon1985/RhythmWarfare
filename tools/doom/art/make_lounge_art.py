@@ -103,7 +103,10 @@ def tufted(seed, cols=MUSTARD, cell=32):
     return out
 
 
-def curtain(seed, cols=RED):
+OXBLOOD = ["#12040a", "#2c0a12", "#4a1420", "#6c1e2a", "#94303a"]  # stage D: the painting's curtains are deep oxblood velvet in shadow (the first pass read orange)
+
+
+def curtain(seed, cols=OXBLOOD):
     f = 0.5 + 0.38 * np.sin(XX / S * 2 * math.pi * 8 + noise(8, seed) * 2.0) + (noise(24, seed + 1) - 0.5) * 0.2
     f = f * (0.8 + 0.2 * (1 - YY / S))
     return quant(f * 0.9, cols)
@@ -176,10 +179,13 @@ def street(seed, wall=False):
 
 
 def blue_deck(seed, wall=False):
-    if wall:
-        f = 0.28 + noise(12, seed) * 0.2
+    if wall:  # stage D: deep cobalt glass (the painting's passage is dark glass lit by streaks and an LED strip, not a bright tiled box)
+        f = 0.22 + noise(12, seed) * 0.16
         glass = (XX % 64 > 3) & (YY % 96 > 3)
-        f = np.where(glass, f + 0.22 + 0.25 * (XX % 64) / 64.0, 0.06)
+        streak = (np.abs(((XX + YY // 6) % 64) - 40) < 3) & glass
+        f = np.where(glass, f + 0.08 + 0.14 * (1 - (YY % 96) / 96.0), 0.04)
+        f = np.where(streak, f + 0.35, f)
+        f = np.where((YY % 96 > 88) & (YY % 96 < 92), 0.95, f)  # the LED strip along each mullion's foot
         return quant(f, BLUE)
     f = 0.18 + noise(24, seed) * 0.18
     f = np.where((XX % 64 < 2) | (YY % 64 < 2), 0.06, f)
@@ -410,6 +416,56 @@ def beads():
     return img, None
 
 
+def polish():
+    """Stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): the main surfaces redrawn at 256 px for the renderer's 2 m repeat (128 texels per metre) and toward the painting:
+    warm carved stone in three variants (wall_stone, _b, _c: one per piece, so no wall repeats one tile), polished marble with veins and the lamps' gloss baked in, the rug
+    in the painting's oxblood and rust with cream stripes (the first pass read orange), a coffered timber ceiling with gold inlay drawn coarse (it is seen at grazing angles).
+    Foreground pieces CUT from the painting (alpha 0/255, nearest-neighbour): the near sofa with its patterned cushion and the two palms at the frame's edges."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import make_warehouse_art as wa
+    N = wa.N
+    yy, xx = np.mgrid[0:N, 0:N]
+    STONE = ["#1a120e", "#2e221a", "#463426", "#5e4834", "#7a5e44", "#987858"]
+    out = {"wall_stone": wa.tile_brick_wall(301, STONE, "#120c08", bh=32, bw=96), "wall_stone_b": wa.tile_brick_wall(302, STONE, "#120c08", bh=32, bw=80),
+           "wall_stone_c": wa.tile_brick_wall(303, STONE, "#120c08", bh=64, bw=112)}
+    v = 0.45 + (wa.noise(N, N, 304, 32, 3) - 0.5) * 0.3
+    vein = np.abs(np.sin((xx + yy * 0.7) / 23.0 + wa.noise(N, N, 305, 64, 2) * 7)) < 0.06
+    v[vein] += 0.18
+    v[(xx % 128 < 2) | (yy % 128 < 2)] = 0.08
+    img = wa.ramp(np.clip(v, 0, 1), ["#1a1410", "#2e241c", "#4a3a2c", "#6a5440", "#8e7458", "#b49a78"], 0.8)
+    out["floor_marble"] = wa.sheen(img, wa.noise(N, N, 306, 32, 2), ["#8a6a48", "#d0a46a"], 0.74)
+    def pile(seed, cols):
+        f = 0.45 + (wa.noise(N, N, seed, 2, 2) - 0.5) * 0.5 + (wa.noise(N, N, seed + 1, 32, 2) - 0.5) * 0.25
+        return wa.ramp(np.clip(f, 0, 1), cols, 1.0)
+    out["floor_rug_red"] = pile(307, ["#1c0606", "#3a0c0a", "#5e1810", "#822a18", "#a24020"])
+    out["floor_rug_orange"] = pile(309, ["#2a0a06", "#4e160c", "#743012", "#9a4a1c", "#bc6428"])
+    out["floor_rug_cream"] = pile(311, ["#4a3a2a", "#7a6448", "#a8906a", "#cbb690", "#e6d6b0"])
+    v = 0.3 + (wa.noise(N, N, 313, 8) - 0.5) * 0.2
+    img = wa.ramp(v, ["#0e0806", "#1e120c", "#301e14", "#46301e"], 0.7)
+    beam = ((xx % 128) < 28) | ((yy % 128) < 28)
+    bv = 0.45 + 0.3 * (1 - np.minimum(xx % 128, yy % 128) / 28.0) + (wa.noise(N, N, 314, 4) - 0.5) * 0.2
+    bim = wa.ramp(np.clip(bv, 0, 1), ["#1a0e08", "#33200f", "#543418", "#7a4e24", "#a06a34"], 0.8)
+    img[beam] = bim[beam]
+    inlay = (((xx % 128) == 30) | ((yy % 128) == 30)) & ~beam
+    img[inlay] = hexc("#e0b04a")
+    out["ceil_beam"] = img
+    for k, a in out.items():
+        save(k, a)
+    paint = os.path.join(ROOT, "art", "reference", "doom_worlds", "Mustard octagonal lounge of three routes-2.png")
+    cuts = {
+        "lg_p_sofa": ((30, 684, 1450, 941), [(35, 830), (60, 760), (111, 700), (311, 688), (367, 738), (544, 793), (567, 843), (667, 825), (833, 836), (1111, 841), (1333, 825),
+                                              (1445, 840), (1445, 941), (33, 941)]),
+        "lg_p_palm_l": ((0, 470, 270, 735), [(0, 480), (120, 470), (220, 520), (268, 600), (262, 700), (200, 735), (0, 735)]),
+        "lg_p_palm_r": ((1330, 580, 1672, 941), [(1600, 580), (1672, 585), (1672, 941), (1520, 941), (1400, 880), (1332, 760), (1420, 650)]),
+    }
+    for k, (box, poly) in cuts.items():
+        rgb, al = wa.cut(box, poly, paint=paint)
+        if k.startswith("lg_p_palm"):  # a palm: only its leaves and pot, not the room behind (the room is darker and less green than the leaves)
+            r, g, b = rgb[..., 0].astype(int), rgb[..., 1].astype(int), rgb[..., 2].astype(int)
+            al &= (g > r * 0.85) | ((r + g + b) < 60)
+        save(k, rgb, al)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     tex = {}
@@ -440,6 +496,7 @@ def main():
     sp = {"thing_plant": plant(), "thing_lamp": lamp(), "thing_vase": vase(), "thing_cushion": cushion("#c85a2c", "#8a2a14", "#e8b860"), "thing_cushion_b": cushion("#7a3a28", "#c8861e", "#3a5a4a")}
     for k, im in sp.items():
         im.save(os.path.join(OUT, k + ".png"))
+    polish()
     for k, (rgb, alpha) in {"deco_studs": studs(), "deco_vinyl": vinyl()}.items():
         save(k, rgb)
     for k, fn in (("deco_sconce", sconce), ("deco_bottles", bottles), ("deco_beads", beads)):

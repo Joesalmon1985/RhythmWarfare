@@ -36,6 +36,11 @@
   "deco_sconce": "textures/deco_sconce.png",
   "deco_bottles": "textures/deco_bottles.png",
   "deco_beads": "textures/deco_beads.png",
+  "wall_stone_b": "textures/wall_stone_b.png",
+  "wall_stone_c": "textures/wall_stone_c.png",
+  "lg_p_sofa": "textures/lg_p_sofa.png",
+  "lg_p_palm_l": "textures/lg_p_palm_l.png",
+  "lg_p_palm_r": "textures/lg_p_palm_r.png",
   "guide_dock_idle_0": "textures/guide_dock_idle_0.png",
   "guide_dock_available_0": "textures/guide_dock_available_0.png",
   "guide_dock_available_1": "textures/guide_dock_available_1.png",
@@ -101,7 +106,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -109,7 +114,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_1",
@@ -143,7 +149,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -151,7 +157,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_2",
@@ -193,7 +200,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -201,7 +208,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_3",
@@ -243,7 +251,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -251,7 +259,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_4",
@@ -293,7 +302,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -301,7 +310,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_5",
@@ -323,7 +333,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -331,7 +341,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_6",
@@ -353,7 +364,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -361,7 +372,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_7",
@@ -383,7 +395,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -391,7 +403,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_8",
@@ -413,7 +426,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -421,7 +434,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_9",
@@ -443,7 +457,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -451,7 +465,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_10",
@@ -473,7 +488,7 @@
    "ceiling": 5.5,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#f8efdf",
    "room": "main",
@@ -481,7 +496,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "1_0",
@@ -515,7 +531,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_1",
@@ -549,7 +566,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_2",
@@ -583,7 +601,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_3",
@@ -617,7 +636,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_4",
@@ -651,7 +671,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_5",
@@ -685,7 +706,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_6",
@@ -719,7 +741,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_7",
@@ -753,7 +776,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "2_0",
@@ -1195,7 +1219,7 @@
    "ceiling": 7.0,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_b",
    "light": 0.9,
    "tint": "#fff4e4",
    "room": "main",
@@ -1237,7 +1261,7 @@
    "ceiling": 7.0,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_beam",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_c",
    "light": 0.9,
    "tint": "#fff4e4",
    "room": "main",
@@ -2767,7 +2791,8 @@
    "doom_sector": 14,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_step_a"
+   "room_name": "ahead_step_a",
+   "wet": 0.6
   },
   {
    "id": "15_0",
@@ -2793,7 +2818,7 @@
    "ceiling": 4.0,
    "floor_tex": "floor_marble",
    "ceil_tex": "ceil_street",
-   "wall_tex": "wall_stone",
+   "wall_tex": "wall_stone_c",
    "light": 0.85,
    "tint": "#eff2f8",
    "room": "main",
@@ -2801,7 +2826,8 @@
    "doom_sector": 15,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_step_b"
+   "room_name": "ahead_step_b",
+   "wet": 0.6
   },
   {
    "id": "16_0",
@@ -2836,14 +2862,16 @@
    "floor_tex": "floor_street",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_street",
-   "light": 0.8,
+   "light": 1.0,
    "tint": "#ebeff8",
    "room": "main",
    "flags": [],
    "doom_sector": 16,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_street"
+   "room_name": "ahead_street",
+   "wet": 0.9,
+   "rain": true
   },
   {
    "id": "17_0",
@@ -3082,14 +3110,15 @@
    "floor_tex": "floor_blue",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_blue",
-   "light": 0.85,
+   "light": 1.0,
    "tint": "#e6edff",
    "room": "main",
    "flags": [],
    "doom_sector": 20,
    "step_tex": "wall_blue",
    "lip_tex": "wall_stone",
-   "room_name": "right_vest"
+   "room_name": "right_vest",
+   "wet": 0.5
   },
   {
    "id": "21_0",
@@ -3124,14 +3153,15 @@
    "floor_tex": "floor_blue",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_blue",
-   "light": 0.8,
+   "light": 1.0,
    "tint": "#dee6ff",
    "room": "main",
    "flags": [],
    "doom_sector": 21,
    "step_tex": "wall_blue",
    "lip_tex": "wall_blue",
-   "room_name": "right_passage"
+   "room_name": "right_passage",
+   "wet": 0.5
   },
   {
    "id": "22_0",
@@ -5859,6 +5889,42 @@
    "anim": "none"
   },
   {
+   "id": "lg_fg_sofa",
+   "kind": "billboard",
+   "sprite": "lg_p_sofa",
+   "at": [
+    0.0,
+    4.6875
+   ],
+   "y": 0.82,
+   "size": 0.9,
+   "anim": "none"
+  },
+  {
+   "id": "lg_fg_palm_l",
+   "kind": "billboard",
+   "sprite": "lg_p_palm_l",
+   "at": [
+    -1.625,
+    4.5312
+   ],
+   "y": 1.15,
+   "size": 1.6,
+   "anim": "none"
+  },
+  {
+   "id": "lg_fg_palm_r",
+   "kind": "billboard",
+   "sprite": "lg_p_palm_r",
+   "at": [
+    1.75,
+    4.625
+   ],
+   "y": 1.25,
+   "size": 1.8,
+   "anim": "none"
+  },
+  {
    "id": "lg_lt_table",
    "kind": "light",
    "at": [
@@ -5991,6 +6057,66 @@
    "strength": 2.5
   },
   {
+   "id": "lg_lt_dock_key",
+   "kind": "light",
+   "at": [
+    0.0,
+    -10.0
+   ],
+   "y": 2.7,
+   "radius": 4.5,
+   "color": "#dce6ff",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_dock_warm",
+   "kind": "light",
+   "at": [
+    0.0,
+    -8.4375
+   ],
+   "y": 2.2,
+   "radius": 5.2,
+   "color": "#ffc080",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_w",
+   "kind": "light",
+   "at": [
+    -1.875,
+    -10.3125
+   ],
+   "y": 2.2,
+   "radius": 5.9,
+   "color": "#ffd090",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_e",
+   "kind": "light",
+   "at": [
+    1.875,
+    -12.1875
+   ],
+   "y": 2.2,
+   "radius": 5.9,
+   "color": "#c8d8ff",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_n",
+   "kind": "light",
+   "at": [
+    -1.25,
+    -13.125
+   ],
+   "y": 2.4,
+   "radius": 5.9,
+   "color": "#ffd090",
+   "strength": 2.5
+  },
+  {
    "id": "lg_lt_floor",
    "kind": "light",
    "at": [
@@ -6058,8 +6184,8 @@
     -2.3125,
     -7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6070,8 +6196,8 @@
     2.3125,
     -7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6082,8 +6208,8 @@
     7.4062,
     2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6094,8 +6220,8 @@
     -7.4062,
     2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6106,8 +6232,8 @@
     7.4062,
     -2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6118,8 +6244,8 @@
     -7.4062,
     -2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6130,8 +6256,8 @@
     -2.3125,
     7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6142,8 +6268,8 @@
     2.3125,
     7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6289,6 +6415,42 @@
    ],
    "y": 0.0,
    "size": 2.6
+  },
+  {
+   "id": "lg_st_lamp_w",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    -2.4375,
+    -10.3125
+   ],
+   "y": 2.2,
+   "size": 0.8,
+   "emissive": true
+  },
+  {
+   "id": "lg_st_lamp_e",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    2.4375,
+    -12.1875
+   ],
+   "y": 2.2,
+   "size": 0.8,
+   "emissive": true
+  },
+  {
+   "id": "lg_st_lamp_n",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    -1.25,
+    -13.6875
+   ],
+   "y": 2.4,
+   "size": 0.8,
+   "emissive": true
   }
  ],
  "homes": [],
@@ -6397,11 +6559,11 @@
   {
    "id": "lg_ahead_door",
    "at": [
-    0.0,
-    -9.3125
+    0.1531,
+    -6.9429
    ],
-   "yaw": -0.0,
-   "sector": "16_0"
+   "yaw": 2.6,
+   "sector": "0_4"
   },
   {
    "id": "lg_bar_door",
@@ -6415,10 +6577,10 @@
   {
    "id": "lg_floor_door",
    "at": [
-    5.9517,
-    -5.429
+    5.548,
+    -5.8186
    ],
-   "yaw": -53.7,
+   "yaw": -71.3,
    "sector": "20_0"
   },
   {
@@ -6984,5 +7146,9 @@
    ]
   },
   "note": "authored by tools/doom/author_lounge.py; routes are lists of waypoint ids (via points included); hold_bars on a waypoint is the still hold at a choice window"
+ },
+ "weather": {
+  "rain": 0.8,
+  "wind": 6
  }
 }

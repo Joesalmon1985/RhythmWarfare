@@ -3,6 +3,7 @@
 (1600x720), written as ONE contact sheet (docs/shots/doom/underworld/contact.jpg, under 1 MB) and one walk strip of the three routes (walk_strip.jpg). No per-frame dump is kept.
 
     python3 tools/doom/shoot_underworld.py [out_dir]            default out_dir docs/shots/doom/underworld     (needs a window: the real run scene, like tools/doom/shoot_scene.sh)
+    `preview_pitch14` is uw_ref pitched down 14 degrees (a preview of a hook: the run's choice hold cannot pitch).
     RW_SHOTS=<regex> only the shots whose name matches.   RW_KEEP=<dir> also keeps each full-size shot there (for frame_check.py; do not commit them).
 
 The camera poses of the walks come from tools/doom/walk_underworld.gd (the polyline moves of the underworld's rail, the eye's real height); each pose is shot on the real run scene (RW_STORY_CAM=@x:z:yaw:pitch:eye).
@@ -23,7 +24,10 @@ ROOT = ss.ROOT
 SCENE = "doom_underworld"
 PAINTING = os.path.join(ROOT, "art", "reference", "doom_worlds", "Three Paths Across the Basalt Abyss-4.png")
 SHOTS = [("ref", "uw_ref"), ("hold_ledge", "uw_ledge_view"), ("hold_cave", "uw_cave_view"), ("hold_stair", "uw_stair_view"), ("route_ahead", "uw_gate"), ("route_left", "uw_cave_in"),
-         ("route_right", "uw_shelf_end"), ("arrive", "uw_arrive")]
+         ("route_right", "uw_shelf_end"), ("arrive", "uw_arrive"),
+         # PREVIEW, not what the run shows: uw_ref with a steady pitch of -14 degrees (the lava below the rim, as the painting looks down). The run's choice hold has no pitch field
+         # (RunJourney.window_face's player_look carries a `face` and no pitch), so this pose is only reachable through RW_STORY_CAM; an engine hook would make it the hold's own.
+         ("preview_pitch14", "@0.000:-1.600:5.5:-14.0:1.600")]
 ROUTES = ["up", "left", "right"]
 RATE = 0.5
 

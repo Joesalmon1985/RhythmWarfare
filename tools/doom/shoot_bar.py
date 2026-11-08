@@ -5,7 +5,7 @@
 
 Every frame is a real run scene shot (HUD and pads on, RW_STORY_CAM stands the camera): the reference viewpoint beside the painting, the stay loop's three reveal holds and the
 rail camera at song times, and each of the three route walks (up to the booth, left to the Floor, right to the Chill-out) in four frames from tools/doom/walk_poses.gd's poses.
-The frames go to a temporary folder; only the sheet is written to out_dir.
+The frames go to a temporary folder; only the sheet is written to out_dir (RW_KEEP=<dir> also keeps every frame there as a jpg, for tools/doom/frame_check.py).
 """
 import os
 import re
@@ -38,6 +38,10 @@ def shoot(tmp, name, asp, cam, secs):
     if bad:
         print("  errors in", name, asp, bad[:3])
     f = os.path.join(tmp, name + ".png")
+    keep = os.environ.get("RW_KEEP", "")
+    if keep and os.path.exists(f):  # RW_KEEP=<dir>: keep each frame as <name>.jpg for tools/doom/frame_check.py
+        os.makedirs(keep, exist_ok=True)
+        Image.open(f).convert("RGB").save(os.path.join(keep, name + ".jpg"), quality=92)
     return f if os.path.exists(f) else None
 
 

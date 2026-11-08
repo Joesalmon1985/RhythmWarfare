@@ -1,11 +1,11 @@
 MOVE wh_plinths via=3 length=23.1
-WALK stay 0 t=1.84 @-16.605:13.514:-10.6:0.0:1.588 sector=10_28 ground=0.000 above=1.59 still=0.00
-WALK stay 1 t=3.68 @-18.004:2.523:17.1:0.0:1.588 sector=10_26 ground=0.000 above=1.59 still=0.00
-WALK stay 2 t=5.52 @-20.000:-3.125:-98.9:0.0:1.600 sector=10_26 ground=0.000 above=1.60 still=0.00
+WALK stay 0 t=1.84 @-16.605:13.514:-10.6:0.0:1.588 sector=10_0 ground=0.000 above=1.59 still=0.00
+WALK stay 1 t=3.68 @-18.004:2.523:17.1:0.0:1.588 sector=10_2 ground=0.000 above=1.59 still=0.00
+WALK stay 2 t=5.52 @-20.000:-3.125:-98.9:0.0:1.600 sector=10_4 ground=0.000 above=1.60 still=0.00
 HOLD wh_plinths 2.0 moved=0.0028 turned=0.000
-MOVE wh_platform via=4 length=32.0
-WALK stay 3 t=10.11 @-15.905:2.184:-82.8:0.0:2.566 sector=9_6 ground=0.978 above=1.63 still=0.00
-WALK stay 4 t=11.95 @-0.942:2.600:-117.6:0.0:2.588 sector=9_4 ground=1.000 above=1.59 still=0.00
+MOVE wh_platform via=4 length=32.1
+WALK stay 3 t=10.11 @-15.974:2.327:-78.4:0.0:2.521 sector=9_6 ground=0.933 above=1.64 still=0.00
+WALK stay 4 t=11.95 @-0.971:2.585:-117.6:0.0:2.588 sector=9_4 ground=1.000 above=1.59 still=0.00
 WALK stay 5 t=13.79 @2.063:-0.688:120.1:0.0:3.600 sector=4_0 ground=2.000 above=1.60 still=0.00
 HOLD wh_platform 2.0 moved=0.0028 turned=0.000
 MOVE wh_fence via=1 length=16.1
@@ -13,8 +13,8 @@ WALK stay 6 t=17.93 @2.089:3.484:174.2:0.0:2.628 sector=9_3 ground=1.051 above=1
 WALK stay 7 t=19.31 @-0.163:10.861:161.3:0.0:2.577 sector=9_2 ground=1.000 above=1.58 still=0.00
 WALK stay 8 t=20.69 @-1.500:14.813:266.7:0.0:2.600 sector=9_19 ground=1.000 above=1.60 still=0.00
 HOLD wh_fence 2.0 moved=0.0028 turned=0.000
-MOVE wh_ref via=3 length=21.1
-WALK stay 9 t=25.29 @-6.970:14.813:90.0:0.0:2.588 sector=9_19 ground=1.000 above=1.59 still=0.00
-WALK stay 10 t=27.13 @-14.679:17.456:89.3:0.0:1.588 sector=10_2 ground=0.000 above=1.59 still=0.00
-WALK stay 11 t=28.97 @-19.375:18.750:314.5:0.0:1.600 sector=10_3 ground=0.000 above=1.60 still=0.00
+MOVE wh_ref via=3 length=21.7
+WALK stay 9 t=25.29 @-7.114:14.813:90.0:0.0:2.588 sector=9_19 ground=1.000 above=1.59 still=0.00
+WALK stay 10 t=27.13 @-15.081:17.217:445.8:0.0:1.588 sector=10_9 ground=0.000 above=1.59 still=0.00
+WALK stay 11 t=28.97 @-19.375:18.750:314.5:0.0:2.100 sector=20_0 ground=0.500 above=1.60 still=0.00
 HOLD wh_ref 8.0 moved=0.0028 turned=0.000
