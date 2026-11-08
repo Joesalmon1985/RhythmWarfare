@@ -413,6 +413,47 @@ def continue_down(c, fig, ox, oy, s, spec):
         c.paint(m, spec.get("shoes", "#2a1a14"))
 
 
+def parapet_down(c, ox, oy, h, s, spec):
+    """Round 2: what the painting hides under the stage guide's cut is not invented legs but the stage's balustrade. Under the cut (painting row `cut`, where her coat meets
+    the walkway's deck edge) the deck-edge girder of the painting (rows `band_y`, columns `span`) is the top of a riveted kick panel that runs down to the floor; the panel below it
+    is the girder's own pixels mirror-tiled downward and darkening toward the floor. Pure pixels of the painting."""
+    im = np.array(Image.open(os.path.join(REF, spec["src"])).convert("RGB"))
+    x0, x1 = spec["span"]
+    y0, y1 = spec["band_y"]
+    band = im[y0:y1, x0:x1]
+    nw = max(2, int(round((x1 - x0) * s)))
+    nh = max(2, int(round((y1 - y0) * s)))
+    band = np.array(Image.fromarray(band).resize((nw, nh), Image.NEAREST))
+    X0 = ox + int(round((x0 - spec["_x0"]) * s))
+    top = oy + h
+    flat = band.reshape(-1, 3).astype(float)
+    lum = flat.sum(axis=1)
+    pal = [flat[(lum >= np.quantile(lum, q0)) & (lum <= np.quantile(lum, q1))].mean(axis=0) for q0, q1 in ((0.0, 0.2), (0.2, 0.45), (0.45, 0.7), (0.7, 0.9))]  # the girder's own steel
+    rng = np.random.default_rng(7)
+    for y in range(top, FEET + 1):
+        k = y - top
+        for x in range(nw):
+            X = X0 + x
+            if not (0 <= X < W and 0 <= y < H):
+                continue
+            if k < nh:
+                px = band[k, x].astype(float)
+            else:  # the kick panel under the deck edge: the girder's steel, lit from above, a seam every 26 px, rivets along the seams, darkening to the floor
+                t = (k - nh) / float(max(1, FEET - top - nh))
+                v = 0.62 - 0.45 * t + (rng.random() - 0.5) * 0.18 + (BAYER[y % 4, X % 4] - 0.5) * 0.25
+                seam = x % 26
+                if seam == 0:
+                    v = 0.0
+                elif seam == 1:
+                    v += 0.25
+                elif seam in (3, 23) and (k - nh) % 8 == 4:
+                    v = 0.95
+                px = pal[int(np.clip(v, 0, 0.999) * len(pal))]
+            c.rgb[y, X] = px.astype(np.uint8)
+            c.alpha[y, X] = True
+    c.rgb[FEET - 2:FEET + 1, X0:X0 + nw] = hexc("#0b0d1c")
+
+
 def rim(rgb, alpha, strength, col=WARM_RIM, side=(-1, -1)):
     """A lamp-lit rim: the figure's pixels whose upper-left neighbours are empty, pulled toward the lamp colour; dithered so it reads as light, not a line."""
     a = alpha
@@ -469,6 +510,9 @@ def crop_guide(spec):
             if 0 <= X < W and row[x, 3]:
                 base.rgb[Y, X] = row[x, :3]
                 base.alpha[Y, X] = True
+    if spec.get("parapet"):
+        pp = dict(spec["parapet"], src=spec["src"], _x0=int(min(p[0] for p in spec["poly"])) - 1)
+        parapet_down(base, ox, oy, h, s, pp)
     if spec.get("legs"):
         lg = dict(spec["legs"])
         lg["_x0"] = int(min(p[0] for p in spec["poly"])) - 1
@@ -528,11 +572,12 @@ CROPS = {  # painting polygons (pixels of the painting), read by eye over a grid
                       (60, 565), (35, 540), (25, 500), (28, 440), (40, 395), (60, 365), (95, 340), (130, 325), (150, 310), (125, 270), (128, 230)],
                 hand=(330, 455, 412, 525, 320, 412),
                 legs=dict(src_span=(200, 290), hip_span=(160, 290), shoes="#3a2416", stance=9, ankle=6)),
-    "stage": dict(src=MID, top=25, chin=127, cut=293, centre_x=812,
+    "stage": dict(src=MID, top=25, chin=127, cut=432, centre_x=812,  # round 2: cut at the walkway's deck edge with her railing in front (the painting's own pixels down to there)
                   poly=[(757, 45), (773, 31), (830, 24), (863, 40), (874, 70), (863, 100), (863, 120), (897, 183), (930, 190), (967, 187), (980, 170), (1007, 151), (1048, 173),
-                        (1030, 185), (997, 198), (973, 208), (950, 218), (943, 233), (950, 293), (686, 293), (686, 273), (692, 220), (706, 162), (730, 137), (740, 105), (737, 80)],
+                        (1030, 185), (997, 198), (973, 208), (950, 218), (943, 233), (950, 293), (905, 298), (888, 330), (888, 432), (668, 432), (668, 300), (686, 273),
+                        (692, 220), (706, 162), (730, 137), (740, 105), (737, 80)],
                   hand=(965, 145, 1050, 212, 940, 1050),
-                  legs=dict(src_span=[(708, 770, 200, 240), (800, 850, 281, 292), (708, 770, 200, 240)], hip_span=(712, 925), leg_span=(815, 845), leg_y=(281, 292), coat_to=0.5, shoes="#15121c", stance=8, ankle=5)),
+                  parapet=dict(span=(668, 888), band_y=(432, 466))),
     "lounge": dict(src=MID, top=218, chin=335, cut=697, centre_x=1490, door_left=False,
                    poly=[(1430, 225), (1480, 218), (1525, 238), (1545, 280), (1540, 315), (1580, 345), (1615, 372), (1640, 420), (1665, 500), (1668, 580), (1658, 640), (1662, 665),
                          (1612, 672), (1582, 682), (1582, 697), (1405, 697), (1400, 620), (1385, 580), (1380, 520), (1350, 497), (1305, 487), (1298, 472), (1340, 455), (1370, 463),

@@ -161,13 +161,20 @@ def draw_guide(who, state, i):
 
 
 BAR_PAINTING = "doom_worlds/Copper Basement Bar, Three Hidden Routes-3.png"
-CROPS = {  # stage D polish (ruling 36): guides the paintings show 180 px tall or more are cut from them (tools/doom/art/make_guides.py crop_guide)
+CROPS = {  # stage D polish (ruling 36): guides the paintings show 180 px tall or more are cut from them (round 2: the Booth guide too) (tools/doom/art/make_guides.py crop_guide)
     # the Floor guide stands full length in this painting (420 px, crown to feet): her own picture, leaning on nothing (the post she leans on is left out)
     "floor": dict(src=BAR_PAINTING, top=238, chin=0, cut=660, centre_x=200, door_left=True,
                   poly=[(169, 239), (136, 270), (115, 320), (107, 387), (111, 437), (107, 462), (140, 470), (169, 470), (177, 537), (182, 603), (177, 655), (223, 659), (244, 645),
                         (257, 603), (265, 537), (244, 470), (227, 412), (223, 382), (236, 345), (265, 345), (298, 341), (313, 330), (302, 316), (282, 324), (240, 320), (215, 307),
                         (207, 287), (202, 257), (190, 239)],
                   hand=(278, 310, 316, 346, 255, 316)),
+    # round 2: the Booth guide is cut from this painting too (her head is 80 px in it; crown to the desk 200 px): her picture behind the booth desk with its mixer, cut at the
+    # desk's front edge; under it the desk front runs down to the floor (make_guides.parapet_down: the painting's own wood), as the painting's booth window frames her
+    "booth": dict(src=BAR_PAINTING, top=219, chin=262, cut=320, centre_x=995,
+                  poly=[(980, 224), (995, 218), (1012, 223), (1021, 240), (1019, 256), (1028, 268), (1042, 278), (1050, 298), (1060, 303), (1060, 320), (920, 320), (920, 302),
+                        (950, 299), (955, 292), (940, 291), (921, 289), (918, 280), (935, 275), (952, 281), (960, 276), (975, 268), (972, 256), (971, 238)],
+                  hand=(916, 270, 962, 296, 962, 916),
+                  parapet=dict(span=(920, 1060), band_y=(320, 331))),
     # the Chill-out guide (mustard cardigan, glasses, cushion) is the same man as the Warehouse's lounge guide: the same crop (Midnight dance hall painting, 480 px), turning right
     "chill": dict(mg.CROPS["lounge"], door_left=False),
 }

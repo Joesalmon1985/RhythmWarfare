@@ -8,7 +8,7 @@ const MAP_ID := "doom_warehouse"
 const ASPECTS := {"16:9": Vector2(1280.0, 460.0), "20:9": Vector2(1600.0, 460.0)}
 const HUD_BOXES := [Rect2(0, 0, 345, 100)]
 const GUIDES := ["wh_guide_stage", "wh_guide_bar", "wh_guide_lounge"]
-const HOLD_PLACES := ["wh_ref", "wh_fence", "wh_plinths", "wh_platform"]
+const HOLD_PLACES := ["wh_ref", "wh_gate_view", "wh_bar_side", "wh_fence", "wh_plinths", "wh_platform"]
 const CHOICE_REF_HOLD := 8.0
 const MIN_GUIDE_PX := 60.0  # the farthest guide (the stage's) must still be this tall in the 460 px stage strip
 
@@ -194,6 +194,7 @@ func test_the_overlay_is_one_geography_graph_per_the_brief_table() -> void:
 
 const DOOM_NODES := ["doom_warehouse"]  # the Warehouse world: one geography scene (its map); the other worlds are tested below
 const REVEAL_HOLD := 2.0
+const NEAR_REVEAL_HOLD := 1.5  # round 2 (Warehouse, Bar, Lounge): the near reveals hold 1.5 bars, so the rail steps on at the next decision
 
 
 func _doom_run() -> RunData:
@@ -225,17 +226,84 @@ func test_the_rail_data_validates_and_every_route_is_a_via_polyline_with_holds()
 			assert_true(typeof(routes[k].get("via")) == TYPE_ARRAY and not (routes[k]["via"] as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0 or k == "stumble", "%s: route %s holds at its end" % [id, k])
 		for p in rail["good"]:
-			assert_true(float(p.get("hold_bars", 0.0)) >= REVEAL_HOLD, "%s: good place %s holds at least %d bars" % [id, p["to"], int(REVEAL_HOLD)])
-	var good: Array = on.nodes["doom_warehouse"]["rail"]["good"]
-	assert_eq(good.size(), 4, "the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "wh_ref", "the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)), "wh_ref is a choice viewpoint")
-	assert_eq(float(good[3]["hold_bars"]), 8.0, "wh_ref holds 8 bars")
-	assert_true(float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "the choice viewpoint holds at least the whole choice window")
+			assert_true(float(p.get("hold_bars", 0.0)) >= NEAR_REVEAL_HOLD, "%s: good place %s holds at least %.1f bars" % [id, p["to"], NEAR_REVEAL_HOLD])
+	_assert_near_reveal_rail(on.nodes["doom_warehouse"]["rail"]["good"], "wh_ref")
 	assert_true(on.nodes["doom_warehouse"]["rail"]["routes"]["up"]["via"].size() >= 3, "ahead is a polyline of several legs")
+
+
+## The run driven the way RunPlay drives it (tests/test_choice_pitch.gd's drive): a perfect player, nothing tapped. Returns the journey (its log) and the actions.
+func _drive_first_phases(d: RunData, start: String, until_phase: int) -> Dictionary:
+	var e := RunEngine.new(d)
+	e.hotspots = RunHotspots.new(d, {}, {})
+	e.begin(start)
+	var j := RunJourney.new(d)
+	j.look_heralds = false
+	var actions: Array = []
+	var pressed := {}
+	var t := 0.0
+	while e.phase_n < until_phase and not e.over and t < 900.0:
+		for ev in e.update(t):
+			actions.append_array(j.on_event(ev, e))
+		for i in e.level.notes.size():
+			var n: Dictionary = e.level.notes[i]
+			if not pressed.has(i) and float(n["time"]) <= t:
+				pressed[i] = true
+				e.press(int(n["pad"]), float(n["time"]))
+				if n["type"] == "hold":
+					e.release(int(n["pad"]), float(n["end_time"]))
+		t += 1.0 / 60.0
+	return {"journey": j, "actions": actions}
+
+
+## Round 2 (9 November): the FIRST phase's choice window finds the camera still at the choice viewpoint (ruling 35), not on a reveal of the stay rail; a scene is usually left
+## after one phase, so otherwise the reference composition (and an authored pitch) is never what the player chooses from. Checked for every phase played (three).
+func _assert_every_window_at_the_choice_viewpoint(id: String, ref: String) -> void:
+	var r := _drive_first_phases(_doom_run(), id, 4)
+	var j: RunJourney = r["journey"]
+	var seen := 0
+	for l in j.log:
+		if int(l["block"]) == 2:
+			seen += 1
+			assert_eq(str(l["place"]), ref, "%s phase %d: the window finds the camera at %s (%s)" % [id, int(l["phase"]), ref, str(l["kind"])])
+	assert_eq(seen, 3, "%s: three phases' block-2 decisions seen" % id)
+	var holds := (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_hold" and str((a["args"] as Dictionary).get("hold", "")) == "window")
+	assert_eq(holds.size(), 3, "%s: a still window hold in each of the three phases" % id)
+
+
+func test_the_warehouse_first_window_finds_the_camera_at_the_reference_viewpoint() -> void:
+	_assert_every_window_at_the_choice_viewpoint("doom_warehouse", "wh_ref")
+
+
+## The round 2 stay rail (Warehouse, Bar, Lounge): a near reveal (2 bars out), the choice viewpoint (3 bars back, 8 still), the other near reveal, the choice viewpoint.
+func _assert_near_reveal_rail(good: Array, ref: String) -> void:
+	assert_eq(good.size(), 4, "%s: the stay rail has four places (reveal, %s, reveal, %s)" % [ref, ref, ref])
+	if good.size() != 4:
+		return
+	for i in [0, 2]:
+		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+		assert_true(float(good[i]["bars"]) <= 2.0 and float(good[i]["hold_bars"]) <= 2.0, "reveal %s: out in 2 bars, still at most 2, so the rail steps back at the next decision" % good[i]["to"])
+	for i in [1, 3]:
+		assert_eq(str(good[i]["to"]), ref, "place %d is the reference viewpoint" % i)
+		assert_true(bool(good[i].get("choice", false)) and float(good[i]["hold_bars"]) == 8.0, "%s is a choice viewpoint that holds 8 bars" % ref)
+		assert_true(float(good[i]["bars"]) <= 3.0, "the walk back to %s lands by beat 40.5 (3 bars from the decision at 28.5)" % ref)
+
+
+func test_each_warehouse_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _map()
+	if m == null:
+		fail("map did not load")
+		return
+	var cam: Vector2 = m.waypoint("wh_ref")["at"]
+	for g in GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a step or the railing's portal: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "%s: the sightline from wh_ref stays clear of solid walls" % g)
 
 
 func test_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:
@@ -264,7 +332,7 @@ func test_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:
 				assert_false(m.is_void(sid), "%s: %s is not in a void" % [id, wid])
 				assert_true(reach.has(sid), "%s: %s stands in a piece a walker reaches" % [id, wid])
 				assert_true(float(m.sector(sid)["ceiling"]) - float(m.sector(sid)["floor"]) >= m.eye_height + 0.1, "%s: %s has room for the eye" % [id, wid])
-	assert_true(seen > 25, "the loop looked at %d waypoint uses" % seen)
+	assert_true(seen > 20, "the loop looked at %d waypoint uses" % seen)  # (round 2: the stay rail is two near reveals now)
 
 
 func test_check_rail_paths_reports_no_problem_for_the_warehouse() -> void:
@@ -662,17 +730,33 @@ func test_the_bar_rail_data_validates_and_every_route_is_a_via_polyline_with_hol
 			assert_true(typeof(routes[k].get("via")) == TYPE_ARRAY and not (routes[k]["via"] as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0 or k == "stumble", "%s: route %s holds at its end" % [id, k])
 		for p in rail["good"]:
-			assert_true(float(p.get("hold_bars", 0.0)) >= REVEAL_HOLD, "%s: good place %s holds at least %d bars" % [id, p["to"], int(REVEAL_HOLD)])
-	var good: Array = on.nodes["doom_bar"]["rail"]["good"]
-	assert_eq(good.size(), 4, "the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "wb_ref", "the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) == 8.0, "wb_ref is a choice viewpoint that holds 8 bars")
+			assert_true(float(p.get("hold_bars", 0.0)) >= NEAR_REVEAL_HOLD, "%s: good place %s holds at least %.1f bars" % [id, p["to"], NEAR_REVEAL_HOLD])
+	_assert_near_reveal_rail(on.nodes["doom_bar"]["rail"]["good"], "wb_ref")
 	var exits: Dictionary = on.nodes["doom_bar"]["rail"]["exits"]
 	for k in ["up", "left", "right"]:
 		assert_true(BAR_THRESHOLDS.has(str(exits[k])), "exit %s is a threshold" % k)
+
+
+func test_the_bar_first_window_finds_the_camera_at_the_reference_viewpoint() -> void:
+	_assert_every_window_at_the_choice_viewpoint("doom_bar", "wb_ref")
+
+
+func test_each_bar_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _bar()
+	if m == null:
+		fail("map did not load")
+		return
+	var cam: Vector2 = m.waypoint("wb_ref")["at"]
+	for g in BAR_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a step, a railing over the channel: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "%s: the sightline from wb_ref stays clear of solid walls" % g)
 
 
 func test_every_bar_waypoint_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
@@ -726,7 +810,7 @@ func test_the_bar_has_its_railing_visibility_and_step_keys_set() -> void:
 		var a: Dictionary = sec[str(w["sector"])]
 		var b: Dictionary = sec[str(w["portal"])]
 		assert_true(absf(float(a["floor"]) - float(b["floor"])) > 0.5, "a railing stands where there is a drop")
-		assert_true(minf(float(a["floor"]), float(b["floor"])) <= -0.9, "a railing is along the channel")
+		assert_true(minf(float(a["floor"]), float(b["floor"])) <= -0.55, "a railing is along the channel")  # (round 2: the water raised to -0.6 m so it shows from wb_ref)
 	assert_true(rails >= 6, "the channel's banks carry railings (%d)" % rails)
 	var m := _bar()
 	var steps := 0
@@ -757,6 +841,8 @@ const LGUIDES := ["lg_guide_dock", "lg_guide_bar", "lg_guide_floor"]
 const LTHRESHOLDS := ["lg_ahead_door", "lg_bar_door", "lg_floor_door"]
 const LHOLD_PLACES := ["lg_ref", "lg_west", "lg_north", "lg_east"]
 const LOUNGE_NODES := ["doom_lounge"]
+const LREF_PITCH := -12.0  # round 2: lg_ref's steady pitch through the window (tools/run/make_doom_lounge.py REF_PITCH)
+const LMIN_GUIDE_PX := 80.0  # round 2: the lounge's guides were 66 to 86 px (the smallest in any scene); brought forward, each must read at 80
 
 
 func _lmap() -> StoryMap:
@@ -908,16 +994,57 @@ func test_lounge_rail_data_validates_and_every_route_is_a_via_polyline_with_hold
 			assert_true(typeof(routes[k].get("via")) == TYPE_ARRAY and not (routes[k]["via"] as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0 or k == "stumble", "%s: route %s holds at its end" % [id, k])
 		for p in rail["good"]:
-			assert_true(float(p.get("hold_bars", 0.0)) >= REVEAL_HOLD, "%s: good place %s holds at least %d bars" % [id, p["to"], int(REVEAL_HOLD)])
+			assert_true(float(p.get("hold_bars", 0.0)) >= NEAR_REVEAL_HOLD, "%s: good place %s holds at least %.1f bars" % [id, p["to"], NEAR_REVEAL_HOLD])
 	var good: Array = on.nodes["doom_lounge"]["rail"]["good"]
-	assert_eq(good.size(), 4, "the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "lg_ref", "the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) == 8.0, "lg_ref is a choice viewpoint holding 8 bars")
-	assert_true(float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "the choice viewpoint holds at least the whole choice window")
+	_assert_near_reveal_rail(good, "lg_ref")
+	for i in [1, 3]:
+		assert_eq(float(good[i].get("pitch", 0.0)), LREF_PITCH, "lg_ref holds a steady %d degree pitch into the pit" % int(LREF_PITCH))
 	assert_true(on.nodes["doom_lounge"]["rail"]["routes"]["up"]["via"].size() >= 4, "ahead is a polyline of several legs")
+
+
+func test_lounge_first_window_finds_the_camera_at_the_reference_viewpoint_with_its_pitch() -> void:
+	_assert_every_window_at_the_choice_viewpoint("doom_lounge", "lg_ref")
+	var r := _drive_first_phases(_doom_run(), "doom_lounge", 2)
+	var holds := (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_hold" and str((a["args"] as Dictionary).get("hold", "")) == "window")
+	assert_eq(holds.size(), 1, "the first phase holds its window")
+	if holds.size() == 1:
+		assert_eq(float((holds[0]["args"] as Dictionary).get("pitch", 0.0)), LREF_PITCH, "the first window's hold carries lg_ref's pitch")
+
+
+func test_lounge_guides_read_at_the_pitched_reference_pose() -> void:
+	var m := _lmap()
+	if m == null:
+		fail("map did not load")
+		return
+	var pose := _lpose_at(m, "lg_ref")
+	pose["pitch"] = LREF_PITCH  # the pose the choice window holds (RunJourney: player_hold with the viewpoint's pitch)
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in LGUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "pitched %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "pitched %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= LMIN_GUIDE_PX, "pitched %s %s: at least %d px tall (%.0f)" % [asp, g, int(LMIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "pitched %s %s: clear of the HUD's corner" % [asp, g])
+			print("  lounge pitched %s %-14s rect %s" % [asp, g, str(r)])
+		for i in LGUIDES.size():
+			for j in range(i + 1, LGUIDES.size()):
+				var a: Rect2 = rects[LGUIDES[i]]
+				var b: Rect2 = rects[LGUIDES[j]]
+				assert_false(a.intersects(b), "pitched %s: %s and %s do not overlap" % [asp, LGUIDES[i], LGUIDES[j]])
+				var gap := maxf(b.position.x - a.end.x, a.position.x - b.end.x)
+				assert_true(gap >= 60.0, "pitched %s: %s and %s stand at least 60 px apart (%.0f)" % [asp, LGUIDES[i], LGUIDES[j], gap])
+	# the pit is in the picture above the pads: the table (its lamp's foot) projects into the stage strip
+	var tbl: Dictionary = _thing(m, "lg_lamp_table")
+	var at: Vector2 = tbl["at"]
+	var fl := float(m.sector(str(tbl["sector"]))["floor"])
+	for asp in ASPECTS:
+		var p := StoryProjector.project(Vector3(at.x, fl, at.y), pose, ASPECTS[asp])
+		assert_true((p["screen"] as Vector2).y < float((ASPECTS[asp] as Vector2).y) - 20.0, "pitched %s: the table stands above the pad strip (y %.0f)" % [asp, (p["screen"] as Vector2).y])
 
 
 func test_lounge_every_via_waypoint_exists_and_stands_in_a_walkable_piece() -> void:

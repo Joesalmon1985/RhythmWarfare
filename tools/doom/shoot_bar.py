@@ -27,10 +27,15 @@ RES = {"16x9": "1280x720", "20x9": "1600x720"}
 RATE = 0.5
 
 
-def shoot(tmp, name, asp, cam, secs):
-    """One shot; returns the PNG path or None."""
-    steps = "%d:shot:%s" % (int((secs + 2.0) / RATE) + 2, name)
-    env = {"XDG_DATA_HOME": tmp + "/data", "RW_DOOM_WORLDS": "1", "RW_RUN_VIRTUAL": "1", "RW_STORY_RATE": str(RATE), "RW_RUN_START": SCENE, "RW_RUN_BOT": "perfect"}
+def shoot(tmp, name, asp, cam, secs, select=None):
+    """One shot; returns the PNG path or None. `select` (round 2, the guide-state captures): a hotspot id tapped at beat 50 (RW_RUN_SELECT) on the rail camera; `secs` is then
+    the phase beat to shoot at, on a finer frame step."""
+    rate = RATE if select is None else 0.125
+    t = secs if select is None else secs * 60.0 / 174.0
+    steps = "%d:shot:%s" % (int(round((t + 2.0) / rate)) + 2, name)
+    env = {"XDG_DATA_HOME": tmp + "/data", "RW_DOOM_WORLDS": "1", "RW_RUN_VIRTUAL": "1", "RW_STORY_RATE": str(rate), "RW_RUN_START": SCENE, "RW_RUN_BOT": "perfect"}
+    if select:
+        env["RW_RUN_SELECT"] = select + "@50"
     if cam != "-":
         env["RW_STORY_CAM"] = cam
     text = ss.godot(["--path", ROOT, "--resolution", RES[asp], "-s", "tools/shoot.gd", "--", "res://src/run/run_play.tscn", tmp, steps], env, timeout=300)
@@ -71,6 +76,11 @@ def main(out):
         for asp in ("16x9", "20x9"):
             rows.append([(asp, "hold_" + n, c, 3, "stay hold %s %s" % (n, asp.replace("x", ":"))) for n, c in holds] + [(asp, "stumble", "wb_ref_back", 3, "stumble %s" % asp.replace("x", ":"))])
         rows.append([("16x9", "rail_%d" % k, "-", t, "rail camera t=%ds 16:9" % t) for k, t in enumerate((14, 28, 42, 56))])
+        # the guide-state captures (round 2): each guide tapped at beat 50 of the first window, shot on the hold (beat 50.4, selected) and early in the walk off (beat 52, committed)
+        rows.append([("16x9", "state_%s_%s" % (who, st), ("sel", "doom_bar.exit_" + hid), b, "%s %s 16:9" % (who, st)) for who, hid in (("booth", "booth"), ("floor", "floor"))
+                     for st, b in (("selected", 50.4), ("committed", 52))])
+        rows.append([("16x9", "state_%s_%s" % (who, st), ("sel", "doom_bar.exit_" + hid), b, "%s %s 16:9" % (who, st)) for who, hid in (("chill", "chill"),)
+                     for st, b in (("selected", 50.4), ("committed", 52))])
         for route, label in (("ahead", "up to the booth"), ("left", "left to the Floor"), ("right", "right to the Chill-out")):
             ps = poses(route)
             pick = [ps[i] for i in (2, 5, 8, 11)] if len(ps) >= 12 else ps
@@ -82,7 +92,7 @@ def main(out):
                     cells[(r, c)] = (painting, "the painting")
                     continue
                 asp, name, cam, secs, label = cell
-                f = shoot(tmp_u, name + "_" + asp, asp, cam, secs)
+                f = shoot(tmp_u, name + "_" + asp, asp, "-", secs, cam[1]) if isinstance(cam, tuple) else shoot(tmp_u, name + "_" + asp, asp, cam, secs)
                 if f:
                     cells[(r, c)] = (Image.open(f).convert("RGB"), label)
                     print("shot", name, asp)

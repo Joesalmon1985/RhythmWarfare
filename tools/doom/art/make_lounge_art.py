@@ -68,7 +68,7 @@ CREAM = ["#5a4a3a", "#8a7658", "#b8a07a", "#d8c8a0", "#f0e6c4"]
 COPPER = ["#3a1a0a", "#74371a", "#b0612c", "#dc8c42", "#ffc070"]
 WOOD = ["#1a0f0a", "#33201a", "#54362a", "#7a5036", "#a47448"]
 BLUE = ["#0a1030", "#142266", "#2438b0", "#3c64ff", "#80a8ff"]
-STREET = ["#0c1018", "#1a2230", "#2e3a4c", "#4a5a70", "#7a8ca8"]
+STREET = ["#141a24", "#26303e", "#3c4a5e", "#5e7088", "#90a4c0"]  # round 2: a step lighter (the rain street read as one dark grey)
 
 
 def blocks(seed, bw=64, bh=32, cols=BROWN, mortar=0.18):
@@ -179,18 +179,21 @@ def street(seed, wall=False):
 
 
 def blue_deck(seed, wall=False):
-    if wall:  # stage D: deep cobalt glass (the painting's passage is dark glass lit by streaks and an LED strip, not a bright tiled box)
-        f = 0.22 + noise(12, seed) * 0.16
-        glass = (XX % 64 > 3) & (YY % 96 > 3)
-        streak = (np.abs(((XX + YY // 6) % 64) - 40) < 3) & glass
-        f = np.where(glass, f + 0.08 + 0.14 * (1 - (YY % 96) / 96.0), 0.04)
-        f = np.where(streak, f + 0.35, f)
-        f = np.where((YY % 96 > 88) & (YY % 96 < 92), 0.95, f)  # the LED strip along each mullion's foot
-        return quant(f, BLUE)
-    f = 0.18 + noise(24, seed) * 0.18
-    f = np.where((XX % 64 < 2) | (YY % 64 < 2), 0.06, f)
-    f = np.where((YY % 64 > 30) & (YY % 64 < 34), 0.85, f)  # a strip of floor light
-    return quant(f, BLUE)
+    deep = ["#03040c", "#060a1e", "#0c1640", "#16287a", "#2a4cd0", "#7aa0ff"]
+    if wall:  # round 2: DARK cobalt glass (the lead: the stage-D tile still read as a bright striped box): near-black panes, one thin diagonal streak, the LED strip at the foot
+        f = 0.40 + noise(12, seed) * 0.14
+        glass = (XX % 64 > 2) & (YY % 128 > 2)
+        streak = (np.abs(((XX + YY // 5) % 128) - 70) < 2) & glass
+        f = np.where(glass, f + 0.10 * (1 - (YY % 128) / 128.0), 0.02)
+        f = np.where(streak, f + 0.40, f)
+        f = np.where((YY % 128 > 122) & (YY % 128 < 125), 0.92, f)  # the LED strip along the foot
+        lights = (noise(32, seed + 5) > 0.72) & (XX % 6 < 3) & (YY % 8 < 3) & glass  # the city's lit windows beyond the glass, as the painting's passage shows
+        f = np.where(lights, 0.9, f)
+        return quant(f, deep)
+    f = 0.30 + noise(24, seed) * 0.16  # round 2: a dark wet deck, the LED strip's reflection a thin line
+    f = np.where((XX % 64 < 2) | (YY % 64 < 2), 0.04, f)
+    f = np.where((YY % 128 > 62) & (YY % 128 < 64), 0.8, f)
+    return quant(f, deep)
 
 
 def marble_wall(seed):
@@ -416,6 +419,68 @@ def beads():
     return img, None
 
 
+def coffer_panel():
+    """Round 2: the painting's warm coffered panelling (it replaces the gold studded panels, which read as gold cubes): a dark timber frame, two columns of four sunk coffers,
+    each with a lit upper-left bevel, a shadowed lower-right one and a gold bead round its field; 96 x 192, lit from above."""
+    w, h = 96, 192
+    yy, xx = np.mgrid[0:h, 0:w]
+    v = 0.42 + (np.random.default_rng(41).random((h, w)) - 0.5) * 0.08 - 0.15 * (yy / h)
+    cols = ["#140a06", "#2a160c", "#462614", "#6a3c1e", "#90562a", "#c08040", "#f0c060"]
+    for cx in (8, 50):
+        for cy in range(8, h - 8, 46):
+            lx, ly = xx - cx, yy - cy
+            box = (lx >= 0) & (lx < 38) & (ly >= 0) & (ly < 40)
+            bev = np.minimum(np.minimum(lx, ly), np.minimum(37 - lx, 39 - ly))
+            v = np.where(box & (bev < 5) & ((lx < 5) | (ly < 5)) & (lx < 38 - ly * 0.95), 0.66, v)
+            v = np.where(box & (bev < 5) & ((lx >= 33) | (ly >= 35)) & ~((lx < 5) | (ly < 5)), 0.18, v)
+            field = box & (bev >= 5)
+            v = np.where(field, 0.3 + 0.12 * (1 - ly / 40.0), v)
+            v = np.where(box & (bev == 5), 0.9, v)  # the gold bead
+    f = np.clip(v, 0, 1) * (len(cols) - 1) + (BAYER[yy % 4, xx % 4] - 0.5) * 0.55
+    ramp = np.array([hexc(c) for c in cols], np.uint8)
+    img = ramp[np.clip(np.round(f).astype(int), 0, len(cols) - 1)]
+    return img, np.ones((h, w), bool)
+
+
+def coffer_frieze():
+    """Round 2: the frieze of coffers under the vault, over each face of the octagon (the painting's warm panelling above the arches): 640 x 128, five coffers between
+    two gold-edged beams."""
+    one, _ = coffer_panel()
+    tile = one[8:54, 8:88]  # a row of two coffers from the panel
+    w, h = 640, 128
+    img = np.zeros((h, w, 3), np.uint8)
+    row = np.concatenate([tile] * (w // tile.shape[1] + 1), axis=1)[:, :w]
+    big = np.array(Image.fromarray(row).resize((w, 92), Image.NEAREST))
+    img[18:110] = big
+    yy, xx = np.mgrid[0:h, 0:w]
+    beam = (yy < 18) | (yy >= 110)
+    bv = 0.5 + 0.3 * (1 - np.abs((yy % 110) - 9) / 9.0)
+    ramp = np.array([hexc(c) for c in ["#1a0e08", "#33200f", "#543418", "#7a4e24", "#a06a34"]], np.uint8)
+    bi = ramp[np.clip(np.round(np.clip(bv, 0, 1) * 4 + (BAYER[yy % 4, xx % 4] - 0.5) * 0.6).astype(int), 0, 4)]
+    img[beam] = bi[beam]
+    img[(yy == 17) | (yy == 110)] = hexc("#e0b04a")
+    return img, np.ones((h, w), bool)
+
+
+def pilaster():
+    """Round 2: a carved stone pilaster with a brass capital and base (the painting's columns between the arches): 64 x 448, a flat decal on each corner of the octagon."""
+    w, h = 64, 448
+    yy, xx = np.mgrid[0:h, 0:w]
+    v = 0.45 + 0.25 * np.cos((xx - 22) / 64.0 * np.pi) + (np.random.default_rng(43).random((h, w)) - 0.5) * 0.1
+    v = np.where((xx % 16) < 2, v - 0.25, v)  # flutes
+    cols = ["#140e0a", "#2a2018", "#463626", "#62503a", "#82684c", "#a88a66"]
+    ramp = np.array([hexc(c) for c in cols], np.uint8)
+    img = ramp[np.clip(np.round(np.clip(v, 0, 1) * 5 + (BAYER[yy % 4, xx % 4] - 0.5) * 0.6).astype(int), 0, 5)]
+    brass = ["#3a2406", "#7a5416", "#c89030", "#f0c850", "#fff0a0"]
+    br = np.array([hexc(c) for c in brass], np.uint8)
+    for y0, y1 in ((0, 36), (h - 28, h)):
+        bv = 0.4 + 0.5 * (1 - np.abs(yy - (y0 + y1) / 2.0) / ((y1 - y0) / 2.0)) * np.cos((xx - 22) / 64.0 * np.pi)
+        bi = br[np.clip(np.round(np.clip(bv, 0, 1) * 4 + (BAYER[yy % 4, xx % 4] - 0.5) * 0.6).astype(int), 0, 4)]
+        m = (yy >= y0) & (yy < y1)
+        img[m] = bi[m]
+    return img, np.ones((h, w), bool)
+
+
 def polish():
     """Stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): the main surfaces redrawn at 256 px for the renderer's 2 m repeat (128 texels per metre) and toward the painting:
     warm carved stone in three variants (wall_stone, _b, _c: one per piece, so no wall repeats one tile), polished marble with veins and the lamps' gloss baked in, the rug
@@ -458,6 +523,7 @@ def polish():
         "lg_p_palm_l": ((0, 470, 270, 735), [(0, 480), (120, 470), (220, 520), (268, 600), (262, 700), (200, 735), (0, 735)]),
         "lg_p_palm_r": ((1330, 580, 1672, 941), [(1600, 580), (1672, 585), (1672, 941), (1520, 941), (1400, 880), (1332, 760), (1420, 650)]),
     }
+    Image.fromarray(wa.spr_halo(), "RGBA").save(os.path.join(OUT, "lg_halo.png"))  # round 2: the sconces' and lamps' glow (additive), the Warehouse's halo
     for k, (box, poly) in cuts.items():
         rgb, al = wa.cut(box, poly, paint=paint)
         if k.startswith("lg_p_palm"):  # a palm: only its leaves and pot, not the room behind (the room is darker and less green than the leaves)
@@ -497,7 +563,7 @@ def main():
     for k, im in sp.items():
         im.save(os.path.join(OUT, k + ".png"))
     polish()
-    for k, (rgb, alpha) in {"deco_studs": studs(), "deco_vinyl": vinyl()}.items():
+    for k, (rgb, alpha) in {"deco_studs": studs(), "deco_vinyl": vinyl(), "deco_coffer": coffer_panel(), "deco_frieze": coffer_frieze(), "deco_pilaster": pilaster()}.items():
         save(k, rgb)
     for k, fn in (("deco_sconce", sconce), ("deco_bottles", bottles), ("deco_beads", beads)):
         im, _a = fn()

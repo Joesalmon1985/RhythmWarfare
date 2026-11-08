@@ -468,6 +468,111 @@ def spr_sofa():
     return img, al
 
 
+# --- round 2 (9 November): the painting's rig and far wall, to fill the hall's depth ---------------------------------------------------------------------------------------
+
+def spr_truss(w=512, h=64):
+    """A rig truss (a vertical Warren girder, 8 m x 1 m at 64 px per m): two steel chords, diagonal webs, rivets, cobalt spot cans and an amber par under the bottom chord.
+    Hung as a fixed-yaw decal 6 to 7 m over the floor, several of them make the painting's cage of trusses overhead."""
+    yy, xx = np.mgrid[0:h, 0:w]
+    al = np.zeros((h, w), bool)
+    chord = (yy < 7) | ((yy >= 38) & (yy < 45))
+    al |= chord
+    for x0 in range(0, w, 32):  # the webs: a zigzag between the chords
+        for y in range(7, 38):
+            t = (y - 7) / 31.0
+            x = int(round(x0 + (t * 32 if (x0 // 32) % 2 == 0 else (1 - t) * 32)))
+            al[y, max(0, x - 2):min(w, x + 2)] = True
+        al[7:38, max(0, x0 - 1):x0 + 2] = True
+    v = 0.42 + 0.25 * (1 - (yy % 38) / 38.0) + (noise(h, w, 171, 3) - 0.5) * 0.15
+    img = ramp(np.clip(v, 0, 1), STEEL, 0.8)
+    img[(yy == 0) | (yy == 38)] = hexc("#8aa4dc")
+    img[(yy == 6) | (yy == 44)] = hexc("#0b0d1c")
+    for x in range(8, w, 16):
+        img[3, x] = hexc("#0e1226")
+        img[41, x] = hexc("#0e1226")
+    for k, x0 in enumerate(range(24, w, 64)):  # the cans under the bottom chord: cobalt, every fourth an amber par
+        warm = k % 4 == 2
+        body = (yy >= 45) & (yy < 60) & (np.abs(xx - x0) < 6)
+        al |= body
+        img[body] = hexc("#141a33")
+        lens = (yy >= 56) & (yy < 61) & (np.abs(xx - x0) < 5)
+        img[lens] = hexc("#ffb24a" if warm else "#7fa0ff")
+        img[lens & (yy >= 58) & (np.abs(xx - x0) < 3)] = hexc("#ffe8b0" if warm else "#e0e8ff")
+        al |= lens
+    return img, al
+
+
+def spr_stack(w=128, h=224):
+    """A floor-standing speaker stack (the painting's black cabinets with cones, two high), an amber light strip at its foot."""
+    img = np.zeros((h, w, 3), np.uint8)
+    yy, xx = np.mgrid[0:h, 0:w]
+    v = 0.22 + (noise(h, w, 181, 3) - 0.5) * 0.12 + 0.1 * (1 - xx / w)
+    img[:] = ramp(np.clip(v, 0, 1), ["#05060c", "#0b0d1c", "#151a33", "#212a4d"], 0.8)
+    for c0 in (0, 104):  # two cabinets, each 104 px with cones
+        img[c0:c0 + 3, :] = hexc("#2e3b6a")
+        img[c0 + 101:c0 + 104, :] = hexc("#05060c")
+        for (cy, cx, r) in ((c0 + 34, 64, 26), (c0 + 80, 36, 14), (c0 + 80, 92, 14)):
+            d = np.hypot(xx - cx, yy - cy)
+            cone = d < r
+            cv = 0.12 + 0.55 * (d / r)
+            cim = ramp(np.clip(cv, 0, 1), ["#05060c", "#0e1222", "#1c2440", "#2e3b6a", "#5f78b4"], 0.8)
+            img[cone] = cim[cone]
+            img[np.abs(d - r) < 1.2] = hexc("#8aa4dc")
+            img[d < r * 0.22] = hexc("#2e3b6a")
+    img[:, :2] = hexc("#41548c")
+    img[:, -2:] = hexc("#05060c")
+    strip = yy >= h - 16
+    img[strip] = hexc("#2a1208")
+    img[strip & (xx % 16 < 10) & (yy >= h - 12) & (yy < h - 4)] = hexc("#ffb24a")
+    return img, np.ones((h, w))
+
+
+def prop_backdrop():
+    """The stage's far wall, brought in (round 2): a riveted steel wall flat 6 m wide, 5 m tall (768 x 640 at 128 px per m), the painting's window onto the night city
+    set high in it in a steel frame, two caged lanterns either side (cut from the painting) and a treble-clef banner. A fixed-yaw decal behind the stage, facing the hall."""
+    W_, H_ = 768, 640
+    tile = tile_steel_wall(4)
+    img = np.tile(tile, (H_ // N + 1, W_ // N + 1, 1))[:H_, :W_].copy()
+    yy, xx = np.mgrid[0:H_, 0:W_]
+    img = (img.astype(float) * (0.78 + 0.22 * (1 - yy / H_))[..., None]).astype(np.uint8)
+    win, _ = prop_window()  # 512 x 288; its left 300 columns (the water tower and the moon): the right holds a hanging speaker and the painted-out guide's scarf
+    win = win[:, :300]
+    wy, wx = 120, (W_ - win.shape[1]) // 2
+    img[wy - 10:wy + win.shape[0] + 10, wx - 10:wx + win.shape[1] + 10] = hexc("#151a33")
+    img[wy - 10:wy - 6, wx - 10:wx + win.shape[1] + 10] = hexc("#5f78b4")
+    img[wy:wy + win.shape[0], wx:wx + win.shape[1]] = win
+    for mx in range(wx + 100, wx + win.shape[1] - 50, 100):  # mullions
+        img[wy:wy + win.shape[0], mx:mx + 4] = hexc("#0b0d1c")
+    img[wy + 140:wy + 144, wx:wx + win.shape[1]] = hexc("#0b0d1c")  # transom
+    sc, sa = cut(box=(1280, 310, 1322, 348), scale=2.0)
+    for sx in (40, W_ - 40 - sc.shape[1]):
+        sy = 300
+        glow = np.hypot(xx - (sx + sc.shape[1] / 2), yy - (sy + sc.shape[0] / 2)) / 110.0
+        warm = (glow < 1) & (BAYER[yy % 4, xx % 4] < (1 - glow) * 0.55)
+        img[warm] = (img[warm].astype(float) * 0.5 + np.array(hexc("#c47a34")) * 0.5).astype(np.uint8)
+        reg = img[sy:sy + sc.shape[0], sx:sx + sc.shape[1]]
+        reg[sa] = sc[sa]
+    bn, ba = cut(box=(381, 147, 440, 330), scale=1.4)
+    for bx in (60, W_ - 60 - bn.shape[1]):
+        reg = img[420:420 + bn.shape[0], bx:bx + bn.shape[1]]
+        reg[ba[:reg.shape[0], :reg.shape[1]]] = bn[:reg.shape[0], :reg.shape[1]][ba[:reg.shape[0], :reg.shape[1]]]
+    img[-24:, :] = ramp(np.full((24, W_), 0.3), STEEL[:4], 0.8)
+    img[-26:-24, :] = hexc("#c47a34")
+    return img, np.ones((H_, W_))
+
+
+def spr_halo(n=128):
+    """A lamp's glow (additive, the one soft thing besides the shafts): warm, falling off from the bulb, dithered at its rim so it is pixels, not a blur."""
+    yy, xx = np.mgrid[0:n, 0:n]
+    d = np.hypot(xx - n / 2 + 0.5, yy - n / 2 + 0.5) / (n / 2)
+    a = np.clip(1 - d, 0, 1) ** 2.2
+    a = np.where(BAYER[yy % 4, xx % 4] < a * 4, a, a * 0.5)
+    rgb = np.zeros((n, n, 3), np.uint8)
+    rgb[:] = hexc("#ffb060")
+    rgb[d < 0.25] = hexc("#ffe0a8")
+    return np.dstack([rgb, (np.clip(a * 1.4, 0, 1) * 255).astype(np.uint8)])
+
+
 PROPS = {  # name: (function or painting cut args)
     "wh_p_banner": dict(box=(381, 147, 440, 330)),
     "wh_p_banner_b": dict(box=(1365, 175, 1418, 335)),
@@ -504,11 +609,14 @@ def main():
         made.append(save(k, rgb, al))
     rgb, _ = prop_window()
     made.append(save("wh_p_window", rgb))
+    halo = Image.fromarray(spr_halo(), "RGBA")
+    halo.save(os.path.join(OUT, "wh_p_halo.png"))
+    made.append(halo)
     beam = spr_beam()
     im = Image.fromarray(beam, "RGBA")
     im.save(os.path.join(OUT, "wh_p_beam.png"))
     made.append(im)
-    for k, fn in (("wh_p_case2", spr_case), ("wh_p_plant", spr_plant), ("wh_p_sofa", spr_sofa)):
+    for k, fn in (("wh_p_case2", spr_case), ("wh_p_plant", spr_plant), ("wh_p_sofa", spr_sofa), ("wh_p_truss", spr_truss), ("wh_p_stack", spr_stack), ("wh_p_backdrop", prop_backdrop)):
         rgb, al = fn()
         made.append(save(k, rgb, al))
     cols = 8

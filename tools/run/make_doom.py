@@ -38,13 +38,16 @@ def P(to, role="dancer", style="walk", bars=3, hold=0, via=None, choice=False):
 
 
 EXITS = {"up": "wh_stage_top", "left": "wh_bar_door", "right": "wh_lounge_door", "down": "wh_ref"}
-# The stay loop (the good rail) goes round the floor: the west band north of the bar, up on the pedestal, against the south railing on the floor, then back to the reference viewpoint, a
-# choice viewpoint (8 bars still). The via points are in the map (tools/doom/author_warehouse.py); tools/story/check_rail_paths.gd traces every leg.
+# The stay rail (the good rail; round 2, 9 November). The rail climbs one place per block decision (beats 12.5, 28.5, 44.5 of a phase; not while a leg holds) and the choice
+# window opens at beat 49: with round 1's four places the FIRST phase's window found the camera at the third reveal, walking (tests/test_doom_views.gd), so a player who chose
+# in a scene's first phase never stood at the reference viewpoint. Now: a near reveal (2 bars there, 1.5 still), back to wh_ref by the second decision (3 bars, landing at beat
+# 40.5, still through the window), then in a second phase the other near reveal and back again. The far tour (plinths, pedestal, the floor's railing) is no longer on the rail;
+# its waypoints stay in the map as shot viewpoints.
 GOOD = [
-    P("wh_plinths", bars=4, hold=2, via=["wh_v_bar_e1", "wh_v_bar_mid", "wh_v_bar_e2"]),
-    P("wh_platform", bars=4, hold=2, via=["wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot"]),
-    P("wh_fence", bars=3, hold=2, via=["wh_ped_foot"]),
-    P("wh_ref", bars=4, hold=8, choice=True, via=["wh_v_court_sw", "wh_v_gate_s", "wh_v_lounge_w"]),
+    P("wh_gate_view", bars=2, hold=1.5, via=["wh_v_lounge_w"]),
+    P("wh_ref", bars=3, hold=8, choice=True, via=["wh_v_lounge_w"]),
+    P("wh_bar_side", bars=2, hold=1.5),
+    P("wh_ref", bars=3, hold=8, choice=True),
 ]
 BAD = [P("wh_ref_back", "queasy", "walk", 2), P("wh_sw_corner", "queasy", "stagger", 3)]  # a stumble back along the walkway
 # The routes out of the floor and back in, one polyline move each (the way the camera walks to the threshold of ahead / left / right, the arrival from the doorway, the stumble round the

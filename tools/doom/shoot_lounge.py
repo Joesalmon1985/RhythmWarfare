@@ -25,9 +25,11 @@ import shoot_scene as ss  # noqa: E402  (bash_exe, godot)
 SCENE = "doom_lounge"
 PAINTING = os.path.join(ROOT, "art", "reference", "doom_worlds", "Mustard octagonal lounge of three routes-2.png")
 POSE = ss.POSE
-LABELS = {"ref": "reference viewpoint lg_ref", "reveal_west": "reveal west", "reveal_north": "reveal north (Dock street)", "reveal_east": "reveal east (Bar arch)", "arrive_passage": "arrival (blue passage)",
+LABELS = {"ref": "reference viewpoint lg_ref (pitch -12, as held)", "ref_level": "lg_ref level (no pitch)", "reveal_se": "reveal south-east (round 2 stay rail)", "reveal_west": "reveal west", "reveal_north": "reveal north (Dock street)", "reveal_east": "reveal east (Bar arch)", "arrive_passage": "arrival (blue passage)",
           "approach_dock": "threshold ahead (Dock)", "approach_bar": "threshold left (Bar)", "approach_floor": "threshold right (Floor)", "stumble": "stumble", "stay_1": "stay loop t=14 s",
-          "stay_2": "stay loop t=28 s", "stay_3": "stay loop t=42 s", "stay_4": "stay loop t=56 s"}
+          "stay_2": "stay loop t=28 s", "stay_3": "stay loop t=42 s", "stay_4": "stay loop t=56 s",
+          "state_dock_selected": "Dock guide tapped (beat 50.4)", "state_dock_committed": "Dock guide committed (beat 52)", "state_bar_selected": "Bar guide tapped (beat 50.4)",
+          "state_bar_committed": "Bar guide committed (beat 52)", "state_floor_selected": "Floor guide tapped (beat 50.4)", "state_floor_committed": "Floor guide committed (beat 52)"}
 ORDER = list(LABELS)
 
 

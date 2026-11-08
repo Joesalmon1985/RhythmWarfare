@@ -32,6 +32,24 @@ shot() {  # name aspect(16x9|20x9) cam(- for the rail camera) seconds
   fi
 }
 
+# the guide-state captures (round 2, DOOM_WORLDS_BRIEF section 8): the rail camera, the guide tapped at beat 50 of the choice window (RW_RUN_SELECT), shot on the hold with
+# the guide selected (beat 50.4, the tap commits: ruling 39) and on an early frame of the walk off with it committed (beat 52); a finer frame step so the beats land
+sshot() {  # name hotspot beat
+  local nm="$1" hid="$2" beat="$3" rate=0.125
+  want "$nm" || return 0
+  local f="$(python3 -c "print(int(round(($beat*60.0/174.0+2.0)/$rate))+2)")"
+  env XDG_DATA_HOME="$TMP/data" RW_DOOM_WORLDS=1 RW_RUN_VIRTUAL=1 RW_STORY_RATE=$rate RW_RUN_START="$SCENE" RW_RUN_BOT=perfect RW_RUN_SELECT="$hid@50"     "$GODOT" --path "$ROOT" --resolution 1280x720 -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP" "$f:shot:${nm}_16x9" 2>&1 </dev/null | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB\|WASAPI\|ERR_CANT_OPEN" || true
+  if [ -f "$TMP/${nm}_16x9.png" ]; then
+    ffmpeg -nostdin -y -loglevel error -i "$TMP/${nm}_16x9.png" -q:v 3 "$OUT/${nm}_16x9.jpg" && rm -f "$TMP/${nm}_16x9.png"
+    echo "shot $OUT/${nm}_16x9.jpg"
+  fi
+}
+for g in "stage balcony" "bar bar" "lounge lounge"; do
+  set -- $g
+  sshot "state_$1_selected" "$SCENE.exit_$2" 50.4
+  sshot "state_$1_committed" "$SCENE.exit_$2" 52
+done
+
 for asp in 16x9 20x9; do
   shot ref "$asp" wh_ref 3
   shot reveal_fence "$asp" wh_fence 3
