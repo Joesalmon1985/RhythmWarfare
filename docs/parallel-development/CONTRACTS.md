@@ -46,9 +46,14 @@ Fixture: `scene_entry.json`. Tests: `test_scene_entry_and_exit_shapes`.
 
 - **DISAGREE (pose form)**: the Doom brief wants arrival poses; the engine moves only to waypoint ids (`story_player.gd:67`, `_plan_move`). The
   runtime takes a waypoint id; `{at, yaw}` is allowed in authoring data only and must be baked into a waypoint by `make_scenes.py` / the Doom converter.
-- **DISAGREE (threshold)**: the Doom brief wants the world transition "at a believable threshold after the player approaches it"; today a world
-  change cuts to the destination's `arrive` waypoint and walks home, and the departing side has no approach walk for another world (only a
-  same-world `leave_walk`). Hook H1.6.
+- **Threshold (built, H1.6)**: the Doom scenes are **geography worlds** (`"geography": true` on the run.json `worlds` entry): one scene per world, its
+  `down` route the stay (`loop: true`), its other routes leading to the entry scene of another geography world in any direction, at any depth, cycles
+  through worlds allowed (`RunData._validate_geography_routes`). A route's threshold is the node's `thresholds[to]` when given, else the route's move
+  `rail.routes[dir].to` (`RunJourney.threshold_of` / `threshold_move`). In a geography world a guide's tap is the decision (ruling 39): it commits at the
+  tap and walks from there (`RunEngine.tap_commit` -> `hotspot_commit` -> `RunPlay._on_hotspot_commit` -> `RunJourney.commit_walk`); an untouched default walks from the lock, beat 61
+  (`RunPlay._update_passage` -> `RunJourney.threshold_leave`). Either walk follows the move's `via` polyline over its `bars` (clamped 2..4), cut to
+  end by the boundary, with its `hold_bars` only when there is time; the pads keep playing. Then the passage frame shuts, the stage swaps on the downbeat, and the destination's `rail.arrival` cuts to its `rail.arrive` and walks home.
+  Shape for a generator: `docs/engine/GEOGRAPHY_WORLDS.md`.
 - The bedsit must not be left by the rhythm (brief 2): its node's default destination is `{}` ("stay", port `set_default`) and it has no
   `on_miss`. Depletion would still end the run: hook H1.7.
 
@@ -121,7 +126,8 @@ ActivityResult  = {activity_id, completed: bool, score: int, flags_to_set: [Stri
                    race?: {won: bool, position: int, time_s: float}}
 ```
 Modes: cloakroom and bar `replace` (2 and 4 controls), race `overlay`, the bass knob `rhythm` (proposal: it is short; the knob is a target in the
-stage view like the blackjack table's; owner may prefer `replace`), blackjack stays `rhythm` (no `mode` key).
+stage view like the blackjack table's), blackjack `replace` since A8b (ruling 40, owner 8 November: while seated the pad
+slots are the four card controls and judging is suspended; getting up finishes on the resume boundary).
 
 Entry (all modes): hotspot outcome `{"activity": id}` commits (`run_play.gd:1927`) -> host builds ActivityRequest -> `MinigameController.request(id,
 t_commit, t_seat, exits)` (`minigame_controller.gd:80`; `t_seat` = the next block start) -> `engine.hold = true` (`:103`).
@@ -320,8 +326,8 @@ An activity is played in the room it is found in, through the stage, with the ru
 - **Tests**: an activity's state machine is tested without the stage (things()/frames as data); the view test
   shoots the scene at three moments with the things in place and checks each thing's screen rectangle is inside
   the stage strip and at least 48 px tall (as `test_doom_views` does for guides).
-- **The card table** (blackjack) is converted to this contract in package A8b; until then it is the one
-  exception, named in every report that mentions it.
+- **The card table** (blackjack) is converted to this contract by package A8b (merged on `feature/bedsit-raves`): cards, deck and
+  chips as dynamic things, the dealer and players as crowd actors, bet/twist/stick/get-up in the pad slots, `replace` mode (ruling 40).
 
 **Built (package A8, wip/engine-props).** The real signatures; the activity side's guide is `docs/engine/WORLD_THINGS.md`.
 
@@ -353,8 +359,45 @@ control = {id, label: "", pictogram? | shape? + color? | icon?: res:// png | dra
 Built on this branch (minimal, tested):
 - H7.0 `src/audio/stem_transport.gd`: `_locked`, `_ramp`, `set_stem_locked`, `is_stem_locked`, `_apply_locks`; `_retarget` ANDs the lock; `_process` uses an unlock's ramp while rising. `src/track/track_transport.gd` `load_pack_streams`: calls `_apply_locks()`.
 
+- H1.6 `run_journey.gd` / `run_play.gd` lock handler: a world exit's approach walk to the threshold spot in the guard before the boundary. **BUILT** (package
+  engine-geography, wip/engine-geography):
+
+**Built (H1.6, geography worlds).** The real signatures; the generator's guide is `docs/engine/GEOGRAPHY_WORLDS.md`. Tests: `tests/test_geography.gd`
+(fixture `tests/fixtures/geography/`), `tests/test_run_relaxed_threshold.gd`.
+```
+RunData.is_geography(world) -> bool             worlds[world].geography
+RunData.leaves_world(id) -> bool                a route of scene id leads to another world (a geography world's terminal: _terminal, _reaches_exit)
+RunData._validate_geography_routes(id, n)       stay = dir "down" in-world loop; >= 2 routes; a route out -> the ENTRY scene of a geography world; no depth rule
+RunRail.validate: rail.routes {up|left|right|stumble|arrive: {to, via?, bars > 0 (the walk clamps to 2..4), hold_bars >= 0, style?, role?, from?}}   (RunRail.ROUTE_KEYS)
+RunData._validate_places: every routes[*].to / from / via waypoint is in the scene's map
+RunJourney.threshold_of(from, to) -> wp         thresholds[to], else threshold_move(from, to).to, else ""
+RunJourney.threshold_move(from, to) -> {}       the next entry to `to` gives dir; rail.routes[dir] ({} for down, same world, no move)
+RunJourney.threshold_walk(t, t_boundary, wp, bars = 2, move = {})   one player_move {to, via?, style, bars <= boundary, hold_bars? (if time), threshold: true}
+RunJourney.threshold_leave(t, t_boundary, from, to) -> Array        the walk out ([] when the route has no threshold); the lock handler's, beat 61
+RunJourney.commit_walk(ev, engine) -> Array     a final-window hotspot_commit with tapped true and a route to another world: threshold_leave from ev.t
+                                                ([] for the untouched default, a stay, a same-world route, an activity); RunPlay then latches _door_phase
+RunHotspots.is_geography_exit(h) -> bool        a final-window hotspot of a geography scene whose success route is another geography world's scene
+RunHotspots.commit_tap() -> outcome | {}        the selected geography exit commits now: success, `committed` at once (the others declined), at_tap: true
+RunEngine.tap_commit(t) -> bool                 window open, last lap, not yet committed: hotspot_commit at t, choice set, route_commit now {t: boundary, at: t,
+                                                tapped: true, same_world: false}; the block-3 decision and the boundary give no second commit (_tap_routed)
+RunPlay.hotspot_select: after a pick, engine.tap_commit(now)   (a pick made before the window opens commits as it opens: _decide, b == 2)
+RunJourney.leaving                              after a threshold walk, the rail takes no step (log kind "leaving") until the next phase
+RunJourney player_hold {bars, hold: "window"}   the choice viewpoint's hold (beats 49 to 60.5)
+StoryPlayer.end_window_holds(t)                 a player_move with threshold: true ends every window hold under way one beat after t (eased); drops one not begun
+RunPlay.data_for_test (static, tests only)      the RunData the next run scene plays instead of content/run/run.json
+```
+- **Ruling 39 (lead)**: in a geography world a route guide's tap IS the decision. The choice viewpoint's hold runs through the window as before, but
+  a tap on a guide whose route leads to another geography world commits at the tap's own beat (the hotspot goes `committed` at once, `route_commit`
+  fires then, the other guides go `declined`); the walk then gets the authored leg and its hold whenever the tap comes early enough (a tap at beat 50
+  has 14 beats). Second and later taps in the same window are ignored. An untouched window keeps the default at the lock (the 3-beat walk). Every
+  non-geography hotspot keeps `window: "final"` (the tap an intent, the commit at the lock) exactly as before.
+- The tap commit is a success whatever the rhythm (like a quest entrance under ruling 15): the way on is never gated. A late tap's leg is shortened
+  to end on the boundary.
+- The early `route_commit` keeps `t` = the boundary (the director's lock reads it as the boundary) and adds `at` = the tap.
+- A geography world needs one entry scene whose id is the world id; `exit_scene` is optional (the entry may be the exit). In a path the flag is an error.
+- Non-geography worlds (the main run, the paths, the bedsit) keep every rule they had; a route from one into a geography world follows the old rules.
+
 Needed, not built:
-- H1.6 `run_journey.gd:63` `_phase_start` / `run_play.gd` lock handler: a world exit's approach walk to the threshold spot in the guard before the boundary.
 - H1.7 `run_engine.gd:585` `_decide`: a node flag (`"relaxed": true`) keeps energy at or above 1 (the bedsit never forces a departure).
 - H3.1 `run_rail.gd:233` `ambient` and `run_journey.gd:153` (window face): no stroll or glance while the rail stands at a `choice_view` waypoint; the window face only turns before the hold begins.
 - H3.2 `run_rail.gd:147` `pick_bars`: only if legs under 2 bars are wanted.
@@ -375,6 +418,17 @@ Needed, not built:
 - H8.3 the cockpit as a low-res overlay layer (`StoryLowRes.add_overlay`) under the activity view.
 - H8.4 `run_play.gd:420` `_show_world`: an activity may ask for another map's stage at `t_seat` and back at exit (race), prebuilt in a guard.
 - H9.1 `hotspot_view.gd` and `choice_staging.gd`: draw states from ChoiceThing data, no ring (package A7).
+- H10 weather (rain scenes: Booth, Dock, Balcony, the Lounge's street; rulings 36, 38). **BUILT** (package A9, wip/engine-rain); guide `docs/engine/WEATHER.md`,
+  tests `tests/test_weather.gd`, sheet `docs/shots/engine/weather/rain_sheet.jpg`:
+  ```
+  map  "weather": {"rain": 0..1, "wind": -60..60 (degrees of slant, + leans toward +x), "drips": [{"at": [x, z], "h": metres above the floor}]}   (StoryMap.weather; errors on bad values)
+  sector "rain": true | false   (true: rain under a roof; false: an open sector kept dry; absent: open = ceil_tex "sky" or "*_sky")
+  sector "wet": 0..1            (the floor gloss; absent: the map's rain on open sectors, 0 elsewhere)
+  StoryMap.rain_open(sid) -> bool, wet_of(sid) -> float, has_weather() -> bool, sky_ceiling(sector) (static)
+  StoryStage.weather: StoryWeather   built beside fx3d only when map.has_weather() (a dry map gets no node), updated in _update_world on song time
+  StoryWeather.update(t, camera, sector_light, vis)   rain_mm / drip_mm / gloss_mm (one MultiMesh each), rain_at(p), streak_pos(i, t, lo), draw_calls()
+  ```
+  Cost at the Dock (640 x 231 low-res, rain 1): +3 draw calls, +886 primitives, weather.update ~8 us CPU on the dev PC; phone GPU time not measured.
 
 ## What is not settled (for the lead or the owner)
 

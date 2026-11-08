@@ -299,6 +299,31 @@ func commit_final(passed: bool, credit := -1.0) -> Dictionary:
 	return out
 
 
+## (lead ruling 39) A guide of a geography world whose success route leads to another geography world (docs/engine/GEOGRAPHY_WORLDS.md): in a geography world its tap IS the decision.
+## Every other hotspot keeps the final window as it is (the tap an intent, the lock the commit).
+func is_geography_exit(h: Dictionary) -> bool:
+	if data == null or h.is_empty() or window_of(h) != "final" or data.is_path() or not data.nodes.has(node):
+		return false
+	var w := str(data.nodes[node]["world"])
+	var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
+	return data.is_geography(w) and data.nodes.has(r) and str(data.nodes[r]["world"]) != w and data.is_geography(str(data.nodes[r]["world"]))
+
+
+## (ruling 39) The selected hotspot commits now, when it is a geography exit and nothing has committed yet: a success (the way on is never gated by the rhythm), `committed` at once, so
+## every other option is declined and later taps are refused (select() shows nothing once committed: no un-choosing). {} when it does not apply (the final commit stays at the lock).
+func commit_tap() -> Dictionary:
+	if committed != "" or selected == "":
+		return {}
+	var h := get_hotspot(selected)
+	if not is_geography_exit(h) or not is_available(h):
+		return {}
+	var out := _resolve(h, true, true, "final")
+	out["at_tap"] = true
+	committed = str(h["id"])
+	selected = ""
+	return out
+
+
 ## The success rule: a hotspot with `pass_credit` (and a known credit) succeeds when the block's credit reaches it, any other by the run's pass.
 func _success_of(h: Dictionary, passed: bool, credit: float) -> bool:
 	if h.has("pass_credit") and credit >= 0.0:
