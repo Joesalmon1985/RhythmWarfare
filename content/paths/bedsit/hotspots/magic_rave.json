@@ -49,6 +49,9 @@
      "look_at": "camera",
      "beats": 1
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -99,6 +102,9 @@
      "look_at": "camera",
      "beats": 1
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -149,6 +155,9 @@
      "look_at": "camera",
      "beats": 1
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -199,6 +208,9 @@
      "look_at": "camera",
      "beats": 1
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -231,7 +243,10 @@
     "route": "bedsit"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_stage.deck",
@@ -264,7 +279,10 @@
    "on_failure": {},
    "default": false,
    "repeatable": true,
-   "window": "any"
+   "window": "any",
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "magic_stage.home",
@@ -296,7 +314,10 @@
     "route": "bedsit"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_stage.back",
@@ -328,7 +349,10 @@
     "route": "magic_rave"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_cloakroom.cloakroom",
@@ -361,7 +385,10 @@
    "on_failure": {},
    "default": false,
    "repeatable": true,
-   "window": "any"
+   "window": "any",
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "magic_cloakroom.back",
@@ -393,7 +420,10 @@
     "route": "magic_rave"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_cloakroom.home",
@@ -425,7 +455,10 @@
     "route": "bedsit"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_bar.bar",
@@ -458,7 +491,10 @@
    "on_failure": {},
    "default": false,
    "repeatable": true,
-   "window": "any"
+   "window": "any",
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "magic_bar.back",
@@ -490,7 +526,10 @@
     "route": "magic_rave"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_bar.home",
@@ -522,7 +561,10 @@
     "route": "bedsit"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_race.race",
@@ -553,7 +595,10 @@
    "on_failure": {},
    "default": false,
    "repeatable": true,
-   "window": "any"
+   "window": "any",
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "magic_race.back",
@@ -585,7 +630,10 @@
     "route": "magic_rave"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "magic_race.home",
@@ -617,7 +665,10 @@
     "route": "bedsit"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   }
  ]
 }

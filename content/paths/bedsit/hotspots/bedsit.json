@@ -31,7 +31,10 @@
     "route": "space_rave"
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.threshold_e",
@@ -63,7 +66,10 @@
     "route": "dino_rave"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.threshold_s",
@@ -95,7 +101,10 @@
     "route": "magic_rave"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.threshold_w",
@@ -127,7 +136,10 @@
     "route": "transport_rave"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.dev_exit",
@@ -161,7 +173,10 @@
     "route": "bedsit.end"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.way_out",
@@ -195,7 +210,10 @@
     "route": "bedsit.end"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.end.exit",
@@ -233,7 +251,10 @@
     ]
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "bedsit.end.mirror",
@@ -268,7 +289,10 @@
     "energy": -2
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   }
  ]
 }
