@@ -242,7 +242,11 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": last["place"], "kind": last["kind"], "role": last["role"], "pos": last["pos"]})
 	if b == 2 and rail.at_choice():  # a choice viewpoint (docs/story/HEIGHTS_AND_PATHS.md): the camera stands still through the whole choice window, the viewpoint frames the choices
 		var w0 := engine.t_of(FACE_TURN_BEAT)
-		out.append({"t0": w0, "action": "player_hold", "args": {"bars": (engine.t_of(FACE_RELEASE_BEAT) - w0) / rail.bar_s(), "hold": "window"}})
+		var hold := {"bars": (engine.t_of(FACE_RELEASE_BEAT) - w0) / rail.bar_s(), "hold": "window"}
+		var vp := float(rail.place_spec().get("pitch", 0.0))
+		if vp != 0.0:  # the viewpoint's authored steady pitch (RunRail place `pitch`, degrees, negative down): held through the window, released by the walk-off; unauthored, the hold is as before
+			hold["pitch"] = vp
+		out.append({"t0": w0, "action": "player_hold", "args": hold})
 	elif b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
 		var face: Array = face_fn.call(str(ev["node"]), rail.place()) if b == 2 and face_fn.is_valid() else []
 		if not face.is_empty():

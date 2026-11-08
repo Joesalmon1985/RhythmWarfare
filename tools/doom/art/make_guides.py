@@ -271,6 +271,277 @@ def draw_guide(who, state, i):
     return c.image()
 
 
+# --- crops from the paintings (stage D polish, ruling 36) ----------------------------------------------------------------------------------------------------------------
+# Where a painting shows a guide 180 px tall or more, the sprite is CUT from it: a hand-traced polygon (painting pixels) round the figure is the surround's limit; inside a
+# band along its edge every pixel nearer in colour to the surround (a local mean outside the polygon) than to the figure (a local mean inside) is dropped; the mask is
+# cleaned with a small opening and closing; the figure is scaled nearest-neighbour so the head (crown to chin) is HEAD_FRAC of FIG_H; what the painting hides (the legs under a
+# counter, a railing or the crowd) is drawn below the cut by the procedural painter in the painting's colours. The four states are small edits of that one picture.
+REF = os.path.join(ROOT, "art", "reference")
+FIG_H = 230  # a 1.8 m figure on the 256 sheet (feet at FEET)
+HEAD_FRAC = 1 / 6.5  # the head (crown to chin) of the figure height: the paintings' people are drawn about 6.5 heads tall
+WARM_RIM = (255, 214, 150)
+
+
+def _blur(a, r):
+    im = Image.fromarray(np.clip(a * 255.0, 0, 255).astype(np.uint8))
+    return np.array(im.filter(ImageFilter.BoxBlur(r))).astype(float) / 255.0
+
+
+def figure_mask(img, poly, band=7, keep=0.85):
+    """img: HxWx3 uint8 painting; poly: [(x, y)] round the figure. Returns a bool mask (colour-distance refinement of the polygon's edge band)."""
+    h, w = img.shape[:2]
+    m = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(m).polygon([tuple(p) for p in poly], fill=255)
+    inside = np.array(m) > 127
+    core = np.array(m.filter(ImageFilter.MinFilter(2 * band + 1))) > 127
+    ring = (np.array(m.filter(ImageFilter.MaxFilter(2 * band + 1))) > 127) & ~inside
+    f = img.astype(float) / 255.0
+    out_mean = np.zeros_like(f)
+    in_mean = np.zeros_like(f)
+    wo = _blur(ring.astype(float), 2 * band) + 1e-4
+    wi = _blur(core.astype(float), 3 * band) + 1e-4
+    for k in range(3):
+        out_mean[..., k] = _blur(f[..., k] * ring, 2 * band) / wo
+        in_mean[..., k] = _blur(f[..., k] * core, 3 * band) / wi
+    d_out = np.linalg.norm(f - out_mean, axis=2)
+    d_in = np.linalg.norm(f - in_mean, axis=2)
+    edge = inside & ~core
+    drop = edge & (d_out < d_in * keep) & (d_out < 0.16)
+    mask = inside & ~drop
+    mi = Image.fromarray((mask * 255).astype(np.uint8))
+    mi = mi.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.MaxFilter(3))  # opening: specks of surround go
+    mi = mi.filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.MinFilter(3))  # closing: pinholes in the figure go
+    return (np.array(mi) > 127) & inside
+
+
+def cut_figure(src, poly, top, chin, cut, centre_x):
+    """The figure as RGBA at sprite scale: (rgba array, scale, x offset of the painting's centre_x in it, the cut row in sprite pixels)."""
+    im = np.array(Image.open(os.path.join(REF, src)).convert("RGB"))
+    mask = figure_mask(im, poly)
+    xs = [p[0] for p in poly]
+    x0, x1 = int(min(xs)) - 1, int(max(xs)) + 2
+    y0, y1 = int(top), int(cut)
+    rgba = np.zeros((y1 - y0, x1 - x0, 4), np.uint8)
+    rgba[..., :3] = im[y0:y1, x0:x1]
+    rgba[..., 3] = np.where(mask[y0:y1, x0:x1], 255, 0)
+    s = FIG_H * HEAD_FRAC / float(chin - top) if chin > 0 else FIG_H / float(cut - top)  # chin 0: the whole figure is in the painting, feet at `cut`
+    nw, nh = max(1, int(round((x1 - x0) * s))), max(1, int(round((y1 - y0) * s)))
+    small = np.array(Image.fromarray(rgba, "RGBA").resize((nw, nh), Image.NEAREST))
+    small[..., 3] = np.where(small[..., 3] > 127, 255, 0)
+    return small, s, (centre_x - x0) * s, nh
+
+
+def continue_down(c, fig, ox, oy, s, spec):
+    """What the painting hides under the cut, continued from the painting's own pixels: the bottom rows of the cut (columns `src_span`, painting x) are repeated downward
+    (mirror-tiled, darkening toward the floor) over a span that tapers from `hip` (sprite px either side of CX) to the ankles, split into two legs below `split` (0..1 of the
+    way down); a coat (`coat_to`, 0..1) keeps the full span to that point. Shoes are painted. Pure pixels of the painting: no new colours but the shoes and the shadow."""
+    h = fig.shape[0]
+    top = oy + h
+    ground = FEET - 10
+    def grab(spans, rows=None):  # the band of the cut (or of painting rows) under the painting columns of `spans` ((x0, x1) or (x0, x1, y0, y1)), side by side
+        if isinstance(spans[0], (int, float)):
+            spans = [spans]
+        parts = []
+        for sp in spans:
+            rr = rows if len(sp) < 4 else sp[2:4]
+            r0, r1 = (h - 8, h) if rr is None else (int(round((rr[0] - spec["_top"]) * s)), int(round((rr[1] - spec["_top"]) * s)))
+            q = fig[r0:r1, int(round((sp[0] - spec["_x0"]) * s)):int(round((sp[1] - spec["_x0"]) * s))]
+            if q.shape[0] and q.shape[1]:
+                parts.append(q if not parts else np.array(Image.fromarray(q, "RGBA").resize((q.shape[1], parts[0].shape[0]), Image.NEAREST)))
+        return np.concatenate(parts, axis=1)
+
+    band = grab(spec["src_span"], spec.get("band_y"))
+    bh, bw = band.shape[:2]
+    if bw < 2:
+        return
+    hs = spec.get("hip_span", spec["src_span"] if isinstance(spec["src_span"][0], (int, float)) else (spec["src_span"][0][0], spec["src_span"][-1][1]))
+    hl = ox + int(round((hs[0] - spec["_x0"]) * s)) - CX
+    hr = ox + int(round((hs[1] - spec["_x0"]) * s)) - CX
+    ank = spec.get("ankle", 6)
+    stance = spec.get("stance", 10)
+    split = spec.get("split", 0.0)
+    coat_to = spec.get("coat_to", 0.0)
+    leg_band = None
+    if spec.get("leg_span"):
+        leg_band = grab(spec["leg_span"], spec.get("leg_y"))
+    for y in range(top, ground + 1):
+        t = (y - top) / float(max(1, ground - top))
+        k = (y - top) % (2 * bh)
+        r = bh - 1 - (k if k < bh else 2 * bh - 1 - k)
+        shade = 1.0 - 0.22 * t
+        if coat_to and t <= coat_to:  # the coat skirt: the whole span, narrowing toward the knee
+            nar = (hr - hl) * 0.22 * (t / coat_to)
+            L, R = CX + hl + nar, CX + hr - nar
+            spans = [(L, R, band)]
+        else:
+            u = (t - coat_to) / max(1e-6, 1.0 - coat_to) if coat_to else t
+            gap = 0 if u < split else min(4.0, (u - split) * 14)
+            src = leg_band if (leg_band is not None and leg_band.shape[1] >= 2) else band
+            mid = CX + (hl + hr) / 2.0
+            lo_l, lo_r = mid - stance - ank, mid - stance + ank
+            ro_l, ro_r = mid + stance - ank, mid + stance + ank
+            if coat_to:  # legs out from under a coat: they start at their own width, not the skirt's
+                hl, hr = mid - CX - stance - ank - 3, mid - CX + stance + ank + 3
+            L1 = CX + hl + (lo_l - CX - hl) * u
+            R1 = mid - gap / 2 + (lo_r - mid + gap / 2) * u * 0.6
+            L2 = mid + gap / 2 + (ro_l - mid - gap / 2) * u * 0.6
+            R2 = CX + hr + (ro_r - CX - hr) * u
+            if gap <= 0:
+                spans = [(L1, R2, src)]
+            else:
+                spans = [(L1, R1, src[:, :max(1, src.shape[1] // 2)]), (L2, R2, src[:, src.shape[1] // 2:])]
+        for (L, R, sb) in spans:
+            L, R = int(round(L)), int(round(R))
+            if R <= L:
+                continue
+            for X in range(L, R + 1):
+                if not (0 <= X < W and 0 <= y < H) or c.alpha[y, X]:
+                    continue
+                sx = int((X - L) / float(max(1, R - L)) * (sb.shape[1] - 1))
+                px = sb[min(r, sb.shape[0] - 1), sx]
+                if px[3] == 0:
+                    px = sb[:, sx][sb[:, sx, 3] > 0][0] if (sb[:, sx, 3] > 0).any() else None
+                    if px is None:
+                        continue
+                c.rgb[y, X] = (np.array(px[:3], float) * shade).astype(np.uint8)
+                c.alpha[y, X] = True
+    mid = CX + (hl + hr) / 2.0
+    for sx_ in (-1, 1):
+        fx = mid + sx_ * stance + sx_ * 2
+        m, d = c.mask()
+        d.rounded_rectangle([fx - 9, ground - 1, fx + 9, ground + 8], radius=4, fill=255)
+        c.paint(m, spec.get("shoes", "#2a1a14"))
+
+
+def rim(rgb, alpha, strength, col=WARM_RIM, side=(-1, -1)):
+    """A lamp-lit rim: the figure's pixels whose upper-left neighbours are empty, pulled toward the lamp colour; dithered so it reads as light, not a line."""
+    a = alpha
+    edge = np.zeros_like(a)
+    for dy, dx in ((side[1], 0), (0, side[0]), (side[1], side[0])):
+        sh = np.zeros_like(a)
+        ys = slice(max(0, -dy), a.shape[0] - max(0, dy)) if dy else slice(None)
+        ys2 = slice(max(0, dy), a.shape[0] - max(0, -dy)) if dy else slice(None)
+        xs = slice(max(0, -dx), a.shape[1] - max(0, dx)) if dx else slice(None)
+        xs2 = slice(max(0, dx), a.shape[1] - max(0, -dx)) if dx else slice(None)
+        sh[ys2, xs2] = a[ys, xs]
+        edge |= a & ~sh
+    grown = edge | (np.roll(edge, 1, 1) & a) | (np.roll(edge, 1, 0) & a)
+    yy, xx = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    dith = BAYER[yy % 4, xx % 4]
+    sel = (edge & (dith < 0.4 + strength * 0.6)) | (grown & (dith < strength * 0.5))
+    out = rgb.astype(float)
+    out[sel] = out[sel] * (1 - strength * 0.7) + np.array(col) * strength * 0.7
+    return np.clip(out, 0, 255).astype(np.uint8)
+
+
+def shear(rgb, alpha, box, dy_max):
+    """Lifts the region `box` (x0, y0, x1, y1; xa the column that stays, xb the column lifted by dy_max) column by column: a hand raised from the wrist."""
+    x0, y0, x1, y1, xa, xb = box
+    r2, a2 = rgb.copy(), alpha.copy()
+    for x in range(min(x0, x1), max(x0, x1) + 1):
+        if not 0 <= x < rgb.shape[1]:
+            continue
+        f = (x - xa) / float(xb - xa) if xb != xa else 1.0
+        dy = int(round(dy_max * max(0.0, min(1.0, f))))
+        if dy == 0:
+            continue
+        for y in range(max(0, y0 - dy_max - 1), min(rgb.shape[0], y1 + 1)):
+            sy = y + dy
+            if y0 - dy <= y <= y1 and 0 <= sy < rgb.shape[0]:
+                r2[y, x], a2[y, x] = rgb[sy, x], alpha[sy, x]
+    return r2, a2
+
+
+def crop_guide(spec):
+    """Every frame of a cropped guide: {(state, i): RGBA Image}. spec: src, poly, top, hip, cut, centre_x, legs{...}, hand (painting box x0,y0,x1,y1,xa,xb)."""
+    fig, s, cx_off, cut_row = cut_figure(spec["src"], spec["poly"], spec["top"], spec["chin"], spec["cut"], spec["centre_x"])
+    base = Canvas()
+    ox = int(round(CX - cx_off))
+    oy = FEET - FIG_H
+    h, w = fig.shape[:2]
+    for y in range(h):
+        Y = oy + y
+        if not 0 <= Y < H:
+            continue
+        row = fig[y]
+        for x in range(w):
+            X = ox + x
+            if 0 <= X < W and row[x, 3]:
+                base.rgb[Y, X] = row[x, :3]
+                base.alpha[Y, X] = True
+    if spec.get("legs"):
+        lg = dict(spec["legs"])
+        lg["_x0"] = int(min(p[0] for p in spec["poly"])) - 1
+        lg["_top"] = spec["top"]
+        continue_down(base, fig, ox, oy, s, lg)
+    m = Image.fromarray((base.alpha * 255).astype(np.uint8))  # the one-pixel edge a step darker than the local colour (style guide section 6), not a black line
+    grown = np.array(m.filter(ImageFilter.MaxFilter(3))) > 127
+    ring = grown & ~base.alpha
+    dark = np.array(Image.fromarray(base.rgb).filter(ImageFilter.MaxFilter(3))).astype(float)
+    base.rgb[ring] = (dark[ring] * 0.32 + np.array(hexc("#120a22")) * 0.68).astype(np.uint8)
+    base.alpha |= ring
+    hb = None
+    if spec.get("hand"):
+        x0, y0, x1, y1, xa, xb = spec["hand"]
+        tx = lambda x: int(round(ox + (x - (spec["centre_x"] - cx_off / s)) * s))  # noqa: E731
+        ty = lambda y: int(round(oy + (y - spec["top"]) * s))  # noqa: E731
+        hb = (tx(x0), ty(y0), tx(x1), ty(y1), tx(xa), tx(xb))
+    if spec.get("mirror"):  # the painting's figure faces the other way from where this scene needs her
+        base.rgb, base.alpha = base.rgb[:, ::-1].copy(), base.alpha[:, ::-1].copy()
+        if hb:
+            hb = (W - 1 - hb[0], hb[1], W - 1 - hb[2], hb[3], W - 1 - hb[4], W - 1 - hb[5])
+    frames = {}
+    for state, n in FRAMES.items():
+        for i in range(n):
+            rgb, al = base.rgb.copy(), base.alpha.copy()
+            if state == "idle":
+                rgb = (rgb.astype(float) * 0.86).astype(np.uint8)
+            elif state == "available":
+                lift = [0, 1, 2, 1, 0][i]
+                if hb:
+                    rgb, al = shear(rgb, al, hb, lift)
+                rgb = rim(rgb, al, [0.35, 0.5, 0.65, 0.5, 0.35][i])
+            elif state == "selected":
+                if hb:
+                    rgb, al = shear(rgb, al, hb, [4, 6][i])
+                rgb = np.clip(rgb.astype(float) * 1.08, 0, 255).astype(np.uint8)
+                rgb = rim(rgb, al, 0.9)
+            else:  # committed: turned toward the doorway (mirrored), the front in shadow, a step on
+                rgb, al = rgb[:, ::-1].copy(), al[:, ::-1].copy()
+                k = 2 + 2 * i
+                rgb = np.roll(rgb, -k if spec.get("door_left", True) else k, 1)
+                al = np.roll(al, -k if spec.get("door_left", True) else k, 1)
+                rgb = (rgb.astype(float) * 0.78).astype(np.uint8)
+                rgb = rim(rgb, al, 0.5, side=(1, -1))
+            out = np.zeros((H, W, 4), np.uint8)
+            out[..., :3] = rgb
+            out[..., 3] = np.where(al, 255, 0)
+            frames[(state, i)] = Image.fromarray(out, "RGBA")
+    return frames
+
+
+MID = "doom_worlds/Midnight dance hall with three guides-1.png"
+CROPS = {  # painting polygons (pixels of the painting), read by eye over a grid (docs/doom/scenes/warehouse.md: guides)
+    "bar": dict(src=MID, top=192, chin=322, cut=700, centre_x=190,
+                poly=[(150, 205), (185, 192), (230, 195), (262, 215), (275, 250), (262, 290), (240, 320), (232, 335), (255, 345), (275, 385), (290, 450), (298, 488), (340, 478),
+                      (372, 466), (395, 470), (410, 490), (400, 505), (365, 512), (330, 520), (300, 545), (290, 580), (292, 640), (296, 700), (80, 700), (82, 640), (85, 590),
+                      (60, 565), (35, 540), (25, 500), (28, 440), (40, 395), (60, 365), (95, 340), (130, 325), (150, 310), (125, 270), (128, 230)],
+                hand=(330, 455, 412, 525, 320, 412),
+                legs=dict(src_span=(200, 290), hip_span=(160, 290), shoes="#3a2416", stance=9, ankle=6)),
+    "stage": dict(src=MID, top=25, chin=127, cut=293, centre_x=812,
+                  poly=[(757, 45), (773, 31), (830, 24), (863, 40), (874, 70), (863, 100), (863, 120), (897, 183), (930, 190), (967, 187), (980, 170), (1007, 151), (1048, 173),
+                        (1030, 185), (997, 198), (973, 208), (950, 218), (943, 233), (950, 293), (686, 293), (686, 273), (692, 220), (706, 162), (730, 137), (740, 105), (737, 80)],
+                  hand=(965, 145, 1050, 212, 940, 1050),
+                  legs=dict(src_span=[(708, 770, 200, 240), (800, 850, 281, 292), (708, 770, 200, 240)], hip_span=(712, 925), leg_span=(815, 845), leg_y=(281, 292), coat_to=0.5, shoes="#15121c", stance=8, ankle=5)),
+    "lounge": dict(src=MID, top=218, chin=335, cut=697, centre_x=1490, door_left=False,
+                   poly=[(1430, 225), (1480, 218), (1525, 238), (1545, 280), (1540, 315), (1580, 345), (1615, 372), (1640, 420), (1665, 500), (1668, 580), (1658, 640), (1662, 665),
+                         (1612, 672), (1582, 682), (1582, 697), (1405, 697), (1400, 620), (1385, 580), (1380, 520), (1350, 497), (1305, 487), (1298, 472), (1340, 455), (1370, 463),
+                         (1400, 440), (1412, 415), (1432, 378), (1448, 330), (1428, 262)],
+                   hand=(1296, 440, 1385, 500, 1395, 1296),
+                   legs=dict(src_span=(1412, 1540), hip_span=(1412, 1575), split=0.2, shoes="#3a2416", stance=10, ankle=7)),
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(os.path.dirname(SHEET), exist_ok=True)
@@ -278,9 +549,10 @@ def main():
     sheet = Image.new("RGBA", (cols * W, 3 * H), (14, 12, 34, 255))
     for r, who in enumerate(GUIDES):
         x = 0
+        cropped = crop_guide(CROPS[who]) if who in CROPS else None
         for state, n in FRAMES.items():
             for i in range(n):
-                im = draw_guide(who, state, i)
+                im = cropped[(state, i)] if cropped else draw_guide(who, state, i)
                 im.save(os.path.join(OUT, "guide_%s_%s_%d.png" % (who, state, i)))
                 sheet.alpha_composite(im, (x * W, r * H))
                 x += 1

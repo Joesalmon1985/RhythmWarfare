@@ -6,6 +6,7 @@
 
     python -I tools/doom/art/make_dock_guides.py     writes assets/story/doom_dock/textures/guide_<who>_<state>_<n>.png
 
+Stage D polish: all three are now CROPPED from the paintings (see `main`). The text below describes the earlier procedural placeholders, which `variants` still draws.
 PLACEHOLDER art, procedural, like the Warehouse's: NOT the painterly finish of art/reference/standard/guide_floor_sprite_standard.png. The painting's figures are the brief (the Underworld guide
 sits on crates with a drum, the Mothership guide stands with an arm out; these are standing sprites with the shared poses). An art pass replaces the PNGs; names and frame counts are the contract.
 """
@@ -46,24 +47,19 @@ def variants():
     }
 
 
+CROPPED = {"floor": "floor_dock", "mothership": "mothership_booth", "underworld": "underworld_dock7"}  # who: the crop (tools/doom/art/make_dock_crop.py CROPS)
+
+
 def main():
+    """Stage D polish (ruling 36): the three guides are CROPPED from the paintings (make_dock_crop.py): the Floor guide from this scene's painting (350 px tall there), the
+    Mothership guide from the Booth's painting (200 px; 130 px in the Dock's), the Underworld guide from `Rainy Dock of Three Paths-7.png` (his legs hidden there: the sheet
+    leaves them out and the scene seats him behind crates and his drum). The procedural figures above (`variants`, `horns`) are kept for reference only."""
+    import make_dock_crop as mc
     os.makedirs(OUT, exist_ok=True)
     n = 0
-    base, vs = variants()
-    for who, (arch, patch, hcol) in vs.items():
-        mg.GUIDES[arch] = {**base[arch], **patch}
-        for state, frames in mg.FRAMES.items():
-            for i in range(frames):
-                im = horns(mg.draw_guide(arch, state, i), hcol)
-                im.save(os.path.join(OUT, "guide_%s_%s_%d.png" % (who, state, i)))
-                n += 1
-        mg.GUIDES[arch] = dict(base[arch])
-    for state, frames in mg.FRAMES.items():  # the Lounge's Floor guide, unchanged
-        for i in range(frames):
-            lg.draw("floor", state, i).save(os.path.join(OUT, "guide_floor_%s_%d.png" % (state, i)))
-            n += 1
+    for who, key in CROPPED.items():
+        n += mc.write(mc.CROPS[key], OUT, who)
     return n
-
 
 if __name__ == "__main__":
     print("wrote %d guide frames to %s" % (main(), OUT))

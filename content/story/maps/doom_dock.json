@@ -4,7 +4,6 @@
  "art": "doom_dock",
  "start": "dk_arrive",
  "textures": {
-  "dk_ceil_sky": "textures/dk_ceil_sky.png",
   "dk_ceil_truss": "textures/dk_ceil_truss.png",
   "dk_floor_asphalt": "textures/dk_floor_asphalt.png",
   "dk_floor_blue": "textures/dk_floor_blue.png",
@@ -13,11 +12,15 @@
   "dk_trim": "textures/dk_trim.png",
   "dk_wall_blue": "textures/dk_wall_blue.png",
   "dk_wall_brick": "textures/dk_wall_brick.png",
+  "dk_wall_brick_b": "textures/dk_wall_brick_b.png",
   "dk_wall_shutter": "textures/dk_wall_shutter.png",
   "dk_wall_steel": "textures/dk_wall_steel.png",
   "dk_wall_tower": "textures/dk_wall_tower.png",
+  "dk_wall_tower_b": "textures/dk_wall_tower_b.png",
+  "dk_wall_tower_c": "textures/dk_wall_tower_c.png",
   "dk_wall_ware": "textures/dk_wall_ware.png",
   "dk_bollard": "textures/dk_bollard.png",
+  "dk_pallets_near": "textures/dk_pallets_near.png",
   "dk_case": "textures/dk_case.png",
   "dk_pallet": "textures/dk_pallet.png",
   "dk_pallet_stack": "textures/dk_pallet_stack.png",
@@ -28,16 +31,16 @@
   "dk_street_lamp": "textures/dk_street_lamp.png",
   "dk_wall_lamp": "textures/dk_wall_lamp.png",
   "dk_furnace": "textures/dk_furnace.png",
-  "dk_drum": "textures/dk_drum.png",
   "dk_door_leaf": "textures/dk_door_leaf.png",
   "dk_clef": "textures/dk_clef.png",
   "dk_pipe_vert": "textures/dk_pipe_vert.png",
   "dk_windows_lit": "textures/dk_windows_lit.png",
   "dk_towers": "textures/dk_towers.png",
+  "dk_end_glow": "textures/dk_end_glow.png",
+  "dk_neon_blue": "textures/dk_neon_blue.png",
   "dk_fence": "textures/dk_fence.png",
   "dk_pipes_yard": "textures/dk_pipes_yard.png",
   "dk_shutter": "textures/dk_shutter.png",
-  "dk_neon_blue": "textures/dk_neon_blue.png",
   "guide_mothership_idle_0": "textures/guide_mothership_idle_0.png",
   "guide_mothership_available_0": "textures/guide_mothership_available_0.png",
   "guide_mothership_available_1": "textures/guide_mothership_available_1.png",
@@ -69,7 +72,10 @@
   "guide_underworld_committed_0": "textures/guide_underworld_committed_0.png",
   "guide_underworld_committed_1": "textures/guide_underworld_committed_1.png"
  },
- "sky": {},
+ "sky": {
+  "tex": "textures/dk_sky.png",
+  "mode": "cylinder"
+ },
  "sectors": [
   {
    "id": "0_0",
@@ -98,15 +104,16 @@
    "floor": 0.25,
    "ceiling": 7.5,
    "floor_tex": "dk_floor_conc",
-   "ceil_tex": "dk_ceil_sky",
+   "ceil_tex": "sky",
    "wall_tex": "dk_wall_brick",
    "light": 1.0,
-   "tint": "#dbcec6",
+   "tint": "#ede0d8",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "1_0",
@@ -139,7 +146,9 @@
    "flags": [],
    "doom_sector": 1,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_wall_shutter",
+   "ambient": 0.5,
+   "wet": 0.35
   },
   {
    "id": "2_0",
@@ -172,15 +181,16 @@
    "floor": 0.25,
    "ceiling": 7.5,
    "floor_tex": "dk_floor_walk",
-   "ceil_tex": "dk_ceil_sky",
+   "ceil_tex": "sky",
    "wall_tex": "dk_wall_brick",
-   "light": 0.984,
-   "tint": "#cec7db",
+   "light": 1.0,
+   "tint": "#e3ddf0",
    "room": "main",
    "flags": [],
    "doom_sector": 2,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "3_0",
@@ -217,18 +227,87 @@
    "floor": 0.0,
    "ceiling": 7.5,
    "floor_tex": "dk_floor_asphalt",
-   "ceil_tex": "dk_ceil_sky",
+   "ceil_tex": "sky",
    "wall_tex": "dk_wall_tower",
-   "light": 0.93,
-   "tint": "#c6cee5",
+   "light": 1.0,
+   "tint": "#dde1f5",
    "room": "main",
    "flags": [],
    "doom_sector": 3,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
   },
   {
    "id": "4_0",
+   "polygon": [
+    [
+     -1.5,
+     -31.0
+    ],
+    [
+     -1.5,
+     -20.0
+    ],
+    [
+     -4.0,
+     -20.0
+    ],
+    [
+     -4.0,
+     -31.0
+    ]
+   ],
+   "floor": 0.25,
+   "ceiling": 5.5,
+   "floor_tex": "dk_floor_walk",
+   "ceil_tex": "sky",
+   "wall_tex": "dk_wall_tower_b",
+   "light": 0.95,
+   "tint": "#dddbf0",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 4,
+   "step_tex": "dk_trim",
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
+  },
+  {
+   "id": "5_0",
+   "polygon": [
+    [
+     7.5,
+     -20.0
+    ],
+    [
+     -1.5,
+     -20.0
+    ],
+    [
+     -1.5,
+     -31.0
+    ],
+    [
+     7.5,
+     -31.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 5.5,
+   "floor_tex": "dk_floor_asphalt",
+   "ceil_tex": "sky",
+   "wall_tex": "dk_wall_tower_c",
+   "light": 0.95,
+   "tint": "#dbdff5",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 5,
+   "step_tex": "dk_trim",
+   "lip_tex": "dk_trim",
+   "ambient": 0.5
+  },
+  {
+   "id": "6_0",
    "polygon": [
     [
      13.5,
@@ -250,18 +329,19 @@
    "floor": 0.0,
    "ceiling": 7.5,
    "floor_tex": "dk_floor_asphalt",
-   "ceil_tex": "dk_ceil_sky",
+   "ceil_tex": "sky",
    "wall_tex": "dk_wall_ware",
-   "light": 0.984,
-   "tint": "#e5cbb6",
+   "light": 1.0,
+   "tint": "#f2ddcb",
    "room": "main",
    "flags": [],
-   "doom_sector": 4,
+   "doom_sector": 6,
    "step_tex": "dk_trim",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_trim",
+   "ambient": 0.48
   },
   {
-   "id": "5_0",
+   "id": "7_0",
    "polygon": [
     [
      -4.0,
@@ -285,17 +365,23 @@
    "floor_tex": "dk_floor_blue",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_blue",
-   "light": 0.984,
+   "light": 1.0,
    "tint": "#b6c6ff",
    "room": "main",
    "flags": [],
-   "doom_sector": 5,
+   "doom_sector": 7,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_wall_brick",
+   "ambient": 0.7,
+   "wet": 0.2
   },
   {
-   "id": "6_0",
+   "id": "8_0",
    "polygon": [
+    [
+     -10.0,
+     -11.5
+    ],
     [
      -5.5,
      -11.5
@@ -314,7 +400,11 @@
     ],
     [
      -10.0,
-     -11.5
+     -7.0
+    ],
+    [
+     -10.0,
+     -10.5
     ]
    ],
    "floor": 0.25,
@@ -322,16 +412,65 @@
    "floor_tex": "dk_floor_blue",
    "ceil_tex": "dk_ceil_truss",
    "wall_tex": "dk_wall_blue",
-   "light": 0.984,
+   "light": 1.0,
    "tint": "#a8bcff",
    "room": "main",
    "flags": [],
-   "doom_sector": 6,
+   "doom_sector": 8,
    "step_tex": "dk_wall_steel",
-   "lip_tex": "dk_trim"
+   "lip_tex": "dk_wall_blue",
+   "ambient": 0.7
+  },
+  {
+   "id": "9_0",
+   "polygon": [
+    [
+     -10.0,
+     -10.5
+    ],
+    [
+     -10.0,
+     -7.0
+    ],
+    [
+     -16.0,
+     -7.0
+    ],
+    [
+     -16.0,
+     -10.5
+    ]
+   ],
+   "floor": 0.25,
+   "ceiling": 3.0,
+   "floor_tex": "dk_floor_blue",
+   "ceil_tex": "dk_ceil_truss",
+   "wall_tex": "dk_wall_blue",
+   "light": 1.0,
+   "tint": "#acbcff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 9,
+   "step_tex": "dk_wall_steel",
+   "lip_tex": "dk_wall_blue",
+   "ambient": 0.7
   }
  ],
  "walls": [
+  {
+   "from": [
+    -10.0,
+    -7.0
+   ],
+   "to": [
+    -10.0,
+    -10.5
+   ],
+   "sector": "8_0",
+   "portal": "9_0",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
   {
    "from": [
     -5.5,
@@ -341,10 +480,10 @@
     -5.5,
     -10.0
    ],
-   "sector": "5_0",
-   "portal": "6_0",
+   "sector": "7_0",
+   "portal": "8_0",
    "lower_tex": "",
-   "upper_tex": "dk_trim"
+   "upper_tex": ""
   },
   {
    "from": [
@@ -358,7 +497,7 @@
    "sector": "0_0",
    "portal": "2_0",
    "lower_tex": "",
-   "upper_tex": ""
+   "upper_tex": "sky"
   },
   {
    "from": [
@@ -370,9 +509,23 @@
     -10.0
    ],
    "sector": "2_0",
-   "portal": "5_0",
+   "portal": "7_0",
    "lower_tex": "",
-   "upper_tex": "dk_trim"
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -4.0,
+    -20.0
+   ],
+   "to": [
+    -1.5,
+    -20.0
+   ],
+   "sector": "2_0",
+   "portal": "4_0",
+   "lower_tex": "",
+   "upper_tex": "sky"
   },
   {
    "from": [
@@ -386,7 +539,7 @@
    "sector": "2_0",
    "portal": "3_0",
    "lower_tex": "dk_trim",
-   "upper_tex": ""
+   "upper_tex": "sky"
   },
   {
    "from": [
@@ -400,7 +553,35 @@
    "sector": "0_0",
    "portal": "3_0",
    "lower_tex": "dk_trim",
-   "upper_tex": ""
+   "upper_tex": "sky"
+  },
+  {
+   "from": [
+    -1.5,
+    -31.0
+   ],
+   "to": [
+    -1.5,
+    -20.0
+   ],
+   "sector": "4_0",
+   "portal": "5_0",
+   "lower_tex": "dk_trim",
+   "upper_tex": "sky"
+  },
+  {
+   "from": [
+    -1.5,
+    -20.0
+   ],
+   "to": [
+    7.5,
+    -20.0
+   ],
+   "sector": "3_0",
+   "portal": "5_0",
+   "lower_tex": "",
+   "upper_tex": "sky"
   },
   {
    "from": [
@@ -414,7 +595,7 @@
    "sector": "0_0",
    "portal": "1_0",
    "lower_tex": "",
-   "upper_tex": "dk_trim"
+   "upper_tex": ""
   },
   {
    "from": [
@@ -428,7 +609,7 @@
    "sector": "1_0",
    "portal": "3_0",
    "lower_tex": "dk_trim",
-   "upper_tex": "dk_trim"
+   "upper_tex": ""
   },
   {
    "from": [
@@ -440,9 +621,9 @@
     -8.5
    ],
    "sector": "3_0",
-   "portal": "4_0",
+   "portal": "6_0",
    "lower_tex": "",
-   "upper_tex": ""
+   "upper_tex": "sky"
   },
   {
    "from": [
@@ -463,15 +644,95 @@
   {
    "from": [
     -4,
-    -20
+    -4.5
    ],
    "to": [
-    -1.5,
-    -20
+    -4,
+    -6
    ],
    "sector": "2_0",
    "portal": "",
-   "tex": "dk_wall_tower",
+   "tex": "dk_wall_brick_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -4,
+    -10
+   ],
+   "to": [
+    -4,
+    -12
+   ],
+   "sector": "2_0",
+   "portal": "",
+   "tex": "dk_wall_brick_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -4,
+    -20
+   ],
+   "to": [
+    -4,
+    -31
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_tower_b",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -4,
+    -31
+   ],
+   "to": [
+    -1.5,
+    -31
+   ],
+   "sector": "4_0",
+   "portal": "",
+   "tex": "dk_wall_tower_c",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    7.5,
+    -20
+   ],
+   "to": [
+    7.5,
+    -31
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_tower_c",
+   "lower_tex": "",
+   "upper_tex": "",
+   "dock_solid": true
+  },
+  {
+   "from": [
+    -1.5,
+    -31
+   ],
+   "to": [
+    7.5,
+    -31
+   ],
+   "sector": "5_0",
+   "portal": "",
+   "tex": "dk_wall_tower_b",
    "lower_tex": "",
    "upper_tex": "",
    "dock_solid": true
@@ -501,7 +762,7 @@
     13.5,
     -16
    ],
-   "sector": "4_0",
+   "sector": "6_0",
    "portal": "",
    "tex": "dk_wall_ware",
    "lower_tex": "",
@@ -517,7 +778,7 @@
     13.5,
     -8.5
    ],
-   "sector": "4_0",
+   "sector": "6_0",
    "portal": "",
    "tex": "dk_wall_steel",
    "lower_tex": "",
@@ -558,8 +819,8 @@
     10.0,
     -12.6
    ],
-   "y": 1.1,
-   "size": 2.2,
+   "y": 1.15,
+   "size": 2.3,
    "anim": "none"
   },
   {
@@ -567,8 +828,8 @@
    "kind": "billboard",
    "sprite": "dk_bollard",
    "at": [
-    -0.8,
-    -2.6
+    -0.5,
+    -4.3
    ],
    "y": 0.55,
    "size": 1.1,
@@ -584,6 +845,42 @@
    ],
    "y": 0.55,
    "size": 1.1,
+   "anim": "none"
+  },
+  {
+   "id": "dk_bollard_c",
+   "kind": "billboard",
+   "sprite": "dk_bollard",
+   "at": [
+    -0.9,
+    -2.6
+   ],
+   "y": 0.55,
+   "size": 1.1,
+   "anim": "none"
+  },
+  {
+   "id": "dk_pallets_near",
+   "kind": "billboard",
+   "sprite": "dk_pallets_near",
+   "at": [
+    5.4,
+    -5.3
+   ],
+   "y": 0.6,
+   "size": 1.2,
+   "anim": "none"
+  },
+  {
+   "id": "dk_case_e",
+   "kind": "billboard",
+   "sprite": "dk_case",
+   "at": [
+    6.6,
+    -6.4
+   ],
+   "y": 0.45,
+   "size": 0.9,
    "anim": "none"
   },
   {
@@ -743,6 +1040,30 @@
    "anim": "none"
   },
   {
+   "id": "dk_street_lamp_c",
+   "kind": "billboard",
+   "sprite": "dk_street_lamp",
+   "at": [
+    -2.4,
+    -24.0
+   ],
+   "y": 2.3,
+   "size": 4.6,
+   "anim": "none"
+  },
+  {
+   "id": "dk_street_lamp_d",
+   "kind": "billboard",
+   "sprite": "dk_street_lamp",
+   "at": [
+    6.9,
+    -27.5
+   ],
+   "y": 2.3,
+   "size": 4.6,
+   "anim": "none"
+  },
+  {
    "id": "dk_door_lamp",
    "kind": "billboard",
    "sprite": "dk_wall_lamp",
@@ -767,15 +1088,27 @@
    "anim": "none"
   },
   {
-   "id": "dk_drum",
+   "id": "dk_seat_a",
    "kind": "billboard",
-   "sprite": "dk_drum",
+   "sprite": "dk_crate",
    "at": [
-    10.9,
-    -12.0
+    9.7,
+    -12.3
    ],
    "y": 0.275,
    "size": 0.55,
+   "anim": "none"
+  },
+  {
+   "id": "dk_seat_b",
+   "kind": "billboard",
+   "sprite": "dk_crate",
+   "at": [
+    10.35,
+    -12.35
+   ],
+   "y": 0.25,
+   "size": 0.5,
    "anim": "none"
   },
   {
@@ -783,8 +1116,8 @@
    "kind": "billboard",
    "sprite": "dk_crate",
    "at": [
-    10.3,
-    -13.5
+    10.9,
+    -13.6
    ],
    "y": 0.35,
    "size": 0.7,
@@ -795,8 +1128,8 @@
    "kind": "billboard",
    "sprite": "dk_crate",
    "at": [
-    11.1,
-    -13.0
+    11.4,
+    -13.2
    ],
    "y": 0.45,
    "size": 0.9,
@@ -910,11 +1243,71 @@
    "kind": "decal",
    "sprite": "dk_towers",
    "at": [
-    3.0,
-    -19.9
+    2.0,
+    -30.9
    ],
-   "y": 1.2,
-   "size": 4.4,
+   "y": 1.0,
+   "size": 6.0,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_g",
+   "kind": "decal",
+   "sprite": "dk_windows_lit",
+   "at": [
+    -3.9,
+    -24.0
+   ],
+   "y": 3.0,
+   "size": 1.5,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_win_h",
+   "kind": "decal",
+   "sprite": "dk_windows_lit",
+   "at": [
+    7.4,
+    -26.5
+   ],
+   "y": 2.2,
+   "size": 1.5,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_end_glow",
+   "kind": "decal",
+   "sprite": "dk_end_glow",
+   "at": [
+    -15.9,
+    -8.75
+   ],
+   "y": 0.0,
+   "size": 2.6,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_neon_d",
+   "kind": "decal",
+   "sprite": "dk_neon_blue",
+   "at": [
+    -13.0,
+    -10.4
+   ],
+   "y": 1.3,
+   "size": 0.6,
+   "emissive": true
+  },
+  {
+   "id": "dk_dc_neon_e",
+   "kind": "decal",
+   "sprite": "dk_neon_blue",
+   "at": [
+    -13.0,
+    -7.1
+   ],
+   "y": 1.3,
+   "size": 0.6,
    "emissive": true
   },
   {
@@ -996,18 +1389,6 @@
    ],
    "y": 0.0,
    "size": 3.3
-  },
-  {
-   "id": "dk_dc_neon_a",
-   "kind": "decal",
-   "sprite": "dk_neon_blue",
-   "at": [
-    -9.9,
-    -8.75
-   ],
-   "y": 1.3,
-   "size": 0.6,
-   "emissive": true
   },
   {
    "id": "dk_dc_neon_b",
@@ -1190,6 +1571,162 @@
    "strength": 2.5
   },
   {
+   "id": "dk_lt_pool_apron",
+   "kind": "light",
+   "at": [
+    2.0,
+    -3.2
+   ],
+   "y": 2.8,
+   "radius": 7.8,
+   "color": "#ffb060",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_door",
+   "kind": "light",
+   "at": [
+    -3.0,
+    -7.2
+   ],
+   "y": 2.4,
+   "radius": 6.5,
+   "color": "#ffb868",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_far",
+   "kind": "light",
+   "at": [
+    2.0,
+    -26.0
+   ],
+   "y": 5.0,
+   "radius": 15.6,
+   "color": "#8a70e0",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_far_lamp",
+   "kind": "light",
+   "at": [
+    -2.2,
+    -24.0
+   ],
+   "y": 4.5,
+   "radius": 10.4,
+   "color": "#ffb860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_run",
+   "kind": "light",
+   "at": [
+    -13.5,
+    -8.75
+   ],
+   "y": 2.0,
+   "radius": 7.8,
+   "color": "#7a6aff",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_mouth",
+   "kind": "light",
+   "at": [
+    11.0,
+    -13.4
+   ],
+   "y": 1.0,
+   "radius": 6.5,
+   "color": "#ff9040",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_s1",
+   "kind": "light",
+   "at": [
+    -0.6,
+    -9.5
+   ],
+   "y": 3.5,
+   "radius": 11.7,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_s2",
+   "kind": "light",
+   "at": [
+    3.5,
+    -12.0
+   ],
+   "y": 4.0,
+   "radius": 13.0,
+   "color": "#7a90e0",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_s3",
+   "kind": "light",
+   "at": [
+    -0.8,
+    -17.5
+   ],
+   "y": 3.5,
+   "radius": 10.4,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_s4",
+   "kind": "light",
+   "at": [
+    4.5,
+    -7.0
+   ],
+   "y": 3.0,
+   "radius": 9.1,
+   "color": "#ffb060",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_walk",
+   "kind": "light",
+   "at": [
+    -2.8,
+    -13.0
+   ],
+   "y": 3.0,
+   "radius": 7.8,
+   "color": "#ffb060",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_far_lamp_b",
+   "kind": "light",
+   "at": [
+    6.5,
+    -27.5
+   ],
+   "y": 4.4,
+   "radius": 11.7,
+   "color": "#ffb860",
+   "strength": 2.5
+  },
+  {
+   "id": "dk_lt_pool_far",
+   "kind": "light",
+   "at": [
+    3.0,
+    -24.0
+   ],
+   "y": 3.0,
+   "radius": 10.4,
+   "color": "#ffa850",
+   "strength": 2.5
+  },
+  {
    "id": "dk_lamp_mothership",
    "kind": "light",
    "at": [
@@ -1236,14 +1773,14 @@
    ]
   },
   "dk_guide_floor": {
-   "sector": "5_0",
+   "sector": "7_0",
    "at": [
     -4.8,
     -7.3
    ]
   },
   "dk_guide_underworld": {
-   "sector": "4_0",
+   "sector": "6_0",
    "at": [
     10.0,
     -12.6
@@ -1335,7 +1872,7 @@
     0.8,
     -18.8
    ],
-   "yaw": -0.0,
+   "yaw": -3.8,
    "sector": "3_0",
    "hold_bars": 1
   },
@@ -1345,18 +1882,18 @@
     -8.0,
     -9.0
    ],
-   "yaw": 90.0,
-   "sector": "6_0",
+   "yaw": 91.8,
+   "sector": "8_0",
    "hold_bars": 1
   },
   {
    "id": "dk_under",
    "at": [
-    12.2,
-    -14.9
+    8.3,
+    -15.4
    ],
-   "yaw": -90.0,
-   "sector": "4_0",
+   "yaw": -125.5,
+   "sector": "6_0",
    "hold_bars": 1
   },
   {
@@ -1420,7 +1957,7 @@
     -9.0
    ],
    "yaw": 90.0,
-   "sector": "5_0"
+   "sector": "7_0"
   },
   {
    "id": "dk_v_u1",
@@ -1443,11 +1980,11 @@
   {
    "id": "dk_v_u3",
    "at": [
-    9.2,
-    -10.0
+    8.4,
+    -11.6
    ],
-   "yaw": -31.5,
-   "sector": "4_0"
+   "yaw": 1.5,
+   "sector": "6_0"
   },
   {
    "id": "dk_v_r1",
@@ -1517,6 +2054,30 @@
     "pieces": [
      "4_0"
     ],
+    "floor": 8,
+    "ceiling": 176,
+    "light": 100,
+    "floor_flat": "FLOOR5_1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "5": {
+    "pieces": [
+     "5_0"
+    ],
+    "floor": 0,
+    "ceiling": 176,
+    "light": 100,
+    "floor_flat": "FLOOR0_1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "6": {
+    "pieces": [
+     "6_0"
+    ],
     "floor": 0,
     "ceiling": 240,
     "light": 110,
@@ -1525,9 +2086,9 @@
     "special": 0,
     "tag": 0
    },
-   "5": {
+   "7": {
     "pieces": [
-     "5_0"
+     "7_0"
     ],
     "floor": 8,
     "ceiling": 88,
@@ -1537,12 +2098,24 @@
     "special": 0,
     "tag": 0
    },
-   "6": {
+   "8": {
     "pieces": [
-     "6_0"
+     "8_0"
     ],
     "floor": 8,
     "ceiling": 102,
+    "light": 110,
+    "floor_flat": "FLOOR5_1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "9": {
+    "pieces": [
+     "9_0"
+    ],
+    "floor": 8,
+    "ceiling": 96,
     "light": 110,
     "floor_flat": "FLOOR5_1",
     "ceil_flat": "CEIL3_5",
@@ -1564,9 +2137,9 @@
    "The painting's street curves left and its fence runs behind the van; here the street is straight and the fence is a wall decal."
   ],
   "stats": {
-   "doom_sectors": 7,
-   "pieces": 7,
-   "portals": 8
+   "doom_sectors": 10,
+   "pieces": 10,
+   "portals": 12
   },
   "authored": true
  },
@@ -1577,8 +2150,8 @@
   "far": 0
  },
  "fog": {
-  "color": "#10122a",
-  "density": 0.02
+  "color": "#17152e",
+  "density": 0.014
  },
  "palette_weight": 1.0,
  "scene": {
@@ -1625,5 +2198,39 @@
    ]
   },
   "note": "authored by tools/doom/author_dock.py; routes are lists of waypoint ids (the polyline); hold_bars on a waypoint is the still hold at a choice window"
+ },
+ "weather": {
+  "rain": 0.8,
+  "wind": 10,
+  "drips": [
+   {
+    "at": [
+     4.15,
+     -1.2
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     3.9,
+     -2.6
+    ],
+    "h": 3.2
+   },
+   {
+    "at": [
+     -3.7,
+     -8.0
+    ],
+    "h": 2.6
+   },
+   {
+    "at": [
+     -3.7,
+     -9.7
+    ],
+    "h": 2.6
+   }
+  ]
  }
 }

@@ -696,6 +696,77 @@ def sheet_of(names, path):
     sh.convert("RGB").save(path)
 
 
+def polish_tiles():
+    """Stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): the surfaces redrawn at 256 px for the renderer's 2 m repeat (128 texels per metre): dark stone blocks with mortar
+    variation, moss and stains in three variants (bar_brick, _b, _c) where the painting's walls are dark and mossy (the first pass was one even orange brick), a warmer lit
+    variant for the bar nook, wet violet cobbles with warm and blue reflections baked in, the copper mains along the ceiling, a lighter water. Props cut from the painting:
+    the red velvet stool and the copper counter with its whisky glass and bottles (the painting's right foreground)."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import make_warehouse_art as wa
+    STONE = ["#140e10", "#241a1a", "#362828", "#4a3832", "#604c40", "#7a6250"]  # stage D exposure pass: a notch lighter (lit block faces)
+    LIT = ["#140a08", "#2a1610", "#44261a", "#603822", "#7e4c2c", "#9e6436"]
+    out = {"bar_brick": wa.tile_brick_wall(201, STONE, "#08060a", moss=True, bh=32, bw=64), "bar_brick_b": wa.tile_brick_wall(202, STONE, "#08060a", moss=True, bh=32, bw=56),
+           "bar_brick_c": wa.tile_brick_wall(203, STONE, "#08060a", moss=False, bh=32, bw=72), "bar_brick_lit": wa.tile_brick_wall(204, LIT, "#0c0604", bh=32, bw=64),
+           "bar_quay": wa.tile_brick_wall(205, STONE, "#06080a", moss=True, bh=32, bw=48)}
+    N = wa.N
+    yy, xx = np.mgrid[0:N, 0:N]
+    v = np.zeros((N, N))
+    rng = np.random.default_rng(206)
+    for r in range(N // 24 + 1):  # cobbles: rows of rounded setts
+        off = int(rng.integers(0, 40))
+        x = -off
+        while x < N:
+            w = int(rng.integers(30, 46))
+            b = 0.35 + rng.random() * 0.35
+            ly, lx = yy - r * 24, xx - x
+            inside = (ly >= 0) & (ly < 24) & (lx >= 0) & (lx < w)
+            edge = np.minimum(np.minimum(ly, 23 - ly), np.minimum(lx, w - 1 - lx))
+            v[inside] = np.where(edge[inside] < 2, 0.06, b + 0.15 * (1 - ly[inside] / 24.0))
+            x += w
+    v += (wa.noise(N, N, 207, 4) - 0.5) * 0.15
+    img = wa.ramp(np.clip(v, 0, 1), ["#0a0812", "#1a1428", "#2a2040", "#3c2e58", "#52406e", "#6a5686"], 0.9)
+    wet = wa.noise(N, N, 208, 64, 2)
+    img = wa.sheen(img, wet, ["#34407e", "#6a78c8"], 0.7)
+    warm = wa.noise(N, N, 209, 32, 2)
+    img = wa.sheen(img, warm, ["#8a5a3a", "#e0a060"], 0.76)
+    out["bar_cobble"] = img
+    v = 0.25 + (wa.noise(N, N, 210, 8) - 0.5) * 0.2
+    img = wa.ramp(v, ["#0e0806", "#1c100a", "#2c1a10", "#3e2616"], 0.7)
+    for y0, h in ((96, 64),):  # one main per 2 m tile, riveted collars (transposed below: it runs along the passage, as the painting's mains do)
+        t = np.clip((yy - y0) / float(h), 0, 1)
+        cyl = 1 - np.abs(t - 0.35) * 1.8
+        pim = wa.ramp(np.clip(cyl * 0.78 + (wa.noise(N, N, 211 + y0, 4) - 0.5) * 0.15, 0, 1), COPPER, 0.8)  # stage D: the mains in the ceiling's shadow, lit, not glowing
+        m = (yy >= y0) & (yy < y0 + h)
+        img[m] = pim[m]
+        for x0 in (60,):
+            c = (xx >= x0) & (xx < x0 + 14) & (yy >= y0 - 4) & (yy < y0 + h + 4)
+            cv = np.clip(1 - np.abs((yy - y0 - h / 2.0) / (h / 2.0 + 4)), 0, 1)
+            cim = wa.ramp(cv, COPPER, 0.6)
+            img[c] = cim[c]
+            img[c & ((yy - y0) % 10 == 3) & ((xx - x0) % 7 == 3)] = hexc("#ffe0a0")
+    out["bar_ceiling"] = np.ascontiguousarray(img.transpose(1, 0, 2))
+    v = 0.35 + 0.18 * np.sin(xx / 14.0 + np.sin(yy / 9.0) * 2) + 0.14 * np.sin(yy / 7.0 + xx / 25.0) + (wa.noise(N, N, 213, 8) - 0.5) * 0.3
+    img = wa.ramp(v, ["#04161c", "#0a3a42", "#106a70", "#1c9a9a", "#5ad2c4", "#b0f4e0"], 0.8)
+    spark = (wa.noise(N, N, 214, 4) > 0.8) & (BAYER[yy % 4, xx % 4] < 0.6)
+    img[spark] = hexc("#ffc27a")
+    out["bar_water"] = img
+    for k, a in out.items():
+        save(k, a)
+    paint = os.path.join(ROOT, "art", "reference", "doom_worlds", "Copper Basement Bar, Three Hidden Routes-3.png")
+    rgb, al = wa.cut((1018, 776, 1298, 941), [(1030, 800), (1080, 782), (1160, 778), (1240, 782), (1294, 805), (1292, 870), (1270, 882), (1250, 941), (1060, 941), (1042, 882), (1020, 860)], paint=paint)
+    save("bar_p_stool", rgb, al.astype(float))
+    rgb, al = wa.cut((1262, 500, 1672, 941), [(1268, 600), (1300, 560), (1360, 528), (1440, 505), (1540, 500), (1600, 340), (1660, 340), (1672, 340), (1672, 941), (1300, 941), (1290, 760), (1268, 700)], paint=paint)
+    save("bar_p_counter", rgb, al.astype(float))
+    # the riveted copper downpipe at the passage's left (stage D: the first pass was a flat drawn plank), collars wider than the shaft
+    pipe = [(452, 0), (528, 0), (528, 60), (518, 60), (518, 140), (528, 140), (528, 165), (518, 165), (518, 405), (528, 405), (528, 430), (518, 430), (518, 605), (462, 605),
+            (462, 430), (452, 430), (452, 405), (462, 405), (462, 165), (452, 165), (452, 140), (462, 140), (462, 60), (452, 60)]
+    rgb, al = wa.cut((450, 0, 530, 606), pipe, paint=paint)
+    save("bar_p_pipe", rgb, al.astype(float))
+    # the stone post the Floor guide leans on (her crop keeps her hand at its top; the first pass left the hand on nothing)
+    rgb, al = wa.cut((92, 464, 172, 692), [(96, 470), (120, 464), (168, 466), (171, 470), (171, 692), (93, 692)], paint=paint)
+    save("bar_p_post", rgb, al.astype(float))
+
+
 def main():
     tiles = {"bar_brick": tile_brick(), "bar_cobble": tile_cobble(), "bar_planks": tile_planks(), "bar_step": tile_step(), "bar_counter_front": tile_counter_front(),
              "bar_copper": tile_copper(), "bar_water": tile_water(), "bar_grate": tile_grate(), "bar_quay": tile_quay(), "bar_ceiling": tile_ceiling(), "bar_booth_wall": tile_booth_wall(),
@@ -710,6 +781,7 @@ def main():
                decal_door_floor, decal_curtain]
     for f in sprites:
         f()
+    polish_tiles()
     names = sorted(os.path.splitext(f)[0] for f in os.listdir(OUT) if f.endswith(".png") and not f.startswith("guide_"))
     sheet_of(names, SHEET)
     print("wrote %d images to %s" % (len(names), OUT))

@@ -43,10 +43,14 @@ SECTORS = [
     ("b_c", r(-1, 11, 1, 12), 1.125, 8.0, 105, "STEP1", "CEIL3_5"),
     ("bridge", r(-1, 12, 1, 16), 1.125, 8.0, 105, "FLOOR5_1", "CEIL3_5"),
     ("isle", r(-2, 16, 2, 19), 1.125, 8.0, 130, "FLOOR5_1", "CEIL3_5"),
-    ("vw1", r(-9, 9, -1, 16), -9.0, 8.0, 60, "FLOOR0_1", "CEIL3_5"),
-    ("vw2", r(-9, 16, -2, 19), -9.0, 8.0, 60, "FLOOR0_1", "CEIL3_5"),
-    ("ve1", r(1, 9, 9, 16), -9.0, 8.0, 60, "FLOOR0_1", "CEIL3_5"),
-    ("ve2", r(2, 16, 9, 19), -9.0, 8.0, 60, "FLOOR0_1", "CEIL3_5"),
+    # stage D polish: the drops' ceilings come down to 2.4 m (their far walls end less than a metre above the eye, so the sky's moon and skyline show over them: the painting's city)
+    ("vw1", r(-9, 9, -1, 16), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    ("vw2", r(-9, 16, -2, 19), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    ("ve1", r(1, 9, 9, 16), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    ("ve2", r(2, 16, 9, 19), -9.0, 2.4, 60, "FLOOR0_1", "CEIL3_5"),
+    # stage D polish: the alley at the stair's foot (the way to the Floor runs on down it to a lit side door) and the cabin's back door onto the stairwell down (the way to the Booth)
+    ("alley", r(-6.5, -7, -3.5, 0), -1.875, 8.0, 100, "FLOOR5_1", "CEIL3_5"),
+    ("cback", r(9, 4, 10.5, 6), 0.0, 2.5, 150, "FLOOR5_1", "CEIL3_5"),
 ]
 # railings (flags impassable): the deck's open edges, the stair's open side, the bridge and the platform (pairs of sector names). isle|vw2 and isle|ve2 stay plain drops (the voids
 # must stay connected to the map through one open portal each: the loader demands every sector reachable; a walker cannot cross a drop, the rail check proves it).

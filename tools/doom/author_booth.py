@@ -23,10 +23,17 @@ OWN = "textures/"
 MARGIN = 0.5
 MARGINS = {"bt_bal_door": 0.33, "bt_v_door": 0.33, "bt_v_dockdoor": 0.33, "bt_hatch": 0.45}
 MAX_STEP = 0.5
-RAIL_HEIGHTS = {"dais|aisle": 1.0, "dais|terrace": 1.75, "dstep_a|terrace": 2.375, "dstep_b|terrace": 2.0}  # metres above the higher floor (the window tops out at the 2.75 m ceiling)
+RAIL_HEIGHTS = {"dais|terrace": 2.75, "dstep_a|terrace": 2.75, "dstep_b|terrace": 2.75}  # stage D: the desk is on the floor, the window mesh runs floor to ceiling behind it  # metres above the higher floor (the window tops out at the 2.75 m ceiling)
 RAIL_TEX = {"dais|aisle": "bt_rail"}  # every other railing is the window mesh
 WINDOW_TEX = "bt_window"
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.52, 0.35, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+# stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): every sector's song-time light at 1.0 (a gain of 1.5) with the flat light away from the lamps at AMBIENT; the iron balcony outside
+# the window is open to the storm sky (rain falls there, drips from the window's lintel and the double door), the dock annex floor is wet from its open shutter; nobody but the guides
+SKY = {"tex": "textures/bt_sky.png", "mode": "cylinder"}
+SKY_SECTORS = ["terrace", "porch", "bal_step_a", "bal_step_b", "bal_top"]
+AMBIENT = {"aisle": 0.75, "dais": 0.75, "landing": 0.75, "terrace": 0.7, "porch": 0.7, "dock": 0.7, "moth": 0.7}
+WEATHER = {"rain": 0.85, "wind": 8, "drips": [{"at": [-4.2, -2.0], "h": 2.6}, {"at": [-4.2, -5.0], "h": 2.6}, {"at": [-5.0, -9.0], "h": 2.2}]}
+WET = {"dock": 0.6, "dock_door": 0.3}
 
 
 def M(x, y):
@@ -99,8 +106,9 @@ GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
 }
 # billboards: id, sprite, point (m), size (height m); y is the centre (half the size) unless a fifth value is given (height of the centre above the floor)
 THINGS = [
-    ("bt_deck_a", "bt_turntable", (-2.45, 1.5), 0.7), ("bt_mixer", "bt_mixer", (-2.5, 3.1), 0.8), ("bt_deck_b", "bt_turntable", (-2.45, 4.8), 0.6),
-    ("bt_desk_lamp", "bt_lamp", (-3.2, 3.6), 1.1), ("bt_stool", "bt_stool", (-1.2, 4.0), 0.75), ("bt_records", "bt_records", (-2.6, 0.55), 0.55),
+    # stage D polish: the painting's big desk (turntable, mixer, lamp, mug, headphones, records: cropped from the painting) as the foreground billboard on the dais's aisle edge,
+    # standing on the floor, so from bt_ref it fills the lower left as the painting's desk does; the stool before it
+    ("bt_desk_big", "bt_desk_big", (-0.75, 5.1), 1.6, 0.85), ("bt_stool", "bt_stool", (-0.1, 3.6), 0.7),
     ("bt_dais_cables", "bt_cables", (-2.1, 6.4), 0.45), ("bt_deck_c", "bt_turntable", (-2.6, 6.5), 0.5),
     ("bt_rack_a", "bt_rack", (1.35, 7.4), 1.5), ("bt_rack_b", "bt_rack", (1.35, 8.7), 1.5), ("bt_case_a", "bt_case", (1.3, 9.9), 0.7), ("bt_case_b", "bt_case", (1.3, 1.0), 0.6),
 ("bt_rack_c", "bt_rack_short", (-1.35, 10.3), 1.0),
@@ -115,7 +123,7 @@ DECALS = [
     ("bt_dc_vent_door", "bt_vent_door", (1.6, 6.15), 2.2, 0.0, False), ("bt_dc_pipes", "bt_pipes", (1.65, 7.55), 2.6, 0.0, False), ("bt_dc_shelf", "bt_cable_shelf", (1.6, 9.0), 1.3, 0.55, False),
     ("bt_dc_led_a", "bt_led", (1.6, 1.5), 0.22, 2.1, True), ("bt_dc_led_b", "bt_led", (1.6, 9.9), 0.22, 2.1, True), ("bt_dc_led_c", "bt_led", (-1.6, 10.8), 0.2, 2.15, True),
     ("bt_dc_screen_a", "bt_screen", (-3.3, 10.8), 0.55, 1.5, True), ("bt_dc_screen_b", "bt_screen_wave", (-2.5, 10.8), 0.55, 1.5, True), ("bt_dc_screen_c", "bt_screen", (1.5, 10.85), 0.5, 1.5, True),
-    ("bt_dc_skyline", "bt_skyline", (-9.6, 4.25), 3.0, 0.3, True), ("bt_dc_shutter", "bt_shutter", (8.85, 4.5), 2.0, 0.0, False),
+    ("bt_dc_skyline", "bt_skyline", (-9.6, 4.25), 3.0, 0.3, True), ("bt_dc_shutter", "bt_shutter_open", (8.85, 4.5), 3.0, 0.0, True),
     ("bt_dc_led_d", "bt_led", (0.0, 0.2), 0.3, 2.2, True),
 ]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (amber task light over the desk, red LED glow at the racks, the caged lamps in the aisle, moonlight on the balcony, violet ahead, sodium on the dock)
@@ -125,6 +133,8 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength   (amber task light ove
     ("bt_lt_balcony", (-6.8, 4.2), 3.0, 9.0, "#5a80d8", 1.5), ("bt_lt_balcony2", (-6.5, 9.8), 3.0, 6.0, "#6a90e0", 1.2),
     ("bt_lt_hatch", (0.0, 11.5), 2.2, 3.0, "#d0a0ff", 1.2), ("bt_lt_moth", (0.0, 14.5), 3.4, 8.0, "#a070ff", 1.6), ("bt_lt_moth2", (0.0, 16.6), 2.0, 4.5, "#70ffc8", 1.2),
     ("bt_lt_dock", (4.6, 4.6), 3.0, 8.0, "#ffa850", 1.8), ("bt_lt_dock2", (6.9, 2.6), 3.0, 6.0, "#ffb860", 1.5), ("bt_lt_dock3", (7.0, 7.0), 3.0, 6.0, "#ff9840", 1.2),
+    ("bt_lt_shutter", (8.3, 4.5), 1.4, 5.0, "#ffb050", 1.6), ("bt_lt_desk_lamp", (-1.6, 5.4), 1.3, 4.0, "#ffb060", 2.0),
+    ("bt_lt_window_moon", (-3.6, 4.0), 2.0, 5.0, "#6a90e0", 1.4), ("bt_lt_terrace_lamp", (-8.0, 6.0), 2.6, 6.0, "#ff8a40", 1.4), ("bt_lt_aisle_floor", (0.6, 4.5), 0.6, 4.0, "#ffb060", 1.2),
 ]
 CROWD_POINTS_SECTOR = "terrace"
 
@@ -218,12 +228,23 @@ def main():
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, lift(tint), step
         s["lip_tex"] = "bt_trim"
         s["room"] = "main"
-        s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        s["light"] = 1.0
+        s["ambient"] = AMBIENT.get(nm, 0.6)
+        s.pop("wet", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
+            s["rain"] = False
+        if nm in SKY_SECTORS:
+            s["ceil_tex"] = "sky"
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
-            used[s[k]] = True
+            if s[k] != "sky":
+                used[s[k]] = True
+    sky_ids = {s["id"] for s in d["sectors"] if names[int(s["doom_sector"])] in SKY_SECTORS}
     for w in d["walls"]:
+        if w.get("portal") and w["sector"] in sky_ids and w["portal"] in sky_ids:
+            w["upper_tex"] = "sky"
         for k in ("lower_tex", "upper_tex"):
-            if w.get(k):
+            if w.get(k) and w[k] != "sky":
                 used[w[k]] = True
     used.update({"bt_rail": True, WINDOW_TEX: True})
     tex = {}
@@ -274,8 +295,9 @@ def main():
     d["waypoints"] = keep
     d["start"] = "bt_arrive"
     barriers(d, names)
-    d["sky"] = {}
-    d["fog"] = {"color": "#2a1618", "density": 0.022}
+    d["sky"] = dict(SKY)
+    d["weather"] = {"rain": WEATHER["rain"], "wind": WEATHER["wind"], "drips": [dict(x) for x in WEATHER["drips"]]}
+    d["fog"] = {"color": "#1a0e10", "density": 0.018}
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("bt_")]
@@ -316,6 +338,8 @@ def main():
             dec[k] = [e for e in dec.get(k, []) if not (isinstance(e, dict) and str(e.get("action", "")).startswith("player_"))]
     for e in ch["endings"].values():
         e["journey"] = []
+    ch["actors"], ch["silhouettes"] = [], []  # stage D polish: the painting's booth and balcony are empty but for the three guides
+    ch["groups"] = {k: [] for k in ch["groups"]}
     open(os.path.join(ROOT, "content", "run", "doom", "story_doom_booth.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(ch, indent=1) + "\n")
     terrace = next(s for s in d["sectors"] if names[int(s["doom_sector"])] == CROWD_POINTS_SECTOR)
     guide_pts = [M(*g[0]) for g in GUIDES.values()]

@@ -77,52 +77,98 @@ ROUTES = {  # the destination routes and the stay loop as lists of waypoint ids,
     "arrive": ["wh_arrive", "wh_ref"],
     "stumble": ["wh_ref_back", "wh_sw_corner", "wh_ref"],
 }
-# sector (by the trace's name) -> floor, wall, ceiling texture, tint
+# sector (by the trace's name) -> floor, wall, ceiling texture, tint. The Warehouse's own tiles (tools/doom/art/make_warehouse_art.py, stage D polish); a wall named WALLS gets one of
+# its variants per piece (a hash of the piece id), so no long wall repeats one tile.
 STYLE = {
-    "stone_ring": ("floor_dark", "wall_panel", "ceil_truss", "#b8c8ff"),
-    "courtyard": ("floor_led", "trim", "ceil_truss", "#8aa4ff"),
-    "terrace": ("floor_boards", "wall_brick", "ceil_truss", "#9fb0e8"),
-    "nub": ("floor_dark", "wall_corridor", "ceil_low", "#aab8f0"),
-    "pedestal": ("floor_stage", "wall_led", "ceil_truss", "#ff8aa8"),
-    "ped_step_a": ("floor_stage", "trim", "ceil_truss", "#ffa8bc"),
-    "ped_step_b": ("floor_stage", "trim", "ceil_truss", "#ffa8bc"),
-    "stage_step_a": ("floor_stage", "trim", "ceil_truss", "#c8d0ff"),
-    "stage_step_b": ("floor_stage", "trim", "ceil_truss", "#c8d0ff"),
-    "stage": ("floor_stage", "wall_panel", "ceil_truss", "#d0d8ff"),
-    "gate_step_s": ("floor_dark", "trim", "ceil_truss", "#b8c8ff"),
-    "gate_step_w": ("floor_dark", "trim", "ceil_truss", "#b8c8ff"),
-    "bar": ("floor_boards", "wall_bar", "ceil_low", "#ffc080"),
-    "lounge": ("floor_carpet", "wall_chill", "ceil_low", "#ffd090"),
+    "stone_ring": ("wh_walk", "WALLS", "wh_roof", "#b8c8ff"),
+    "plate": ("wh_walk", "WALLS", "wh_roof", "#c8d4ff"),
+    "courtyard": ("wh_dance", "wh_steel_b", "wh_roof", "#8aa4ff"),
+    "terrace": ("wh_walk", "BRICKS", "wh_roof", "#9fb0e8"),
+    "nub": ("wh_walk", "wh_steel_c", "wh_ceil_bar", "#aab8f0"),
+    "pedestal": ("wh_stage_boards", "wh_cube", "wh_roof", "#ff8aa8"),
+    "ped_step_a": ("wh_stage_boards", "wh_trim", "wh_roof", "#ffa8bc"),
+    "ped_step_b": ("wh_stage_boards", "wh_trim", "wh_roof", "#ffa8bc"),
+    "stage_step_a": ("wh_stage_boards", "wh_trim", "wh_roof", "#c8d0ff"),
+    "stage_step_b": ("wh_stage_boards", "wh_trim", "wh_roof", "#c8d0ff"),
+    "stage": ("wh_stage_boards", "wh_steel_c", "wh_roof", "#d0d8ff"),
+    "gate_step_s": ("wh_walk", "wh_trim", "wh_roof", "#b8c8ff"),
+    "gate_step_w": ("wh_walk", "wh_trim", "wh_roof", "#b8c8ff"),
+    "bar": ("wh_boards", "wh_bar_brick", "wh_ceil_bar", "#ffc080"),
+    "lounge": ("wh_carpet", "wh_velvet", "wh_ceil_lounge", "#ffd090"),
 }
 for k in ("plat_n", "plat_e", "plat_w", "plat_s"):
-    STYLE[k] = ("floor_dark", "wall_speaker", "ceil_truss", "#b8c8ff")
+    STYLE[k] = ("wh_walk", "wh_speaker", "wh_roof", "#b8c8ff")
 for k in ("pit_n1", "pit_n2", "pit_s1", "pit_s2"):
-    STYLE[k] = ("floor_dark", "wall_panel", "ceil_truss", "#6a80d0")
-BORROWED = ["floor_dark", "floor_led", "floor_stage", "floor_boards", "floor_carpet", "wall_panel", "wall_led", "wall_bar", "wall_chill", "wall_corridor", "wall_speaker", "wall_brick",
-            "ceil_truss", "ceil_low", "trim", "thing_pendant", "thing_truss_tower", "thing_sofa", "thing_rail"]
+    STYLE[k] = ("wh_grate", "wh_steel_a", "wh_roof", "#6a80d0")
+VARIANTS = {"WALLS": ["wh_steel_a", "wh_brick_a", "wh_steel_b", "wh_brick_b", "wh_steel_c", "wh_brick_c"], "BRICKS": ["wh_brick_a", "wh_brick_b", "wh_brick_c"]}
+OWN_TILES = ["wh_walk", "wh_grate", "wh_dance", "wh_boards", "wh_stage_boards", "wh_carpet", "wh_steel_a", "wh_steel_b", "wh_steel_c", "wh_brick_a", "wh_brick_b", "wh_brick_c",
+             "wh_bar_brick", "wh_velvet", "wh_roof", "wh_ceil_bar", "wh_ceil_lounge", "wh_trim", "wh_speaker", "wh_cube"]
+PROPS = ["wh_p_banner", "wh_p_banner_b", "wh_p_speaker", "wh_p_backbar", "wh_p_counter", "wh_p_lamp_cu", "wh_p_lamp_lg", "wh_p_pelmet", "wh_p_case", "wh_p_window", "wh_p_beam",
+         "wh_p_case2", "wh_p_plant", "wh_p_sofa", "wh_p_pendant", "wh_p_sconce"]
+BORROWED = ["thing_truss_tower"]
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 2.0, 0.9, 0.75, 2.5  # exposure (docs/doom/scenes/warehouse.md): the Doom lights are low for this renderer; A1's night-interior median is 0.25 to 0.38
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
     "stage": ((-300, -190), 2.2, (-330, -190)),
     "bar": ((-600, -300), 2.2, (-600, -250)),
-    "lounge": ((-465, -604), 2.2, (-440, -604)),
+    "lounge": ((-448, -604), 2.2, (-423, -604)),  # stage D: 0.5 m deeper into the lounge than the first pass, so his feet clear the pad strip from the raised wh_ref plate
 }
-THINGS = [  # extra dressing: id, sprite, doom point, y, size
-    ("wh_pendant_a", "thing_pendant", (-300, -300), 3.2, 1.0), ("wh_pendant_b", "thing_pendant", (300, -300), 3.2, 1.0),
-    ("wh_pendant_c", "thing_pendant", (-300, 300), 3.2, 1.0), ("wh_pendant_d", "thing_pendant", (300, 300), 3.2, 1.0),
-    ("wh_truss_a", "thing_truss_tower", (-720, 720), 2.5, 5.0), ("wh_truss_b", "thing_truss_tower", (720, -720), 2.5, 5.0),
-    ("wh_truss_c", "thing_truss_tower", (730, 540), 2.5, 5.0), ("wh_sofa", "thing_sofa", (-440, -690), 0.75, 1.5),
+# stage D exposure pass: the painting's caged wall lanterns along the hall's walls (here the faces of the 3 m terrace riser round the walkway), each a small emissive
+# billboard 0.25 m off the wall with an amber wall-wash light (SCONCE_LIGHTS): warm practicals against the cobalt, as the painting's far wall has them
+SCONCES = [(-735, -300), (-735, 120), (-735, 520), (-300, -735), (120, -735), (520, -735), (-300, 735), (120, 735), (520, 735), (735, -300), (735, 120), (735, 520)]
+THINGS = [  # extra dressing: id, sprite, doom point, y (centre over the floor), size (height m), extra keys (blend, emissive)
+    # over the floor (the painting's rig): two hanging speaker stacks, treble-clef banners at the hall's far sides, four spotlight shafts (additive), the truss towers
+    ("wh_spk_a", "wh_p_speaker", (-120, 60), 6.4, 2.6, {}), ("wh_spk_b", "wh_p_speaker", (180, -170), 6.4, 2.6, {}),
+    ("wh_banner_a", "wh_p_banner", (-360, 560), 5.6, 3.4, {}), ("wh_banner_b", "wh_p_banner_b", (560, -380), 5.6, 3.4, {}), ("wh_banner_c", "wh_p_banner", (300, 600), 5.6, 3.4, {}),
+    ("wh_beam_a", "wh_p_beam", (-250, 120), 4.8, 8.0, {"blend": "add"}), ("wh_beam_b", "wh_p_beam", (-20, -60), 4.8, 8.0, {"blend": "add"}),
+    ("wh_beam_c", "wh_p_beam", (200, 230), 4.8, 8.0, {"blend": "add"}), ("wh_beam_d", "wh_p_beam", (260, -20), 4.8, 8.0, {"blend": "add"}),
+    # stage D exposure pass: more of the painting's shafts (it has six or more over the floor), so every view across the floor has one
+    ("wh_beam_e", "wh_p_beam", (150, -380), 4.8, 8.0, {"blend": "add"}), ("wh_beam_f", "wh_p_beam", (420, -330), 4.8, 8.0, {"blend": "add"}),
+    ("wh_beam_g", "wh_p_beam", (-380, 360), 4.8, 8.0, {"blend": "add"}), ("wh_beam_h", "wh_p_beam", (380, 420), 4.8, 8.0, {"blend": "add"}),
+    ("wh_beam_i", "wh_p_beam", (-120, 420), 4.8, 8.0, {"blend": "add"}),
+    ("wh_truss_a", "thing_truss_tower", (-720, 720), 2.5, 5.0, {}), ("wh_truss_b", "thing_truss_tower", (720, -720), 2.5, 5.0, {}),
+    ("wh_truss_c", "thing_truss_tower", (730, 540), 2.5, 5.0, {}),
+    # the stage: the window onto the night city behind the guide (a backdrop billboard: there is no wall there)
+    ("wh_window", "wh_p_window", (-230, -120), 3.1, 3.2, {"emissive": True}),
+    ("wh_pend_stage_a", "wh_p_pendant", (-330, -250), 3.9, 1.0, {"emissive": True}), ("wh_pend_stage_b", "wh_p_pendant", (-330, -130), 3.9, 1.0, {"emissive": True}),
+    ("wh_pend_bar_in", "wh_p_pendant", (-680, -260), 3.0, 0.8, {"emissive": True}),
+    # the bar: counter in front of the guide (two halves), the copper lamp over him, the flight cases and a plant on the walkway at its mouth
+    ("wh_counter_a", "wh_p_counter", (-622, -335), 0.65, 1.3, {}), ("wh_counter_b", "wh_p_counter", (-588, -337), 0.65, 1.3, {}),
+    ("wh_pend_copper", "wh_p_lamp_cu", (-606, -300), 3.0, 0.9, {"emissive": True}), ("wh_case_a", "wh_p_case", (-700, -440), 0.55, 1.1, {}),
+    ("wh_case_b", "wh_p_case2", (-725, -470), 0.35, 0.7, {}), ("wh_plant_bar", "wh_p_plant", (-575, -420), 0.75, 1.5, {}),
+    # the lounge: the lamp beside the guide, the oxblood sofa behind him, a plant at its mouth
+    ("wh_stdlamp_lounge", "wh_p_lamp_lg", (-440, -625), 0.85, 1.7, {"emissive": True}), ("wh_sofa", "wh_p_sofa", (-430, -700), 0.5, 0.95, {}),
+    ("wh_plant_lounge", "wh_p_plant", (-530, -728), 0.75, 1.5, {}),
+    # stage D exposure pass: the painting's hanging pendants over the walkway (emissive, each with its amber pool below: WALK_PENDANTS)
+] + [("wh_sconce_%d" % i, "wh_p_sconce", at, 2.3, 1.1, {"emissive": True}) for i, at in enumerate(SCONCES)] + [("wh_pend_%d" % i, "wh_p_pendant", at, 3.4, 1.0, {"emissive": True}) for i, at in enumerate(((-640, -470), (-470, -545), (-660, -120), (-120, -660), (-660, 260), (260, -660), (-660, 620), (620, -660)))]
+WET = {  # stage D: the painting's wet floor (the weather engine's gloss, a dry map: the practicals' highlights smeared on the floor toward the eye)
+    "stone_ring": 0.75, "plate": 0.75, "gate_step_s": 0.6, "gate_step_w": 0.6, "courtyard": 0.55, "terrace": 0.5,
+}
+DECALS = [  # on a wall: id, sprite, doom point (within 0.35 m of a wall of its sector), y (bottom edge), height m, emissive
+    ("wh_backbar_a", "wh_p_backbar", (-690, -206), 1.0, 1.7, True), ("wh_backbar_b", "wh_p_backbar", (-620, -206), 1.0, 1.7, True),
+    ("wh_pelmet", "wh_p_pelmet", (-406, -662), 2.2, 1.6, False),
+    ("wh_sconce_bar", "wh_p_sconce", (-562, -300), 1.8, 1.0, True),  # stage D: the caged lantern on the bar's outer wall, facing the walkway
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength   (cobalt over the floor and the walkway, amber in the bar and the lounge, a cool pool on the stage)
     ("wh_lt_floor", (0, 0), 6.0, 16.0, "#4a72ff", 1.6), ("wh_lt_cube", (66, 22), 3.2, 5.0, "#ff4b6e", 1.4),
     ("wh_lt_spot_nw", (-300, 300), 6.0, 11.0, "#5f88ff", 1.4), ("wh_lt_spot_ne", (300, 300), 6.0, 11.0, "#5f88ff", 1.4),
     ("wh_lt_spot_se", (300, -300), 6.0, 11.0, "#5f88ff", 1.4), ("wh_lt_spot_sw", (-300, -300), 6.0, 11.0, "#5f88ff", 1.4),
-    ("wh_lt_stage", (-300, -190), 4.5, 7.0, "#a8c8ff", 1.5),
+    ("wh_lt_stage", (-300, -190), 4.5, 7.0, "#a8c8ff", 1.5), ("wh_lt_stage_key", (-320, -215), 3.6, 3.2, "#ffc890", 2.4),
     ("wh_lt_bar", (-640, -300), 3.4, 6.5, "#ffa84a", 1.8), ("wh_lt_bar2", (-600, -380), 3.0, 5.0, "#ffb860", 1.4),
     ("wh_lt_lounge", (-465, -640), 3.4, 6.5, "#ffb860", 1.8), ("wh_lt_lounge2", (-480, -604), 3.0, 5.0, "#ffc878", 1.4),
     ("wh_lt_ref", (-620, -540), 3.4, 11.0, "#7a98ff", 1.4), ("wh_lt_ring_w", (-640, 100), 3.4, 11.0, "#6a88ff", 1.2), ("wh_lt_ring_s", (60, -640), 3.4, 11.0, "#6a88ff", 1.2),
     ("wh_lt_ring_e", (640, 100), 3.4, 11.0, "#6a88ff", 1.2), ("wh_lt_ring_n", (0, 640), 3.4, 11.0, "#6a88ff", 1.2),
-]
+    # stage D: the painting's amber floor lights at the speaker plinths' feet and the walkway's pendant pools (warm practicals against the cobalt), lifting the mid-tones
+    ("wh_lt_plinth_sw", (-330, -330), 0.7, 5.0, "#ffa040", 2.0), ("wh_lt_plinth_nw", (-330, 330), 0.7, 5.0, "#ffa040", 2.0),
+    ("wh_lt_plinth_se", (330, -330), 0.7, 5.0, "#ffa040", 2.0), ("wh_lt_plinth_ne", (330, 330), 0.7, 5.0, "#ffa040", 2.0),
+    ("wh_lt_walk_w", (-640, -470), 3.0, 5.5, "#ffb860", 1.6), ("wh_lt_walk_s", (-470, -540), 3.0, 5.5, "#ffb860", 1.6),
+    # stage D exposure pass: an amber pool under every walkway pendant (the painting's warm pools on the wet steel against the cobalt hall) and the bar's wall lantern
+    ("wh_lt_pend_w2", (-660, -120), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s2", (-120, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_pend_w3", (-660, 260), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s3", (260, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_pend_w4", (-660, 620), 2.8, 5.0, "#ffb050", 1.6), ("wh_lt_pend_s4", (620, -660), 2.8, 5.0, "#ffb050", 1.6),
+    ("wh_lt_sconce_bar", (-575, -300), 2.0, 3.5, "#ffa040", 1.4),
+] + [("wh_lt_sconce_%d" % i, (x - 30 * (x > 0) + 30 * (x < 0) if abs(x) == 735 else x, y - 30 * (y > 0) + 30 * (y < 0) if abs(y) == 735 else y), 2.3, 5.0, "#ffa848", 1.8)
+     for i, (x, y) in enumerate(SCONCES)]
 
 
 def barriers(d):
@@ -209,19 +255,27 @@ def main():
     for s in d["sectors"]:
         nm = names[int(s["doom_sector"])]
         f, w, c, tint = STYLE[nm]
+        if w in VARIANTS:
+            w = VARIANTS[w][sum(ord(ch) * (i + 1) for i, ch in enumerate(str(s["id"]))) % len(VARIANTS[w])]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"] = f, w, c, lift(tint)
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        if nm in WET:
+            s["wet"] = WET[nm]
+        else:
+            s.pop("wet", None)
     for s in d["sectors"]:
         for k in ("floor_tex", "wall_tex", "ceil_tex"):
             used[s[k]] = True
     for w in d["walls"]:
         for k in ("lower_tex", "upper_tex"):
+            if w.get(k) == "trim":
+                w[k] = "wh_trim"
             if w.get(k):
                 used[w[k]] = True
     tex = {}
-    for k in sorted(set(used) | set(BORROWED)):
-        tex[k] = NIGHT + k + ".png"
+    for k in sorted(set(used) | set(BORROWED) | set(OWN_TILES) | set(PROPS)):
+        tex[k] = (OWN if k.startswith("wh_") else NIGHT) + k + ".png"
     for g, n in STATES.items():
         pass
     for who in GUIDES:
@@ -234,7 +288,7 @@ def main():
     d["visibility"] = {"mode": "clip", "depth": 48, "far": 0}  # 72 pieces: the portal walk that narrows its window at every portal (the flood's 7 portals is too few for an open hall)
     barriers(d)
     d["sky"] = {}
-    d["fog"] = {"color": "#2f48ac", "density": 0.021}
+    d["fog"] = {"color": "#3654b8", "density": 0.021}
     d["palette_weight"] = 1.0
     # waypoints
     keep = [w for w in d["waypoints"] if not w["id"].startswith("wh_")]
@@ -270,9 +324,15 @@ def main():
     for who, (at, size, lamp) in GUIDES.items():
         x, z = m(*at)
         things.append({"id": "wh_guide_" + who, "kind": "billboard", "sprite": "guide_%s_idle_0" % who, "at": [x, z], "y": round(size * 0.5, 3), "size": size, "anim": "none"})
-    for tid, spr, at, y, size in THINGS:
+    for tid, spr, at, y, size, extra in THINGS:
         x, z = m(*at)
-        things.append({"id": tid, "kind": "billboard", "sprite": spr, "at": [x, z], "y": y, "size": size, "anim": "none"})
+        things.append({"id": tid, "kind": "billboard", "sprite": spr, "at": [x, z], "y": y, "size": size, "anim": "none", **extra})
+    for tid, spr, at, y, size, emi in DECALS:
+        x, z = m(*at)
+        dd = {"id": tid, "kind": "decal", "sprite": spr, "at": [x, z], "y": y, "size": size}
+        if emi:
+            dd["emissive"] = True
+        things.append(dd)
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = m(*at)
         things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
@@ -314,6 +374,18 @@ def main():
             gz += 0.8
         gx += 0.8
     pts.sort(key=lambda p: (int(p[0] * 977 + p[1] * 1931) * 2654435761) % 4294967296)
+    rx, rz = m(-620, -600)  # the crowd packs the near half of the floor, between the fence and the stage, as the painting's does (the far half stays sparse)
+    gx_, gz_ = m(*GUIDES["stage"][0])
+    ux, uz = (gx_ - rx), (gz_ - rz)
+    ul = math.hypot(ux, uz)
+
+    def in_sightline(p):  # the lane from the reference viewpoint to the stage guide stays clear (the painting sees her over the crowd; here the eye is lower)
+        t = ((p[0] - rx) * ux + (p[1] - rz) * uz) / (ul * ul)
+        return 0.0 < t < 1.15 and abs((p[0] - rx) * uz - (p[1] - rz) * ux) / ul < 2.4
+
+    pts = [p for p in pts if not in_sightline(p)]
+    near = [p for p in pts if 4.5 <= math.hypot(p[0] - rx, p[1] - rz) <= 17.0]
+    pts = near + [p for p in pts if p not in near]
     need = len(ch["actors"]) + len(ch["silhouettes"])
     if len(pts) < need:
         raise SystemExit("only %d floor spots for %d people" % (len(pts), need))

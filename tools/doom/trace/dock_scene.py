@@ -16,6 +16,8 @@ The painting's place (metres, x east, y north; the viewer stands on the concrete
   * ahead the wet asphalt STREET running north between dark towers, a sodium street lamp, the MOTHERSHIP guide (violet, white hair, horns) at its far end;
   * on the right, past the shutter wall, the service YARD: a parked van, pallet stacks, chain-link fence, a domed boiler furnace with a glowing mouth where the UNDERWORLD guide (red, horned, on
     crates with a drum) sits.
+Stage D polish: the street and its sidewalk run on 11 m further north (`street_far`, `walk_far`) so the street recedes and the threshold ahead looks up it, not at a wall;
+the club passage runs on west (`floor_run`) to the lit dance-floor door the threshold left looks into; the open sectors' ceilings are the map's sky (author_dock.py).
 NOT modelled: the street's curve to the left, the fence as geometry (a wall decal), the rain (nothing falls) and the puddle reflections.
 Everything is on a 0.25 m grid so every Doom coordinate is an integer.
 """
@@ -38,9 +40,12 @@ SECTORS = [
     ("canopy", r(4, 0, 7.5, 4.5), 0.25, 3.5, 140, "FLOOR5_1", "CEIL3_5"),
     ("walk", r(-4, 4.5, -1.5, 20), 0.25, 7.5, 110, "FLOOR5_1", "CEIL3_5"),
     ("street", r(-1.5, 4.5, 7.5, 20), 0.0, 7.5, 100, "FLOOR0_1", "CEIL3_5"),
+    ("walk_far", r(-4, 20, -1.5, 31), 0.25, 5.5, 100, "FLOOR5_1", "CEIL3_5"),
+    ("street_far", r(-1.5, 20, 7.5, 31), 0.0, 5.5, 100, "FLOOR0_1", "CEIL3_5"),
     ("yard", r(7.5, 8.5, 13.5, 16), 0.0, 7.5, 110, "FLOOR0_1", "CEIL3_5"),
     ("floor_door", r(-5.5, 6, -4, 10), 0.25, 2.75, 110, "FLOOR5_1", "CEIL3_5"),
     ("floor_hall", r(-10, 6, -5.5, 11.5), 0.25, 3.2, 110, "FLOOR5_1", "CEIL3_5"),
+    ("floor_run", r(-16, 7, -10, 10.5), 0.25, 3.0, 110, "FLOOR5_1", "CEIL3_5"),
 ]
 RAILS = []
 START = (2.0, 0.75)
