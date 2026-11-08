@@ -85,3 +85,14 @@ Resolve `make_doom.py`/`test_doom_views.gd` merges by rebuilding from each side'
 - 8 Nov night: one-pc `d01bb628`; shared-contracts `97c6f53a` (geography); doom-layout-worlds: eight worlds; bedsit-raves
   `8e438c54` (spacewire, A8b). Running: wiring, geography ruling 39.
 - 8 Nov late night (run paused by the owner): one-pc 021706fc (wiring, full suite green); shared-contracts f7762477 (rain); doom-layout-worlds 589099a5 (eight geography worlds, cuts); bedsit-raves 56a03f7a (race). Paused mid-work and pushed: wip/polish-a 9726fc8f, wip/polish-b cc4ef476, wip/polish-c 166c612c, wip/play-raves c6c8df29.
+
+## 9 November (the owner's clock: still 8 Nov local, late): the run resumed
+
+- Checked every worktree in step with its remote; no stray Godot processes left; only untracked `.uid`/`.import` files.
+- Contracts rain suites from last night all green (playtest 2993, test_geography 189, 0 SCRIPT ERROR): step 1 for contracts done.
+- Merged `feature/shared-contracts` f7762477 (rain) `--no-ff` into env → `6addc102` and play → `6001fa7d`, both imported, both pushed.
+- Merged env into the three polish branches: `wip/polish-a` a40eeff6, `wip/polish-b` eeba725e, `wip/polish-c` 6725235a (clean).
+  `wip/play-raves` ← `feature/bedsit-raves` conflicts in `tools/run/make_bedsit.py`: aborted, left to the raves agent (it has both sides' context).
+- Play list re-running on the merged play branch in the background (`leadlogs/play_rain_<filter>.log`).
+- Relaunched the four agents fresh (Opus) on their worktrees with the START HERE table rows as context; a Sonnet read-only
+  progression gap check on play; a Sonnet APK agent in a new worktree `MusicGame-apk` on `wip/apk` from `feature/one-pc`.
