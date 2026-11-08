@@ -26,9 +26,9 @@ OWN = "textures/"
 MARGIN = 0.5
 MARGINS = {"ms_v_br": 0.4, "ms_booth_hatch": 0.45}
 MAX_STEP = 0.5
-RAIL_HEIGHT = 1.1  # the balustrade round the void, metres above the ring's floor
+RAIL_HEIGHT = 0.95  # (round 2: 1.1 -> 0.95, the parapet opened: the pool shows over it and through its ovals in the pitched choice view) the balustrade round the void, metres above the ring's floor
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.3, 0.45, 0.08, 2.4
-REF_BEARING = 32.0  # the reference viewpoint looks this many degrees north of east
+REF_BEARING = 47.0  # the reference viewpoint looks this many degrees north of east
 PAINTING = "art/reference/doom_worlds/Mothership Ringwalk Over the Void-7.png"
 
 
@@ -48,7 +48,7 @@ def face(a, b):
 
 
 RING = 7.75  # the walkway's centre line
-REF_AT = P(RING, -112.5)
+REF_AT = P(6.9, -112.5)  # (round 2: 0.85 m nearer the rim, so the pitched view looks over the parapet into the pool)
 REF_LOOK = (REF_AT[0] + 10 * math.cos(math.radians(REF_BEARING)), REF_AT[1] + 10 * math.sin(math.radians(REF_BEARING)))
 
 
@@ -57,7 +57,7 @@ def ahead(at_r, at_ang, deg=14.0):
     return P(at_r, at_ang + deg)
 
 
-GUIDE_AT = {"underworld": P(11.6, 6.0), "booth": (0.0, 15.8), "dock": P(10.5, -38.0)}
+GUIDE_AT = {"underworld": P(11.6, 6.0), "booth": (0.0, 15.6), "dock": P(10.5, -38.0)}
 
 # id, point (m), look-at point (m), hold_bars (0 = a moving place), what it is.  Names starting ms_v_ are via points only: corners of the polyline moves, never stood on.
 WAYPOINTS = [
@@ -96,9 +96,9 @@ STYLE = {  # sector class -> floor, wall, ceiling texture, tint, step_tex (the r
     "void": ("ms_floor_void", "ms_void_cliff", SKY, "#9ad8b0", "ms_void_cliff"),
     "bridge": ("ms_floor_walk", "ms_wall_rib", SKY, "#d8c8ff", "ms_void_cliff"),
     "platform": ("ms_floor_plate", "ms_wall_rib", SKY, "#e0c8ff", "ms_void_cliff"),
-    "dk": ("ms_floor_walk", "ms_wall_rib_c", "ms_ceil", "#ffc890", "ms_wall_dark"),  # (the alcoves are bone too, warm-lit: the painting frames each hatch in ribs)
-    "uw_s": ("ms_floor_walk", "ms_wall_rib_b", "ms_ceil", "#ffb8a8", "ms_wall_dark"),
-    "uw": ("ms_floor_walk", "ms_wall_rib_b", "ms_ceil", "#ffa8a0", "ms_wall_dark"),
+    "dk": ("ms_floor_walk", "ms_wall_bone", "ms_ceil", "#ffc890", "ms_wall_dark"),  # (round 2: the alcoves keep the close warm bone lattice: ms_wall_bone)  # (the alcoves are bone too, warm-lit: the painting frames each hatch in ribs)
+    "uw_s": ("ms_floor_walk", "ms_wall_bone", "ms_ceil", "#ffb8a8", "ms_wall_dark"),
+    "uw": ("ms_floor_walk", "ms_wall_bone", "ms_ceil", "#ffa8a0", "ms_wall_dark"),
 }
 
 
@@ -119,10 +119,10 @@ def style_of(name):
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
     "underworld": (GUIDE_AT["underworld"], 2.2, P(11.6, -6.0)),
-    "booth": (GUIDE_AT["booth"], 2.2, (-1.1, 15.8)),
+    "booth": (GUIDE_AT["booth"], 2.2, (-1.0, 15.5)),
     "dock": (GUIDE_AT["dock"], 2.2, P(10.5, -45.0)),
 }
-BORROWED = ["thing_pendant", "trim"]
+BORROWED = ["thing_pendant"]
 
 
 def ring_pt(j, r, off=0.0):
@@ -131,10 +131,11 @@ def ring_pt(j, r, off=0.0):
 
 # billboards: id, sprite, point (m), size (height m); y is the centre (half the size) above the sector's floor unless a fifth value is given (height of the centre above the floor)
 THINGS = [
-    ("ms_dj_rig", "ms_dj_rig", (-1.9, 15.4), 1.5), ("ms_speaker_a", "ms_speaker", (-2.3, 14.2), 1.3), ("ms_pipes", "ms_organ", (-1.3, 16.9), 2.4),
-    ("ms_armillary", "ms_armillary", (1.9, 13.0), 1.5), ("ms_booth_arch", "ms_hatch_arch", (0.0, 16.9), 2.8),
-    ("ms_orb", "ms_orb", (-2.4, 14.8), 4.8, 6.0), ("ms_cables_a", "ms_cables_hang", (-4.5, 10.8), 3.4, 7.0), ("ms_cables_b", "ms_cables_hang", (3.2, 18.0), 3.0, 7.2),
-    ("ms_crystal_a", "ms_crystal", (2.3, 15.1), 1.6), ("ms_crystal_b", "ms_crystal", (1.2, 12.0), 1.1),
+    # (round 2: the platform is 2.25 m in radius: its props drawn in)
+    ("ms_dj_rig", "ms_dj_rig", (-1.4, 15.0), 1.5), ("ms_speaker_a", "ms_speaker", (-1.7, 13.9), 1.3), ("ms_pipes", "ms_organ", (-1.0, 15.9), 2.4),
+    ("ms_armillary", "ms_armillary", (1.4, 13.1), 1.5), ("ms_booth_arch", "ms_hatch_arch", (0.0, 16.05), 2.8),
+    ("ms_orb", "ms_orb", (-3.2, 16.4), 3.8, 7.6),  # (round 2: higher and smaller, off the Booth guide in the pitched view) ("ms_cables_b", "ms_cables_hang", (3.2, 18.0), 3.0, 7.2),  # (round 2: the near cable bundle hid the Booth guide in the pitched view)
+    ("ms_crystal_a", "ms_crystal", (1.6, 15.0), 1.6), ("ms_crystal_b", "ms_crystal", (0.9, 12.5), 1.1),
     ("ms_console_a", "ms_console", ring_pt(7, RING + 0.9), 1.0), ("ms_console_b", "ms_console", ring_pt(9, RING + 0.9), 1.0), ("ms_console_c", "ms_console", ring_pt(11, RING + 0.9), 1.0),
     ("ms_console_d", "ms_console", ring_pt(13, RING + 0.9), 1.0), ("ms_console_e", "ms_console", ring_pt(5, RING + 0.9, 8.0), 1.0),
     ("ms_crystal_c", "ms_crystal", ring_pt(6, 8.8, -4.0), 2.0), ("ms_crystal_d", "ms_crystal", ring_pt(8, 8.9, 3.0), 2.4), ("ms_crystal_e", "ms_crystal", ring_pt(10, 8.8, -3.0), 1.8),
@@ -149,32 +150,39 @@ RIM_LAMPS = [a for a in [-90.0 + 22.5 * k + 11.25 for k in range(16)]]
 for _k, _a in enumerate(RIM_LAMPS):
     THINGS.append(("ms_rimlamp_%d" % _k, "ms_rim_lamp", P(6.35, _a), 0.16))
 # pillars rising from the abyss (in the void wedges, so their floor is the pool, 9 m down): id, wedge, radius, angle offset, height
-PILLARS = [(2, 5.2, 0.0, 9.0), (4, 4.6, -3.0, 8.6), (6, 5.2, 2.0, 9.0), (8, 4.6, 0.0, 8.8), (10, 5.2, -2.0, 9.0), (12, 4.6, 3.0, 8.6), (14, 5.2, 0.0, 9.0), (15, 4.4, 2.0, 8.8), (1, 4.4, -2.0, 8.8)]
+PILLARS = [(2, 5.2, 0.0, 3.2), (4, 4.2, -3.0, 3.1), (6, 5.2, 2.0, 3.2), (8, 4.2, 0.0, 3.1), (10, 5.2, -2.0, 3.2), (12, 4.2, 3.0, 3.1), (14, 5.2, 0.0, 3.2), (15, 4.0, 2.0, 3.1), (1, 4.0, -2.0, 3.1)]  # (round 2: the pool is 3.5 m down: the arch legs reach the rim)
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y, emissive
 DECALS = []  # (the old oval windows are gone: the rib lattice is the wall now)
 for _k, (_j, _off) in enumerate(((sc.DOCK_J, -10.0), (sc.DOCK_J, 10.0), (sc.UW_J, -10.0), (sc.UW_J, 10.0), (1, 0.0), (3, 0.0), (5, 0.0), (15, 0.0))):
     DECALS.append(("ms_dc_lamp_%d" % _k, "ms_wall_lamp", P(11.2 if _j in (sc.DOCK_J, sc.UW_J) else 9.16, sc.centre(_j) + _off), 0.5, 1.3, True))
-DECALS += [("ms_dc_hatch_dock", "ms_hatch_dock", P(13.1, -45.0), 2.6, 0.0, True), ("ms_dc_hatch_uw", "ms_hatch_uw", P(13.6, 0.0), 2.8, 0.0, True),
-           ("ms_dc_dock_shutter", "ms_shutter_panel", P(13.1, -52.0), 1.6, 0.4, False), ("ms_dc_uw_runes", "ms_runes", P(13.55, 7.0), 1.4, 1.2, True)]
+# round 2: the ribs as a few sweeping ARCHES (the painting's bone arches, not a fine mesh): one tall arch decal on the outer wall of every ring piece but the two hatches, two variants
+# in turn, 3.7 m apart (the wall between them is the low-contrast rib tile)
+for _j in range(sc.N):
+    if _j in (sc.DOCK_J, sc.UW_J):
+        continue
+    DECALS.append(("ms_dc_arch_%d" % _j, "ms_arch_a" if _j % 2 == 0 else "ms_arch_b", P(9.2, sc.centre(_j)), 5.3, 0.0, False))
+DECALS += [("ms_dc_hatch_dock", "ms_hatch_dock", P(16.25, -45.0), 2.6, 0.0, True), ("ms_dc_hatch_uw", "ms_hatch_uw", P(13.6, 0.0), 2.8, 0.0, True),
+           ("ms_dc_uw_runes", "ms_runes", P(13.55, 7.0), 1.4, 1.2, True)]  # (round 2: the dock's flat shutter is gone: the hatch opens on the lit passage dk_c, its doorway at the far end)
 # the void's depth haze (hook work-around: with the void in wedges StoryMap's void_top equals the pool's floor and the engine's void haze is off): a ms_void_haze band on the cliff of every
 # wedge, the ring's (radius 5.83, facing the centre) and the platform's (radius 3.0, facing out), from the pool up; emissive (the pool's mist is lit by the pool). id, wedge, radius, faces out
-HAZE_SIZE = 6.3  # metres tall: the sprite's 96 x 256 makes it 2.36 m wide, a wedge's chord at the ring's rim
+HAZE_SIZE = 3.0  # (round 2: the pool is 3 m down) metres tall: the sprite's 96 x 256 makes it 2.36 m wide, a wedge's chord at the ring's rim
 HAZE = []
 for _j in range(sc.N):
     if _j == sc.BRIDGE_J:
         continue
     HAZE.append(("ms_dc_haze_r%d" % _j, _j, 5.83, False))  # (the rim is a chord: 5.885 m out at the wedge's centre line)
-    HAZE.append(("ms_dc_haze_p%d" % _j, _j, 3.0, True))  # (the platform's face: 2.94 m)
+    HAZE.append(("ms_dc_haze_p%d" % _j, _j, sc.RH, True))  # (the platform's face)
 # the pool's lamps: low green lights 1 m over the pool in every other wedge (the old ones stood 4 m BELOW the pool floor: a light's y is above its sector's floor), reaching the void only
 POOL_LAMPS = [j for j in range(sc.N) if j % 2 == 1]
-POOL_R, POOL_Y, POOL_RAD, POOL_COL, POOL_ST = 4.5, 1.0, 6.5, "#50ffa0", 2.2
+POOL_R, POOL_Y, POOL_RAD, POOL_COL, POOL_ST = 4.5, 1.5, 8.0, "#50ffa0", 2.5  # (round 2: higher and wider: the cliffs glow to the rim)
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (cold lilac and teal pools on the ring, amber at the hatches, green glow from the abyss, warm light on the platform)
     ("ms_lt_ring_a", P(RING, -112.5), 3.2, 8.0, "#9a88ff", 1.5), ("ms_lt_ring_b", P(RING, -67.5), 3.2, 8.0, "#80e0d0", 1.4), ("ms_lt_ring_c", P(RING, -22.5), 3.2, 8.0, "#a090ff", 1.4),
     ("ms_lt_ring_d", P(RING, 22.5), 3.2, 8.0, "#80e0d0", 1.3), ("ms_lt_ring_e", P(RING, 67.5), 3.2, 8.0, "#a090ff", 1.3), ("ms_lt_ring_f", P(RING, 112.5), 3.2, 8.0, "#80e0d0", 1.2),
     ("ms_lt_ring_g", P(RING, 157.5), 3.2, 8.0, "#a090ff", 1.2), ("ms_lt_ring_h", P(RING, 202.5), 3.2, 8.0, "#80e0d0", 1.3),
 ] + [("ms_lt_rim_%d" % k, P(6.5, a), 0.3, 2.4, "#ffb050", 1.0) for k, a in enumerate(RIM_LAMPS)] + [
-    ("ms_lt_dock", P(11.0, -45.0), 2.4, 5.0, "#ffb060", 1.8), ("ms_lt_dock_in", P(13.0, -45.0), 2.4, 4.0, "#ff9840", 1.4), ("ms_lt_uw", P(11.6, 0.0), 3.0, 5.5, "#ff6a50", 1.6), ("ms_lt_uw_in", P(13.4, 0.0), 2.6, 4.0, "#ff5a3a", 1.3),
-    ("ms_lt_plat_a", (0.0, 14.5), 3.4, 6.5, "#ffc080", 1.6), ("ms_lt_plat_b", (-1.4, 16.2), 2.0, 4.5, "#ffa050", 1.3),
+    ("ms_lt_dock", P(11.0, -45.0), 2.4, 5.0, "#ffb060", 1.8), ("ms_lt_dock_in", P(13.0, -45.0), 2.4, 4.0, "#ff9840", 1.4),
+    ("ms_lt_dock_far", P(15.6, -45.0), 2.0, 4.5, "#ffb060", 2.0), ("ms_lt_dock_mid", P(12.4, -45.0), 2.6, 5.0, "#ffc070", 1.6), ("ms_lt_dock_floor_a", P(14.6, -49.0), 0.2, 2.5, "#ffc070", 1.2), ("ms_lt_dock_floor_b", P(14.6, -41.0), 0.2, 2.5, "#ffc070", 1.2), ("ms_lt_uw", P(11.6, 0.0), 3.0, 5.5, "#ff6a50", 1.6), ("ms_lt_uw_in", P(13.4, 0.0), 2.6, 4.0, "#ff5a3a", 1.3),
+    ("ms_lt_plat_a", (0.0, 14.5), 3.4, 6.5, "#ffc080", 1.3), ("ms_lt_plat_b", (-1.0, 15.6), 2.0, 4.5, "#ffa050", 1.3),
     # the rim's green: the pool's glow rising, a lamp under the rim's lip every quarter (inside the void wedges, 7.5 m over the pool: it lights the cliff tops and the railing from below)
     ("ms_lt_void_a", P(5.4, -60.0), 7.5, 5.0, "#40ff90", 1.0), ("ms_lt_void_b", P(5.4, 30.0), 7.5, 5.0, "#40ffa0", 1.0), ("ms_lt_void_c", P(5.4, 120.0), 7.5, 5.0, "#50ff90", 1.0),
     ("ms_lt_void_d", P(5.4, 210.0), 7.5, 5.0, "#40ff90", 1.0),
@@ -272,8 +280,12 @@ def main():
             w = RIBS[int(nm.split("_")[1]) % len(RIBS)]
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, lift(tint), step
         s["lip_tex"] = "ms_trim"
-        if nm.startswith("void_"):
+        if nm.startswith("void_") and nm != "void_%d" % sc.OPEN_WEDGE:
             s["void"] = True  # marked: the depth rule cannot see it (its neighbours include the other wedges, as deep)
+        # round 2: the open wedge (west, behind every guide view) is the POOL SHORE: at the pool's level and NOT a void. StoryMap gives the void's connected group the lowest floor
+        # round it as void_top (docs/story/HEIGHTS_AND_PATHS.md, split voids); with the shore at the pool's depth that is the pool itself, so the engine's depth haze (a multiplier toward
+        # 30 % of the violet fog) does not turn the green pool dark: the pool glows, lit by its lamps, as the painting's main light. Nobody can reach it (its edge to the ring is the drop
+        # the loader needs, never walked; the rail check refuses a drop)
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR if not nm.startswith("void_") else 0.35, float(s["light"]) * LIGHT_GAIN)), 3)
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
@@ -281,8 +293,7 @@ def main():
                 used[s[k]] = True
     for w in d["walls"]:
         for k in ("lower_tex", "upper_tex"):
-            if w.get(k):
-                used[w[k]] = True
+            w[k] = ""  # round 2: the sectors' step_tex / lip_tex decide (convert.py's placeholder `trim`, Night One's brass truss, was drawn on every cliff into the void)
     used["ms_rail"] = True
     tex = {}
     for k in sorted(used):

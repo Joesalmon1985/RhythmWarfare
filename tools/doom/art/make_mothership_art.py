@@ -494,12 +494,178 @@ def sky_vault():
     return im
 
 
-TEXTURES = {"ms_wall_rib": wall_rib, "ms_wall_rib_b": wall_rib_b, "ms_wall_rib_c": wall_rib_c, "ms_wall_dark": wall_dark, "ms_floor_walk": floor_walk, "ms_floor_void": floor_void,
-            "ms_floor_plate": floor_plate, "ms_ceil": ceil_arch, "ms_trim": trim, "ms_rail": rail_tile, "ms_void_cliff": void_cliff, "ms_sky": sky_vault}
+# --- stage D round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md): the ribs as a few sweeping arches, not a fine white mesh ------------------------------------------------------------
+
+def wall_rib_r2(v=0):
+    """The outer wall between the arches (256 px, 2 m): soft bone on dusky violet at LOW contrast (the painting's bone is cream lit by amber, not white on violet): one broad rib
+    swaying up the tile, a narrower one beside it, the shadowed hollows between them a deep violet with a dithered edge. Three variants (the rib's sway and place)."""
+    T = 256
+    rnd = random.Random(401 + 37 * v)
+    im = Image.new("RGB", (T, T), hexc("#443858"))
+    px = im.load()
+    ribs = [(rnd.uniform(40, 216), rnd.uniform(20, 28), rnd.choice((1, 2)), rnd.uniform(0, 6.28)), (rnd.uniform(0, 256), 9, rnd.choice((1, 2, 3)), rnd.uniform(0, 6.28))]  # (one soft rib and a thin one: the arches carry the bone)
+    for y in range(T):
+        for x in range(T):
+            b = (BAYER4[y % 4][x % 4] - 7.5) / 16.0
+            c = None
+            for cx, w, f, ph in ribs:
+                xc = cx + 10 * math.sin(y / T * 2 * math.pi * f + ph)  # (whole periods: the tile wraps)
+                dx = ((x - xc + T / 2) % T) - T / 2
+                if abs(dx) < w:
+                    t = dx / w  # -1 left flank .. 1 right flank
+                    v2 = 0.75 - 0.45 * t - 0.25 * t * t + b * 0.25
+                    c = hexc("#b8a8ac") if v2 > 0.8 else hexc("#988496") if v2 > 0.5 else hexc("#74627e") if v2 > 0.25 else hexc("#544462")
+                    break
+            if c is None:  # the hollow: deeper toward its middle
+                c = hexc("#4a3c62") if b > -0.2 else hexc("#3a2e52")
+            px[x, y] = c
+    return speckle(im, 0.1, 402 + v)
+
+
+def wall_bone():
+    """The hatch alcoves' walls (round 2): the painting frames each hatch in close bone ribs, lit warm by the hatch lamps: the round 1 lattice, softened and warmed."""
+    im = rib_lattice(239, n=4, stretch=1.5, rib=26.0)
+    r, g, b = im.split()
+    warm = Image.merge("RGB", [r.point(lambda v: min(255, int(v * 1.05 + 14))), g.point(lambda v: min(255, int(v * 0.95 + 8))), b.point(lambda v: int(v * 0.85))])
+    return Image.blend(warm, Image.new("RGB", warm.size, hexc("#7a6a86")), 0.45)  # (half its contrast: soft bone, not a shouting lattice)
+
+
+def arch(v=0):
+    """A sweeping bone arch (decal, 192 x 320, hung on the outer wall every ring piece: 5.3 m tall, 3.2 m wide): two thick ribs rising from the floor and leaning in to meet in a pointed
+    arch near the top, rounded (a lit left flank warm from the amber lamps, a violet right flank), tesserae dithered on them; transparent between and around (the wall shows)."""
+    W, Hh = 192, 320
+    im, d = canvas(W, Hh)
+    px = im.load()
+    rnd = random.Random(431 + v)
+    lean = (0.0, 10.0)[v]
+    for y in range(Hh):
+        t = y / float(Hh - 1)  # 0 top .. 1 floor
+        half = (W / 2 - 18) * min(1.0, (t / 0.42) ** 0.55)  # the ribs' centre lines: together at the top, apart below
+        wid = 13 + 13 * t  # thicker toward the floor
+        for side in (-1, 1):
+            cx = W / 2 + side * half + lean * math.sin(t * 3.0) * side
+            for x in range(int(cx - wid), int(cx + wid) + 1):
+                if not (0 <= x < W):
+                    continue
+                u = (x - cx) / wid  # -1 .. 1 across the rib
+                if abs(u) > 1:
+                    continue
+                b = (BAYER4[y % 4][x % 4] - 7.5) / 16.0
+                lit = 0.78 - 0.5 * u * (1 if side < 0 else 0.6) - 0.3 * u * u + b * 0.25
+                c = hexc("#e6d4c0") if lit > 0.82 else hexc("#bca898") if lit > 0.52 else hexc("#8a7488") if lit > 0.26 else hexc("#4e3e60")
+                if (x * 7 + y * 13 + v) % 17 == 0:
+                    c = shade(c, 0.88)
+                px[x, y] = (*c, 255)
+    # a thin inner rib following the arch (the painting's double ribs), and a keystone lamp at the crown
+    for y in range(40, Hh):
+        t = y / float(Hh - 1)
+        half = (W / 2 - 18) * min(1.0, (t / 0.42) ** 0.55) - 28
+        if half < 4:
+            continue
+        for side in (-1, 1):
+            x = int(W / 2 + side * half)
+            if 0 <= x < W - 2:
+                for k in range(3):
+                    px[x + k, y] = (*hexc("#9a8698"), 255)
+    d.ellipse([W / 2 - 7, 30, W / 2 + 7, 44], fill=hexc("#ffb040"), outline=hexc("#5a3010"))
+    d.point((int(W / 2), 36), fill=hexc("#fff0c0"))
+    return im
+
+
+def rail_r2():
+    """The balustrade (round 2): a warm bone coping and a frame round a LARGE oval opening (the painting's: most of the panel is open, the pool's glow shows through), alpha 0 in it."""
+    im = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    stone, light, dark = hexc("#9a8a98"), hexc("#d4c4bc"), hexc("#3a2e48")
+    d.rectangle([0, 0, S, 18], fill=(*stone, 255))
+    d.rectangle([0, 0, S, 4], fill=(*light, 255))
+    d.rectangle([0, 15, S, 18], fill=(*dark, 255))
+    d.rectangle([0, 18, S, S], fill=(*stone, 255))
+    d.rectangle([0, 18, 5, S], fill=(*light, 255))
+    d.ellipse([10, 24, 118, 120], fill=(0, 0, 0, 0))
+    d.arc([10, 24, 118, 120], 0, 360, fill=(*dark, 255), width=3)
+    d.arc([13, 27, 115, 117], 200, 300, fill=(*light, 255), width=2)
+    return im
+
+
+def hatch_dock_r2():
+    """The dock hatch's far doorway (round 2, emissive decal 128 x 144 at the end of the lit passage dk_c): a bone oval arch round a corridor running on, violet walls, amber floor
+    lamps in two rows receding to a warm bright door, the wet floor catching them (the painting's right-hand passage). No shutter."""
+    W, Hh = 128, 144
+    im, d = canvas(W, Hh)
+    d.rounded_rectangle([0, 0, W - 1, Hh - 1], radius=56, fill=hexc("#c8b4b0"))
+    d.rounded_rectangle([5, 5, W - 6, Hh - 1], radius=52, fill=hexc("#8a7488"))
+    d.rounded_rectangle([12, 14, W - 13, Hh - 1], radius=46, fill=hexc("#1c1430"))
+    px = im.load()
+    cx, hz = W // 2, 70
+    for y in range(hz, Hh):  # the wet floor: violet, the lamps' amber streaks on it
+        t = (y - hz) / float(Hh - hz)
+        hw = int(6 + 46 * t)
+        for x in range(cx - hw, cx + hw + 1):
+            if 12 < x < W - 13 and px[x, y][3]:
+                b = BAYER4[y % 4][x % 4]
+                px[x, y] = (*(hexc("#3a2c50") if b < 8 else hexc("#2a2040")), 255)
+    for y in range(24, hz):  # the walls and the vault receding: darker toward the far door
+        t = (hz - y) / float(hz - 24)
+        hw = int(6 + 40 * t)
+        for x in (cx - hw, cx + hw):
+            if 12 < x < W - 13:
+                px[x, y] = (*hexc("#5a4870"), 255)
+    d.rectangle([cx - 6, hz - 16, cx + 6, hz], fill=hexc("#ffcf80"))  # the far door, bright
+    d.rectangle([cx - 3, hz - 13, cx + 3, hz - 1], fill=hexc("#fff0c8"))
+    for k in range(6):  # two rows of floor lamps, receding, each with a streak on the wet floor
+        t = (k + 1) / 7.0
+        y = int(hz + (Hh - hz) * t * t)
+        for side in (-1, 1):
+            x = cx + side * int(6 + 44 * t * t)
+            r = 1 + int(3 * t)
+            d.rectangle([x - r, y - r, x + r, y + r // 2], fill=hexc("#ffb040"))
+            for yy in range(y + 2, min(Hh, y + 2 + 3 * r)):
+                if BAYER4[yy % 4][x % 4] < 9:
+                    px[x, yy] = (*hexc("#c88040"), 255)
+    for y in range(Hh):  # the bone frame's lit left flank, dithered
+        for x in range(0, 10):
+            if px[x, y][3] and BAYER4[y % 4][x % 4] < 6:
+                px[x, y] = (*hexc("#f2e6d8"), 255)
+    return im
+
+
+def floor_void_r2():
+    """The pool (round 2, unhazed now: the shore): a luminous mint-green water, brighter swirl rings, dithered (the painting's main light)."""
+    rnd = random.Random(114)
+    im = Image.new("RGB", (S, S), hexc("#1e7a52"))
+    px = im.load()
+    for y in range(S):
+        for x in range(S):
+            n = math.sin(x * 0.2 + y * 0.09) + math.sin(y * 0.17 - x * 0.06)
+            px[x, y] = hexc("#2a9a68") if BAYER4[y % 4][x % 4] < 7 + 3 * n else hexc("#166048")
+    d = ImageDraw.Draw(im)
+    for _ in range(16):
+        x, y, r = rnd.randrange(S), rnd.randrange(S), rnd.randint(8, 30)
+        for off in (-S, 0, S):
+            d.ellipse([x - r + off, y - r // 2, x + r + off, y + r // 2], outline=shade(hexc("#9affc8"), 0.6 + rnd.random() * 0.5))
+    return im
+
+
+def void_cliff_r2():
+    """The void's cliffs (round 2): the pale arch legs of round 1 on deep violet, the pool's mint light washing up them from below (a dithered band in the tile's lower half)."""
+    im = void_cliff()
+    px = im.load()
+    for y in range(S // 2, S):
+        k = (y - S // 2) / float(S // 2)
+        for x in range(S):
+            if BAYER4[y % 4][x % 4] < int(10 * k):
+                c = px[x, y]
+                px[x, y] = (c[0] // 2 + 20, min(255, c[1] // 2 + 90), c[2] // 2 + 50)
+    return im
+
+
+TEXTURES = {"ms_wall_bone": wall_bone, "ms_wall_rib": wall_rib_r2, "ms_wall_rib_b": lambda: wall_rib_r2(1), "ms_wall_rib_c": lambda: wall_rib_r2(2), "ms_wall_dark": wall_dark, "ms_floor_walk": floor_walk, "ms_floor_void": floor_void_r2,
+            "ms_floor_plate": floor_plate, "ms_ceil": ceil_arch, "ms_trim": trim, "ms_rail": rail_r2, "ms_void_cliff": void_cliff_r2, "ms_sky": sky_vault}
 PROPS = {"ms_crystal": crystal, "ms_console": console, "ms_orb": orb, "ms_cables_hang": cables_hang, "ms_armillary": armillary, "ms_dj_rig": dj_rig, "ms_speaker": speaker,
          "ms_organ": organ, "ms_hatch_arch": hatch_arch, "ms_case": case, "ms_lamp_post": lamp_post, "ms_brazier": brazier, "ms_pillar": pillar,
          "ms_rim_lamp": rim_lamp}
-DECALS = {"ms_void_haze": void_haze, "ms_oval_window": oval_window, "ms_wall_lamp": wall_lamp, "ms_hatch_dock": hatch_dock, "ms_hatch_uw": hatch_uw, "ms_shutter_panel": shutter_panel, "ms_runes": runes}
+DECALS = {"ms_void_haze": void_haze, "ms_oval_window": oval_window, "ms_wall_lamp": wall_lamp, "ms_hatch_dock": hatch_dock_r2, "ms_arch_a": arch, "ms_arch_b": lambda: arch(1), "ms_hatch_uw": hatch_uw, "ms_shutter_panel": shutter_panel, "ms_runes": runes}
 
 
 def main():

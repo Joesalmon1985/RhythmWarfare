@@ -10,6 +10,7 @@ from __future__ import annotations
 WORLD = {"id": "doom_mothership", "title": "The Mothership (Doom worlds)", "map": "doom_mothership", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_mothership.json",
          "blurb": "A violet atrium, a ring walk over a glowing void. The stair to the Underworld ahead, the platform hatch of the Booth on the left, the dock hatch on the right: follow the guide you like."}
 EXITS = {"up": "ms_uw_hatch", "left": "ms_booth_hatch", "right": "ms_dock_in", "down": "ms_ref"}
+PITCH = -14.0  # degrees (negative looks down): the choice hold at ms_ref (docs/engine/GEOGRAPHY_WORLDS.md)
 DIR_OF = {"underworld": "up", "booth": "left", "dock": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
     "underworld": ("ms_guide_underworld", "doom_underworld", "underworld"),
@@ -25,7 +26,7 @@ def _rail(P):
         P("ms_hub_view", bars=3, hold=2, via=["ms_v_a1"]),
         P("ms_stair_view", bars=3, hold=2, via=["ms_v_a3"]),
         P("ms_bridge_view", bars=4, hold=2, via=["ms_v_a3", "ms_v_a2", "ms_v_a1"]),
-        P("ms_ref", bars=3, hold=8, choice=True, via=["ms_v_a1"]),
+        {**P("ms_ref", bars=3, hold=8, choice=True, via=["ms_v_a1"]), "pitch": PITCH},  # round 2: a steady look down over the balustrade: the pool's glow in the lower part of the choice view
     ]
     bad = [P("ms_ref_back", "queasy", "walk", 2), P("ms_sw_corner", "queasy", "stagger", 3)]
     routes = {

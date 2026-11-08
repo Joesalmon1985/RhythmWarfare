@@ -1411,6 +1411,11 @@ func test_mothership_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_
 		fail("mothership map did not load")
 		return
 	var pose := _ms_pose(m, "ms_ref")
+	# round 2: the choice hold at ms_ref carries a steady pitch (the run's rail place `pitch`): the guides are checked at the PITCHED pose the window holds
+	var good: Array = _doom_run().nodes["doom_mothership"]["rail"]["good"]
+	var pitch := float((good[3] as Dictionary).get("pitch", 0.0))
+	assert_true(pitch <= -8.0 and pitch >= -35.0, "mothership: ms_ref holds a downward pitch over the pool (%.1f)" % pitch)
+	pose["pitch"] = pitch
 	for asp in ASPECTS:
 		var view: Vector2 = ASPECTS[asp]
 		var rects := {}
@@ -1552,9 +1557,23 @@ func test_mothership_the_void_is_shut_by_railings_visibility_decals_and_the_art_
 		for p in m.portals():
 			if (str(p["a"]) == str(s["id"]) or str(p["b"]) == str(s["id"])) and not bool(p["blocked"]):
 				var other := str(p["b"]) if str(p["a"]) == str(s["id"]) else str(p["a"])
-				if not m.is_void(other):
+				if not m.is_void(other) and absf(float(m.sector(other)["floor"]) - float(s["floor"])) > 0.01:  # (round 2: the pool shore, at the pool's own level, is part of the pool)
 					open_to_void += 1
 					assert_eq(str(m.floor_change(other, str(s["id"]))["kind"]), "void", "mothership: the open edge to the void %s is a void crossing (the rail never takes it)" % s["id"])
+		assert_eq(float(s.get("void_top", 99.0)), float(s["floor"]), "mothership: void %s has void_top at the pool (the pool shore: no depth haze darkens the pool)" % s["id"])
+	# round 2: the POOL SHORE: one wedge of the pool at the pool's level that is not a void (StoryMap's split-void void_top is then the pool, the engine haze leaves it glowing);
+	# its one edge onto the walk is the drop the loader needs, and the rail never takes a drop
+	var shore := 0
+	for s in m.sectors:
+		if not m.is_void(str(s["id"])) and float(s["floor"]) <= -3.0:
+			shore += 1
+			for p in m.portals():
+				if (str(p["a"]) == str(s["id"]) or str(p["b"]) == str(s["id"])) and not bool(p["blocked"]):
+					var other := str(p["b"]) if str(p["a"]) == str(s["id"]) else str(p["a"])
+					if not m.is_void(other):
+						open_to_void += 1
+						assert_eq(str(m.floor_change(other, str(s["id"]))["kind"]), "drop", "mothership: the open edge onto the pool shore is a drop (the rail never takes it)")
+	assert_eq(shore, 1, "mothership: one pool shore piece")
 	assert_true(voids >= 10, "mothership: the void is made of marked sectors (%d)" % voids)
 	assert_true(open_to_void <= 1, "mothership: at most one unrailed edge into the void (%d)" % open_to_void)
 	for wid in m.waypoints:

@@ -1238,7 +1238,8 @@
         "ms_v_a1"
        ],
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -14.0
       }
      ],
      "bad": [

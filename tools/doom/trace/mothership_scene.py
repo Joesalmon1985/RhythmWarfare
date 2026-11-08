@@ -27,10 +27,11 @@ OUT = os.path.join(HERE, "mothership_pilot.json")
 U = 32.0
 SNAP = 0.125
 CX, CY = 0.0, 14.0
-RI, RO, RH = 6.0, 9.5, 3.0  # the ring's inner and outer radius, the platform's radius
+RI, RO, RH = 6.0, 9.5, 2.25  # (round 2: the platform 2.25 m (was 3): the pool between it and the ring is 3.75 m wide and shows over the parapet)
+# the ring's inner and outer radius, the platform's radius
 N = 16
 STEP = 360.0 / N
-CEIL, VOID_FLOOR = 9.0, -9.0
+CEIL, VOID_FLOOR = 5.5, -3.0  # round 2: the atrium's walls 5.5 m (were 9: the vault sky now shows over the ring), the pool 3 m down (was 9: its glow is in the pitched choice view)
 BRIDGE_J = 0  # the ring piece / wedge centred at -90 degrees (south)
 OPEN_WEDGE = 12  # the void wedge that keeps an unrailed portal to the ring (west, centred 180 degrees: out of every guide view)
 DOCK_J = 2  # alcove centred -45 degrees
@@ -88,6 +89,8 @@ def sectors():
     # the dock hatch (right): the vestibule behind the outer wall
     out.append(("dk_a", band(DOCK_J, RO, 12.0), 0.0, 3.5, 140, "FLOOR0_1", "CEIL3_5"))
     out.append(("dk_b", band(DOCK_J, 12.0, 13.5), 0.0, 3.0, 130, "FLOOR0_1", "CEIL3_5"))
+    # round 2: the dock hatch opens on a lit passage (the painting's right-hand corridor): a narrower, lower piece 3 m deep past the hatch, its far end the lit doorway decal
+    out.append(("dk_c", [pt(13.5, centre(DOCK_J) - STEP / 2), pt(16.5, centre(DOCK_J) - 7.0), pt(16.5, centre(DOCK_J) + 7.0), pt(13.5, centre(DOCK_J) + STEP / 2)], 0.0, 2.6, 120, "FLOOR0_1", "CEIL3_5"))
     # the underworld hatch (ahead): a stair of 0.375 m risers, the landing and the hatch
     out.append(("uw_s1", band(UW_J, RO, 10.25), 0.375, 5.0, 150, "STEP1", "CEIL3_5"))
     out.append(("uw_s2", band(UW_J, 10.25, 11.0), 0.75, 5.0, 150, "STEP1", "CEIL3_5"))

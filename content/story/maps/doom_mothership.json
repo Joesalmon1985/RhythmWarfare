@@ -11,11 +11,11 @@
   "ms_rail": "textures/ms_rail.png",
   "ms_trim": "textures/ms_trim.png",
   "ms_void_cliff": "textures/ms_void_cliff.png",
+  "ms_wall_bone": "textures/ms_wall_bone.png",
   "ms_wall_dark": "textures/ms_wall_dark.png",
   "ms_wall_rib": "textures/ms_wall_rib.png",
   "ms_wall_rib_b": "textures/ms_wall_rib_b.png",
   "ms_wall_rib_c": "textures/ms_wall_rib_c.png",
-  "trim": "res://assets/story/night_one/textures/trim.png",
   "thing_pendant": "res://assets/story/night_one/textures/thing_pendant.png",
   "ms_dj_rig": "textures/ms_dj_rig.png",
   "ms_speaker": "textures/ms_speaker.png",
@@ -31,9 +31,10 @@
   "ms_brazier": "textures/ms_brazier.png",
   "ms_rim_lamp": "textures/ms_rim_lamp.png",
   "ms_wall_lamp": "textures/ms_wall_lamp.png",
+  "ms_arch_a": "textures/ms_arch_a.png",
+  "ms_arch_b": "textures/ms_arch_b.png",
   "ms_hatch_dock": "textures/ms_hatch_dock.png",
   "ms_hatch_uw": "textures/ms_hatch_uw.png",
-  "ms_shutter_panel": "textures/ms_shutter_panel.png",
   "ms_runes": "textures/ms_runes.png",
   "ms_pillar": "textures/ms_pillar.png",
   "ms_void_haze": "textures/ms_void_haze.png",
@@ -96,11 +97,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -129,11 +130,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -162,11 +163,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -195,11 +196,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -228,11 +229,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -261,11 +262,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -294,11 +295,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -327,11 +328,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -360,11 +361,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -393,11 +394,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -426,11 +427,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -459,11 +460,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -492,11 +493,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -525,11 +526,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -558,11 +559,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -591,11 +592,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#d1bdff",
    "room": "main",
    "flags": [],
@@ -615,20 +616,20 @@
      -8.125
     ],
     [
-     -0.625,
-     -11.0
+     -0.5,
+     -11.75
     ],
     [
-     0.625,
-     -11.0
+     0.5,
+     -11.75
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.795,
    "tint": "#dbccff",
    "room": "main",
    "flags": [],
@@ -648,20 +649,20 @@
      -8.125
     ],
     [
-     0.625,
-     -11.0
+     0.5,
+     -11.75
     ],
     [
-     1.625,
-     -11.5
+     1.25,
+     -12.125
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -678,24 +679,24 @@
      -9.0
     ],
     [
-     1.625,
-     -11.5
+     1.25,
+     -12.125
     ],
     [
-     2.5,
-     -12.375
+     1.875,
+     -12.75
     ],
     [
      5.0,
      -10.625
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -712,24 +713,24 @@
      -10.625
     ],
     [
-     2.5,
-     -12.375
+     1.875,
+     -12.75
     ],
     [
-     3.0,
-     -13.375
+     2.25,
+     -13.5
     ],
     [
      5.875,
      -12.875
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -746,24 +747,24 @@
      -12.875
     ],
     [
-     3.0,
-     -13.375
+     2.25,
+     -13.5
     ],
     [
-     3.0,
-     -14.625
+     2.25,
+     -14.5
     ],
     [
      5.875,
      -15.125
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -780,24 +781,24 @@
      -15.125
     ],
     [
-     3.0,
-     -14.625
+     2.25,
+     -14.5
     ],
     [
-     2.5,
-     -15.625
+     1.875,
+     -15.25
     ],
     [
      5.0,
      -17.375
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -814,24 +815,24 @@
      -17.375
     ],
     [
-     2.5,
-     -15.625
+     1.875,
+     -15.25
     ],
     [
-     1.625,
-     -16.5
+     1.25,
+     -15.875
     ],
     [
      3.375,
      -19.0
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -844,12 +845,12 @@
    "id": "23_0",
    "polygon": [
     [
-     1.625,
-     -16.5
+     1.25,
+     -15.875
     ],
     [
-     0.625,
-     -17.0
+     0.5,
+     -16.25
     ],
     [
      1.125,
@@ -860,12 +861,12 @@
      -19.0
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -878,12 +879,12 @@
    "id": "24_0",
    "polygon": [
     [
-     0.625,
-     -17.0
+     0.5,
+     -16.25
     ],
     [
-     -0.625,
-     -17.0
+     -0.5,
+     -16.25
     ],
     [
      -1.125,
@@ -894,12 +895,12 @@
      -19.875
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -912,12 +913,12 @@
    "id": "25_0",
    "polygon": [
     [
-     -0.625,
-     -17.0
+     -0.5,
+     -16.25
     ],
     [
-     -1.625,
-     -16.5
+     -1.25,
+     -15.875
     ],
     [
      -3.375,
@@ -928,12 +929,12 @@
      -19.875
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -946,8 +947,8 @@
    "id": "26_0",
    "polygon": [
     [
-     -2.5,
-     -15.625
+     -1.875,
+     -15.25
     ],
     [
      -5.0,
@@ -958,16 +959,16 @@
      -19.0
     ],
     [
-     -1.625,
-     -16.5
+     -1.25,
+     -15.875
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -980,8 +981,8 @@
    "id": "27_0",
    "polygon": [
     [
-     -3.0,
-     -14.625
+     -2.25,
+     -14.5
     ],
     [
      -5.875,
@@ -992,16 +993,16 @@
      -17.375
     ],
     [
-     -2.5,
-     -15.625
+     -1.875,
+     -15.25
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -1014,8 +1015,8 @@
    "id": "28_0",
    "polygon": [
     [
-     -3.0,
-     -13.375
+     -2.25,
+     -13.5
     ],
     [
      -5.875,
@@ -1026,30 +1027,29 @@
      -15.125
     ],
     [
-     -3.0,
-     -14.625
+     -2.25,
+     -14.5
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 28,
    "step_tex": "ms_void_cliff",
-   "lip_tex": "ms_trim",
-   "void": true
+   "lip_tex": "ms_trim"
   },
   {
    "id": "29_0",
    "polygon": [
     [
-     -2.5,
-     -12.375
+     -1.875,
+     -12.75
     ],
     [
      -5.0,
@@ -1060,16 +1060,16 @@
      -12.875
     ],
     [
-     -3.0,
-     -13.375
+     -2.25,
+     -13.5
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -1082,8 +1082,8 @@
    "id": "30_0",
    "polygon": [
     [
-     -1.625,
-     -11.5
+     -1.25,
+     -12.125
     ],
     [
      -3.375,
@@ -1094,16 +1094,16 @@
      -10.625
     ],
     [
-     -2.5,
-     -12.375
+     -1.875,
+     -12.75
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -1124,20 +1124,20 @@
      -9.0
     ],
     [
-     -1.625,
-     -11.5
+     -1.25,
+     -12.125
     ],
     [
-     -0.625,
-     -11.0
+     -0.5,
+     -11.75
     ]
    ],
-   "floor": -9.0,
-   "ceiling": 9.0,
+   "floor": -3.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_void",
    "ceil_tex": "sky",
    "wall_tex": "ms_void_cliff",
-   "light": 1.0,
+   "light": 0.581,
    "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
@@ -1150,76 +1150,76 @@
    "id": "32_0",
    "polygon": [
     [
-     -1.625,
-     -16.5
+     -1.25,
+     -15.875
     ],
     [
-     -0.625,
-     -17.0
+     -0.5,
+     -16.25
     ],
     [
-     0.625,
-     -17.0
+     0.5,
+     -16.25
     ],
     [
-     1.625,
-     -16.5
+     1.25,
+     -15.875
     ],
     [
-     2.5,
-     -15.625
+     1.875,
+     -15.25
     ],
     [
-     3.0,
-     -14.625
+     2.25,
+     -14.5
     ],
     [
-     3.0,
-     -13.375
+     2.25,
+     -13.5
     ],
     [
-     2.5,
-     -12.375
+     1.875,
+     -12.75
     ],
     [
-     1.625,
-     -11.5
+     1.25,
+     -12.125
     ],
     [
-     0.625,
-     -11.0
+     0.5,
+     -11.75
     ],
     [
-     -0.625,
-     -11.0
+     -0.5,
+     -11.75
     ],
     [
-     -1.625,
-     -11.5
+     -1.25,
+     -12.125
     ],
     [
-     -2.5,
-     -12.375
+     -1.875,
+     -12.75
     ],
     [
-     -3.0,
-     -13.375
+     -2.25,
+     -13.5
     ],
     [
-     -3.0,
-     -14.625
+     -2.25,
+     -14.5
     ],
     [
-     -2.5,
-     -15.625
+     -1.875,
+     -15.25
     ]
    ],
    "floor": 0.0,
-   "ceiling": 9.0,
+   "ceiling": 5.5,
    "floor_tex": "ms_floor_plate",
    "ceil_tex": "sky",
    "wall_tex": "ms_wall_rib",
-   "light": 1.0,
+   "light": 0.831,
    "tint": "#e2ccff",
    "room": "main",
    "flags": [],
@@ -1251,8 +1251,8 @@
    "ceiling": 3.5,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.76,
    "tint": "#ffcc98",
    "room": "main",
    "flags": [],
@@ -1284,8 +1284,8 @@
    "ceiling": 3.0,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_c",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.724,
    "tint": "#ffcc98",
    "room": "main",
    "flags": [],
@@ -1295,6 +1295,39 @@
   },
   {
    "id": "35_0",
+   "polygon": [
+    [
+     13.0,
+     -3.875
+    ],
+    [
+     10.125,
+     -1.0
+    ],
+    [
+     7.5,
+     -2.75
+    ],
+    [
+     11.25,
+     -6.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 2.59375,
+   "floor_tex": "ms_floor_walk",
+   "ceil_tex": "ms_ceil",
+   "wall_tex": "ms_wall_bone",
+   "light": 0.688,
+   "tint": "#ffcc98",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 35,
+   "step_tex": "ms_wall_dark",
+   "lip_tex": "ms_trim"
+  },
+  {
+   "id": "36_0",
    "polygon": [
     [
      10.0,
@@ -1317,17 +1350,17 @@
    "ceiling": 5.0,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.795,
    "tint": "#ffbdae",
    "room": "main",
    "flags": [],
-   "doom_sector": 35,
+   "doom_sector": 36,
    "step_tex": "ms_wall_dark",
    "lip_tex": "ms_trim"
   },
   {
-   "id": "36_0",
+   "id": "37_0",
    "polygon": [
     [
      10.75,
@@ -1350,17 +1383,17 @@
    "ceiling": 5.0,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.795,
    "tint": "#ffbdae",
    "room": "main",
    "flags": [],
-   "doom_sector": 36,
+   "doom_sector": 37,
    "step_tex": "ms_wall_dark",
    "lip_tex": "ms_trim"
   },
   {
-   "id": "37_0",
+   "id": "38_0",
    "polygon": [
     [
      12.25,
@@ -1383,17 +1416,17 @@
    "ceiling": 5.0,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.831,
    "tint": "#ffaea7",
    "room": "main",
    "flags": [],
-   "doom_sector": 37,
+   "doom_sector": 38,
    "step_tex": "ms_wall_dark",
    "lip_tex": "ms_trim"
   },
   {
-   "id": "38_0",
+   "id": "39_0",
    "polygon": [
     [
      13.75,
@@ -1416,12 +1449,12 @@
    "ceiling": 4.0,
    "floor_tex": "ms_floor_walk",
    "ceil_tex": "ms_ceil",
-   "wall_tex": "ms_wall_rib_b",
-   "light": 1.0,
+   "wall_tex": "ms_wall_bone",
+   "light": 0.76,
    "tint": "#ffaea7",
    "room": "main",
    "flags": [],
-   "doom_sector": 38,
+   "doom_sector": 39,
    "step_tex": "ms_wall_dark",
    "lip_tex": "ms_trim"
   }
@@ -1494,7 +1527,7 @@
    ],
    "sector": "12_0",
    "portal": "28_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": ""
   },
   {
@@ -1508,17 +1541,17 @@
    ],
    "sector": "13_0",
    "portal": "29_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -3.0,
-    -13.375
+    -2.25,
+    -13.5
    ],
    "to": [
     -5.875,
@@ -1540,17 +1573,17 @@
    ],
    "sector": "11_0",
    "portal": "27_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -3.0,
-    -14.625
+    -2.25,
+    -14.5
    ],
    "to": [
     -5.875,
@@ -1600,17 +1633,17 @@
    ],
    "sector": "14_0",
    "portal": "30_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -2.5,
-    -12.375
+    -1.875,
+    -12.75
    ],
    "to": [
     -5.0,
@@ -1632,17 +1665,17 @@
    ],
    "sector": "10_0",
    "portal": "26_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -2.5,
-    -15.625
+    -1.875,
+    -15.25
    ],
    "to": [
     -5.0,
@@ -1655,8 +1688,8 @@
   },
   {
    "from": [
-    -1.625,
-    -11.5
+    -1.25,
+    -12.125
    ],
    "to": [
     -3.375,
@@ -1678,17 +1711,17 @@
    ],
    "sector": "15_0",
    "portal": "31_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -1.625,
-    -16.5
+    -1.25,
+    -15.875
    ],
    "to": [
     -3.375,
@@ -1710,102 +1743,66 @@
    ],
    "sector": "25_0",
    "portal": "9_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -3.0,
-    -14.625
+    -2.25,
+    -14.5
    ],
    "to": [
-    -3.0,
-    -13.375
+    -2.25,
+    -13.5
    ],
    "sector": "28_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -3.0,
-    -13.375
+    -2.25,
+    -13.5
    ],
    "to": [
-    -2.5,
-    -12.375
+    -1.875,
+    -12.75
    ],
    "sector": "29_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -2.5,
-    -15.625
+    -1.875,
+    -15.25
    ],
    "to": [
-    -3.0,
-    -14.625
+    -2.25,
+    -14.5
    ],
    "sector": "27_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
-  },
-  {
-   "from": [
-    -2.5,
-    -12.375
-   ],
-   "to": [
-    -1.625,
-    -11.5
-   ],
-   "sector": "30_0",
-   "portal": "32_0",
-   "lower_tex": "trim",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "ms_rail",
-   "height": 1.1
-  },
-  {
-   "from": [
-    -1.625,
-    -16.5
-   ],
-   "to": [
-    -2.5,
-    -15.625
-   ],
-   "sector": "26_0",
-   "portal": "32_0",
-   "lower_tex": "trim",
-   "upper_tex": "",
-   "blocked": true,
-   "kind": "railing",
-   "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -1823,6 +1820,42 @@
   },
   {
    "from": [
+    -1.875,
+    -12.75
+   ],
+   "to": [
+    -1.25,
+    -12.125
+   ],
+   "sector": "30_0",
+   "portal": "32_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "ms_rail",
+   "height": 0.95
+  },
+  {
+   "from": [
+    -1.25,
+    -15.875
+   ],
+   "to": [
+    -1.875,
+    -15.25
+   ],
+   "sector": "26_0",
+   "portal": "32_0",
+   "lower_tex": "",
+   "upper_tex": "",
+   "blocked": true,
+   "kind": "railing",
+   "tex": "ms_rail",
+   "height": 0.95
+  },
+  {
+   "from": [
     -1.125,
     -19.875
    ],
@@ -1837,39 +1870,39 @@
   },
   {
    "from": [
-    -1.625,
-    -11.5
+    -1.25,
+    -12.125
    ],
    "to": [
-    -0.625,
-    -11.0
+    -0.5,
+    -11.75
    ],
    "sector": "31_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -0.625,
-    -17.0
+    -0.5,
+    -16.25
    ],
    "to": [
-    -1.625,
-    -16.5
+    -1.25,
+    -15.875
    ],
    "sector": "25_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -1877,17 +1910,17 @@
     -8.125
    ],
    "to": [
-    -0.625,
-    -11.0
+    -0.5,
+    -11.75
    ],
    "sector": "16_0",
    "portal": "31_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -1905,8 +1938,8 @@
   },
   {
    "from": [
-    -0.625,
-    -17.0
+    -0.5,
+    -16.25
    ],
    "to": [
     -1.125,
@@ -1928,21 +1961,21 @@
    ],
    "sector": "24_0",
    "portal": "8_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    -0.625,
-    -11.0
+    -0.5,
+    -11.75
    ],
    "to": [
-    0.625,
-    -11.0
+    0.5,
+    -11.75
    ],
    "sector": "16_0",
    "portal": "32_0",
@@ -1951,26 +1984,26 @@
   },
   {
    "from": [
-    0.625,
-    -17.0
+    0.5,
+    -16.25
    ],
    "to": [
-    -0.625,
-    -17.0
+    -0.5,
+    -16.25
    ],
    "sector": "24_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    0.625,
-    -11.0
+    0.5,
+    -11.75
    ],
    "to": [
     1.125,
@@ -1978,35 +2011,35 @@
    ],
    "sector": "16_0",
    "portal": "17_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    0.625,
-    -11.0
+    0.5,
+    -11.75
    ],
    "to": [
-    1.625,
-    -11.5
+    1.25,
+    -12.125
    ],
    "sector": "17_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    0.625,
-    -17.0
+    0.5,
+    -16.25
    ],
    "to": [
     1.125,
@@ -2019,21 +2052,21 @@
   },
   {
    "from": [
-    1.625,
-    -16.5
+    1.25,
+    -15.875
    ],
    "to": [
-    0.625,
-    -17.0
+    0.5,
+    -16.25
    ],
    "sector": "23_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2060,12 +2093,12 @@
    ],
    "sector": "17_0",
    "portal": "1_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2092,35 +2125,35 @@
    ],
    "sector": "23_0",
    "portal": "7_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    1.625,
-    -11.5
+    1.25,
+    -12.125
    ],
    "to": [
-    2.5,
-    -12.375
+    1.875,
+    -12.75
    ],
    "sector": "18_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    1.625,
-    -11.5
+    1.25,
+    -12.125
    ],
    "to": [
     3.375,
@@ -2133,26 +2166,26 @@
   },
   {
    "from": [
-    2.5,
-    -15.625
+    1.875,
+    -15.25
    ],
    "to": [
-    1.625,
-    -16.5
+    1.25,
+    -15.875
    ],
    "sector": "22_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    1.625,
-    -16.5
+    1.25,
+    -15.875
    ],
    "to": [
     3.375,
@@ -2165,26 +2198,26 @@
   },
   {
    "from": [
-    2.5,
-    -12.375
+    1.875,
+    -12.75
    ],
    "to": [
-    3.0,
-    -13.375
+    2.25,
+    -13.5
    ],
    "sector": "19_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    2.5,
-    -12.375
+    1.875,
+    -12.75
    ],
    "to": [
     5.0,
@@ -2197,26 +2230,26 @@
   },
   {
    "from": [
-    3.0,
-    -14.625
+    2.25,
+    -14.5
    ],
    "to": [
-    2.5,
-    -15.625
+    1.875,
+    -15.25
    ],
    "sector": "21_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    2.5,
-    -15.625
+    1.875,
+    -15.25
    ],
    "to": [
     5.0,
@@ -2229,26 +2262,26 @@
   },
   {
    "from": [
-    3.0,
-    -13.375
+    2.25,
+    -13.5
    ],
    "to": [
-    3.0,
-    -14.625
+    2.25,
+    -14.5
    ],
    "sector": "20_0",
    "portal": "32_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
-    3.0,
-    -13.375
+    2.25,
+    -13.5
    ],
    "to": [
     5.875,
@@ -2261,8 +2294,8 @@
   },
   {
    "from": [
-    3.0,
-    -14.625
+    2.25,
+    -14.5
    ],
    "to": [
     5.875,
@@ -2284,12 +2317,12 @@
    ],
    "sector": "18_0",
    "portal": "2_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2316,12 +2349,12 @@
    ],
    "sector": "22_0",
    "portal": "6_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2348,12 +2381,12 @@
    ],
    "sector": "19_0",
    "portal": "3_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2380,12 +2413,12 @@
    ],
    "sector": "21_0",
    "portal": "5_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2413,7 +2446,7 @@
    "sector": "2_0",
    "portal": "33_0",
    "lower_tex": "",
-   "upper_tex": "trim"
+   "upper_tex": ""
   },
   {
    "from": [
@@ -2426,12 +2459,12 @@
    ],
    "sector": "20_0",
    "portal": "4_0",
-   "lower_tex": "trim",
+   "lower_tex": "",
    "upper_tex": "",
    "blocked": true,
    "kind": "railing",
    "tex": "ms_rail",
-   "height": 1.1
+   "height": 0.95
   },
   {
    "from": [
@@ -2473,7 +2506,21 @@
    "sector": "33_0",
    "portal": "34_0",
    "lower_tex": "",
-   "upper_tex": "trim"
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    11.25,
+    -6.5
+   ],
+   "to": [
+    7.5,
+    -2.75
+   ],
+   "sector": "34_0",
+   "portal": "35_0",
+   "lower_tex": "",
+   "upper_tex": ""
   },
   {
    "from": [
@@ -2484,10 +2531,10 @@
     9.375,
     -15.875
    ],
-   "sector": "35_0",
+   "sector": "36_0",
    "portal": "4_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
+   "lower_tex": "",
+   "upper_tex": ""
   },
   {
    "from": [
@@ -2498,9 +2545,9 @@
     10.0,
     -12.0
    ],
-   "sector": "35_0",
-   "portal": "36_0",
-   "lower_tex": "trim",
+   "sector": "36_0",
+   "portal": "37_0",
+   "lower_tex": "",
    "upper_tex": ""
   },
   {
@@ -2512,9 +2559,9 @@
     10.75,
     -11.875
    ],
-   "sector": "36_0",
-   "portal": "37_0",
-   "lower_tex": "trim",
+   "sector": "37_0",
+   "portal": "38_0",
+   "lower_tex": "",
    "upper_tex": ""
   },
   {
@@ -2526,10 +2573,10 @@
     12.25,
     -11.5
    ],
-   "sector": "37_0",
-   "portal": "38_0",
+   "sector": "38_0",
+   "portal": "39_0",
    "lower_tex": "",
-   "upper_tex": "trim"
+   "upper_tex": ""
   }
  ],
  "things": [
@@ -2551,7 +2598,7 @@
    "sprite": "guide_booth_idle_0",
    "at": [
     0.0,
-    -15.8
+    -15.6
    ],
    "y": 1.1,
    "size": 2.2,
@@ -2574,8 +2621,8 @@
    "kind": "billboard",
    "sprite": "ms_dj_rig",
    "at": [
-    -1.9,
-    -15.4
+    -1.4,
+    -15.0
    ],
    "y": 0.75,
    "size": 1.5,
@@ -2586,8 +2633,8 @@
    "kind": "billboard",
    "sprite": "ms_speaker",
    "at": [
-    -2.3,
-    -14.2
+    -1.7,
+    -13.9
    ],
    "y": 0.65,
    "size": 1.3,
@@ -2598,8 +2645,8 @@
    "kind": "billboard",
    "sprite": "ms_organ",
    "at": [
-    -1.3,
-    -16.9
+    -1.0,
+    -15.9
    ],
    "y": 1.2,
    "size": 2.4,
@@ -2610,8 +2657,8 @@
    "kind": "billboard",
    "sprite": "ms_armillary",
    "at": [
-    1.9,
-    -13.0
+    1.4,
+    -13.1
    ],
    "y": 0.75,
    "size": 1.5,
@@ -2623,7 +2670,7 @@
    "sprite": "ms_hatch_arch",
    "at": [
     0.0,
-    -16.9
+    -16.05
    ],
    "y": 1.4,
    "size": 2.8,
@@ -2639,18 +2686,6 @@
    ],
    "y": 6.0,
    "size": 4.8,
-   "anim": "none"
-  },
-  {
-   "id": "ms_cables_a",
-   "kind": "billboard",
-   "sprite": "ms_cables_hang",
-   "at": [
-    -4.5,
-    -10.8
-   ],
-   "y": 7.0,
-   "size": 3.4,
    "anim": "none"
   },
   {
@@ -2670,8 +2705,8 @@
    "kind": "billboard",
    "sprite": "ms_crystal",
    "at": [
-    2.3,
-    -15.1
+    1.6,
+    -15.0
    ],
    "y": 0.8,
    "size": 1.6,
@@ -2682,8 +2717,8 @@
    "kind": "billboard",
    "sprite": "ms_crystal",
    "at": [
-    1.2,
-    -12.0
+    0.9,
+    -12.5
    ],
    "y": 0.55,
    "size": 1.1,
@@ -3081,8 +3116,8 @@
     3.677,
     -10.323
    ],
-   "y": 4.5,
-   "size": 9.0,
+   "y": 1.6,
+   "size": 3.2,
    "anim": "none"
   },
   {
@@ -3090,11 +3125,11 @@
    "kind": "billboard",
    "sprite": "ms_pillar",
    "at": [
-    4.594,
-    -13.759
+    4.194,
+    -13.78
    ],
-   "y": 4.3,
-   "size": 8.6,
+   "y": 1.55,
+   "size": 3.1,
    "anim": "none"
   },
   {
@@ -3105,8 +3140,8 @@
     3.546,
     -17.803
    ],
-   "y": 4.5,
-   "size": 9.0,
+   "y": 1.6,
+   "size": 3.2,
    "anim": "none"
   },
   {
@@ -3115,10 +3150,10 @@
    "sprite": "ms_pillar",
    "at": [
     0.0,
-    -18.6
+    -18.2
    ],
-   "y": 4.4,
-   "size": 8.8,
+   "y": 1.55,
+   "size": 3.1,
    "anim": "none"
   },
   {
@@ -3129,8 +3164,8 @@
     -3.546,
     -17.803
    ],
-   "y": 4.5,
-   "size": 9.0,
+   "y": 1.6,
+   "size": 3.2,
    "anim": "none"
   },
   {
@@ -3138,11 +3173,11 @@
    "kind": "billboard",
    "sprite": "ms_pillar",
    "at": [
-    -4.594,
-    -13.759
+    -4.194,
+    -13.78
    ],
-   "y": 4.3,
-   "size": 8.6,
+   "y": 1.55,
+   "size": 3.1,
    "anim": "none"
   },
   {
@@ -3153,8 +3188,8 @@
     -3.677,
     -10.323
    ],
-   "y": 4.5,
-   "size": 9.0,
+   "y": 1.6,
+   "size": 3.2,
    "anim": "none"
   },
   {
@@ -3162,11 +3197,11 @@
    "kind": "billboard",
    "sprite": "ms_pillar",
    "at": [
-    -1.541,
-    -9.879
+    -1.401,
+    -10.253
    ],
-   "y": 4.4,
-   "size": 8.8,
+   "y": 1.55,
+   "size": 3.1,
    "anim": "none"
   },
   {
@@ -3174,11 +3209,11 @@
    "kind": "billboard",
    "sprite": "ms_pillar",
    "at": [
-    1.541,
-    -9.879
+    1.401,
+    -10.253
    ],
-   "y": 4.4,
-   "size": 8.8,
+   "y": 1.55,
+   "size": 3.1,
    "anim": "none"
   },
   {
@@ -3278,12 +3313,166 @@
    "emissive": true
   },
   {
+   "id": "ms_dc_arch_0",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    0.0,
+    -4.8
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_1",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    3.521,
+    -5.5
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_3",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    8.5,
+    -10.479
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_5",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    8.5,
+    -17.521
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_6",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    6.505,
+    -20.505
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_7",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    3.521,
+    -22.5
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_8",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    0.0,
+    -23.2
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_9",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    -3.521,
+    -22.5
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_10",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    -6.505,
+    -20.505
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_11",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    -8.5,
+    -17.521
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_12",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    -9.2,
+    -14.0
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_13",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    -8.5,
+    -10.479
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_14",
+   "kind": "decal",
+   "sprite": "ms_arch_a",
+   "at": [
+    -6.505,
+    -7.495
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
+   "id": "ms_dc_arch_15",
+   "kind": "decal",
+   "sprite": "ms_arch_b",
+   "at": [
+    -3.521,
+    -5.5
+   ],
+   "y": 0.0,
+   "size": 5.3
+  },
+  {
    "id": "ms_dc_hatch_dock",
    "kind": "decal",
    "sprite": "ms_hatch_dock",
    "at": [
-    9.263,
-    -4.737
+    11.49,
+    -2.51
    ],
    "y": 0.0,
    "size": 2.6,
@@ -3300,17 +3489,6 @@
    "y": 0.0,
    "size": 2.8,
    "emissive": true
-  },
-  {
-   "id": "ms_dc_dock_shutter",
-   "kind": "decal",
-   "sprite": "ms_shutter_panel",
-   "at": [
-    8.065,
-    -3.677
-   ],
-   "y": 0.4,
-   "size": 1.6
   },
   {
    "id": "ms_dc_uw_runes",
@@ -3333,7 +3511,7 @@
     -8.614
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 22.5
   },
@@ -3342,11 +3520,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    1.148,
-    -11.228
+    0.861,
+    -11.921
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -157.5
   },
@@ -3359,7 +3537,7 @@
     -9.878
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 45.0
   },
@@ -3368,11 +3546,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    2.121,
-    -11.879
+    1.591,
+    -12.409
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -135.0
   },
@@ -3385,7 +3563,7 @@
     -11.769
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 67.5
   },
@@ -3394,11 +3572,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    2.772,
-    -12.852
+    2.079,
+    -13.139
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -112.5
   },
@@ -3411,7 +3589,7 @@
     -14.0
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 90.0
   },
@@ -3420,11 +3598,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    3.0,
+    2.25,
     -14.0
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -90.0
   },
@@ -3437,7 +3615,7 @@
     -16.231
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 112.5
   },
@@ -3446,11 +3624,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    2.772,
-    -15.148
+    2.079,
+    -14.861
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -67.5
   },
@@ -3463,7 +3641,7 @@
     -18.122
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 135.0
   },
@@ -3472,11 +3650,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    2.121,
-    -16.121
+    1.591,
+    -15.591
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -45.0
   },
@@ -3489,7 +3667,7 @@
     -19.386
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 157.5
   },
@@ -3498,11 +3676,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    1.148,
-    -16.772
+    0.861,
+    -16.079
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -22.5
   },
@@ -3515,7 +3693,7 @@
     -19.83
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -180.0
   },
@@ -3525,10 +3703,10 @@
    "sprite": "ms_void_haze",
    "at": [
     0.0,
-    -17.0
+    -16.25
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -0.0
   },
@@ -3541,7 +3719,7 @@
     -19.386
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -157.5
   },
@@ -3550,11 +3728,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -1.148,
-    -16.772
+    -0.861,
+    -16.079
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 22.5
   },
@@ -3567,7 +3745,7 @@
     -18.122
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -135.0
   },
@@ -3576,11 +3754,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -2.121,
-    -16.121
+    -1.591,
+    -15.591
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 45.0
   },
@@ -3593,7 +3771,7 @@
     -16.231
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -112.5
   },
@@ -3602,11 +3780,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -2.772,
-    -15.148
+    -2.079,
+    -14.861
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 67.5
   },
@@ -3619,7 +3797,7 @@
     -14.0
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -90.0
   },
@@ -3628,11 +3806,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -3.0,
+    -2.25,
     -14.0
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 90.0
   },
@@ -3645,7 +3823,7 @@
     -11.769
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -67.5
   },
@@ -3654,11 +3832,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -2.772,
-    -12.852
+    -2.079,
+    -13.139
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 112.5
   },
@@ -3671,7 +3849,7 @@
     -9.878
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -45.0
   },
@@ -3680,11 +3858,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -2.121,
-    -11.879
+    -1.591,
+    -12.409
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 135.0
   },
@@ -3697,7 +3875,7 @@
     -8.614
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": -22.5
   },
@@ -3706,11 +3884,11 @@
    "kind": "decal",
    "sprite": "ms_void_haze",
    "at": [
-    -1.148,
-    -11.228
+    -0.861,
+    -11.921
    ],
    "y": 0.0,
-   "size": 6.3,
+   "size": 3.0,
    "emissive": true,
    "yaw": 157.5
   },
@@ -3721,10 +3899,10 @@
     1.722,
     -9.843
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3750,10 +3928,10 @@
     4.157,
     -12.278
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3779,10 +3957,10 @@
     4.157,
     -15.722
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3808,10 +3986,10 @@
     1.722,
     -18.157
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3837,10 +4015,10 @@
     -1.722,
     -18.157
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3866,10 +4044,10 @@
     -4.157,
     -15.722
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3895,10 +4073,10 @@
     -4.157,
     -12.278
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -3924,10 +4102,10 @@
     -1.722,
     -9.843
    ],
-   "y": 1.0,
-   "radius": 6.5,
+   "y": 1.5,
+   "radius": 8.0,
    "color": "#50ffa0",
-   "strength": 2.2,
+   "strength": 2.5,
    "sectors": [
     "17_0",
     "18_0",
@@ -4259,6 +4437,54 @@
    "strength": 2.5
   },
   {
+   "id": "ms_lt_dock_far",
+   "kind": "light",
+   "at": [
+    11.031,
+    -2.969
+   ],
+   "y": 2.0,
+   "radius": 5.9,
+   "color": "#ffb060",
+   "strength": 2.5
+  },
+  {
+   "id": "ms_lt_dock_mid",
+   "kind": "light",
+   "at": [
+    8.768,
+    -5.232
+   ],
+   "y": 2.6,
+   "radius": 6.5,
+   "color": "#ffc070",
+   "strength": 2.5
+  },
+  {
+   "id": "ms_lt_dock_floor_a",
+   "kind": "light",
+   "at": [
+    9.578,
+    -2.981
+   ],
+   "y": 0.2,
+   "radius": 3.2,
+   "color": "#ffc070",
+   "strength": 2.5
+  },
+  {
+   "id": "ms_lt_dock_floor_b",
+   "kind": "light",
+   "at": [
+    11.019,
+    -4.422
+   ],
+   "y": 0.2,
+   "radius": 3.2,
+   "color": "#ffc070",
+   "strength": 2.5
+  },
+  {
    "id": "ms_lt_uw",
    "kind": "light",
    "at": [
@@ -4298,8 +4524,8 @@
    "id": "ms_lt_plat_b",
    "kind": "light",
    "at": [
-    -1.4,
-    -16.2
+    -1.0,
+    -15.6
    ],
    "y": 2.0,
    "radius": 5.9,
@@ -4370,8 +4596,8 @@
    "id": "ms_lamp_booth",
    "kind": "light",
    "at": [
-    -1.1,
-    -15.8
+    -1.0,
+    -15.5
    ],
    "y": 2.6,
    "radius": 3.0,
@@ -4394,7 +4620,7 @@
  "homes": [],
  "spots": {
   "ms_guide_underworld": {
-   "sector": "37_0",
+   "sector": "38_0",
    "at": [
     11.536,
     -15.213
@@ -4404,7 +4630,7 @@
    "sector": "32_0",
    "at": [
     0.0,
-    -15.8
+    -15.6
    ]
   },
   "ms_guide_dock": {
@@ -4433,16 +4659,16 @@
     -5.668,
     -8.715
    ],
-   "yaw": -73.0,
+   "yaw": -57.7,
    "sector": "14_0"
   },
   {
    "id": "ms_ref",
    "at": [
-    -2.966,
-    -6.84
+    -2.641,
+    -7.625
    ],
-   "yaw": -58.0,
+   "yaw": -43.0,
    "sector": "15_0",
    "hold_bars": 8
   },
@@ -4452,7 +4678,7 @@
     -4.2798,
     -6.5922
    ],
-   "yaw": -60.5,
+   "yaw": -45.4,
    "sector": "15_0"
   },
   {
@@ -4461,7 +4687,7 @@
     -5.937,
     -9.018
    ],
-   "yaw": -74.8,
+   "yaw": -59.7,
    "sector": "14_0"
   },
   {
@@ -4501,7 +4727,7 @@
     -13.59
    ],
    "yaw": -76.7,
-   "sector": "37_0",
+   "sector": "38_0",
    "hold_bars": 1
   },
   {
@@ -4599,7 +4825,7 @@
      "0_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4611,7 +4837,7 @@
      "1_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4623,7 +4849,7 @@
      "2_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4635,7 +4861,7 @@
      "3_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4647,7 +4873,7 @@
      "4_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4659,7 +4885,7 @@
      "5_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4671,7 +4897,7 @@
      "6_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4683,7 +4909,7 @@
      "7_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4695,7 +4921,7 @@
      "8_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4707,7 +4933,7 @@
      "9_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4719,7 +4945,7 @@
      "10_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4731,7 +4957,7 @@
      "11_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4743,7 +4969,7 @@
      "12_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4755,7 +4981,7 @@
      "13_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4767,7 +4993,7 @@
      "14_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4779,7 +5005,7 @@
      "15_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4791,7 +5017,7 @@
      "16_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 150,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4802,8 +5028,8 @@
     "pieces": [
      "17_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4814,8 +5040,8 @@
     "pieces": [
      "18_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4826,8 +5052,8 @@
     "pieces": [
      "19_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4838,8 +5064,8 @@
     "pieces": [
      "20_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4850,8 +5076,8 @@
     "pieces": [
      "21_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4862,8 +5088,8 @@
     "pieces": [
      "22_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4874,8 +5100,8 @@
     "pieces": [
      "23_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4886,8 +5112,8 @@
     "pieces": [
      "24_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4898,8 +5124,8 @@
     "pieces": [
      "25_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4910,8 +5136,8 @@
     "pieces": [
      "26_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4922,8 +5148,8 @@
     "pieces": [
      "27_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4934,8 +5160,8 @@
     "pieces": [
      "28_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4946,8 +5172,8 @@
     "pieces": [
      "29_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4958,8 +5184,8 @@
     "pieces": [
      "30_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4970,8 +5196,8 @@
     "pieces": [
      "31_0"
     ],
-    "floor": -288,
-    "ceiling": 288,
+    "floor": -96,
+    "ceiling": 176,
     "light": 90,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -4983,7 +5209,7 @@
      "32_0"
     ],
     "floor": 0,
-    "ceiling": 288,
+    "ceiling": 176,
     "light": 160,
     "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
@@ -5018,10 +5244,10 @@
     "pieces": [
      "35_0"
     ],
-    "floor": 12,
-    "ceiling": 160,
-    "light": 150,
-    "floor_flat": "STEP1",
+    "floor": 0,
+    "ceiling": 83,
+    "light": 120,
+    "floor_flat": "FLOOR0_1",
     "ceil_flat": "CEIL3_5",
     "special": 0,
     "tag": 0
@@ -5030,7 +5256,7 @@
     "pieces": [
      "36_0"
     ],
-    "floor": 24,
+    "floor": 12,
     "ceiling": 160,
     "light": 150,
     "floor_flat": "STEP1",
@@ -5042,6 +5268,18 @@
     "pieces": [
      "37_0"
     ],
+    "floor": 24,
+    "ceiling": 160,
+    "light": 150,
+    "floor_flat": "STEP1",
+    "ceil_flat": "CEIL3_5",
+    "special": 0,
+    "tag": 0
+   },
+   "38": {
+    "pieces": [
+     "38_0"
+    ],
     "floor": 36,
     "ceiling": 160,
     "light": 160,
@@ -5050,9 +5288,9 @@
     "special": 0,
     "tag": 0
    },
-   "38": {
+   "39": {
     "pieces": [
-     "38_0"
+     "39_0"
     ],
     "floor": 36,
     "ceiling": 128,
@@ -5077,9 +5315,9 @@
    "The painting's pedestal in the void and the free standing arches are not modelled as geometry (the armillary and the ribs are billboards)."
   ],
   "stats": {
-   "doom_sectors": 39,
-   "pieces": 39,
-   "portals": 70
+   "doom_sectors": 40,
+   "pieces": 40,
+   "portals": 71
   },
   "authored": true
  },
