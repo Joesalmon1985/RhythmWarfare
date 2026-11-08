@@ -22,10 +22,10 @@ STAY_AT = (-1.3, 0.4, -6.6)  # on the ring just ahead of the reference viewpoint
 
 def _rail(P):
     ring = ["ms_v_a1", "ms_v_a2", "ms_v_a3", "ms_v_a4"]
+    # round 2: the rail steps one place per passed block and the choice hold is set at block 2 only when the rail stands at the choice place then; with four places the camera was
+    # elsewhere when the window opened (the Underworld's shots on the real run). So ONE reveal (2 bars + 1 still) and the choice viewpoint, reached before the window
     good = [
-        P("ms_hub_view", bars=3, hold=2, via=["ms_v_a1"]),
-        P("ms_stair_view", bars=3, hold=2, via=["ms_v_a3"]),
-        P("ms_bridge_view", bars=4, hold=2, via=["ms_v_a3", "ms_v_a2", "ms_v_a1"]),
+        P("ms_hub_view", bars=2, hold=1, via=["ms_v_a1"]),
         {**P("ms_ref", bars=3, hold=8, choice=True, via=["ms_v_a1"]), "pitch": PITCH},  # round 2: a steady look down over the balustrade: the pool's glow in the lower part of the choice view
     ]
     bad = [P("ms_ref_back", "queasy", "walk", 2), P("ms_sw_corner", "queasy", "stagger", 3)]

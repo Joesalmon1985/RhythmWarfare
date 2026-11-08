@@ -1188,7 +1188,7 @@ func test_underworld_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_
 	var pose := _uw_pose(m, "uw_ref")
 	# round 2: the choice hold at uw_ref carries a steady pitch (the run's rail place `pitch`, docs/engine/GEOGRAPHY_WORLDS.md): the guides are checked at the PITCHED pose the window holds
 	var good: Array = _doom_run().nodes["doom_underworld"]["rail"]["good"]
-	var pitch := float((good[3] as Dictionary).get("pitch", 0.0))
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
 	assert_true(pitch <= -10.0 and pitch >= -35.0, "underworld: uw_ref holds a downward pitch over the lava (%.1f)" % pitch)
 	pose["pitch"] = pitch
 	for asp in ASPECTS:
@@ -1260,12 +1260,13 @@ func test_underworld_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
 		assert_eq([str(routes["up"]["to"]), str(routes["left"]["to"]), str(routes["right"]["to"])], UW_EXITS, "%s: the thresholds are the exits' waypoints" % id)
 	var good: Array = on.nodes["doom_underworld"]["rail"]["good"]
-	assert_eq(good.size(), 4, "underworld: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "underworld: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+	# round 2: one reveal and the choice viewpoint (the rail steps a place per passed block: the choice place must be reached by block 2, when the window opens)
+	assert_eq(good.size(), 2, "underworld: the stay loop is one reveal and the choice viewpoint")
+	for i in 1:
+		assert_true(float(good[i]["hold_bars"]) > 0.0 and float(good[i]["bars"]) + float(good[i]["hold_bars"]) <= 4.0, "underworld: reveal viewpoint %s holds still and is over within a block" % good[i]["to"])
 		assert_false(bool(good[i].get("choice", false)), "underworld: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "uw_ref", "underworld: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "underworld: uw_ref is a choice viewpoint holding the whole window")
+	assert_eq(str(good[1]["to"]), "uw_ref", "underworld: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "underworld: uw_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_underworld", [])
 	assert_eq(hs.size(), 4, "underworld: three guides and the stay hotspot")
 	var dests := []
@@ -1413,7 +1414,7 @@ func test_mothership_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_
 	var pose := _ms_pose(m, "ms_ref")
 	# round 2: the choice hold at ms_ref carries a steady pitch (the run's rail place `pitch`): the guides are checked at the PITCHED pose the window holds
 	var good: Array = _doom_run().nodes["doom_mothership"]["rail"]["good"]
-	var pitch := float((good[3] as Dictionary).get("pitch", 0.0))
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
 	assert_true(pitch <= -8.0 and pitch >= -35.0, "mothership: ms_ref holds a downward pitch over the pool (%.1f)" % pitch)
 	pose["pitch"] = pitch
 	for asp in ASPECTS:
@@ -1485,12 +1486,13 @@ func test_mothership_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
 			assert_eq(str(routes[k]["to"]), str((rail["exits"] as Dictionary)[k]), "%s: route %s ends at rail.exits.%s (the doorway)" % [id, k, k])
 	var good: Array = on.nodes["doom_mothership"]["rail"]["good"]
-	assert_eq(good.size(), 4, "mothership: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "mothership: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+	# round 2: one reveal and the choice viewpoint (the rail steps a place per passed block: the choice place must be reached by block 2, when the window opens)
+	assert_eq(good.size(), 2, "mothership: the stay loop is one reveal and the choice viewpoint")
+	for i in 1:
+		assert_true(float(good[i]["hold_bars"]) > 0.0 and float(good[i]["bars"]) + float(good[i]["hold_bars"]) <= 4.0, "mothership: reveal viewpoint %s holds still and is over within a block" % good[i]["to"])
 		assert_false(bool(good[i].get("choice", false)), "mothership: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "ms_ref", "mothership: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "mothership: ms_ref is a choice viewpoint holding the whole window")
+	assert_eq(str(good[1]["to"]), "ms_ref", "mothership: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "mothership: ms_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_mothership", [])
 	assert_eq(hs.size(), 4, "mothership: three guides and the stay hotspot")
 	var dests := []

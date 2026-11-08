@@ -71,7 +71,7 @@ ROUTES = {
     "ahead": ["uw_v_a1", "uw_v_a2", "uw_v_a3", "uw_v_a4", "uw_gate"],
     "left": ["uw_v_l1", "uw_v_l2", "uw_v_l3", "uw_cave_in"],
     "right": ["uw_v_r1", "uw_v_r2", "uw_v_r3", "uw_v_r4", "uw_shelf_end"],
-    "stay": ["uw_v_s1", "uw_ledge_view", "uw_v_s2", "uw_cave_view", "uw_v_s1", "uw_stair_view", "uw_v_s1", "uw_ref"],
+    "stay": ["uw_v_s1", "uw_ledge_view", "uw_v_s1", "uw_ref"],  # (round 2: one reveal, then the choice viewpoint: tools/run/make_doom_underworld.py)
     "arrive": ["uw_arrive", "uw_ref"],
     "stumble": ["uw_ref_back", "uw_sw_corner", "uw_ref"],
 }

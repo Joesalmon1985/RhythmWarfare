@@ -25,11 +25,12 @@ GUIDE = {  # name: (guide thing, route node, sprite stem)
 
 
 def _rail(P):
+    # round 2: the rail steps one place per passed block (RunRail.step) and the choice hold is set at block 2 only when the rail stands at the choice place then; with four places
+    # the camera was still walking to the stair view when the window opened (shot on the real run, no RW_STORY_CAM). So the loop is ONE reveal (2 bars + 1 still, over before
+    # block 1 ends) and the choice viewpoint (reached by beat 44, held still through the window)
     good = [
-        P("uw_ledge_view", bars=4, hold=2, via=["uw_v_s1"]),
-        P("uw_cave_view", bars=3, hold=2, via=["uw_v_s2"]),
-        P("uw_stair_view", bars=4, hold=2, via=["uw_v_s1"]),
-        {**P("uw_ref", bars=4, hold=8, choice=True, via=["uw_v_s1"]), "pitch": PITCH},  # the steady downward look over the lava lake through the whole choice window
+        P("uw_ledge_view", bars=2, hold=1, via=["uw_v_s1"]),
+        {**P("uw_ref", bars=3, hold=8, choice=True, via=["uw_v_s1"]), "pitch": PITCH},  # the steady downward look over the lava lake through the whole choice window
     ]
     bad = [P("uw_ref_back", "queasy", "walk", 2), P("uw_sw_corner", "queasy", "stagger", 3)]
     routes = {

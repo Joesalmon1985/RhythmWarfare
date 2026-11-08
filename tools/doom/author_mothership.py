@@ -27,7 +27,7 @@ MARGIN = 0.5
 MARGINS = {"ms_v_br": 0.4, "ms_booth_hatch": 0.45}
 MAX_STEP = 0.5
 RAIL_HEIGHT = 0.95  # (round 2: 1.1 -> 0.95, the parapet opened: the pool shows over it and through its ovals in the pitched choice view) the balustrade round the void, metres above the ring's floor
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.3, 0.45, 0.08, 2.4
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.3, 0.45, 0.08, 1.9
 REF_BEARING = 47.0  # the reference viewpoint looks this many degrees north of east
 PAINTING = "art/reference/doom_worlds/Mothership Ringwalk Over the Void-7.png"
 
@@ -84,7 +84,7 @@ ROUTES = {
     "ahead": ["ms_v_a1", "ms_v_a2", "ms_v_a3", "ms_v_a4", "ms_v_uw", "ms_uw_hatch"],
     "left": ["ms_v_a1", "ms_v_br", "ms_booth_hatch"],
     "right": ["ms_v_a1", "ms_v_a2", "ms_v_dk", "ms_dock_in"],
-    "stay": ["ms_v_a1", "ms_hub_view", "ms_v_a3", "ms_stair_view", "ms_v_a3", "ms_v_a2", "ms_v_a1", "ms_bridge_view", "ms_v_a1", "ms_ref"],
+    "stay": ["ms_v_a1", "ms_hub_view", "ms_v_a1", "ms_ref"],  # (round 2: one reveal, then the choice viewpoint: tools/run/make_doom_mothership.py)
     "arrive": ["ms_arrive", "ms_ref"],
     "stumble": ["ms_ref_back", "ms_sw_corner", "ms_ref"],
 }

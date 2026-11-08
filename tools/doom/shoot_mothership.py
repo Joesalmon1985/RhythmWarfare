@@ -22,8 +22,8 @@ import shoot_scene as ss  # noqa: E402
 ROOT = ss.ROOT
 SCENE = "doom_mothership"
 PAINTING = os.path.join(ROOT, "art", "reference", "doom_worlds", "Mothership Ringwalk Over the Void-7.png")
-SHOTS = [("ref", "ms_ref"), ("hold_hub", "ms_hub_view"), ("hold_stair", "ms_stair_view"), ("hold_bridge", "ms_bridge_view"), ("route_ahead", "ms_uw_hatch"), ("route_left", "ms_booth_hatch"),
-         ("route_right", "ms_dock_in"), ("arrive", "ms_arrive")]
+SHOTS = [("ref", "ms_ref,0,-14"), ("hold_hub", "ms_hub_view"), ("hold_stair", "ms_stair_view"), ("hold_bridge", "ms_bridge_view"), ("route_ahead", "ms_uw_hatch"), ("route_left", "ms_booth_hatch"),
+         ("route_right", "ms_dock_in"), ("arrive", "ms_arrive")]  # (round 2: `ref` is the run's own choice hold, pitched -14 (the rail place's `pitch`); the stair and bridge views are views, no longer run holds)
 ROUTES = ["up", "left", "right"]
 RATE = 0.5
 
@@ -41,6 +41,25 @@ def shoot(tmp, name, cam, res, secs=3):
         print("  ", ln)
     p = os.path.join(tmp, name + ".png")
     return Image.open(p).convert("RGB") if os.path.exists(p) else None
+
+
+# round 2: the guide-state captures (DOOM_WORLDS_BRIEF.md section 8): the run's own camera (no RW_STORY_CAM), the guide ahead tapped at beat 50 of the choice window (RW_RUN_SELECT);
+# `selected` is the hold just after the tap, `committed` the first frame of the walk-off (a tapped guide commits at once: "you chose, you go")
+STATE_HOT = "doom_mothership.exit_underworld"
+STATES = [("selected", 50.4), ("committed", 51.6)]
+
+
+def shoot_states(tmp, res="1280x720"):
+    steps = ["%d:shot:state_%s" % (int((b * 60.0 / 174.0 + 2.0) / RATE) + 2, n) for n, b in STATES]
+    env = {"XDG_DATA_HOME": tmp + "/data_states", "RW_DOOM_WORLDS": "1", "RW_RUN_VIRTUAL": "1", "RW_STORY_RATE": str(RATE), "RW_RUN_START": SCENE, "RW_RUN_BOT": "perfect",
+           "RW_RUN_SELECT": STATE_HOT + "@50"}
+    ss.godot(["--path", ROOT, "--resolution", res, "-s", "tools/shoot.gd", "--", "res://src/run/run_play.tscn", tmp] + steps, env)
+    out = {}
+    for n, _b in STATES:
+        q = os.path.join(tmp, "state_%s.png" % n)
+        if os.path.exists(q):
+            out[n] = Image.open(q).convert("RGB")
+    return out
 
 
 def label(im, text, w, h):
@@ -84,6 +103,11 @@ def main(out):
                     os.makedirs(os.environ["RW_KEEP"], exist_ok=True)
                     im.save(os.path.join(os.environ["RW_KEEP"], "%s_%s.jpg" % (name, asp)), quality=92)
                 print("shot", name, asp)
+    states = shoot_states(tmp) if not only or re.search(only, "state") else {}
+    for n, im in states.items():
+        if os.environ.get("RW_KEEP"):
+            im.save(os.path.join(os.environ["RW_KEEP"], "state_%s.jpg" % n), quality=92)  # (not *_16x9: frame_check's eight are the viewpoints)
+        print("shot state", n)
     # --- the one contact sheet: the painting beside the reference viewpoint, then every shot as a 16:9 | 20:9 pair
     W = 640
     rows = []
@@ -109,6 +133,12 @@ def main(out):
         r20 = Image.new("RGB", (2 * W, 288 + 16), (12, 12, 20))
         r20.paste(label(shots[("ref", "20x9")], "ref 20:9", W, 288), (0, 0))
         rows[rows.index(None)] = r20
+    if states:  # the guide-state pair: selected | committed (16:9, the run's own camera)
+        row = Image.new("RGB", (2 * W, 360 + 16), (12, 12, 20))
+        for k, n in enumerate(("selected", "committed")):
+            if n in states:
+                row.paste(label(states[n], "%s (the guide ahead tapped at beat 50, the run's own camera)" % n, W, 360), (k * W, 0))
+        rows.append(row)
     rows = [r for r in rows if r is not None]
     if rows:
         sheet = Image.new("RGB", (2 * W, sum(r.height for r in rows)), (12, 12, 20))
