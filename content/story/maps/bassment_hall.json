@@ -582,6 +582,15 @@
    ],
    "yaw": 0,
    "sector": "h_apse"
+  },
+  {
+   "id": "hall_way_up",
+   "at": [
+    3.41,
+    6.51
+   ],
+   "yaw": -71,
+   "sector": "h_aisle"
   }
  ],
  "fog": {

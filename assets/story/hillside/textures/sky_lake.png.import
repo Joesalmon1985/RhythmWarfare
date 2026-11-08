@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6qs7xdvpou5b"
-path="res://.godot/imported/wall_door.png-1bc0836b081ad2deea5167f7a61862ae.ctex"
+uid="uid://bnlxj13j21xjd"
+path="res://.godot/imported/sky_lake.png-a15c7214bd2193f3243ea498da1c5baa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/galilee_shore/textures/wall_door.png"
-dest_files=["res://.godot/imported/wall_door.png-1bc0836b081ad2deea5167f7a61862ae.ctex"]
+source_file="res://assets/story/hillside/textures/sky_lake.png"
+dest_files=["res://.godot/imported/sky_lake.png-a15c7214bd2193f3243ea498da1c5baa.ctex"]
 
 [params]
 

@@ -38,8 +38,8 @@ const EXCEPTIONS := {
 ## (RunRail.ambient), so nine consecutive phases give every combination a scene can meet in a run (the run's own first scene is phase 1).
 const PHASES := [2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-static var _walls: Dictionary = {}  # map id -> {sector id -> [wall]}
 static var _maps: Dictionary = {}
+const WALLS_META := &"cc_walls_by_sector"  # {sector id -> [wall]}, cached on the map itself: two maps may share an id (the tests' "box" maps), so an id-keyed cache leaked one test's walls into another
 
 
 # --- the rays --------------------------------------------------------------------------------------------------------------------------------
@@ -51,15 +51,15 @@ static func map_of(id: String) -> StoryMap:
 
 
 static func walls_of(m: StoryMap) -> Dictionary:
-	if not _walls.has(m.id):
+	if not m.has_meta(WALLS_META):
 		var by := {}
 		for w in m.resolved_walls():
 			var sid := str(w["sector"])
 			if not by.has(sid):
 				by[sid] = []
 			by[sid].append(w)
-		_walls[m.id] = by
-	return _walls[m.id]
+		m.set_meta(WALLS_META, by)
+	return m.get_meta(WALLS_META)
 
 
 ## Distance along the ray (origin, unit dir) to segment a-b, or INF.
@@ -245,15 +245,7 @@ static func play(data: RunData, id: String, entry: Dictionary, phase := 2) -> Di
 	var map_id := str(node["map"])
 	var m := map_of(map_id)
 	j.face_fn = func(node_id: String, _place: String) -> Array:  # the run scene's window turn (RunPlay._window_face), with the map alone
-		var pts: Array = []
-		for h in e.hotspots.shown(3, true):
-			if RunHotspots.window_of(h) != "final":
-				continue
-			var r := HotspotView.resolve(h["anchor"], map_of(str(data.nodes[node_id]["map"])), {})
-			if bool(r["ok"]):
-				var hp: Vector3 = r["pos"]
-				pts.append([hp.x, hp.z, 1.0 if bool(h["default"]) else 0.0, hp.y])
-		return pts
+		return RunJourney.window_points(e.hotspots.shown(3, true), map_of(str(data.nodes[node_id]["map"])))
 	var actions: Array = []
 	var pre: Array = []
 	if kind == "direct":  # (RunPlay starts a first scene whose home is not the map's start with a walk there over the countdown)

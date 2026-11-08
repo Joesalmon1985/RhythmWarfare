@@ -76,6 +76,55 @@
    }
   },
   {
+   "id": "hollow.skip",
+   "world": "hollow",
+   "scene": "hollow",
+   "map": "orchard",
+   "anchor": {
+    "pos": [
+     4.5,
+     1.5,
+     0.8
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hollow.inn"
+   },
+   "on_failure": {
+    "route": "hollow.inn",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "door",
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "height_m": 3.0,
+    "width_m": 1.5
+   },
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "ember.return",
    "world": "hollow",
    "scene": "hollow",

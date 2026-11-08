@@ -100,7 +100,7 @@ func test_run_data_rejects_broken_routes_and_sibling_charts() -> void:
 	var good := RunData.load_default()
 	assert_eq(good.errors, [])
 	assert_eq(good.warnings.filter(func(w: String) -> bool: return w.contains("cannot be reached")), [], "every scene is reachable")
-	var d := _bad_run(func(run: Dictionary) -> void: (_scene(run, "mothership.exit")["next"] as Array).remove_at(1))  # a world exit keeps one route
+	var d := _bad_run(func(run: Dictionary) -> void: (_scene(run, "mothership.exit")["next"] as Array).resize(1))  # a world exit keeps one route (its second world and its way back to the hub gone)
 	assert_true(_has(d.errors, "at least 2 routes"), str(d.errors))
 	# the siblings of the Warehouse floor: plain scenes (audio/chart named) so the charts are the test's own, whatever the shipped arrangements play
 	var mp := "user://test_run_bad_music.json"
@@ -168,3 +168,36 @@ func test_the_route_map_covers_seven_worlds_on_five_maps() -> void:
 	assert_eq(d.nodes["hospital_late.exit"]["next"][0]["to"], "hospital_late", "the last depth loops onward")
 	assert_true(bool(d.nodes["hospital_late.exit"]["next"][0]["loop"]))
 	assert_true(bool(d.nodes["ward_late.exit"]["next"][0]["loop"]))
+
+
+## The routes between hubs (the shared wiring step; RunData._validate_hub_route): a hub's link to its partner and every scene's way back to its hub load clean; a link to a hub of
+## another depth, a way back without its loop mark, a way back from one world into a later one and a hub route as the default are refused.
+func test_run_data_accepts_the_hub_routes_and_refuses_bad_ones() -> void:
+	var good := RunData.load_default()
+	assert_eq(good.errors, [])
+	var links := 0
+	var backs := 0
+	for id in good.nodes:
+		for e in good.nodes[id]["next"]:
+			links += 1 if bool(e.get("hub_link", false)) else 0
+			backs += 1 if bool(e.get("to_hub", false)) else 0
+	assert_eq(links, 4, "four hub links: Mothership and Underworld, Hospital and Ward, both ways")
+	assert_eq(backs, 31, "a way back to the hub from every main-run scene that is not a hub")
+	var d := _bad_run(func(run: Dictionary) -> void:
+		for e in _scene(run, "mothership")["next"]:
+			if bool(e.get("hub_link", false)):
+				e["to"] = "hospital")
+	assert_true(_has(d.errors, "partner hubs are at the same depth"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void:
+		for e in _scene(run, "warehouse.bar")["next"]:
+			if bool(e.get("to_hub", false)):
+				e.erase("loop"))
+	assert_true(_has(d.errors, "must be marked \"loop\""), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void:
+		for e in _scene(run, "hospital.garden")["next"]:
+			if bool(e.get("to_hub", false)):
+				e["to"] = "hospital_late"
+				e.erase("loop"))
+	assert_true(_has(d.errors, "leaves for another world"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "warehouse.bar")["next"] as Array).reverse())
+	assert_true(_has(d.errors, "cannot be the scene's first (default) route"), str(d.errors))

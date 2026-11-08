@@ -40,6 +40,7 @@ NEW_WAYPOINTS = {
         ("gallery_east", (26.3, 7.5), -90, "gallery"),
         ("catwalk_door", (27.8, 7.5), -90, "catwalk"), ("catwalk_bridge", (40.2, 7.5), -90, "catwalk"), ("catwalk_mid", (33.0, 7.5), -90, "catwalk"),
         ("bridge_door", (41.8, 7.5), -90, "bridge"),
+        ("deck_rift", (-4.0, 3.0), 180, "deck"),  # the hub link to the Underworld (a rift in the deck floor, red light below)
         ("med_door", (34.0, 9.7), 180, "medbay"), ("med_alcove_in", (29.8, 12.0), 90, "med_alcove"), ("exam_door", (36.5, 12.0), -90, "medbay"), ("airlock_door", (34.0, 14.6), 180, "medbay"),
     ],
     "underworld": [
@@ -48,10 +49,11 @@ NEW_WAYPOINTS = {
         ("court_door", (11.8, 4.0), -90, "court"), ("court_mid", (19.0, 4.0), -90, "court"), ("court_causeway", (19.0, 7.4), 180, "court"),
         ("furnace_door", (-11.3, 4.0), 90, "furnace"), ("furnace_mid", (-20.0, 4.0), 90, "furnace"), ("furnace_out", (-11.6, 6.0), -90, "furnace"),
         ("causeway_in", (19.0, 9.0), 180, "causeway"), ("pit_door", (19.0, 10.6), 180, "pit_deck"), ("pit_rim_e", (24.0, 12.5), 90, "pit_deck"),
+        ("arena_beam", (-3.5, 1.0), 180, "arena"),  # the hub link to the Mothership (a beam of cold light through a hole in the arena ceiling)
         ("throne_door_l", (30.2, 1.0), 90, "throne"), ("throne_door_r", (30.2, 7.0), 90, "throne"),
     ],
     "hospital": [
-        ("ward_door", (4.2, 1.0), -90, "ward"), ("bed_corner", (-1.4, 7.4), 180, "bed"), ("bed_far", (1.4, 7.6), 180, "bed"),
+        ("ward_door", (4.2, 1.0), -90, "ward"), ("ward_old_wing", (4.6, -1.8), -90, "ward"),  # (the hub link to the Ward: a door to the old wing) ("bed_corner", (-1.4, 7.4), 180, "bed"), ("bed_far", (1.4, 7.6), 180, "bed"),
         ("corridor_mid", (14.0, 1.0), -90, "corridor"), ("corridor_fork", (21.0, 1.0), -90, "corridor"), ("corridor_quiet_door", (14.2, 2.2), 180, "corridor"),
         ("corridor_day_door", (20.0, -0.4), 0, "corridor"), ("corridor_cafe", (30.8, 1.0), -90, "station"),
         ("dayroom_mid", (20.0, -6.5), 0, "dayroom"), ("day_tv_in", (20.0, -13.2), 0, "day_tv"), ("dayroom_door", (20.0, -1.4), 180, "dayroom"),
@@ -65,6 +67,7 @@ NEW_WAYPOINTS = {
     "mental_hospital": [
         ("bars_in", (5.0, -2.6), 180, "dayroom"), ("day_stage_in", (0.0, -4.2), 180, "day_stage"), ("day_corner", (-6.0, 8.0), 90, "dayroom"),
         ("day_door_a", (6.3, 6.8), -90, "dayroom"), ("day_door_b", (6.3, 5.0), -90, "dayroom"),
+        ("day_door_general", (-6.3, 2.0), 90, "dayroom"),  # the hub link to the Hospital (a door to the general ward with a window of clean light)
         ("art_door", (33.8, 6.0), 90, "art_room"), ("art_mid", (40.0, 6.0), -90, "art_room"), ("art_easels", (44.0, 10.0), 0, "art_room"), ("art_east_door", (46.2, 7.0), -90, "art_room"),
         ("dorm_door", (26.0, 8.6), 0, "dorm"), ("dorm_mid", (26.0, 12.0), 180, "dorm"), ("dorm_bed", (26.0, 15.4), 180, "dorm_alcove"),
         ("corr_west", (7.8, 6.0), -90, "corridor"), ("corr_mid", (18.0, 6.0), -90, "corridor"), ("corr_east", (30.0, 6.0), -90, "corridor"), ("corr_art_door", (32.4, 6.0), -90, "corridor"),
@@ -253,6 +256,45 @@ scene("ward_late.exit", "ward_late", "exit", "The Day Room", "day_edge", [P("day
       "day_door_a", {"right": "day_door_a", "left": "day_door_b"},
       [("ward_late", "right", "Round again, out to the courtyard", True), ("hospital_late", "left", "Across to the hospital")], exit_scene=True)
 
+# ---- the hubs (docs/parallel-development/NARRATIVE_GRAPH.md 2.2 and 2.4, content/narrative/graph.json): the first scene of a location shows a link to its partner hub, and every other
+# scene of the location a way back to the hub. A location's late world (hospital_late, ward_late) belongs to it: its hub is the hub of its first world. RunData accepts these two kinds
+# of route (`hub_link`: from a hub to the partner hub at the same depth; `to_hub`: from any scene of a location to its hub, also across its worlds); the exit hotspots are generated
+# by hotspots_common.exits() as `<hub>.to_<partner>` and `<scene>.to_hub`.
+HUB_OF = {"warehouse": "warehouse", "mothership": "mothership", "underworld": "underworld", "hospital": "hospital", "hospital_late": "hospital", "ward": "ward", "ward_late": "ward"}
+HUB_TITLE = {"warehouse": "the Floor", "mothership": "the Deck", "underworld": "the Arena", "hospital": "the Ward", "ward": "the Day Room"}
+HUB_LINKS = {  # hub -> (partner hub, doorway waypoint, label)
+    "mothership": ("underworld", "deck_rift", "Down through the rift in the deck, to the Underworld"),
+    "underworld": ("mothership", "arena_beam", "Up the beam of cold light, to the Mothership"),
+    "hospital": ("ward", "ward_old_wing", "Through the door to the old wing, to the Ward"),
+    "ward": ("hospital", "day_door_general", "Through the door to the general ward, to the Hospital"),
+}
+HUB_MAX_HOTSPOTS = 10  # a hub may allow up to ten choices on show (lead ruling 16): the exits, its people and things, the four entrances and the link
+BACK_AHEAD_M = 0.8  # the way back to the hub stands beside the doorway the player came in by (the scene's arrival waypoint): this far into the room and BACK_SIDE_M to its left
+BACK_SIDE_M = 1.4
+
+
+def back_door(sid: str) -> str:
+    """The doorway waypoint of scene `sid`'s way back to its hub (added to the map by add_back_doors)."""
+    return "back_" + sid.replace(".", "_")
+
+
+def add_hub_routes() -> None:
+    """The hub links and the ways back, appended to the S table's routes (after the scene's own, so its default exit stays first)."""
+    world_of = {sc["id"]: sc["world"] for sc in S}
+    for sc in S:
+        hub = HUB_OF[sc["world"]]
+        if sc["id"] == hub:
+            if hub in HUB_LINKS:
+                to, wp, label = HUB_LINKS[hub]
+                sc["next"].append((to, "link", label, False, {"hub_link": True}))
+                sc["exits"]["link"] = wp
+            continue
+        sc["next"].append((hub, "hub", "Back to " + HUB_TITLE[hub], world_of[hub] == sc["world"], {"to_hub": True}))
+        sc["exits"]["hub"] = back_door(sc["id"])
+
+
+add_hub_routes()
+
 # ---- music: scene -> pack (audio = chart). Underworld scenes are Lv2 renders standing in for Lv3 Hell (temporary). ------------------------------------
 PACK = {
     "warehouse": "lv1_warehouse", "warehouse.bar": "lv1_warehouse_v1", "warehouse.balcony": "lv1_warehouse_v2", "warehouse.chill": "lv1_warehouse_v2",
@@ -289,6 +331,7 @@ CAMERA = {
     "hospital.dayroom": {"good": [P("dayroom_mid")]},  # day_tv_in: the television wall at 2.1 m
     "hospital.cafeteria": {"good": [P("cafe_mid")]},  # cafe_serving: the counter wall
     "hospital.exit": {"strolls": "no turn"},  # (the turn ended on the bandstand's hedge)
+    "ward": {"arrive": "day_edge"},  # day_door_a: the south wall under the herald look (the Ward package, N2.4)
     "ward.dorm": {"good": [P("dorm_door")], "strolls": "no turn, half", "glances": "half"},  # dorm_bed: the alcove's window wall at 1.1 m; the look up met the alcove's low ceiling
     "ward.corridor": {"arrive": "corr_art_door", "strolls": "no turn, half", "good": [P("corr_mid")]},
     "hospital_late.quiet": {"good": [P("quiet")], "arrive": "quiet", "strolls": "no turn, quarter", "glances": "half"},  # quiet_far: the end wall at 1.5 m (the room is 2.4 m wide); quiet_door: its choice door fills the picture
@@ -326,7 +369,7 @@ def build_nodes() -> list[dict]:
         rot = lambda lst: lst[k % len(lst):] + lst[:k % len(lst)]  # noqa: E731
         n = {"id": s["id"], "world": s["world"], "scene": s["scene"], "title": s["title"], "entry": s["entry"], "exit_scene": s["exit_scene"], "role": s["role"],
              "blurb": w["blurb"] if s["entry"] else s["title"],
-             "next": [{"to": t[0], "dir": t[1], "label": t[2], **({"loop": True} if len(t) > 3 and t[3] else {})} for t in s["next"]],
+             "next": [{"to": t[0], "dir": t[1], "label": t[2], **({"loop": True} if len(t) > 3 and t[3] else {}), **(t[4] if len(t) > 4 else {})} for t in s["next"]],
              "place": {"waypoint": s["home"], "rail": {"good": s["good"], "bad": s["bad"], "arrive": s["arrive"], "glances": rot(gl), "strolls": rot(st), "exits": s["exits"]}}}
         for k, v in CAMERA.get(s["id"], {}).items():
             n["place"]["rail"][k] = camera_field(k, n["place"]["rail"][k], v)
@@ -334,8 +377,8 @@ def build_nodes() -> list[dict]:
             n["cast"] = json.loads(json.dumps(acting_data.CAST[s["id"]]))
         if s["id"] in ("warehouse", "warehouse.chill"):  # the wizard waits on the floor and in the chill-out; the Bassment returns to the entry scene
             n["trial_gate"] = "deathtrap_opening"
-        if s["id"] == "ward":  # the day room's card table is a fifth hotspot (docs/BLACKJACK_INTEGRATION.md B3)
-            n["max_hotspots"] = 5
+        if HUB_OF[s["world"]] == s["id"]:  # a hub: up to ten choices on show (the Ward's day room: two exits, the orderly, the window, the card table, four entrances and the link)
+            n["max_hotspots"] = HUB_MAX_HOTSPOTS
         nodes.append(n)
     return nodes
 
@@ -427,6 +470,99 @@ def add_waypoints() -> None:
             txt = txt[:m.start(2)] + body + txt[m.end(2):]
             path.write_text(txt, encoding="utf-8", newline="\n")
         print(mp, "+%d waypoints" % len(lines))
+
+
+def add_back_doors() -> None:
+    """The doorway waypoint of every scene's way back to its hub (back_door): beside the scene's arrival waypoint, BACK_AHEAD_M into the room and BACK_SIDE_M to its left, nudged clear of the
+    crowd's homes and the other waypoints (_nudge). Idempotent: a waypoint already in the map stays where it is."""
+    import math
+    wmap = {w["id"]: w["map"] for w in WORLDS}
+    for mp in sorted(set(wmap.values())):
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        doc = json.loads(txt)
+        wps = {w["id"]: w for w in doc["waypoints"]}
+        placed = [tuple(w["at"]) for w in doc["waypoints"]]
+        lines = []
+        for sc in S:
+            if wmap[sc["world"]] != mp or "hub" not in sc["exits"]:
+                continue
+            wid = sc["exits"]["hub"]
+            if wid in wps:
+                continue
+            arr = CAMERA.get(sc["id"], {}).get("arrive", sc["arrive"])
+            a = wps[arr]
+            y = math.radians(a["yaw"])
+            fwd, rgt = (-math.sin(y), -math.cos(y)), (math.cos(y), -math.sin(y))
+            at = (a["at"][0] + fwd[0] * BACK_AHEAD_M - rgt[0] * BACK_SIDE_M, a["at"][1] + fwd[1] * BACK_AHEAD_M - rgt[1] * BACK_SIDE_M)
+            at = _nudge(at, a["sector"], doc, placed)
+            placed.append(at)
+            lines.append('  {"id": "%s", "at": [%g, %g], "yaw": %g, "sector": "%s"}' % (wid, at[0], at[1], a["yaw"], a["sector"]))
+        if lines:
+            m = re.search(r'("waypoints": \[\n)(.*?)(\n \],)', txt, re.S)
+            assert m, mp
+            txt = txt[:m.start(2)] + m.group(2) + ",\n" + ",\n".join(lines) + txt[m.end(2):]
+            path.write_text(txt, encoding="utf-8", newline="\n")
+        print(mp, "+%d ways back to the hub" % len(lines))
+
+
+# Where the ways back and the hub links stand (tools/run/hub_door_spots.gd: in the route window's picture, clear of the other choices and of the walls). map -> {waypoint: (x, z, sector)};
+# a door not listed stands where add_back_doors puts it (beside the arrival doorway) or where NEW_WAYPOINTS says. Applied by place_doors() after the waypoints are added.
+DOOR_SPOTS = {
+    "hospital": {
+        "ward_old_wing": (-2.35, 1.55, "ward"),  # hospital
+        "back_hospital_cafeteria": (45.5, -4.95, "cafeteria"),  # hospital.cafeteria
+        "back_hospital_corridor": (16.75, 1.15, "corridor"),  # hospital.corridor
+        "back_hospital_dayroom": (26.3, -4.95, "dayroom"),  # hospital.dayroom
+        "back_hospital_exit": (57.95, 4.2, "garden"),  # hospital.exit
+        "back_hospital_garden": (53.85, 3.05, "garden"),  # hospital.garden
+        "back_hospital_late": (48.1, -5.2, "garden"),  # hospital_late
+        "back_hospital_late_exit": (57.75, 3.5, "garden"),  # hospital_late.exit
+        "back_hospital_late_quiet": (14.9, 5.1, "quiet"),  # hospital_late.quiet (search tier 2)
+    },
+    "mothership": {
+        "deck_rift": (-5.0, 5.0, "deck"),  # mothership (by hand: left of the gates as the dais sees them, clear of them on screen)
+        "back_mothership_bridge": (48.0, 1.3, "bridge"),  # mothership.bridge
+        "back_mothership_gallery": (20.85, 9.55, "gallery"),  # mothership.gallery
+    },
+    "underworld": {
+        "arena_beam": (-2.0, 3.5, "arena"),  # underworld (by hand: the arena's left half, the gates are on its right)
+        "back_underworld_court": (21.75, 7.5, "court"),  # underworld.court
+        "back_underworld_furnace": (-14.35, 2.55, "furnace"),  # underworld.furnace
+        "back_underworld_pit": (14.4, 19.4, "pit_deck"),  # underworld.pit
+    },
+    "mental_hospital": {
+        "day_door_general": (5.65, -0.7, "dayroom"),  # ward
+        "back_ward_art": (40.55, 5.2, "art_room"),  # ward.art
+        "back_ward_corridor": (21.45, 7.45, "corridor"),  # ward.corridor
+        "back_ward_dorm": (26.8, 13.35, "dorm"),  # ward.dorm
+        "back_ward_exit": (59.95, 1.9, "courtyard"),  # ward.exit
+        "back_ward_late": (48.95, 6.05, "courtyard"),  # ward_late
+        "back_ward_late_dorm": (30.5, 10.7, "dorm"),  # ward_late.dorm
+        "back_ward_late_exit": (-0.5, 2.05, "dayroom"),  # ward_late.exit
+        "back_ward_late_treat": (13.6, 12.6, "treatment"),  # ward_late.treat
+    },
+    "night_one": {
+        "back_warehouse_balcony": (-10.1, -1.65, "balcony"),  # warehouse.balcony (search tier 1)
+        "back_warehouse_booth": (1.25, -3.45, "steps"),  # warehouse.booth
+        "back_warehouse_chill": (9.2, 6.55, "chill"),  # warehouse.chill (search tier 1)
+    },
+}
+
+
+def place_doors() -> None:
+    """Moves the door waypoints of DOOR_SPOTS to their spots, nudged clear of the homes (their lines rewritten in place; the yaw is kept). Idempotent."""
+    for mp, rows in DOOR_SPOTS.items():
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        doc = json.loads(txt)
+        for wid, (x, z, sector) in rows.items():
+            others = [tuple(w["at"]) for w in doc["waypoints"] if w["id"] != wid]
+            x, z = _nudge((x, z), sector, doc, others)  # (clear of the crowd's homes by the map test's metre and of the other waypoints)
+            txt, n = re.subn(r'  \{"id": "%s", "at": \[[^\]]+\], "yaw": ([-\d.]+), "sector": "[^"]+"\}' % re.escape(wid),
+                             lambda m_, wid=wid, x=x, z=z, sector=sector: '  {"id": "%s", "at": [%g, %g], "yaw": %s, "sector": "%s"}' % (wid, x, z, m_.group(1), sector), txt, count=1)
+            assert n == 1, (mp, wid)
+        path.write_text(txt, encoding="utf-8", newline="\n")
 
 
 def add_things() -> None:
@@ -571,6 +707,8 @@ def clear_homes() -> None:
 def main() -> None:
     nodes = build_nodes()
     add_waypoints()
+    add_back_doors()
+    place_doors()
     add_things()
     add_occluders()
     clear_homes()

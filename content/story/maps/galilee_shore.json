@@ -12,6 +12,7 @@
   "thing_basket_full": "textures/thing_basket_full.png",
   "thing_bush": "textures/thing_bush.png",
   "thing_cart": "textures/thing_cart.png",
+  "thing_door": "textures/thing_door.png",
   "thing_dove": "textures/thing_dove.png",
   "thing_fire": "textures/thing_fire.png",
   "thing_grass": "textures/thing_grass.png",
@@ -34,7 +35,6 @@
   "thing_waves": "textures/thing_waves.png",
   "thing_workbench": "textures/thing_workbench.png",
   "trim": "textures/trim.png",
-  "wall_door": "textures/wall_door.png",
   "wall_hill": "textures/wall_hill.png",
   "wall_limestone": "textures/wall_limestone.png",
   "wall_reeds": "textures/wall_reeds.png",
@@ -66,7 +66,7 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_dust",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
@@ -122,11 +122,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 0.8,
    "floor_tex": "floor_sand",
    "ceil_tex": "sky",
    "wall_tex": "wall_reeds",
-   "light": 0.62,
+   "light": 0.56,
    "tint": "#ffc89a",
    "room": "bank_dawn",
    "flags": [],
@@ -178,11 +178,11 @@
     ]
    ],
    "floor": -0.4,
-   "ceiling": 3.0,
+   "ceiling": 0.8,
    "floor_tex": "floor_water",
    "ceil_tex": "sky",
    "wall_tex": "wall_reeds",
-   "light": 0.62,
+   "light": 0.56,
    "tint": "#ffc89a",
    "room": "bank_dawn",
    "flags": [],
@@ -234,11 +234,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_dust",
    "ceil_tex": "sky",
    "wall_tex": "wall_rock",
-   "light": 0.74,
+   "light": 0.64,
    "tint": "#fff0d0",
    "room": "rocks",
    "flags": [],
@@ -267,7 +267,8 @@
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
-   }
+   },
+   "ambient": 0.45
   },
   {
    "id": "workshop",
@@ -290,11 +291,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 2.6,
    "floor_tex": "floor_clay",
    "ceil_tex": "sky",
    "wall_tex": "wall_limestone",
-   "light": 0.72,
+   "light": 0.62,
    "tint": "#ffecc8",
    "room": "workshop",
    "flags": [],
@@ -323,7 +324,8 @@
    "fog": {
     "color": "#e2d4b0",
     "density": 0.01
-   }
+   },
+   "ambient": 0.45
   },
   {
    "id": "galilee_shore_spine",
@@ -465,7 +467,7 @@
     -12.0
    ],
    "sector": "bank_dawn_river",
-   "tex": "wall_hill"
+   "tex": "wall_reeds"
   },
   {
    "from": [
@@ -527,7 +529,7 @@
    "sector": "bank_dawn",
    "portal": "bank_dawn_river",
    "lower_tex": "trim",
-   "upper_tex": "wall_hill"
+   "upper_tex": "wall_reeds"
   },
   {
    "from": [
@@ -647,7 +649,7 @@
     -12.0
    ],
    "sector": "workshop",
-   "tex": "wall_door"
+   "tex": "wall_limestone"
   },
   {
    "from": [
@@ -727,9 +729,9 @@
     3.6,
     -10.0
    ],
-   "size": 3.2,
+   "size": 1.7,
    "piece": "bank_night.star",
-   "y": 4.9,
+   "y": 5.2,
    "blend": "add"
   },
   {
@@ -914,10 +916,10 @@
     18.0,
     -8.0
    ],
-   "size": 2.4,
+   "size": 1.8,
    "piece": "bank_dawn.dove",
-   "y": 4.2,
-   "blend": "add"
+   "y": 3.6,
+   "blend": "mix"
   },
   {
    "id": "bank_dawn.palm1",
@@ -1183,6 +1185,19 @@
    "sector": "rocks"
   },
   {
+   "id": "rocks.sunlt",
+   "kind": "light",
+   "at": [
+    36.0,
+    -6.5
+   ],
+   "y": 5.0,
+   "radius": 12.5,
+   "color": "#ffe6b8",
+   "strength": 1.7,
+   "sector": "rocks"
+  },
+  {
    "id": "workshop.bench",
    "sprite": "thing_workbench",
    "at": [
@@ -1262,6 +1277,37 @@
     -2.2
    ],
    "size": 0.8
+  },
+  {
+   "id": "workshop.door1",
+   "sprite": "thing_door",
+   "at": [
+    53.4,
+    -11.92
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "workshop.door2",
+   "sprite": "thing_door",
+   "at": [
+    59.4,
+    -11.92
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "workshop.sunlt",
+   "kind": "light",
+   "at": [
+    54.0,
+    -6.5
+   ],
+   "y": 5.0,
+   "radius": 12.5,
+   "color": "#ffe6b8",
+   "strength": 1.7,
+   "sector": "workshop"
   }
  ],
  "homes": [
@@ -1786,6 +1832,8 @@
  "sky": {
   "tex": "textures/sky_night.png",
   "mode": "cylinder",
+  "repeats": 1,
+  "horizon": 0.75,
   "by_name": {
    "dawn": "textures/sky_dawn.png",
    "day": "textures/sky_day.png",
@@ -1803,8 +1851,8 @@
    "tex": "floor_water",
    "mode": "scroll",
    "speed": [
-    0.015,
-    0.006
+    0.05,
+    0.02
    ],
    "amount": 0.15,
    "bright": 0.2

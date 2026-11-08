@@ -521,7 +521,7 @@
    "id": "chalk_close",
    "at": [
     -0.7,
-    2.6
+    1.8
    ],
    "yaw": 180,
    "sector": "shaft"
@@ -576,6 +576,15 @@
    "at": [
     3.5,
     -6.8
+   ],
+   "yaw": 0,
+   "sector": "landing"
+  },
+  {
+   "id": "way_up_3",
+   "at": [
+    2.0,
+    -7.0
    ],
    "yaw": 0,
    "sector": "landing"

@@ -81,6 +81,8 @@ var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
 var journey_log: Array = []  # every journey action given to a stage: {world, t0, action, args}
 var _passage_swap := -1.0  # song time of the downbeat a world swap walks through (-1: none under way)
+var _swap_world := ""  # a world swap that waits for a walk-out still under way past the boundary (ruling 42, RunJourney.swap_t): the art world shown at `_swap_world_t`
+var _swap_world_t := -1.0
 var _door_phase := -1  # the phase whose door walk (a path inside the world) was started
 var _run_world := ""  # the run world of the phase before the current one (a change closes the passage frame)
 var _passage: RunPassageView
@@ -901,7 +903,12 @@ func _update_passage(t: float, audio_t: float) -> void:
 	if engine.exit_pending() and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
 		if not data.nodes.has(to) or _run_world_of(to) != _run_world_of(engine.node_id):  # another world, or out of this run (a portal, an ending's way back): the frame closes
-			_passage_swap = engine.t_of(64.0)
+			_passage_swap = maxf(engine.t_of(64.0), journey.cut_t)  # (on the boundary, or when a walk-out at a walking pace runs on past it, as its hold ends: RunJourney.cut_t)
+	if _swap_world != "" and audio_t >= _swap_world_t:  # the walk-out's hold is over: the frame is shut, the new world is shown
+		var sw := _swap_world
+		_swap_world = ""
+		if sw != active_world and stages.has(sw):
+			_show_world(sw)
 	if _passage_swap >= 0.0 and audio_t > _passage_swap + RunPassage.OPEN_BEATS * engine.beat_s + 0.5:
 		_passage_swap = -1.0
 	_passage.set_aperture(RunPassage.aperture(audio_t, _passage_swap, engine.beat_s))
@@ -923,6 +930,7 @@ func summary() -> Dictionary:
 	var moves := 0
 	var looks := 0
 	var walks := 0
+	var holds := 0  # a choice viewpoint's window: the camera stands still (player_hold) instead of the block's glance (ruling 35a, RunJourney._block_result)
 	for a in journey_log:
 		match str(a["action"]):
 			"player_move":
@@ -931,12 +939,14 @@ func summary() -> Dictionary:
 				looks += 1
 			"player_walk":
 				walks += 1
+			"player_hold":
+				holds += 1
 	var worlds_seen: Array = []
 	for p in phase_log:
 		var wid := str(p.get("world", data.nodes[str(p["node"])]["world"] if data.nodes.has(str(p["node"])) else ""))
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
-	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "holds": holds, "glance_skips": journey.glance_skips, "strolls": walks, "worlds": stages.keys(),
 		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size(), "tracks": track_log}
 
 
@@ -1006,6 +1016,9 @@ func _handle(events: Array) -> void:
 		if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"] and trial_state == "" and not minigames.active() and not (_claim_id != "" and str(ev["kind"]) == "block_result") and not (_mg.holds_rail() and str(ev["kind"]) == "block_result"):  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
+		elif str(ev["kind"]) in ["phase_start", "block_result", "lap_start"]:  # withheld from the journey (a trial, a minigame, a claim): the walk's tally of blocks without the rail's glance
+			var why := "withheld_" + ("trial" if trial_state != "" else "minigame" if minigames.active() else "claim" if _claim_id != "" else "mg_rail")
+			journey.glance_skips[why] = int(journey.glance_skips.get(why, 0)) + 1
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
 			event_log.append(ev)
 		if director != null:
@@ -1088,13 +1101,19 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var first := int(ev["phase"]) == 1
 	var world_key := "%s/%s" % [run_path, node["world"]]
 	var world_changed := not first and world_key != _run_world
+	var t_show := journey.swap_t if world_changed and journey.swap_t > t0 else t0  # (a walk-out still under way past the boundary: the new world is shown when its hold ends, ruling 42)
 	if world_changed or first:
-		hud.show_title("%s   LEVEL %d" % [str(node["world_title"]).to_upper(), int(ev["phase"])], str(node["title"]).to_upper(), t0)
+		hud.show_title("%s   LEVEL %d" % [str(node["world_title"]).to_upper(), int(ev["phase"])], str(node["title"]).to_upper(), t_show)
 	else:
 		hud.show_title(str(node["world_title"]).to_upper(), str(node["title"]).to_upper(), t0)
 	if world_changed and _passage_swap < 0.0:
-		_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
-	if world != active_world:
+		_passage_swap = t_show  # the route changed in the last two beats: the frame opens from shut on the new world
+	_swap_world = ""
+	if t_show > t0 and world != active_world:
+		_build_stage(world)
+		_swap_world = world
+		_swap_world_t = t_show
+	elif world != active_world:
 		_show_world(world)
 	_run_world = world_key
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
@@ -1108,7 +1127,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 	_apply_pieces(st, node.get("pieces", {}), t0, true)  # the scene's own set pieces: those it lists are on from its downbeat, every other piece of the stage is off
 	_stage_action(st, "lights_low_pulse", t0)
 	if not first:
-		_stage_action(st, "room_swell", t0)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
+		_stage_action(st, "room_swell", t_show)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
 	if int(ev["phase"]) == 1:
 		_stage_action(st, "doors_open", t0)
 
@@ -1347,7 +1366,7 @@ func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 8 pick th
 ## selection_open() holds, from the scene's first beat to the lock, in every lap; not only in the engine's route window.
 func hotspot_items() -> Array:
 	var out: Array = []
-	if hotspots == null or trial_state != "" or engine == null or minigames.active():  # minigames: the table's view owns the touches
+	if hotspots == null or trial_state != "" or engine == null or minigames.active() or _swap_world != "":  # minigames: the table's view owns the touches; (a walk-out still under way: the new scene is not shown yet)
 		return out
 	var now: float = hud.now_t
 	for h in hotspots.shown(engine.block, selection_open()):
@@ -2026,15 +2045,7 @@ func _window_face(node_id: String, _place: String) -> Array:
 	var st: StoryStage = stages[active_world]["stage"]
 	if st.map == null:
 		return []
-	var pts: Array = []
-	for h in hotspots.shown(3, true):
-		if RunHotspots.window_of(h) != "final":
-			continue
-		var r := HotspotView.resolve(h["anchor"], st.map, st.crowds)
-		if bool(r["ok"]):
-			var p: Vector3 = r["pos"]
-			pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y])
-	return pts
+	return RunJourney.window_points(hotspots.shown(3, true), st.map, st.crowds)  # (the entrances weigh more than a way back: RunJourney.WINDOW_ENTRANCE_W)
 
 
 ## The turn (degrees, relative to the rail's facing now, which a glance is added to) toward an actor, thing or waypoint of the scene's map; NAN when it cannot be placed.

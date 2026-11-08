@@ -5,6 +5,7 @@ extends TestCase
 ## Doom overlay is: the main run's own worlds keep every rule they had.
 
 const FIX := "res://tests/fixtures/geography"
+const FIX_PACE := "res://tests/fixtures/walk_pace"  # LEAD_RULINGS 42: three worlds in one hall map whose legs are 24 m, 5 m, 40 m and 7 m
 const TMP := "user://test_geography"
 const BEAT := 60.0 / 174.0
 const TMP_SAVE := "user://test_geography_save.json"
@@ -22,11 +23,11 @@ func _write(path: String, v: Dictionary) -> void:
 
 
 ## The main run with the fixture's worlds, scenes and music added (`mutate(run, music)` changes them before they are written and loaded).
-func _data(tag: String, mutate: Callable = Callable()) -> RunData:
+func _data(tag: String, mutate: Callable = Callable(), fix := FIX) -> RunData:
 	var run := _read(RunData.RUN_PATH)
 	var music := _read(RunData.MUSIC_PATH)
-	var fr := _read(FIX + "/run.json")
-	var fm := _read(FIX + "/music.json")
+	var fr := _read(fix + "/run.json")
+	var fm := _read(fix + "/music.json")
 	run["worlds"] = (run["worlds"] as Array) + (fr["worlds"] as Array)
 	run["nodes"] = (run["nodes"] as Array) + (fr["nodes"] as Array)
 	music["nodes"] = (music["nodes"] as Array) + (fm["nodes"] as Array)
@@ -161,12 +162,13 @@ func test_the_threshold_walk_plays_the_polyline_and_ends_by_the_boundary() -> vo
 
 ## The run driven the way RunPlay drives it (the engine's events into the journey, the lock handler's walk at beat 61 of the last block), with a perfect player and a route per phase,
 ## tapped at `tap_beat` of the choice window (RunPlay.hotspot_select: the pick, then RunEngine.tap_commit); `per_frame(e, t)` runs every frame before the engine.
-func _drive(d: RunData, start: String, picks: Array, until_phase: int, tap_beat := 50.0, per_frame: Callable = Callable()) -> Dictionary:
+func _drive(d: RunData, start: String, picks: Array, until_phase: int, tap_beat := 50.0, per_frame: Callable = Callable(), pace := true) -> Dictionary:
 	var e := RunEngine.new(d)
 	e.hotspots = RunHotspots.new(d, {}, {})
 	e.begin(start)
 	var j := RunJourney.new(d)
 	j.look_heralds = false
+	j.walk_pace = pace
 	var events: Array = []
 	var actions: Array = []
 	var pressed := {}
@@ -221,27 +223,40 @@ func test_a_floor_bar_floor_cycle_walks_out_cuts_and_arrives() -> void:
 	var homes := ["floor_centre", "deck_centre", "floor_centre", "arena_floor"]
 	var arrives := ["door", "deck_gallery_door", "door", "arena_edge"]
 	var wants := [["to_balcony", ["floor_edge"]], ["deck_reactor_door", ["deck_gallery_door"]], ["to_bar", ["floor_bar"]]]
+	assert_eq(j.walk_offs.size(), 3, "one walk-out at a walking pace a phase")
 	for k in 3:
 		var t_b := float(phases[k + 1]["t"])
 		var walks := acts.filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("threshold", false)) and float(a["t0"]) > t_b - 16.0 * BEAT and float(a["t0"]) < t_b)
 		assert_eq(walks.size(), 1, "one threshold walk out of phase %d" % (k + 1))
-		if walks.size() != 1:
+		if walks.size() != 1 or j.walk_offs.size() != 3:
 			continue
 		var w: Dictionary = walks[0]
+		var wo: Dictionary = j.walk_offs[k]
 		assert_eq(str(w["world"]), maps[k], "walked in the world being left (%d)" % (k + 1))
 		assert_eq(w["args"]["to"], wants[k][0], "to the route's threshold (%d)" % (k + 1))
 		assert_eq(w["args"]["via"], wants[k][1], "along its polyline (%d)" % (k + 1))
 		assert_true(absf(float(w["t0"]) - (t_b - 14.0 * BEAT)) < 0.02, "from the tap at beat 50 (%d)" % (k + 1))
-		assert_near(float(w["args"]["bars"]), 2.0, 1e-6, "the whole authored leg (%d)" % (k + 1))
-		assert_near(float((w["args"] as Dictionary).get("hold_bars", 0.0)), 1.0, 1e-6, "and its hold (%d)" % (k + 1))
-		assert_true(float(w["t0"]) + (float(w["args"]["bars"]) + float(w["args"]["hold_bars"])) * BEAT * 4.0 <= t_b + 1e-6, "there by the boundary (%d)" % (k + 1))
-		# then the arrival in the next world: a cut to its doorway in the guard, the walk home
-		var next_acts := acts.filter(func(a: Dictionary) -> bool: return str(a["world"]) == maps[k + 1] and float(a["t0"]) >= t_b - 3.0 * BEAT and float(a["t0"]) <= t_b + 0.01)
+		# ruling 42: these legs (10 to 17 m) are longer than 2 bars walk at 3 m/s: the leg's own bars, its hold, the cut after it on a whole beat past the boundary
+		assert_near(float(w["args"]["bars"]), RunRail.walk_off_bars(float(wo["length"]), 4.0 * BEAT), 1e-6, "the leg at a walking pace (%d: %.1f m)" % [k + 1, float(wo["length"])])
+		assert_true(float(wo["pace"]) <= RunRail.WALK_PACE_MAX + 1e-6, "no faster than 3 m/s (%d: %.2f)" % [k + 1, float(wo["pace"])])
+		var hb := float((w["args"] as Dictionary).get("hold_bars", 0.0))
+		assert_true(hb >= 1.0 - 1e-6 and hb < 1.25 + 1e-6, "its hold, run on to the beat of the cut (%d: %.3f)" % [k + 1, hb])
+		var t_swap := float(wo["cut_t"]) if float(wo["cut_t"]) > 0.0 else t_b
+		assert_true(t_swap > t_b, "the walk-out runs on past the boundary (%d)" % (k + 1))
+		assert_near(float(w["t0"]) + (float(w["args"]["bars"]) + hb) * BEAT * 4.0, t_swap, 1e-6, "the hold ends on the cut (%d)" % (k + 1))
+		assert_near(fposmod((t_swap - t_b) / BEAT + 1e-6, 1.0), 0.0, 1e-4, "on a whole beat (%d)" % (k + 1))
+		assert_true(t_swap <= t_b + RunJourney.CUT_LATEST_BEAT * BEAT + 1e-6, "and by the next phase's beat 32 (%d)" % (k + 1))
+		# then the arrival in the next world: a cut to its doorway in the guard before the swap, the walk home
+		var next_acts := acts.filter(func(a: Dictionary) -> bool: return str(a["world"]) == maps[k + 1] and float(a["t0"]) >= t_swap - 3.0 * BEAT and float(a["t0"]) <= t_swap + 0.01)
 		var cut := next_acts.filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("cut", false)))
 		assert_eq(cut.map(func(a: Dictionary) -> String: return str(a["args"]["to"])), [arrives[k + 1]], "the cut to the doorway of %s" % maps[k + 1])
 		var home := next_acts.filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and not bool((a["args"] as Dictionary).get("cut", false)))
 		assert_eq(home.map(func(a: Dictionary) -> String: return str(a["args"]["to"])), [homes[k + 1]], "the walk home in %s" % maps[k + 1])
-		assert_true(float(w["t0"]) < float(cut[0]["t0"]) if not cut.is_empty() else false, "the walk out starts before the cut (%d)" % (k + 1))
+		assert_true(float(w["t0"]) + float(w["args"]["bars"]) * BEAT * 4.0 < float(cut[0]["t0"]) if not cut.is_empty() else false, "the walk out and its hold are over before the cut (%d)" % (k + 1))
+		var early := acts.filter(func(a: Dictionary) -> bool: return str(a["world"]) == maps[k + 1] and str(a["action"]) in ["player_move", "player_walk"] and float(a["t0"]) >= t_b - 3.0 * BEAT and float(a["t0"]) < t_swap - 3.0 * BEAT)
+		assert_eq(early, [], "nothing moves the next world's camera before its cut (%d)" % (k + 1))
+		var arriving: Array = j.log.filter(func(l: Dictionary) -> bool: return int(l["phase"]) == k + 2 and str(l["kind"]) == "arriving")
+		assert_true(arriving.all(func(l: Dictionary) -> bool: return int(l["block"]) < 2), "the next scene's rail steps again by block 2, before its window (%d)" % (k + 1))
 	assert_eq(j.world, "underworld")
 	assert_eq(j.run_world, "geo_lounge")
 	assert_eq(e.node_id, "geo_lounge")
@@ -260,12 +275,14 @@ func _commit_ev(t: float, route: String, tapped := true, node := "geo_floor") ->
 		"outcome": {"hotspot": "x", "window": "final", "tapped": tapped, "success": true, "route": route, "continued": false, "cinematic": {}}}
 
 
+## Ruling 39's shortening against the boundary, with the authored bars (walk_pace off: the walking pace of ruling 42 is tested on the walk_pace fixture below).
 func test_an_early_commit_plays_the_whole_leg_and_its_hold() -> void:
 	var d := _data("early")
 	var e := RunEngine.new(d)
 	e.begin("geo_floor")
 	var j := RunJourney.new(d)
 	j.look_heralds = false
+	j.walk_pace = false
 	j.on_event({"kind": "phase_start", "node": "geo_floor", "t": 0.0, "phase": 1}, e)
 	var t_c := e.t_of(44.5)  # a commit well before the boundary (19.5 beats: room for the 2-bar leg and its hold)
 	var w := j.commit_walk(_commit_ev(t_c, "geo_bar"), e)
@@ -295,7 +312,7 @@ func test_an_early_commit_plays_the_whole_leg_and_its_hold() -> void:
 
 func test_a_late_tap_is_shortened_to_end_on_the_boundary() -> void:
 	var d := _data("late")
-	var r := _drive(d, "geo_floor", ["geo_bar"], 2, 58.0)
+	var r := _drive(d, "geo_floor", ["geo_bar"], 2, 58.0, Callable(), false)  # (ruling 39's authored 2 bars: walk_pace off)
 	var walks: Array = (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return bool((a["args"] as Dictionary).get("threshold", false)))
 	assert_eq(walks.size(), 1)
 	if walks.size() != 1:
@@ -358,9 +375,11 @@ func test_a_tap_at_beat_50_is_the_decision_and_a_second_tap_is_ignored() -> void
 	assert_eq(walks.size(), 1, "one walk, no second at the lock")
 	if walks.size() == 1:
 		assert_near(float(walks[0]["t0"]), t_tap, 1e-9, "the walk starts at the tap (beat 50, not 60.5)")
-		assert_near(float(walks[0]["args"]["bars"]), 2.0, 1e-6, "the whole authored leg")
-		assert_near(float((walks[0]["args"] as Dictionary).get("hold_bars", 0.0)), 1.0, 1e-6, "and its hold")
 	var j: RunJourney = r["journey"]
+	if walks.size() == 1 and j.walk_offs.size() == 1:
+		assert_eq(str(j.walk_offs[0]["from"]), "steps", "from the choice viewpoint")
+		assert_near(float(walks[0]["args"]["bars"]), RunRail.walk_off_bars(float(j.walk_offs[0]["length"]), 4.0 * BEAT), 1e-6, "the whole leg at a walking pace (%.1f m)" % float(j.walk_offs[0]["length"]))
+		assert_true(float((walks[0]["args"] as Dictionary).get("hold_bars", 0.0)) >= 1.0 - 1e-6, "and its hold")
 	var last: Array = j.log.filter(func(l: Dictionary) -> bool: return int(l["phase"]) == 1 and int(l["block"]) == 3)
 	assert_eq(last.map(func(l: Dictionary) -> String: return str(l["kind"])), ["leaving"], "the rail takes no step while the player walks out")
 	assert_eq(e.node_id, "geo_bar")
@@ -489,30 +508,221 @@ func test_the_run_scene_walks_the_route_then_swaps_the_world_and_back() -> void:
 		assert_near(float(commits[0]["t"]), t_tap, 1e-6, "committed at the tap's own time")
 	var walks: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("threshold", false)))
 	assert_eq(walks.size(), 1, "one walk to the threshold")
-	if walks.size() == 1:
+	var wo: Dictionary = scene.journey.walk_offs[0] if not (scene.journey.walk_offs as Array).is_empty() else {}
+	assert_false(wo.is_empty(), "the walk-out was logged")
+	var t_arrive := t_tap
+	var t_cut := 64.0 * BEAT
+	if walks.size() == 1 and not wo.is_empty():
 		assert_near(float(walks[0]["t0"]), t_tap, 1e-6, "from the tap, not the lock")
-		assert_near(float(walks[0]["args"]["bars"]), 2.0, 1e-6, "the whole leg")
+		assert_near(float(walks[0]["args"]["bars"]), 5.0, 1e-6, "the 16.6 m leg at a walking pace: 5 bars (ruling 42)")
 		assert_eq(walks[0]["args"]["via"], ["floor_edge"], "along the route's polyline")
 		assert_eq(str(walks[0]["world"]), "night_one")
+		t_arrive = t_tap + 5.0 * 4.0 * BEAT
+		t_cut = float(wo["cut_t"])
+		assert_true(t_cut > 64.0 * BEAT, "the cut waits for the hold, past the boundary")
 	var st: StoryStage = scene.stages["night_one"]["stage"]
 	assert_true(st.player.still_at(t_tap - 0.5 * BEAT) > 0.99, "the choice viewpoint stood still until the tap")
 	assert_near(st.player.still_at(t_tap + 1.5 * BEAT), 0.0, 1e-6, "the hold gave way to the walk")
 	assert_true((st.player.pose_at(t_tap + 1.0 * BEAT)["pos"] as Vector2).distance_to(st.player.pose_at(t_tap)["pos"]) > 0.05, "the camera moves from the tap")
-	_run_to(scene, 63.9 * BEAT)
-	assert_true((st.player.pose_at(64.0 * BEAT)["pos"] as Vector2).distance_to(st.map.waypoint("to_balcony")["at"]) < 0.05, "at the threshold on the boundary")
+	_run_to(scene, 64.4 * BEAT)
+	assert_eq(scene.engine.node_id, "geo_bar", "the engine and the music are in the Bar's phase from the boundary")
+	assert_eq(scene.active_world, "night_one", "the Floor is still shown while the walk-out goes on")
+	assert_true(scene._passage.aperture > 0.99, "the frame is open on the walk")
+	assert_eq(scene.hotspot_items(), [], "the Bar's hotspots wait for its stage")
+	_run_to(scene, t_cut - 0.1 * BEAT)
+	assert_true((st.player.pose_at(t_arrive)["pos"] as Vector2).distance_to(st.map.waypoint("to_balcony")["at"]) < 0.05, "at the threshold when the leg's bars are walked")
+	assert_true(st.player.still_at(t_cut - 1.5 * BEAT) > 0.99, "standing still in the doorway's hold")
 	assert_true(scene._passage.aperture < 0.3, "the frame shut to the doorway before the swap (%f)" % scene._passage.aperture)
 	assert_eq(scene.active_world, "night_one")
-	_run_to(scene, 64.4 * BEAT)
-	assert_eq(scene.engine.node_id, "geo_bar")
-	assert_eq(scene.active_world, "mothership", "the stage swapped on the downbeat")
+	_run_to(scene, t_cut + 0.4 * BEAT)
+	assert_eq(scene.active_world, "mothership", "the stage swapped as the hold ended")
 	var bar: StoryStage = scene.stages["mothership"]["stage"]
-	_run_to(scene, 76.0 * BEAT)
-	assert_true((bar.player.pose_at(76.0 * BEAT)["pos"] as Vector2).distance_to(bar.map.waypoint("deck_centre")["at"]) < 0.05, "the arrival walked home in the Bar")
+	_run_to(scene, t_cut + 12.0 * BEAT)
+	assert_true((bar.player.pose_at(t_cut + 12.0 * BEAT)["pos"] as Vector2).distance_to(bar.map.waypoint("deck_centre")["at"]) < 0.05, "the arrival walked home in the Bar")
 	assert_eq(scene._passage.aperture, 1.0, "the frame is open again")
 	_run_to(scene, 128.4 * BEAT)
 	assert_eq(scene.engine.node_id, "geo_floor", "back to the Floor")
+	var wo2: Dictionary = scene.journey.walk_offs[1] if (scene.journey.walk_offs as Array).size() > 1 else {}
+	_run_to(scene, maxf(128.4 * BEAT, float(wo2.get("cut_t", -1.0)) + 0.4 * BEAT))
 	assert_eq(scene.active_world, "night_one", "the stage swapped back")
 	assert_true(scene.stages["night_one"]["stage"] == st, "the Floor's stage was kept, not rebuilt")
 	var reached: Array = Session.run_progress.reached_ids()
 	assert_true(reached.has("geo_floor") and reached.has("geo_bar"), "both worlds reached: %s" % str(reached))
 	_free(s)
+
+
+# --- the walk-out at a walking pace (LEAD_RULINGS 42) ---------------------------------------------------------------------------
+
+const BAR := 4.0 * BEAT  # 1.379 s at 174 bpm
+
+
+func test_walk_out_bars_follow_the_legs_length() -> void:
+	assert_near(BAR, 1.3793, 1e-4)
+	assert_eq(RunRail.walk_off_bars(24.0, BAR), 6.0, "24 m: 24 / 3 / 1.379 = 5.8, so 6 bars")
+	assert_eq(RunRail.walk_off_bars(5.0, BAR), 2.0, "5 m: 2 bars (the least)")
+	assert_eq(RunRail.walk_off_bars(40.0, BAR), 8.0, "40 m: 8 bars (the most)")
+	assert_eq(RunRail.walk_off_bars_needed(40.0, BAR), 10.0, "40 m would need 10 at 3 m/s")
+	assert_eq(RunRail.walk_off_bars(3.0 * 2.0 * BAR, BAR), 2.0, "exactly 2 bars at 3 m/s is 2 bars")
+	var d := _data("pace_ok", Callable(), FIX_PACE)
+	assert_eq(d.errors, [], "the main run plus the walk_pace worlds validates")
+	var m := StoryMap.load_chapter(str(d.nodes["pace_a"]["map"]), false)
+	assert_eq(m.errors, [], "the hall map loads from the fixture's path")
+	assert_near(RunRail.leg_length(m, "a_view", d.nodes["pace_a"]["rail"]["routes"]["up"]), 24.0, 1e-6, "pace_a up: 24 m")
+	assert_near(RunRail.leg_length(m, "b_view", d.nodes["pace_b"]["rail"]["routes"]["up"]), 5.0, 1e-6, "pace_b up: 5 m")
+	assert_near(RunRail.leg_length(m, "b_view", d.nodes["pace_b"]["rail"]["routes"]["left"]), 40.0, 1e-6, "pace_b left: 40 m")
+	assert_eq(RunRail.leg_length(m, "b_view", {"to": "nowhere"}), -1.0, "a missing waypoint: unknown")
+
+
+## The run driven from scene `start` with the tap at beat 50 on `pick`: the walk-out ({action}, the journey's log entry) and the run.
+func _pace_walk(tag: String, start: String, pick: String) -> Dictionary:
+	var d := _data(tag, Callable(), FIX_PACE)
+	var r := _drive(d, start, [pick], 3)
+	var walks: Array = (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return bool((a["args"] as Dictionary).get("threshold", false)) and str(a["world"]) == str(d.nodes[start]["map"]) and float(a["t0"]) < 64.0 * BEAT)
+	var j: RunJourney = r["journey"]
+	r["walk"] = walks[0] if walks.size() == 1 else {}
+	r["wo"] = j.walk_offs[0] if not j.walk_offs.is_empty() else {}
+	r["data"] = d
+	return r
+
+
+func test_a_24_m_leg_walks_6_bars_and_the_cut_waits_for_its_hold() -> void:
+	var r := _pace_walk("pace_24", "pace_a", "pace_b")
+	var w: Dictionary = r["walk"]
+	var wo: Dictionary = r["wo"]
+	assert_false(w.is_empty() or wo.is_empty(), "one walk-out from the tap")
+	if w.is_empty() or wo.is_empty():
+		return
+	var a: Dictionary = w["args"]
+	var t0 := float(w["t0"])
+	assert_true(t0 >= 50.0 * BEAT and t0 < 50.1 * BEAT, "from the tap at beat 50")
+	assert_eq(str(wo["from"]), "a_view", "from the choice viewpoint")
+	assert_near(float(wo["length"]), 24.0, 1e-6)
+	assert_near(float(a["bars"]), 6.0, 1e-6, "6 bars")
+	assert_near(float(wo["pace"]), 24.0 / (6.0 * BAR), 1e-6, "2.90 m/s")
+	assert_eq(a["via"], ["a_turn"], "along the authored polyline")
+	var hb := float(a.get("hold_bars", 0.0))
+	assert_true(hb >= 1.0 - 1e-6 and hb < 1.25 + 1e-6, "the 1-bar doorway hold, run on to the cut's beat (%.3f)" % hb)
+	var t_cut := float(wo["cut_t"])
+	assert_near(t_cut, t0 + (6.0 + hb) * BAR, 1e-6, "the cut as the hold ends")
+	assert_near(fposmod((t_cut - 64.0 * BEAT) / BEAT + 1e-6, 1.0), 0.0, 1e-4, "on a whole beat")
+	assert_near(t_cut, ceilf((t0 + 7.0 * BAR) / BEAT - 1e-6) * BEAT, 1e-6, "the next beat after walk and hold: beat %.2f" % (t_cut / BEAT))
+	var j: RunJourney = r["journey"]
+	var acts: Array = r["actions"]
+	var cut := acts.filter(func(x: Dictionary) -> bool: return str(x["action"]) == "player_move" and bool((x["args"] as Dictionary).get("cut", false)) and str(x["args"]["to"]) == "b_door")
+	assert_eq(cut.size(), 1, "one cut to the next world's doorway")
+	if cut.size() == 1:
+		assert_near(float(cut[0]["t0"]), t_cut - 2.5 * BEAT, 1e-6, "in the guard before the swap, as on a boundary")
+	assert_true(j.log.filter(func(l: Dictionary) -> bool: return int(l["phase"]) == 2 and str(l["kind"]) == "arriving").size() >= 1, "the next scene's rail waits for the arrival")
+	# the camera along the leg (StoryPlayer, reduced motion): monotonic along the polyline, at the threshold exactly when the bars are walked
+	var m := StoryMap.load_chapter(str((r["data"] as RunData).nodes["pace_a"]["map"]), false)
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.start_at = "a_view"
+	p.reset()
+	p.reduced = true
+	p.drift_on = false
+	p.apply_action({"t0": t0, "action": "player_move", "args": a})
+	var ev: Dictionary = p.move_plan(t0 + 0.01)
+	assert_false(ev.is_empty(), "the walk is planned")
+	if ev.is_empty():
+		return
+	assert_near(float(ev["t1"]) - float(ev["t0"]), 6.0 * BAR, 1e-6, "the move lasts its 6 bars")
+	var along := func(pos: Vector2) -> float:  # metres along a_view -> a_turn -> a_out of the camera's position
+		return absf(pos.y) if pos.y > -12.0 + 1e-4 or pos.x < 1e-4 else 12.0 + pos.x
+	var prev := -1.0
+	var mono := true
+	var off_leg := 0.0
+	for k in 241:
+		var t := t0 + 6.0 * BAR * float(k) / 240.0
+		var pos: Vector2 = p.pose_at(t)["pos"]
+		off_leg = maxf(off_leg, minf(absf(pos.x), absf(pos.y + 12.0)))
+		var dd: float = along.call(pos)
+		if dd < prev - 1e-4:
+			mono = false
+		prev = dd
+	assert_true(mono, "the camera's position along the leg never goes back")
+	assert_true(off_leg < 1e-3, "and keeps to the polyline (%.4f m off)" % off_leg)
+	assert_true((p.pose_at(t0 + 6.0 * BAR)["pos"] as Vector2).distance_to(m.waypoint("a_out")["at"]) < 1e-3, "at the threshold when the 6 bars are walked")
+	assert_true((p.pose_at(t0 + 5.75 * BAR)["pos"] as Vector2).distance_to(m.waypoint("a_out")["at"]) > 0.05, "and not before")
+	assert_true(p.still_at(t0 + 6.5 * BAR) > 0.99, "standing in the doorway's hold")
+
+
+func test_a_5_m_leg_is_as_before() -> void:
+	var r := _pace_walk("pace_5", "pace_b", "pace_a")
+	var w: Dictionary = r["walk"]
+	var wo: Dictionary = r["wo"]
+	assert_false(w.is_empty() or wo.is_empty(), "one walk-out from the tap")
+	if w.is_empty() or wo.is_empty():
+		return
+	assert_near(float(wo["length"]), 5.0, 1e-6)
+	assert_near(float(w["args"]["bars"]), 2.0, 1e-6, "2 bars (1.81 m/s)")
+	assert_near(float(w["args"]["hold_bars"]), 1.0, 1e-9, "the 1-bar hold, untouched")
+	assert_false(bool(wo["paced"]), "2 bars already walk it under 3 m/s: nothing changes")
+	assert_eq(float(wo["cut_t"]), -1.0, "the cut is on the boundary")
+	assert_true(float(w["t0"]) + 3.0 * BAR <= 64.0 * BEAT + 1e-6, "walk and hold end by the boundary")
+	var j: RunJourney = r["journey"]
+	assert_eq(j.log.filter(func(l: Dictionary) -> bool: return str(l["kind"]) == "arriving"), [], "the next scene's rail is not held")
+	var cut := (r["actions"] as Array).filter(func(x: Dictionary) -> bool: return bool((x["args"] as Dictionary).get("cut", false)) and str(x["args"]["to"]) == "a_door")
+	assert_true(cut.size() == 1 and absf(float(cut[0]["t0"]) - 61.5 * BEAT) < 1e-6, "the arrival's cut in the guard before the boundary, as ever")
+
+
+func test_a_40_m_leg_walks_8_bars_and_the_rail_check_flags_it() -> void:
+	var r := _pace_walk("pace_40", "pace_b", "pace_c")
+	var w: Dictionary = r["walk"]
+	var wo: Dictionary = r["wo"]
+	assert_false(w.is_empty() or wo.is_empty(), "one walk-out from the tap")
+	if w.is_empty() or wo.is_empty():
+		return
+	assert_near(float(wo["length"]), 40.0, 1e-6)
+	assert_near(float(w["args"]["bars"]), 8.0, 1e-6, "8 bars, the most")
+	assert_true(float(wo["pace"]) > RunRail.WALK_PACE_MAX, "faster than walking: the scene's fault (%.2f m/s)" % float(wo["pace"]))
+	assert_true(float(wo["cut_t"]) <= 64.0 * BEAT + RunJourney.CUT_LATEST_BEAT * BEAT + 1e-6, "the cut by the next phase's beat 32")
+	assert_near(float(w["t0"]) + (8.0 + float(w["args"]["hold_bars"])) * BAR, float(wo["cut_t"]), 1e-6, "the whole leg and its hold before the cut")
+	# the rail check's walk-offs: the paced bars of every leg, and the 40 m one flagged
+	var run := _read(FIX_PACE + "/run.json")
+	var world_of := {}
+	for n in run["nodes"]:
+		world_of[str(n["id"])] = str(n["world"])
+	var m := StoryMap.load_chapter(str(run["worlds"][0]["map"]), false)
+	var got := {}
+	for n in run["nodes"]:
+		for x in StoryRailCheck.walk_offs(m, n, n["place"], world_of, 174.0):
+			got["%s %s" % [n["id"], x["dir"]]] = x
+	assert_eq(got.keys().size(), 4, "four walk-outs measured: %s" % str(got.keys()))
+	assert_eq(int(got["pace_a up"]["bars"]), 6)
+	assert_false(bool(got["pace_a up"]["warn"]))
+	assert_eq(int(got["pace_b up"]["bars"]), 2)
+	assert_eq(int(got["pace_b left"]["bars"]), 8)
+	assert_eq(int(got["pace_b left"]["need"]), 10)
+	assert_true(bool(got["pace_b left"]["warn"]), "the 40 m leg is flagged: it needs 10 bars at 3 m/s")
+	assert_eq(int(got["pace_c up"]["bars"]), 2)
+
+
+func test_a_late_tap_on_a_long_leg_keeps_the_leg_and_shortens_the_hold() -> void:
+	var d := _data("pace_late", Callable(), FIX_PACE)
+	var e := RunEngine.new(d)
+	e.begin("pace_b")
+	var j := RunJourney.new(d)
+	j.look_heralds = false
+	j.on_event({"kind": "phase_start", "node": "pace_b", "t": 0.0, "phase": 1}, e)
+	j.rail.pos = 1  # (at the choice viewpoint b_view)
+	var t_b := e.t_of(64.0)
+	var w := j.threshold_leave(e.t_of(60.0), t_b, "pace_b", "pace_c", true)
+	assert_eq(w.size(), 1)
+	if w.size() != 1:
+		return
+	assert_near(float(w[0]["args"]["bars"]), 8.0, 1e-6, "beat 60: 8 bars still fit by the next phase's beat 32")
+	assert_near(float(w[0]["args"].get("hold_bars", 0.0)), 1.0, 1e-6, "and the whole hold, ending on beat 32 (a whole beat already)")
+	assert_near(j.cut_t, t_b + 32.0 * BEAT, 1e-6)
+	var w2 := j.threshold_leave(e.t_of(63.0), t_b, "pace_b", "pace_c", true)
+	assert_near(float(w2[0]["args"]["bars"]), 8.0, 1e-6, "beat 63: the whole leg")
+	assert_near(float(w2[0]["args"].get("hold_bars", 0.0)), 0.25, 1e-6, "the hold goes first: what fits by beat 32")
+	assert_near(j.cut_t, t_b + 32.0 * BEAT, 1e-6)
+	var w3 := j.threshold_leave(e.t_of(63.5), t_b, "pace_b", "pace_c", true)
+	assert_near(float(w3[0]["args"]["bars"]), 8.0, 1e-6, "a commit is always before the boundary, so 8 bars always fit by beat 32: the leg is never shortened")
+	assert_near(float(w3[0]["args"].get("hold_bars", 0.0)), 0.125, 1e-6)
+	assert_near(j.cut_t, t_b + 32.0 * BEAT, 1e-6)
+	# the lock's default walk is not a walk-out from a tap: unchanged (3 beats, the cut on the boundary)
+	var w4 := j.threshold_leave(e.t_of(61.0), t_b, "pace_b", "pace_c")
+	assert_near(float(w4[0]["args"]["bars"]), 0.75, 1e-6, "the lock's 3-beat walk")
+	assert_eq(j.cut_t, -1.0)

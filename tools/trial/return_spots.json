@@ -1,0 +1,157 @@
+{
+ "10": {
+  "wp": "edge_in"
+ },
+ "11": {
+  "wp": "pipe_climb"
+ },
+ "12": {
+  "wp": "pipe_climb"
+ },
+ "15": {
+  "wp": "cellar_door"
+ },
+ "16": {
+  "wp": "crack_foot"
+ },
+ "17": {
+  "wp": "crack_foot"
+ },
+ "18": {
+  "wp": "way_up_18"
+ },
+ "19": {
+  "wp": "hall_in"
+ },
+ "20": {
+  "wp": "bar_turn"
+ },
+ "21": {
+  "wp": "barrel_row"
+ },
+ "23": {
+  "wp": "arch_far"
+ },
+ "24": {
+  "wp": "trapdoor_foot"
+ },
+ "25": {
+  "wp": "trapdoor_foot"
+ },
+ "26": {
+  "wp": "pond_edge"
+ },
+ "27": {
+  "wp": "haze_bank"
+ },
+ "28": {
+  "wp": "pond_edge"
+ },
+ "29": {
+  "wp": "way_up_29"
+ },
+ "3": {
+  "wp": "way_up_3"
+ },
+ "30": {
+  "wp": "twin_stand"
+ },
+ "31": {
+  "wp": "wave_panel"
+ },
+ "32": {
+  "wp": "twin_stand"
+ },
+ "35": {
+  "at": [
+   1.0,
+   3.0
+  ],
+  "sector": "rim"
+ },
+ "36": {
+  "wp": "ledge_door"
+ },
+ "37": {
+  "wp": "ledge_rope"
+ },
+ "4": {
+  "wp": "edge_past"
+ },
+ "40": {
+  "wp": "velvet_gap"
+ },
+ "41": {
+  "wp": "velvet_gap"
+ },
+ "42": {
+  "wp": "vault_way_up"
+ },
+ "43": {
+  "wp": "throne_foot"
+ },
+ "44": {
+  "wp": "tunnel_bend"
+ },
+ "45": {
+  "wp": "throne_foot"
+ },
+ "46": {
+  "wp": "tunnel_bend"
+ },
+ "47": {
+  "wp": "tribute_pile"
+ },
+ "48": {
+  "wp": "counter_front"
+ },
+ "49": {
+  "wp": "counter_front"
+ },
+ "5": {
+  "wp": "gap"
+ },
+ "51": {
+  "at": [
+   13.07,
+   1.8
+  ],
+  "sector": "cold"
+ },
+ "52": {
+  "wp": "hall_seam_foot"
+ },
+ "53": {
+  "wp": "hall_statue_foot"
+ },
+ "54": {
+  "wp": "hall_way_up"
+ },
+ "55": {
+  "wp": "hall_gargoyle_floor"
+ },
+ "56": {
+  "wp": "hall_wall_creep"
+ },
+ "57": {
+  "wp": "door_foot"
+ },
+ "58": {
+  "wp": "door_foot"
+ },
+ "59": {
+  "wp": "echo_way_up"
+ },
+ "6": {
+  "wp": "gap"
+ },
+ "61": {
+  "wp": "dawn_landing_bench"
+ },
+ "62": {
+  "wp": "car_park_out"
+ },
+ "8": {
+  "wp": "lamp_stand"
+ }
+}

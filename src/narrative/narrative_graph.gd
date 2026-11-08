@@ -463,7 +463,7 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 	var authored := {}  # entrance objects the content now has as hotspots (status "existing"): the overlay's ungated edge stands for the hotspot's own edges (N2.2)
 	for en in entrances:
 		var o: Dictionary = en.get("object", {})
-		if o.get("status") == "partial" and _truthy(o.get("copy_of")):
+		if (o.get("status") == "partial" or o.get("status") == "existing") and _truthy(o.get("copy_of")):  # (an authored copy on the hub keeps naming its original)
 			originals[str(o["copy_of"])] = true
 		if o.get("status") == "existing" and _truthy(o.get("id")):
 			authored[str(o["id"])] = true
@@ -472,11 +472,38 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 		if str(x.get("kind", "")) == "quest_entry" and xo0.get("status") == "existing" and _truthy(xo0.get("id")):
 			authored[str(xo0["id"])] = true
 
+	# hub links and ways back to the hub that the content has as hotspots (status "existing"): the data's own edges are the routes; they carry the overlay's `link` (tools/narrative/graph.py)
+	var rules0 := {}
+	for r0 in ov.get("route_rules", []):
+		rules0[str(r0.get("id", ""))] = r0
+	var linked := {}  # hotspot id -> link kind
+	var confirm := {}  # "scene|hotspot id" of an authored route the owner is still to confirm
+	for l in locs:
+		for hl in l.get("hub_links", []):
+			if (hl.get("object", {}) as Dictionary).get("status") == "existing":
+				linked[str(hl["object"]["id"])] = "hub_to_hub"
+	if rules0.has("to_hub") and (rules0["to_hub"] as Dictionary).get("status") == "existing":
+		for n in nodes:
+			var d0: Dictionary = nodes[n]
+			if d0["category"] == "mainline" and not d0["hub"] and d0.get("location") != null:
+				linked[_pattern(str(rules0["to_hub"]["object"]), n, "")] = "to_hub"
+	for x0 in ov.get("extra_routes", []):
+		var xk := str(x0.get("kind", ""))
+		if (xk == "restart" or xk == "second_route") and (x0.get("object", {}) as Dictionary).get("status") == "existing":
+			linked["%s|%s" % [str(x0["scene"]), str(x0["object"]["id"])]] = xk
+			if _truthy(x0.get("owner_to_confirm")):
+				confirm["%s|%s" % [str(x0["scene"]), str(x0["object"]["id"])]] = true
+
 	var out: Array = []
 	for e0 in base["edges"]:
 		var e: Dictionary = e0
 		if e.get("hidden", false):
 			continue  # the hidden leaves are rebuilt from the quests' `hidden_fallbacks`
+		if linked.has(e["via"]) or linked.has("%s|%s" % [e["from"], e["via"]]):
+			e = e.duplicate(true)
+			e["link"] = linked.get(e["via"], linked.get("%s|%s" % [e["from"], e["via"]], ""))
+			if confirm.has("%s|%s" % [e["from"], e["via"]]):
+				e["owner_to_confirm"] = true
 		var c: Dictionary = e["condition"]
 		if authored.has(e["via"]) and e["kind"] != "quest_return":
 			continue  # an authored entrance: the overlay's edge below is its route (ungated, through the port)
@@ -521,6 +548,10 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 	# 2. the links between the hubs of a pair of locations
 	for l in locs:
 		for hl in l.get("hub_links", []):
+			if linked.has(str(hl["object"]["id"])):
+				if not _has_edge(base["edges"], str(l["hub"]), str(hl["to"]), str(hl["object"]["id"])):
+					problems.append("hub link %s: existing, but the data has no route from %s to %s by it" % [hl["object"]["id"], l["hub"], hl["to"]])
+				continue
 			out.append(_edge(str(l["hub"]), str(hl["to"]), str(hl["object"]["id"]), "scene", "proposed", "", {"link": "hub_to_hub"}))
 	# 3. the route rules
 	var rules := {}
@@ -536,7 +567,12 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 		for n in sorted_ids:
 			var d: Dictionary = nodes[n]
 			if d["category"] == "mainline" and not d["hub"] and d.get("location") != null:
-				out.append(_edge(n, hubs[d["location"]], _pattern(str(r["object"]), n, ""), str(r.get("kind", "scene")), "proposed", "", {"link": "to_hub"}))
+				var oid := _pattern(str(r["object"]), n, "")
+				if linked.has(oid):
+					if not _has_edge(base["edges"], n, hubs[d["location"]], oid):
+						problems.append("to_hub %s: existing, but the data has no route from %s to %s by it" % [oid, n, hubs[d["location"]]])
+					continue
+				out.append(_edge(n, hubs[d["location"]], oid, str(r.get("kind", "scene")), "proposed", "", {"link": "to_hub"}))
 	if rules.has("back"):
 		var r: Dictionary = rules["back"]
 		var preds := {}
@@ -599,6 +635,10 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 			if not nodes.has(str(x.get("to", ""))):
 				problems.append("extra route %s: destination %s does not exist" % [str(xo.get("id", "")), str(x.get("to", ""))])
 				continue
+			if xo.get("status") == "existing":  # authored (tools/run/path_routes.py): the data's own edge is the route
+				if not _has_edge(base["edges"], str(x["scene"]), str(x["to"]), str(xo["id"])):
+					problems.append("extra route %s: existing, but the data has no route from %s to %s by it" % [xo["id"], x["scene"], x["to"]])
+				continue
 			var e := _edge(str(x["scene"]), str(x["to"]), str(xo["id"]), "scene", "proposed", "", {"link": kind})
 			out.append(e)
 			if _truthy(x.get("owner_to_confirm")):
@@ -638,6 +678,13 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 	errors.append_array(problems)
 	_check_references(ov)
 	_index()
+
+
+static func _has_edge(edges: Array, frm: String, to: String, via: String) -> bool:
+	for e in edges:
+		if e["via"] == via and e["from"] == frm and e["to"] == to:
+			return true
+	return false
 
 
 func _pattern(pattern: String, scene_id: String, quest_id: String) -> String:

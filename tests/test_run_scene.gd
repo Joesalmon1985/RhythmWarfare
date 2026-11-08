@@ -61,7 +61,7 @@ func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
 	var beat: float = 60.0 / 174.0
 	_run_to(scene, 52.0 * beat)
 	var items: Array = scene.hotspot_items()
-	assert_true(items.size() >= 2 and items.size() <= 4, "two to four hotspots from the first beat of block 4 (%d)" % items.size())
+	assert_true(items.size() >= 2 and items.size() <= HotspotContract.MAX_PER_HUB, "two to ten hotspots from the first beat of block 4 (the Floor is a hub: its exits, its people and its four quest entrances) (%d)" % items.size())
 	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
 	var st: StoryStage = scene.stages[scene.active_world]["stage"]
 	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)

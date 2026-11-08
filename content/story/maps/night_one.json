@@ -285,7 +285,12 @@
   {"id": "sofa_front", "at": [9.5, 11.3], "yaw": 180, "sector": "sofa_a"},
   {"id": "booth_down", "at": [-0.75, -8.4], "yaw": 180, "sector": "booth"},
   {"id": "booth_decks", "at": [-0.75, -9.6], "yaw": 180, "sector": "booth"},
-  {"id": "door_r", "at": [2.3, 10.2], "yaw": 0, "sector": "entrance"}
+  {"id": "door_r", "at": [2.3, 10.2], "yaw": 0, "sector": "entrance"},
+  {"id": "back_warehouse_bar", "at": [7.5, 3.9], "yaw": 90, "sector": "bar"},
+  {"id": "back_warehouse_balcony", "at": [-10.6, -2.15], "yaw": -90, "sector": "balcony"},
+  {"id": "back_warehouse_chill", "at": [7.45, 6.55], "yaw": 0, "sector": "chill"},
+  {"id": "back_warehouse_booth", "at": [1.25, -3.45], "yaw": 180, "sector": "steps"},
+  {"id": "back_warehouse_exit", "at": [-1.4, 5.95], "yaw": 0, "sector": "floor"}
  ],
  "spots": {
   "door": {"sector": "entrance", "at": [0, 12.6], "slots": [[-2.1, 10.2], [-0.7, 10.2], [0.7, 10.2], [2.1, 10.2], [-2.1, 11.6], [-0.7, 11.6], [0.7, 11.6], [2.1, 11.6]]},
