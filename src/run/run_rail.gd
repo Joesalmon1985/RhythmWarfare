@@ -37,6 +37,7 @@ var queasy := 0.0
 var sick_played := false
 var busy_until := -1.0  # song time until which a journey move is under way (and its hold)
 var hold_from := -1.0  # song time the last move's hold (`hold_bars`) starts
+var last_skip := ""  # why the last ambient() gave no glance ("" it gave one or the node has none): "choice" a choice viewpoint's window, "hold" a move's hold (the walk's tally)
 var visited: Array = []  # [{place, pos, role, kind}] one entry per block decision (tests and playtests read it)
 var places_seen: Dictionary = {}  # place waypoint -> times stood there
 
@@ -296,8 +297,12 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 	var beat := 60.0 / bpm
 	var idx := phase_n * 4 + block + node_id.length()
 	var window := block >= 3  # the last block is the hotspot window: the head stays on the room (no look at the ceiling, no turn away from the hotspots; visual polish)
+	last_skip = ""
 	if window and at_choice():  # a choice viewpoint: the camera stands still through the window (RunJourney holds it)
+		last_skip = "choice"
 		return out
+	if not glances.is_empty() and _in_hold(t_block + 5.0 * beat, float((glances[idx % glances.size()] as Dictionary).get("bars", 2.0)) * bar_s()):
+		last_skip = "hold"
 	if not glances.is_empty() and not _in_hold(t_block + 5.0 * beat, float((glances[idx % glances.size()] as Dictionary).get("bars", 2.0)) * bar_s()):
 		var g: Dictionary = glances[idx % glances.size()]
 		var by := float(g.get("by", 0.0))

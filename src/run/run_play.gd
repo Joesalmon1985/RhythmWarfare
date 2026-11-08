@@ -934,7 +934,7 @@ func summary() -> Dictionary:
 		var wid := str(p.get("world", data.nodes[str(p["node"])]["world"] if data.nodes.has(str(p["node"])) else ""))
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
-	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "holds": holds, "strolls": walks, "worlds": stages.keys(),
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "holds": holds, "glance_skips": journey.glance_skips, "strolls": walks, "worlds": stages.keys(),
 		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size(), "tracks": track_log}
 
 
@@ -1004,6 +1004,9 @@ func _handle(events: Array) -> void:
 		if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"] and trial_state == "" and not minigames.active() and not (_claim_id != "" and str(ev["kind"]) == "block_result") and not (_mg.holds_rail() and str(ev["kind"]) == "block_result"):  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
+		elif str(ev["kind"]) in ["phase_start", "block_result", "lap_start"]:  # withheld from the journey (a trial, a minigame, a claim): the walk's tally of blocks without the rail's glance
+			var why := "withheld_" + ("trial" if trial_state != "" else "minigame" if minigames.active() else "claim" if _claim_id != "" else "mg_rail")
+			journey.glance_skips[why] = int(journey.glance_skips.get(why, 0)) + 1
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
 			event_log.append(ev)
 		if director != null:

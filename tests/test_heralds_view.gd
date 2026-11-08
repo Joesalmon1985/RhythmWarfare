@@ -349,3 +349,25 @@ func test_the_look_is_data_only_one_face_look_a_staged_herald_never_a_move() -> 
 	off.begin_scene("warehouse.bar", 60.0)
 	e.hotspots = off
 	assert_eq(j.staged_heralds("warehouse.bar", e), [], "without the VIP pass the ember is not on offer: no look")
+
+
+func test_a_later_lap_keeps_its_blocks_own_glances() -> void:
+	# the heralds' look is the scene's opening: a lap after the first (a track scene plays several) has no herald look, so its blocks keep the rail's glances (walk_run.sh: every block a glance)
+	var data := RunData.load_default()
+	var e := RunEngine.new(data)
+	e.hotspots = RunHotspots.new(data, FLAGS.duplicate(), {})
+	e.begin("warehouse.bar")
+	var j := RunJourney.new(data)
+	var t := 0.0
+	var started := false
+	while not started and t < 5.0:
+		for ev in e.update(t):
+			j.on_event(ev, e)
+			started = started or str(ev["kind"]) == "phase_start"
+		t += 0.05
+	assert_true(j._herald_blocks.has(0), "the opening's herald look takes block 0's glance (the ember on offer)")
+	var glance := [{"t0": 1.0, "action": "player_look", "args": {"by": 10.0, "pitch": 0.0, "bars": 2.0}}]
+	assert_eq(j._without_glance(glance, 0).size(), 0, "in the opening the herald look holds the block")
+	j.on_event({"kind": "lap_start", "t": t, "phase": 2, "node": "warehouse.bar", "lap": 2, "laps": 3}, e)
+	assert_true(j._herald_blocks.is_empty(), "a new lap has no herald look")
+	assert_eq(j._without_glance(glance, 0).size(), 1, "so a later lap's block keeps its own glance")

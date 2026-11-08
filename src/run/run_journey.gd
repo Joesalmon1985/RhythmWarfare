@@ -30,6 +30,7 @@ const HERALD_TURN_BARS := 1.0
 const HERALD_MAX_LOOKS := 3
 
 var look_heralds := true  # the heralds' look and the window's herald points (the tests turn it off to see the rail's own camera)
+var glance_skips: Dictionary = {}  # why a block got no glance of its own -> count (RunRail.last_skip; tools/run/walk_run.sh prints it)
 var _herald_blocks: Dictionary = {}  # block -> true: the blocks of this phase whose glance a herald look replaces
 static var _maps: Dictionary = {}
 
@@ -46,7 +47,8 @@ func on_event(ev: Dictionary, engine: RunEngine) -> Array:
 		"block_result":
 			out = _block_result(ev, engine)
 		"lap_start":  # the same scene again, the rail where it has got to: only the glance and the stroll of the lap's first block
-			out = _tag(rail.ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
+			_herald_blocks = {}  # the heralds' look is the scene's opening (its first lap): a later lap's blocks keep their own glances
+			out = _tag(_ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
 	actions.append_array(out)
 	return out
 
@@ -88,7 +90,7 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 		out.append_array(rail.door_walk(t_walk, engine.level.notes, walked))
 	door_target = ""
 	var looks := herald_looks(id, t0, engine)
-	out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
+	out.append_array(_without_glance(_ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
 	out.append_array(looks)
 	node_id = id
 	world = w
@@ -184,8 +186,16 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 		if not face.is_empty():
 			out.append(window_face(face, float(ev["t"]), engine))
 		else:
-			out.append_array(_without_glance(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
+			out.append_array(_without_glance(_ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
 	return _tag(out, world)
+
+
+## The rail's glance and stroll of a block, with the reason tallied when the rail gives no glance.
+func _ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
+	var out := rail.ambient(t_block, phase_n, block, notes)
+	if rail.last_skip != "":
+		glance_skips[rail.last_skip] = int(glance_skips.get(rail.last_skip, 0)) + 1
+	return out
 
 
 ## The map of a run node (the heralds' points need its floors), loaded once.
@@ -229,14 +239,14 @@ func herald_looks(id: String, t0: float, engine: RunEngine) -> Array:
 		for k in heralds.size():  # a scene with more entrances than one look a block plus the window can show (the Floor: four gates and its wizard): the others ride along, not kept
 			if k != i and heralds.size() > HERALD_MAX_LOOKS + 1:
 				pts.append_array(StoryHeralds.look_points(heralds[k], m, 0.0))
-		_herald_blocks[i] = true
 		var t_look := t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat
 		var t_end := t0 + (float(i) * bb + HERALD_LOOK_TO) * beat
 		if rail != null and rail.busy_until > t_look and rail.busy_until - t_look <= beat:  # never start in a door walk's last beat: the walk turns the body to its arrival yaw there (docs/art/CAMERA_CLEARANCE.md, "The herald look")
 			t_look = rail.busy_until
 		var b := (t_end - t_look) / rail.bar_s()
-		if b <= HERALD_TURN_BARS:
+		if b <= HERALD_TURN_BARS:  # no room for the look: the block keeps its own glance
 			continue
+		_herald_blocks[i] = true
 		out.append({"t0": t_look, "action": "player_look", "args": {"face": pts, "bars": b, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
 	return out
 
