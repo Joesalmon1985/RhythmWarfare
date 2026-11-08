@@ -292,15 +292,39 @@ def hatch_dock():
 
 
 def hatch_uw():
-    """The Underworld hatch: a dark arch with a red glow and a ring of runes."""
-    im, d = canvas(128, 160)
-    d.rounded_rectangle([0, 0, 127, 159], radius=60, fill=hexc("#5a2a3a"))
-    d.rounded_rectangle([10, 10, 117, 159], radius=52, fill=hexc("#1a0608"))
-    d.rounded_rectangle([22, 28, 105, 159], radius=44, fill=hexc("#6a1410"))
-    d.rounded_rectangle([36, 52, 91, 159], radius=30, fill=hexc("#ff5a30"))
+    """The Underworld hatch (stage D round 2): a bone arch (the painting's stair alcove is framed in ribs) round a passage glowing from within, the furnace's light rising from a
+    yellow core through orange to a red rim (an ordered dither, no flat fill), steps climbing into it in silhouette and a ring of amber rune lamps over the arch."""
+    W, Hh = 128, 160
+    im, d = canvas(W, Hh)
+    d.rounded_rectangle([0, 0, W - 1, Hh - 1], radius=60, fill=hexc("#c8b4c8"))
+    d.rounded_rectangle([4, 4, W - 5, Hh - 1], radius=56, fill=hexc("#8a7498"))
+    d.rounded_rectangle([12, 14, W - 13, Hh - 1], radius=50, fill=hexc("#3a1a28"))
+    px = im.load()
+    inner = Image.new("L", (W, Hh), 0)
+    ImageDraw.Draw(inner).rounded_rectangle([18, 22, W - 19, Hh - 1], radius=44, fill=255)
+    m = inner.load()
+    cols = [hexc("#7a1810"), hexc("#c8361a"), hexc("#f06a24"), hexc("#ffa840"), hexc("#ffe08a")]
+    for y in range(Hh):
+        for x in range(W):
+            if m[x, y] < 128:
+                continue
+            r = math.hypot((x - W / 2) / 40.0, (y - Hh * 0.62) / 70.0)  # the core low in the passage
+            v = max(0.0, 1.0 - r) * 4.0 + (BAYER4[y % 4][x % 4] - 7.5) / 16.0
+            px[x, y] = (*cols[max(0, min(4, int(v)))], 255)
+    for k in range(6):  # the steps going up into the light: dark treads
+        y = Hh - 4 - k * 11
+        w = 40 - k * 4
+        d.rectangle([W // 2 - w, y, W // 2 + w, y + 2], fill=hexc("#3a0e0a"))
+    # the bone frame's lit left flank and dithered tesserae
+    for y in range(Hh):
+        for x in range(0, 12):
+            if px[x, y][3] and BAYER4[y % 4][x % 4] < 6:
+                px[x, y] = (*hexc("#f2e6d8"), 255)
     for k in range(9):
         a = math.radians(200 + k * 17.5)
-        d.ellipse([64 + 52 * math.cos(a) - 3, 66 + 56 * math.sin(a) - 3, 64 + 52 * math.cos(a) + 3, 66 + 56 * math.sin(a) + 3], fill=hexc("#ffc060"))
+        cx, cy = 64 + 54 * math.cos(a), 66 + 58 * math.sin(a)
+        d.ellipse([cx - 4, cy - 4, cx + 4, cy + 4], fill=hexc("#ffc060"), outline=hexc("#5a2a10"))
+        d.point((int(cx), int(cy)), fill=hexc("#fff4c8"))
     return im
 
 
@@ -330,16 +354,19 @@ def runes():
 BAYER4 = ((0, 8, 2, 10), (12, 4, 14, 6), (3, 11, 1, 9), (15, 7, 13, 5))
 
 
-def rib_lattice(seed, n=7, stretch=1.7, rib=7.0):
+def rib_lattice(seed, n=3, stretch=1.7, rib=24.0, T=256):
     """The painting's bone lattice: a wrapped Voronoi of tall cells (stretched vertically: the ribs run up the wall) whose borders are thick pale bone ribs, shaded round (a lit
     left flank, a dark right flank, dithered between), and whose cells are the dark violet openings (deeper toward their middle, a faint green from the pool far below in the lower
     ones). Every seed gives a different tile: three variants keep a wall from repeating."""
+    # stage D round 2: a 256 px tile (2 m of wall at 128 texels per metre) holding 4 cells, so an opening is a metre or more as the painting's are (the 128 px tile of 7 cells read
+    # as a crackle pattern); warm bone (the amber lamps catch it) against deep violet openings
+    S = T
     rnd = random.Random(seed)
     pts = [(rnd.uniform(0, S), rnd.uniform(0, S)) for _ in range(n)]
     im = Image.new("RGB", (S, S))
     px = im.load()
-    bone_l, bone, bone_d, bone_dd = hexc("#f0e6fa"), hexc("#c8b8e0"), hexc("#8a78a8"), hexc("#4a3a68")
-    hole, hole_d, glow = hexc("#2a1a48"), hexc("#140a26"), hexc("#24584a")
+    bone_l, bone, bone_d, bone_dd = hexc("#f2e6d8"), hexc("#c8b4c8"), hexc("#8a7498"), hexc("#3e2e58")
+    hole, hole_d, glow = hexc("#24163e"), hexc("#100820"), hexc("#1e4a40")
     for y in range(S):
         for x in range(S):
             best, second, bi, si, bx = 1e9, 1e9, 0, 0, 0.0
@@ -368,10 +395,10 @@ def rib_lattice(seed, n=7, stretch=1.7, rib=7.0):
                     c = bone_d
                 else:
                     c = bone_dd
-                if (x * 7 + y * 13 + seed) % 23 == 0:  # the mosaic: a tessera a shade off
-                    c = shade(c, 0.88)
+                if ((x // 2) * 7 + (y // 2) * 13 + seed) % 11 == 0:  # the mosaic: a tessera a shade off (the painting's ribs are tiled)
+                    c = shade(c, 0.86)
             else:  # the opening
-                depth = min(1.0, (edge - rib) / 14.0)
+                depth = min(1.0, (edge - rib) / 30.0)
                 c = hole if depth + (b - 0.5) * 0.4 < 0.55 else hole_d
                 if pts[bi][1] > S * 0.55 and depth > 0.4 and b < 0.25:
                     c = glow
@@ -380,16 +407,28 @@ def rib_lattice(seed, n=7, stretch=1.7, rib=7.0):
 
 
 def wall_rib():
-    """Pale lilac bone ribs (the painting's organic walls), variant a."""
+    """Pale bone ribs (the painting's organic walls), variant a."""
     return rib_lattice(211)
 
 
 def wall_rib_b():
-    return rib_lattice(223, n=6, stretch=1.9)
+    return rib_lattice(223, n=3, stretch=2.1, rib=20.0)
 
 
 def wall_rib_c():
-    return rib_lattice(239, n=8, stretch=1.5)
+    return rib_lattice(239, n=4, stretch=1.5, rib=22.0)
+
+
+def rim_lamp():
+    """The amber floor lamps along the ring's rim (the painting's warm practicals at the railing's foot): a small glowing block in a dark housing, dithered core."""
+    im, d = canvas(32, 20)
+    d.rounded_rectangle([0, 2, 31, 19], radius=3, fill=hexc("#2a1e34"), outline=hexc("#0e0a16"))
+    d.rectangle([4, 6, 27, 15], fill=hexc("#ffa830"))
+    for y in range(7, 15):
+        for x in range(5, 27):
+            if BAYER4[y % 4][x % 4] < 7:
+                d.point((x, y), fill=hexc("#fff0b0"))
+    return im
 
 
 def void_cliff():
@@ -458,7 +497,8 @@ def sky_vault():
 TEXTURES = {"ms_wall_rib": wall_rib, "ms_wall_rib_b": wall_rib_b, "ms_wall_rib_c": wall_rib_c, "ms_wall_dark": wall_dark, "ms_floor_walk": floor_walk, "ms_floor_void": floor_void,
             "ms_floor_plate": floor_plate, "ms_ceil": ceil_arch, "ms_trim": trim, "ms_rail": rail_tile, "ms_void_cliff": void_cliff, "ms_sky": sky_vault}
 PROPS = {"ms_crystal": crystal, "ms_console": console, "ms_orb": orb, "ms_cables_hang": cables_hang, "ms_armillary": armillary, "ms_dj_rig": dj_rig, "ms_speaker": speaker,
-         "ms_organ": organ, "ms_hatch_arch": hatch_arch, "ms_case": case, "ms_lamp_post": lamp_post, "ms_brazier": brazier, "ms_pillar": pillar}
+         "ms_organ": organ, "ms_hatch_arch": hatch_arch, "ms_case": case, "ms_lamp_post": lamp_post, "ms_brazier": brazier, "ms_pillar": pillar,
+         "ms_rim_lamp": rim_lamp}
 DECALS = {"ms_void_haze": void_haze, "ms_oval_window": oval_window, "ms_wall_lamp": wall_lamp, "ms_hatch_dock": hatch_dock, "ms_hatch_uw": hatch_uw, "ms_shutter_panel": shutter_panel, "ms_runes": runes}
 
 
