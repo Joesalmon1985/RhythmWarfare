@@ -69,7 +69,7 @@ style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtai
 OWN_TEX = ["wall_stone", "wall_marble", "wall_sofa", "wall_curtain", "wall_wood", "wall_copper", "wall_table", "wall_street", "wall_blue", "wall_beam",
            "floor_marble", "floor_rug_red", "floor_rug_cream", "floor_rug_orange", "floor_sofa", "floor_table", "floor_wood", "floor_street", "floor_blue", "floor_curtain",
            "ceil_beam", "ceil_street", "thing_plant", "thing_lamp", "thing_vase", "thing_cushion", "thing_cushion_b",
-           "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads", "wall_stone_b", "wall_stone_c", "lg_p_sofa", "lg_p_palm_l", "lg_p_palm_r"]
+           "deco_studs", "deco_coffer", "deco_frieze", "deco_pilaster", "lg_halo", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads", "wall_stone_b", "wall_stone_c", "lg_p_sofa", "lg_p_palm_l", "lg_p_palm_r"]
 RAIN_IN = ("ahead_street",)
 WET = {"concourse": 0.45, "step_ring": 0.45, "ahead_street": 0.9, "ahead_step_a": 0.6, "ahead_step_b": 0.6, "right_vest": 0.5, "right_passage": 0.5}  # stage D: the painting's polished marble and the rain street (gloss)
 STONES = ["wall_stone", "wall_stone_b", "wall_stone_c"]  # the stone's three variants, one per piece (a hash of its id): no wall repeats one tile
@@ -85,8 +85,8 @@ WAYPOINTS = [
     ("lg_north", (0, 200), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
     ("lg_east", (196, 45), (-175, 175), 2, "reveal: the east walkway looking back across the pit to the Bar arch"),
     ("lg_se_view", (200, -100), (-175, 175), 1.5, "reveal (round 2, the stay rail's second): the south-east walkway looking across the pit to the Bar arch"),
-    ("lg_ahead_door", W("n", 0, -6), (0, 330), 0, "THRESHOLD ahead (Dock): at the foot of the steps, 3.2 m before the Dock guide (stage D: held a step back so the pads do not cover him); the world transition happens here"),
-    ("lg_bar_door", W("nw", 0, 22), (-220, 262), 0, "THRESHOLD left (Bar): inside the arch, before the Bar guide"),
+    ("lg_ahead_door", W("n", 0, -32), (0, 330), 0, "THRESHOLD ahead (Dock): inside the octagon before the steps, 1.25 m before the Dock guide on the first step (round 2: the guide brought forward); the world transition happens here"),
+    ("lg_bar_door", W("nw", 0, 0), (-220, 262), 0, "THRESHOLD left (Bar): at the arch's face, 1.3 m before the Bar guide (round 2: both brought forward)"),
     ("lg_floor_door", W("ne", 0, 2), (233, 205), 0, "THRESHOLD right (Floor): at the blue passage's mouth, a step back from the Floor guide (stage D)"),
     # via points: the ring round the pit (octagon of inradius 196), and the way in at each door
     ("lg_v_ene", (196, 81), (81, 196), 0, "via: the walkway, east-north-east corner"),
@@ -97,7 +97,7 @@ WAYPOINTS = [
     ("lg_v_ssw", (-81, -196), (81, -196), 0, "via: south-south-west"),
     ("lg_v_sse", (81, -196), (196, -81), 0, "via: south-south-east"),
     ("lg_v_ese", (196, -81), (196, 81), 0, "via: east-south-east"),
-    ("lg_v_n", (0, 205), (0, 330), 0, "via: in front of the Dock door"),
+    ("lg_v_n", (0, 190), (0, 330), 0, "via: in front of the Dock door"),
 ]
 ROUTES = {  # the three routes and the stay loop as waypoint ids, via points included; tools/run/make_doom_lounge.py cuts them into moves
     "ahead": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne", "lg_v_n", "lg_ahead_door"],
@@ -108,8 +108,9 @@ ROUTES = {  # the three routes and the stay loop as waypoint ids, via points inc
     "stumble": ["lg_ref_back", "lg_sw_corner", "lg_ref"],
 }
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
-    "dock": (W("n", 0, 98), 2.35, W("n", 0, 70)),
-    "bar": (W("nw", -30, 100), 2.2, W("nw", -30, 80)),
+    # round 2: the Dock and Bar guides brought forward to the mouths of their openings (they were 66 and 72 px at lg_ref, the smallest in any scene)
+    "dock": (W("n", 0, 8), 2.35, W("n", 0, -10)),  # on the first street step (0.25 m up)
+    "bar": (W("nw", 0, 58), 2.2, W("nw", 0, 38)),
     "floor": (W("ne", -26, 60), 2.2, W("ne", -26, 42)),
 }
 THINGS = [  # id, sprite, doom point, y centre above the sector's floor, size (height)
@@ -132,7 +133,7 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the h
     ("lg_lt_dock", (0, 330), 3.0, 8.0, "#8cacd8", 1.5), ("lg_lt_dock2", (0, 250), 3.0, 6.0, "#9ab4d8", 1.1),
     ("lg_lt_bar", W("nw", 0, 110), 2.8, 7.0, "#ffa040", 1.8), ("lg_lt_bar2", W("nw", 60, 150), 2.6, 5.0, "#ffb860", 1.4),
     # stage D: the Dock guide is lit from the street lamp over him and the hub's amber behind the viewer (the first pass left him a silhouette in the doorway)
-    ("lg_lt_dock_key", W("n", 0, 80), 2.7, 3.5, "#dce6ff", 1.8), ("lg_lt_dock_warm", W("n", 0, 30), 2.2, 4.0, "#ffc080", 1.4),
+    ("lg_lt_dock_key", W("n", 0, 14), 2.7, 3.5, "#dce6ff", 1.8), ("lg_lt_dock_warm", W("n", 0, 30), 2.2, 4.0, "#ffc080", 1.4),
     ("lg_lt_st_w", (-60, 330), 2.2, 4.5, "#ffd090", 1.6), ("lg_lt_st_e", (60, 390), 2.2, 4.5, "#c8d8ff", 1.6), ("lg_lt_st_n", (-40, 420), 2.4, 4.5, "#ffd090", 1.4),
     ("lg_lt_floor", W("ne", 0, 100), 2.8, 8.0, "#3c64ff", 1.7), ("lg_lt_floor2", W("ne", 0, 40), 2.6, 5.0, "#5a80ff", 1.3),
 ]
@@ -141,10 +142,10 @@ DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, he
     ("lg_sc_e1", "deco_sconce", (237, -74), 1.6, 1.25, True), ("lg_sc_w1", "deco_sconce", (-237, -74), 1.6, 1.25, True),
     ("lg_sc_e2", "deco_sconce", (237, 74), 1.6, 1.25, True), ("lg_sc_w2", "deco_sconce", (-237, 74), 1.6, 1.25, True),
     ("lg_sc_s1", "deco_sconce", (-74, -237), 1.6, 1.25, True), ("lg_sc_s2", "deco_sconce", (74, -237), 1.6, 1.25, True),
-    ("lg_studs_nw1", "deco_studs", W("nw", 98, -2), 0.9, 1.9, False), ("lg_studs_nw2", "deco_studs", W("nw", -98, -2), 0.9, 1.9, False),
-    ("lg_studs_ne1", "deco_studs", W("ne", 98, -2), 0.9, 1.9, False), ("lg_studs_ne2", "deco_studs", W("ne", -98, -2), 0.9, 1.9, False),
-    ("lg_studs_se1", "deco_studs", W("se", 94, -2), 0.9, 1.9, False), ("lg_studs_se2", "deco_studs", W("se", -94, -2), 0.9, 1.9, False),
-    ("lg_studs_sw1", "deco_studs", W("sw", 94, -2), 0.9, 1.9, False), ("lg_studs_sw2", "deco_studs", W("sw", -94, -2), 0.9, 1.9, False),
+    ("lg_coffer_nw1", "deco_coffer", W("nw", 98, -2), 0.9, 1.9, False), ("lg_coffer_nw2", "deco_coffer", W("nw", -98, -2), 0.9, 1.9, False),
+    ("lg_coffer_ne1", "deco_coffer", W("ne", 98, -2), 0.9, 1.9, False), ("lg_coffer_ne2", "deco_coffer", W("ne", -98, -2), 0.9, 1.9, False),
+    ("lg_coffer_se1", "deco_coffer", W("se", 94, -2), 0.9, 1.9, False), ("lg_coffer_se2", "deco_coffer", W("se", -94, -2), 0.9, 1.9, False),
+    ("lg_coffer_sw1", "deco_coffer", W("sw", 94, -2), 0.9, 1.9, False), ("lg_coffer_sw2", "deco_coffer", W("sw", -94, -2), 0.9, 1.9, False),
     ("lg_bottles", "deco_bottles", W("nw", -40, 188), 1.2, 1.3, True), ("lg_vinyl", "deco_vinyl", W("nw", 50, 188), 1.7, 1.0, False),
     ("lg_beads_w", "deco_beads", (-281, 0), 0.0, 2.6, False), ("lg_beads_e", "deco_beads", (281, 0), 0.0, 2.6, False),
     ("lg_beads_s", "deco_beads", (0, -281), 0.0, 2.6, False),
@@ -152,6 +153,13 @@ DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, he
     ("lg_st_lamp_w", "deco_sconce", (-78, 330), 2.2, 0.8, True), ("lg_st_lamp_e", "deco_sconce", (78, 390), 2.2, 0.8, True),
     ("lg_st_lamp_n", "deco_sconce", (-40, 438), 2.4, 0.8, True),
 ]
+
+# round 2: the painting's warm coffered panelling under the vault, as fixed-yaw decals (no wall needed): a coffer frieze over each of the eight faces and a stone pilaster
+# with a brass capital on each corner of the octagon (the coffered panels above replace the gold studded ones, which read as gold cubes)
+_FACE_N = {"n": (0, 1), "e": (1, 0), "w": (-1, 0), "s": (0, -1), "ne": (1, 1), "nw": (-1, 1), "se": (1, -1), "sw": (-1, -1)}
+YAW_DECALS = [("lg_frieze_%s" % f, "deco_frieze", W(f, 0, -6), 4.2, 1.0, round(math.degrees(math.atan2(n[0], -n[1])), 1)) for f, n in _FACE_N.items()]
+YAW_DECALS += [("lg_pilaster_%d" % k, "deco_pilaster", (round(250 * math.cos(math.radians(22.5 + 45 * k))), round(250 * math.sin(math.radians(22.5 + 45 * k)))), 0.0, 4.4,
+                round(math.degrees(math.atan2(math.cos(math.radians(22.5 + 45 * k)), -math.sin(math.radians(22.5 + 45 * k)))), 1)) for k in range(8)]
 
 
 def barriers(d):
@@ -268,6 +276,19 @@ def main():
     for tid, spr, at, y, size in THINGS:
         x, z = m(*at)
         things.append({"id": tid, "kind": "billboard", "sprite": spr, "at": [x, z], "y": y, "size": size, "anim": "none"})
+    # round 2: a warm halo (additive) in front of every sconce and over the table lamp: the painting's brass sconces bloom, and the shots get their highlights from them
+    for did, spr, at, y, size, emi in DECALS:
+        if spr != "deco_sconce":
+            continue
+        r = math.hypot(at[0], at[1])
+        k = 10.0 / r if r > 300 else 10.0 / r
+        hx, hy = at[0] - at[0] * k, at[1] - at[1] * k
+        if did.startswith("lg_st_lamp"):  # (the street lamps: on the street's walls, not round the hub)
+            hx, hy = at[0] - 10 * (1 if at[0] > 0 else -1), at[1]
+        x, z = m(hx, hy)
+        things.append({"id": did + "_halo", "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": y + size * 0.55, "size": 1.3, "anim": "none", "blend": "add"})
+    x, z = m(0, 0)
+    things.append({"id": "lg_lamp_table_halo", "kind": "billboard", "sprite": "lg_halo", "at": [x, z], "y": 0.4, "size": 1.2, "anim": "none", "blend": "add"})
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = m(*at)
         things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
@@ -283,6 +304,11 @@ def main():
         if emi:
             t["emissive"] = True
         things.append(t)
+    for did, spr, at, y, size, yaw in YAW_DECALS:
+        x, z = m(*at)
+        if sector_of(d, x, z) is None:
+            raise SystemExit("decal %s at %s is in no sector" % (did, at))
+        things.append({"id": did, "kind": "decal", "sprite": spr, "at": [x, z], "y": y, "size": size, "yaw": yaw})
     for t in things:
         if t.get("kind") == "billboard":
             t.pop("sector", None)

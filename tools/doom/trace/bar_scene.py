@@ -37,17 +37,21 @@ RECTS = [
     ("booth", -1.2, 7.8, 1.4, 10.2, 1.5, 4.2, 160, "FLOOR0_1", "CEIL3_5"),
     ("desk", -1.2, 10.2, 1.4, 10.8, 2.5, 4.2, 170, "FLOOR0_1", "CEIL3_5"),
     ("booth_back", -1.2, 10.8, 1.4, 12.6, 1.5, 4.2, 170, "FLOOR0_1", "CEIL3_5"),
-    ("chan_a", 1.4, 3.4, 2.6, 3.8, -1.0, 3.25, 110, "NUKAGE1", "CEIL3_5"),
+    ("chan_a", 1.4, 3.4, 2.6, 3.8, -0.6, 3.25, 110, "NUKAGE1", "CEIL3_5"),
     ("bridge_1", 1.4, 3.8, 2.6, 4.8, 0.0, 3.25, 150, "GRATE", "CEIL3_5"),
-    ("chan_b", 1.4, 4.8, 2.6, 5.2, -1.0, 3.25, 110, "NUKAGE1", "CEIL3_5"),
+    ("chan_b", 1.4, 4.8, 2.6, 5.2, -0.6, 3.25, 110, "NUKAGE1", "CEIL3_5"),
     ("bridge_2", 1.4, 5.2, 2.6, 6.2, 0.0, 3.25, 150, "GRATE", "CEIL3_5"),
-    ("chan_c", 1.4, 6.2, 2.6, 10.2, -1.0, 3.25, 110, "NUKAGE1", "CEIL3_5"),
+    ("chan_c", 1.4, 6.2, 2.6, 10.2, -0.6, 3.25, 110, "NUKAGE1", "CEIL3_5"),
     ("bar_w", 1.4, 0.2, 3.2, 2.2, 0.3, 3.25, 160, "FLOOR5_1", "CEIL3_5"),
     ("bar_back", 3.2, 0.2, 6.6, 1.5, 0.3, 3.25, 170, "FLOOR5_1", "CEIL3_5"),
     ("bar_e", 6.6, 0.2, 7.0, 2.2, 0.3, 3.25, 160, "FLOOR5_1", "CEIL3_5"),
     ("counter", 3.2, 1.5, 6.6, 2.2, 1.3, 3.0, 170, "FLOOR0_1", "CEIL3_5"),
     ("bar_front", 1.4, 2.2, 7.0, 3.4, 0.3, 3.25, 160, "FLOOR5_1", "CEIL3_5"),
     ("lounge_n", 2.6, 3.4, 7.0, 8.6, 0.4, 3.25, 150, "FLOOR5_1", "CEIL3_5"),
+    # round 2: the way's west end is no longer a flat blue door but the painting's left doorway: an arch (a 1.9 m opening under a 2.5 m lintel) and a short wet passage
+    # beyond it, blue-lit, ending 4 m on at the Floor's glow
+    ("way_arch", -7.6, 1.3, -7.0, 3.2, 0.0, 2.5, 140, "FLOOR5_1", "CEIL3_5"),
+    ("way_out", -11.0, 1.0, -7.6, 3.5, 0.0, 2.9, 150, "FLOOR5_1", "CEIL3_5"),
 ]
 THINGS = [{"x": int(0.1 * U), "y": int(-0.5 * U), "angle": 90, "type": 1, "flags": 7}]
 
@@ -127,7 +131,7 @@ def main():
         "uncertain": list(src.get("uncertain", [])) + [
             "THE COPPER BAR (tools/doom/trace/bar_scene.py) is NOT read from the render or the WAD: the render of MAP02 (2400 units, channel loop, plateau, plazas) does not contain the painting's room (a 10 m brick passage). "
             "The scene keeps MAP02's ideas (the drain channel with crossings, brown brick rooms, short stairs up) and lays them out as the painting shows them. Every size and place is an invention.",
-            "Heights are guessed from the painting: the channel 1 m under the paving (two grated crossings), the bar 0.3 m up, the Chill-out nook 0.4 m up, four 0.3 m stairs to the booth landing (+1.5 m), the booth desk +1 m.",
+            "Heights are guessed from the painting: the channel 0.6 m under the paving (round 2: was 1 m; the water now shows from the reference viewpoint; two grated crossings), the bar 0.3 m up, the Chill-out nook 0.4 m up, four 0.3 m stairs to the booth landing (+1.5 m), the booth desk +1 m.",
         ],
         "vertices": V, "linedefs": LD, "sidedefs": SD, "sectors": sectors, "sector_names": names, "things": THINGS,
     }

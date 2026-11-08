@@ -774,7 +774,7 @@ func test_the_bar_has_its_railing_visibility_and_step_keys_set() -> void:
 		var a: Dictionary = sec[str(w["sector"])]
 		var b: Dictionary = sec[str(w["portal"])]
 		assert_true(absf(float(a["floor"]) - float(b["floor"])) > 0.5, "a railing stands where there is a drop")
-		assert_true(minf(float(a["floor"]), float(b["floor"])) <= -0.9, "a railing is along the channel")
+		assert_true(minf(float(a["floor"]), float(b["floor"])) <= -0.55, "a railing is along the channel")  # (round 2: the water raised to -0.6 m so it shows from wb_ref)
 	assert_true(rails >= 6, "the channel's banks carry railings (%d)" % rails)
 	var m := _bar()
 	var steps := 0

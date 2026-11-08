@@ -32,6 +32,10 @@
   "thing_cushion": "textures/thing_cushion.png",
   "thing_cushion_b": "textures/thing_cushion_b.png",
   "deco_studs": "textures/deco_studs.png",
+  "deco_coffer": "textures/deco_coffer.png",
+  "deco_frieze": "textures/deco_frieze.png",
+  "deco_pilaster": "textures/deco_pilaster.png",
+  "lg_halo": "textures/lg_halo.png",
   "deco_vinyl": "textures/deco_vinyl.png",
   "deco_sconce": "textures/deco_sconce.png",
   "deco_bottles": "textures/deco_bottles.png",
@@ -5702,7 +5706,7 @@
    "sprite": "guide_dock_idle_0",
    "at": [
     0.0,
-    -10.5625
+    -7.75
    ],
    "y": 1.175,
    "size": 2.35,
@@ -5713,8 +5717,8 @@
    "kind": "billboard",
    "sprite": "guide_bar_idle_0",
    "at": [
-    -6.8593,
-    -8.1851
+    -6.5941,
+    -6.5941
    ],
    "y": 1.1,
    "size": 2.2,
@@ -5925,6 +5929,162 @@
    "anim": "none"
   },
   {
+   "id": "lg_sc_n1_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -2.2194,
+    -7.108
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_n2_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    2.2194,
+    -7.108
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_e1_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    7.108,
+    2.2194
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_w1_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -7.108,
+    2.2194
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_e2_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    7.108,
+    -2.2194
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_w2_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -7.108,
+    -2.2194
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_s1_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -2.2194,
+    7.108
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_sc_s2_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    2.2194,
+    7.108
+   ],
+   "y": 2.2875,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_st_lamp_w_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -2.125,
+    -10.3125
+   ],
+   "y": 2.64,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_st_lamp_e_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    2.125,
+    -12.1875
+   ],
+   "y": 2.64,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_st_lamp_n_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    -0.9375,
+    -13.6875
+   ],
+   "y": 2.84,
+   "size": 1.3,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "lg_lamp_table_halo",
+   "kind": "billboard",
+   "sprite": "lg_halo",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "y": 0.4,
+   "size": 1.2,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
    "id": "lg_lt_table",
    "kind": "light",
    "at": [
@@ -6061,7 +6221,7 @@
    "kind": "light",
    "at": [
     0.0,
-    -10.0
+    -7.9375
    ],
    "y": 2.7,
    "radius": 4.5,
@@ -6145,7 +6305,7 @@
    "kind": "light",
    "at": [
     0.0,
-    -9.6875
+    -7.1875
    ],
    "y": 2.8,
    "radius": 3.0,
@@ -6156,8 +6316,8 @@
    "id": "lg_lamp_bar",
    "kind": "light",
    "at": [
-    -6.4174,
-    -7.7432
+    -6.1522,
+    -6.1522
    ],
    "y": 2.8,
    "radius": 3.0,
@@ -6273,9 +6433,9 @@
    "emissive": true
   },
   {
-   "id": "lg_studs_nw1",
+   "id": "lg_coffer_nw1",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     -7.4338,
     -3.1028
@@ -6284,9 +6444,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_nw2",
+   "id": "lg_coffer_nw2",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     -3.1028,
     -7.4338
@@ -6295,9 +6455,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_ne1",
+   "id": "lg_coffer_ne1",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     3.1028,
     -7.4338
@@ -6306,9 +6466,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_ne2",
+   "id": "lg_coffer_ne2",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     7.4338,
     -3.1028
@@ -6317,9 +6477,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_se1",
+   "id": "lg_coffer_se1",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     7.3454,
     3.1912
@@ -6328,9 +6488,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_se2",
+   "id": "lg_coffer_se2",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     3.1912,
     7.3454
@@ -6339,9 +6499,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_sw1",
+   "id": "lg_coffer_sw1",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     -3.1912,
     7.3454
@@ -6350,9 +6510,9 @@
    "size": 1.9
   },
   {
-   "id": "lg_studs_sw2",
+   "id": "lg_coffer_sw2",
    "kind": "decal",
-   "sprite": "deco_studs",
+   "sprite": "deco_coffer",
    "at": [
     -7.3454,
     3.1912
@@ -6451,22 +6611,214 @@
    "y": 2.4,
    "size": 0.8,
    "emissive": true
+  },
+  {
+   "id": "lg_frieze_n",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    0.0,
+    -7.3125
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": 180.0
+  },
+  {
+   "id": "lg_frieze_e",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    7.3125,
+    -0.0
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": 90.0
+  },
+  {
+   "id": "lg_frieze_w",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    -7.3125,
+    -0.0
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": -90.0
+  },
+  {
+   "id": "lg_frieze_s",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    0.0,
+    7.3125
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": 0.0
+  },
+  {
+   "id": "lg_frieze_ne",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    5.1799,
+    -5.1799
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": 135.0
+  },
+  {
+   "id": "lg_frieze_nw",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    -5.1799,
+    -5.1799
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": -135.0
+  },
+  {
+   "id": "lg_frieze_se",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    5.1799,
+    5.1799
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": 45.0
+  },
+  {
+   "id": "lg_frieze_sw",
+   "kind": "decal",
+   "sprite": "deco_frieze",
+   "at": [
+    -5.1799,
+    5.1799
+   ],
+   "y": 4.2,
+   "size": 1.0,
+   "yaw": -45.0
+  },
+  {
+   "id": "lg_pilaster_0",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    7.2188,
+    -3.0
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": 112.5
+  },
+  {
+   "id": "lg_pilaster_1",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    3.0,
+    -7.2188
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": 157.5
+  },
+  {
+   "id": "lg_pilaster_2",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    -3.0,
+    -7.2188
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": -157.5
+  },
+  {
+   "id": "lg_pilaster_3",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    -7.2188,
+    -3.0
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": -112.5
+  },
+  {
+   "id": "lg_pilaster_4",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    -7.2188,
+    3.0
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": -67.5
+  },
+  {
+   "id": "lg_pilaster_5",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    -3.0,
+    7.2188
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": -22.5
+  },
+  {
+   "id": "lg_pilaster_6",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    3.0,
+    7.2188
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": 22.5
+  },
+  {
+   "id": "lg_pilaster_7",
+   "kind": "decal",
+   "sprite": "deco_pilaster",
+   "at": [
+    7.2188,
+    3.0
+   ],
+   "y": 0.0,
+   "size": 4.4,
+   "yaw": 67.5
   }
  ],
  "homes": [],
  "spots": {
   "lg_guide_dock": {
-   "sector": "16_0",
+   "sector": "14_0",
    "at": [
     0.0,
-    -10.5625
+    -7.75
    ]
   },
   "lg_guide_bar": {
-   "sector": "18_2",
+   "sector": "18_0",
    "at": [
-    -6.8593,
-    -8.1851
+    -6.5941,
+    -6.5941
    ]
   },
   "lg_guide_floor": {
@@ -6569,20 +6921,20 @@
   {
    "id": "lg_ahead_door",
    "at": [
-    0.1531,
-    -6.9429
+    0.0,
+    -6.5
    ],
-   "yaw": 2.6,
+   "yaw": -0.0,
    "sector": "0_4"
   },
   {
    "id": "lg_bar_door",
    "at": [
-    -5.9517,
-    -5.429
+    -4.7582,
+    -5.0829
    ],
-   "yaw": 18.5,
-   "sector": "17_0"
+   "yaw": 34.3,
+   "sector": "0_0"
   },
   {
    "id": "lg_floor_door",
@@ -6669,7 +7021,7 @@
    "id": "lg_v_n",
    "at": [
     0.0,
-    -6.4062
+    -5.9375
    ],
    "yaw": -0.0,
    "sector": "0_4"

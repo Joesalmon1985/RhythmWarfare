@@ -703,8 +703,8 @@ def polish_tiles():
     the red velvet stool and the copper counter with its whisky glass and bottles (the painting's right foreground)."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import make_warehouse_art as wa
-    STONE = ["#140e10", "#241a1a", "#362828", "#4a3832", "#604c40", "#7a6250"]  # stage D exposure pass: a notch lighter (lit block faces)
-    LIT = ["#140a08", "#2a1610", "#44261a", "#603822", "#7e4c2c", "#9e6436"]
+    STONE = ["#120c0c", "#221816", "#34261e", "#4a3628", "#644a34", "#846244", "#a88058"]  # round 2: warmer, with a lit top step (the painting's walls are warm lit stone; the grey read flat)
+    LIT = ["#140a08", "#2a1610", "#44261a", "#603822", "#7e4c2c", "#9e6436", "#c8864a"]  # round 2: a lit top step
     out = {"bar_brick": wa.tile_brick_wall(201, STONE, "#08060a", moss=True, bh=32, bw=64), "bar_brick_b": wa.tile_brick_wall(202, STONE, "#08060a", moss=True, bh=32, bw=56),
            "bar_brick_c": wa.tile_brick_wall(203, STONE, "#08060a", moss=False, bh=32, bw=72), "bar_brick_lit": wa.tile_brick_wall(204, LIT, "#0c0604", bh=32, bw=64),
            "bar_quay": wa.tile_brick_wall(205, STONE, "#06080a", moss=True, bh=32, bw=48)}
@@ -765,6 +765,20 @@ def polish_tiles():
     # the stone post the Floor guide leans on (her crop keeps her hand at its top; the first pass left the hand on nothing)
     rgb, al = wa.cut((92, 464, 172, 692), [(96, 470), (120, 464), (168, 466), (171, 470), (171, 692), (93, 692)], paint=paint)
     save("bar_p_post", rgb, al.astype(float))
+    # round 2: the booth's back wall is the painting's booth window (racks with red LEDs, the frame, the teal glow), not a grey locker wall; the guide in front of it in the
+    # painting is painted out with the window rows above her head (her own sprite stands before it), and the brass desk lamp beside it is cut too
+    im = np.array(Image.open(paint).convert("RGB"))
+    win = im[176:322, 800:1062].copy()
+    ref = win[6:40]  # the teal glass and frame above her head
+    for y in range(42, win.shape[0]):
+        src = ref[(y - 42) % (2 * ref.shape[0]) if (y - 42) % (2 * ref.shape[0]) < ref.shape[0] else 2 * ref.shape[0] - 1 - (y - 42) % (2 * ref.shape[0])]
+        x0 = 112  # painting x 912 onward: her and her desk
+        shade = 1.0 - 0.45 * (y - 42) / float(win.shape[0] - 42)
+        win[y, x0:] = (src[x0:].astype(float) * shade).astype(np.uint8)
+    win = np.array(Image.fromarray(win).resize((win.shape[1] * 2, win.shape[0] * 2), Image.NEAREST))
+    save("bar_p_boothwin", win)
+    # round 2: the lamps' glow (additive, the Warehouse's halo): the painting's pendants and lanterns bloom; the bar's shots held no bright pixel beyond the lamps' few
+    Image.fromarray(wa.spr_halo(), "RGBA").save(os.path.join(OUT, "bar_halo.png"))
 
 
 def main():
