@@ -1,14 +1,14 @@
-MOVE uw_cave_in via=3 length=11.9
-WALK left 0 t=0.00 @0.000:-1.600:0.0:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
-WALK left 1 t=0.50 @-0.217:-1.774:22.2:0.0:1.599 sector=0_0 ground=0.000 above=1.60 still=0.00
-WALK left 2 t=1.00 @-0.812:-2.249:50.1:0.0:1.586 sector=0_0 ground=0.000 above=1.59 still=0.00
-WALK left 3 t=1.50 @-1.701:-2.960:52.5:0.0:1.592 sector=0_0 ground=0.000 above=1.59 still=0.00
-WALK left 4 t=2.01 @-2.799:-3.839:57.5:0.0:1.579 sector=1_0 ground=0.000 above=1.58 still=0.00
-WALK left 5 t=2.51 @-4.194:-4.543:63.3:0.0:1.582 sector=1_0 ground=0.000 above=1.58 still=0.00
-WALK left 6 t=3.01 @-5.674:-5.206:66.2:0.0:1.582 sector=1_0 ground=0.000 above=1.58 still=0.00
-WALK left 7 t=3.51 @-7.112:-5.831:68.5:0.0:1.579 sector=3_0 ground=0.000 above=1.58 still=0.00
-WALK left 8 t=4.01 @-8.434:-6.311:70.7:0.0:1.592 sector=3_0 ground=0.000 above=1.59 still=0.00
-WALK left 9 t=4.51 @-9.514:-6.671:77.9:0.0:1.586 sector=4_0 ground=0.000 above=1.59 still=0.00
-WALK left 10 t=5.02 @-10.236:-6.912:85.9:0.0:1.599 sector=4_0 ground=0.000 above=1.60 still=0.00
+MOVE uw_cave_in via=3 length=12.1
+WALK left 0 t=0.00 @0.000:-1.600:5.5:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK left 1 t=0.50 @-0.200:-1.800:22.6:0.0:1.599 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK left 2 t=1.00 @-0.749:-2.349:44.1:0.0:1.586 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK left 3 t=1.50 @-1.568:-3.168:45.0:0.0:1.592 sector=1_0 ground=0.000 above=1.59 still=0.00
+WALK left 4 t=2.01 @-2.582:-4.182:57.1:0.0:1.579 sector=1_0 ground=0.000 above=1.58 still=0.00
+WALK left 5 t=2.51 @-3.990:-4.780:68.7:0.0:1.582 sector=1_0 ground=0.000 above=1.58 still=0.00
+WALK left 6 t=3.01 @-5.587:-5.168:71.7:0.0:1.582 sector=1_0 ground=0.000 above=1.58 still=0.00
+WALK left 7 t=3.51 @-7.052:-5.805:68.4:0.0:1.579 sector=3_0 ground=0.000 above=1.58 still=0.00
+WALK left 8 t=4.01 @-8.396:-6.299:70.7:0.0:1.592 sector=3_0 ground=0.000 above=1.59 still=0.00
+WALK left 9 t=4.51 @-9.496:-6.665:77.9:0.0:1.586 sector=4_0 ground=0.000 above=1.59 still=0.00
+WALK left 10 t=5.02 @-10.232:-6.911:85.9:0.0:1.599 sector=4_0 ground=0.000 above=1.60 still=0.00
 WALK left 11 t=5.52 @-10.500:-7.000:90.0:0.0:1.600 sector=4_0 ground=0.000 above=1.60 still=0.00
 HOLD uw_cave_in 1.0 moved=0.0028 turned=0.000
