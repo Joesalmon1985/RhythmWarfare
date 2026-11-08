@@ -778,7 +778,10 @@ def polish_tiles():
     win = np.array(Image.fromarray(win).resize((win.shape[1] * 2, win.shape[0] * 2), Image.NEAREST))
     save("bar_p_boothwin", win)
     # round 2: the lamps' glow (additive, the Warehouse's halo): the painting's pendants and lanterns bloom; the bar's shots held no bright pixel beyond the lamps' few
-    Image.fromarray(wa.spr_halo(), "RGBA").save(os.path.join(OUT, "bar_halo.png"))
+    halo = wa.spr_halo()
+    halo[..., 3] = (halo[..., 3].astype(float) * 0.7).astype(np.uint8)  # a softer glow than the hall's: in the low passage the camera passes close under the lamps
+    halo[..., :3] = (halo[..., :3].astype(float) * np.array([1.0, 0.82, 0.62])).astype(np.uint8)
+    Image.fromarray(halo, "RGBA").save(os.path.join(OUT, "bar_halo.png"))
 
 
 def main():

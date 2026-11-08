@@ -71,9 +71,9 @@ STYLE = {
     "way_w": ("bar_cobble", "bar_brick", "bar_ceiling", "#7a90ff", "bar_quay"),
     "way_arch": ("bar_cobble", "bar_brick", "bar_ceiling", "#6a84ff", "bar_quay"),
     "way_out": ("bar_cobble", "bar_brick", "bar_ceiling", "#5a78ff", "bar_quay"),
-    "booth": ("bar_planks", "bar_brick", "bar_ceiling", "#a8e8f0", "bar_step"),
+    "booth": ("bar_planks", "bar_brick_lit", "bar_ceiling", "#f0e0d0", "bar_step"),  # round 2: the booth landing in the warm lit stone (the teal tint dimmed it)
     "desk": ("bar_copper", "bar_brick", "bar_ceiling", "#ffc890", "bar_counter_front"),
-    "booth_back": ("bar_planks", "bar_brick", "bar_ceiling", "#c8d8e0", "bar_step"),  # round 2: the booth's stone, not the grey locker tile (the window decal carries the racks)
+    "booth_back": ("bar_planks", "bar_brick_lit", "bar_ceiling", "#f0e0d0", "bar_step"),  # round 2: the booth's stone, not the grey locker tile (the window decal carries the racks)
     "counter": ("bar_copper", "bar_brick_lit", "bar_ceiling", "#ffc080", "bar_counter_front"),
     "lounge_n": ("bar_planks", "bar_brick_lit", "bar_ceiling", "#ffd090", "bar_quay"),
 }
@@ -132,7 +132,10 @@ THINGS = [  # extra dressing, billboards: id, sprite, point (m), y (centre above
 DECALS += [("bar_d_lantern_way_s", "bar_lantern", (-4.6, 0.95), 1.6, 0.7, True), ("bar_d_lantern_booth", "bar_lantern", (-1.15, 9.0), 1.5, 0.7, True),
            ("bar_d_lantern_nook", "bar_lantern", (4.0, 8.55), 1.5, 0.7, True), ("bar_d_lantern_nook_e", "bar_lantern", (6.95, 3.6), 1.5, 0.7, True),
            ("bar_d_lantern_pass_e", "bar_lantern", (1.35, -2.4), 1.55, 0.7, True)]
-THINGS += [("bar_pendant_way", "bar_pendant", (-4.0, 2.25), 2.3, 0.8), ("bar_pendant_way2", "bar_pendant", (-6.2, 2.25), 2.3, 0.8)]  # round 2: the way to the Floor lit by two pendants
+THINGS += [("bar_pendant_way", "bar_pendant", (-4.0, 2.25), 2.3, 0.8), ("bar_pendant_way2", "bar_pendant", (-6.2, 2.25), 2.3, 0.8),
+           ("bar_pendant_out", "bar_pendant", (-8.6, 2.25), 2.1, 0.7), ("bar_pendant_landing", "bar_pendant", (0.1, 8.7), 2.4, 0.8),
+           ("bar_pendant_bridge", "bar_pendant", (2.0, 4.3), 2.4, 0.8), ("bar_pendant_mid", "bar_pendant", (0.1, 2.6), 2.6, 0.8),
+           ("bar_pendant_nook", "bar_pendant", (3.8, 7.2), 2.4, 0.9), ("bar_pendant_stair", "bar_pendant", (0.1, 7.0), 2.6, 0.8)]  # round 2: the way, its passage, the booth landing, the crossing  # round 2: the way to the Floor lit by two pendants
 def _halo_at(p):
     """A lantern's halo stands 0.3 m off its wall, into the room: the wall is the nearest of the known wall lines."""
     x, y = p
@@ -144,7 +147,7 @@ def _halo_at(p):
 
 
 # round 2: a warm halo (additive) round every pendant, lantern and lamp: the warm practicals bloom as the painting's do, and every shot gets its highlights from them
-HALOS = [("%s_halo" % t[0], t[2], t[3] - 0.1, 1.7) for t in THINGS if t[1] == "bar_pendant"] + [("bar_desk_lamp_halo", (-0.85, 10.5), 0.3, 1.0)] +         [("%s_halo" % dd[0], _halo_at(dd[2]), dd[3] + 0.35, 1.6)
+HALOS = [("%s_halo" % t[0], t[2], t[3] - 0.1, 1.6) for t in THINGS if t[1] == "bar_pendant"] + [("bar_desk_lamp_halo", (-0.85, 10.5), 0.3, 1.0)] +         [("%s_halo" % dd[0], _halo_at(dd[2]), dd[3] + 0.35, 1.5)
          for dd in DECALS if dd[1] == "bar_lantern"]
 WET = {"pass": 0.8, "way_w": 0.8, "way_arch": 0.9, "way_out": 1.0, "chan": 1.0, "bridge": 0.6}  # stage D: the painting's wet cobbles and glittering channel (the weather engine's gloss of the practicals, a dry map)
 BRICKS = ["bar_brick", "bar_brick_b", "bar_brick_c"]  # the stone wall's three variants, one per piece (a hash of its id): no long wall repeats one tile
@@ -160,7 +163,10 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength: warm practical lamps (
 ]
 LIGHTS += [("bar_lt_lantern_way_s", (-4.6, 1.3), 2.0, 3.5, "#ffa040", 1.6), ("bar_lt_lantern_booth", (-0.8, 9.0), 2.2, 3.5, "#ffa040", 1.6),
            ("bar_lt_lantern_nook", (4.0, 8.2), 2.0, 3.5, "#ffa040", 1.6), ("bar_lt_lantern_nook_e", (6.6, 3.6), 2.0, 3.5, "#ffa040", 1.6),
-           ("bar_lt_lantern_pass_e", (1.0, -2.4), 2.0, 3.5, "#ffa040", 1.4)]
+           ("bar_lt_lantern_pass_e", (1.0, -2.4), 2.0, 3.5, "#ffa040", 1.4),
+           ("bar_lt_pend_out", (-8.6, 2.25), 1.9, 3.0, "#ffb050", 1.4), ("bar_lt_pend_landing", (0.1, 8.7), 2.2, 3.5, "#ffb050", 1.5),
+           ("bar_lt_pend_bridge", (2.0, 4.3), 2.2, 3.5, "#ffb050", 1.4), ("bar_lt_pend_mid", (0.1, 2.6), 2.4, 3.5, "#ffb050", 1.3),
+           ("bar_lt_pend_nook", (3.8, 7.2), 2.2, 3.5, "#ffb050", 1.5), ("bar_lt_pend_stair", (0.1, 7.0), 2.4, 3.0, "#ffb050", 1.3), ("bar_lt_booth_fill", (0.1, 10.0), 2.8, 4.0, "#ffc890", 1.0)]
 CAST = {"actors": ["c01", "c02", "c03", "c04", "c05", "c06", "c07"], "silhouettes": ["s01", "s02", "s03"]}
 HOMES = {"c01": (3.8, 0.8), "c02": (4.8, 0.8), "c03": (5.8, 3.05), "c04": (6.4, 3.05), "c05": (5.6, 0.6), "c06": (6.1, 1.1), "c07": (2.7, 0.9)}  # stage D: all at the bar, none in the nook (the painting has no patrons)  # (none stands in the picture at the reference viewpoint but the two far ones in the nook: the counter and the stools are the foreground)
 SILS = {"s01": (6.0, 2.6), "s02": (2.4, 1.0), "s03": (5.0, 0.8)}

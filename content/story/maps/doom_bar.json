@@ -351,9 +351,9 @@
    "ceiling": 4.1875,
    "floor_tex": "bar_planks",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick_b",
+   "wall_tex": "bar_brick_lit",
    "light": 1.0,
-   "tint": "#edfafc",
+   "tint": "#fcf8f5",
    "room": "main",
    "flags": [],
    "doom_sector": 6,
@@ -417,9 +417,9 @@
    "ceiling": 4.1875,
    "floor_tex": "bar_planks",
    "ceil_tex": "bar_ceiling",
-   "wall_tex": "bar_brick",
+   "wall_tex": "bar_brick_lit",
    "light": 1.0,
-   "tint": "#f4f7f8",
+   "tint": "#fcf8f5",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
@@ -1866,6 +1866,78 @@
    "anim": "none"
   },
   {
+   "id": "bar_pendant_out",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    -8.6,
+    -2.25
+   ],
+   "y": 2.1,
+   "size": 0.7,
+   "anim": "none"
+  },
+  {
+   "id": "bar_pendant_landing",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    0.1,
+    -8.7
+   ],
+   "y": 2.4,
+   "size": 0.8,
+   "anim": "none"
+  },
+  {
+   "id": "bar_pendant_bridge",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    2.0,
+    -4.3
+   ],
+   "y": 2.4,
+   "size": 0.8,
+   "anim": "none"
+  },
+  {
+   "id": "bar_pendant_mid",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    0.1,
+    -2.6
+   ],
+   "y": 2.6,
+   "size": 0.8,
+   "anim": "none"
+  },
+  {
+   "id": "bar_pendant_nook",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    3.8,
+    -7.2
+   ],
+   "y": 2.4,
+   "size": 0.9,
+   "anim": "none"
+  },
+  {
+   "id": "bar_pendant_stair",
+   "kind": "billboard",
+   "sprite": "bar_pendant",
+   "at": [
+    0.1,
+    -7.0
+   ],
+   "y": 2.6,
+   "size": 0.8,
+   "anim": "none"
+  },
+  {
    "id": "bar_pendant_c1_halo",
    "kind": "billboard",
    "sprite": "bar_halo",
@@ -1874,7 +1946,7 @@
     -1.9
    ],
    "y": 2.4499999999999997,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1887,7 +1959,7 @@
     -1.9
    ],
    "y": 2.4499999999999997,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1900,7 +1972,7 @@
     -1.9
    ],
    "y": 2.4499999999999997,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1913,7 +1985,7 @@
     -5.0
    ],
    "y": 2.5,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1926,7 +1998,7 @@
     -1.6
    ],
    "y": 2.6,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1939,7 +2011,7 @@
     -4.6
    ],
    "y": 2.6,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1952,7 +2024,7 @@
     -5.8
    ],
    "y": 2.65,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1965,7 +2037,7 @@
     -2.25
    ],
    "y": 2.1999999999999997,
-   "size": 1.7,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -1978,7 +2050,85 @@
     -2.25
    ],
    "y": 2.1999999999999997,
-   "size": 1.7,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_out_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    -8.6,
+    -2.25
+   ],
+   "y": 2.0,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_landing_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    0.1,
+    -8.7
+   ],
+   "y": 2.3,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_bridge_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    2.0,
+    -4.3
+   ],
+   "y": 2.3,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_mid_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    0.1,
+    -2.6
+   ],
+   "y": 2.5,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_nook_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    3.8,
+    -7.2
+   ],
+   "y": 2.3,
+   "size": 1.6,
+   "anim": "none",
+   "blend": "add"
+  },
+  {
+   "id": "bar_pendant_stair_halo",
+   "kind": "billboard",
+   "sprite": "bar_halo",
+   "at": [
+    0.1,
+    -7.0
+   ],
+   "y": 2.5,
+   "size": 1.6,
    "anim": "none",
    "blend": "add"
   },
@@ -2004,7 +2154,7 @@
     -4.0
    ],
    "y": 1.9,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2017,7 +2167,7 @@
     -7.0
    ],
    "y": 2.35,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2030,7 +2180,7 @@
     -3.15
    ],
    "y": 1.9500000000000002,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2043,7 +2193,7 @@
     1.6
    ],
    "y": 1.9,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2056,7 +2206,7 @@
     -1.25
    ],
    "y": 1.9500000000000002,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2069,7 +2219,7 @@
     -9.0
    ],
    "y": 1.85,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2082,7 +2232,7 @@
     -8.25
    ],
    "y": 1.85,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2095,7 +2245,7 @@
     -3.6
    ],
    "y": 1.85,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2108,7 +2258,7 @@
     2.4
    ],
    "y": 1.9,
-   "size": 1.6,
+   "size": 1.5,
    "anim": "none",
    "blend": "add"
   },
@@ -2778,6 +2928,90 @@
    "y": 2.0,
    "radius": 7.0,
    "color": "#ffa040",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_out",
+   "kind": "light",
+   "at": [
+    -8.6,
+    -2.25
+   ],
+   "y": 1.9,
+   "radius": 6.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_landing",
+   "kind": "light",
+   "at": [
+    0.1,
+    -8.7
+   ],
+   "y": 2.2,
+   "radius": 7.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_bridge",
+   "kind": "light",
+   "at": [
+    2.0,
+    -4.3
+   ],
+   "y": 2.2,
+   "radius": 7.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_mid",
+   "kind": "light",
+   "at": [
+    0.1,
+    -2.6
+   ],
+   "y": 2.4,
+   "radius": 7.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_nook",
+   "kind": "light",
+   "at": [
+    3.8,
+    -7.2
+   ],
+   "y": 2.2,
+   "radius": 7.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_pend_stair",
+   "kind": "light",
+   "at": [
+    0.1,
+    -7.0
+   ],
+   "y": 2.4,
+   "radius": 6.0,
+   "color": "#ffb050",
+   "strength": 2.5
+  },
+  {
+   "id": "bar_lt_booth_fill",
+   "kind": "light",
+   "at": [
+    0.1,
+    -10.0
+   ],
+   "y": 2.8,
+   "radius": 8.0,
+   "color": "#ffc890",
    "strength": 2.5
   },
   {
