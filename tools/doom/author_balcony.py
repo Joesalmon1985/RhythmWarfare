@@ -28,6 +28,15 @@ RAIL_HEIGHT = 1.1  # metres above the higher floor
 RAIL_TEX = "bc_rail"
 VOIDS = ["vw1", "vw2", "ve1", "ve2"]
 LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.52, 0.35, 2.4  # exposure (the booth's A1 night values: each sector is lit at least LIGHT_FLOOR)
+# stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): the open sectors take the map's moon sky (no ceiling tile), the drops' ceilings are low (balcony_scene.py) so the city shows
+# over their far walls; exposure: every sector's song-time light at LIGHT (a gain of 1.5) with the flat light away from the lamps cut to AMBIENT, so the lamp pools, the emissive
+# windows and doors carry the picture; the rain on the open sectors, drips at the cabin's eave and the stair's head, the cabin floor wet from the door
+SKY = {"tex": "textures/bc_sky.png", "mode": "cylinder"}
+SKY_SECTORS = ["deck", "landing", "s_a", "s_b", "s_c", "s_d", "s_e", "alley", "b_a", "b_b", "b_c", "bridge", "isle", "vw1", "vw2", "ve1", "ve2"]
+LIGHT = 1.0
+AMBIENT = {"deck": 0.66, "landing": 0.62, "alley": 0.6, "bridge": 0.62, "isle": 0.66, "bdoor": 0.75, "cabin": 0.75, "cback": 0.75, "vw1": 0.68, "vw2": 0.68, "ve1": 0.68, "ve2": 0.68}
+WEATHER = {"rain": 0.85, "wind": -12, "drips": [{"at": [3.3, -4.0], "h": 2.4}, {"at": [3.3, -6.2], "h": 2.4}, {"at": [-3.7, -6.0], "h": 3.0}]}
+WET = {"bdoor": 0.5, "cabin": 0.15}
 
 
 def M(x, y):
@@ -48,9 +57,9 @@ WAYPOINTS = [
     ("bc_bridge_view", (0.0, 6.5), (0.0, 17.5), 2, "reveal: up the deck at the bridge, the drop either side and the mothership guide on the platform"),
     ("bc_stair_view", (-1.8, 3.8), (-6.0, 6.0), 2, "reveal: the deck's west side looking over the railing at the brick stair and the landing"),
     ("bc_cabin_view", (1.9, 6.0), (7.0, 5.5), 2, "reveal: the deck's east side looking through the open cabin door at the lit control room"),
-    ("bc_bridge_end", (0.0, 15.2), (0.0, 19), 1, "THRESHOLD ahead (Mothership): the far end of the bridge, the world transition happens here"),
-    ("bc_stair_foot", (-5.0, 0.5), (-5.0, -6), 1, "THRESHOLD left (Floor): the foot of the brick stair, the world transition happens here"),
-    ("bc_cabin_in", (5.0, 5.0), (8.5, 5.0), 1, "THRESHOLD right (Booth): through the cabin door into the control room, the world transition happens here"),
+    ("bc_bridge_end", (0.0, 15.2), (0.4, 19), 1, "THRESHOLD ahead (Mothership): the far end of the bridge facing the tower's lit violet door under the lace dome; the world transition happens here"),
+    ("bc_stair_foot", (-5.0, 0.5), (-5.0, -7), 1, "THRESHOLD left (Floor): the foot of the brick stair looking down the alley to the club's lit side door; the world transition happens here"),
+    ("bc_cabin_in", (5.0, 5.0), (10.5, 5.0), 1, "THRESHOLD right (Booth): through the cabin door, facing the open back door and the lit stairwell down; the world transition happens here"),
     # via points (corners of the polyline moves)
     ("bc_v_a1", (0.0, 4.5), (0.0, 8), 0, "via: the deck, mid way"),
     ("bc_v_a2", (-0.8, 5.0), (-3, 5.5), 0, "via: the deck's middle, before the stair view"),
@@ -92,6 +101,8 @@ STYLE = {
     "b_c": ("bc_floor_grate", "bc_wall_steel", "bc_ceil", "#9ab0f0", "bc_wall_steel"),
     "bridge": ("bc_floor_grate", "bc_wall_steel", "bc_ceil", "#9ab0f0", "bc_wall_steel"),
     "isle": ("bc_floor_wet", "bc_wall_conc", "bc_ceil", "#c8b8ff", "bc_wall_steel"),
+    "alley": ("bc_floor_alley", "bc_wall_brick_b", "bc_ceil", "#c8b0d8", "bc_wall_steel"),
+    "cback": ("bc_floor_cabin", "bc_wall_steel", "bc_ceil", "#ffc080", "bc_wall_steel"),
     "vw1": ("bc_floor_conc", "bc_wall_conc", "bc_ceil", "#7a90d8", "bc_wall_conc"),
     "vw2": ("bc_floor_conc", "bc_wall_conc", "bc_ceil", "#7a90d8", "bc_wall_conc"),
     "ve1": ("bc_floor_conc", "bc_wall_conc", "bc_ceil", "#7a90d8", "bc_wall_conc"),
@@ -100,7 +111,7 @@ STYLE = {
 BORROWED = ["thing_pendant", "trim"]
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
-    "mothership": ((0.25, 17.5), 2.4, (-0.8, 17.5)),
+    "mothership": ((-0.7, 17.6), 2.4, (-1.4, 17.2)),
     "floor": ((-5.2, 7.2), 2.2, (-5.2, 6.4)),
     "booth": ((5.6, 7.0), 2.2, (6.5, 7.0)),
 }
@@ -108,17 +119,18 @@ GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
 THINGS = [
     ("bc_case_a", "bc_case", (3.0, 1.2), 0.95), ("bc_case_b", "bc_case", (3.05, 2.55), 0.75), ("bc_cables_a", "bc_cables", (2.3, 0.7), 0.5), ("bc_case_c", "bc_case", (-3.0, 8.3), 0.7),
     ("bc_dish", "bc_dish", (2.9, 8.2), 2.4), ("bc_lamp_brick", "bc_cage_lamp", (-6.2, 6.0), 0.5, 2.6),
-    ("bc_rack_a", "bc_rack", (8.5, 3.6), 1.5), ("bc_rack_b", "bc_rack", (8.5, 4.9), 1.5), ("bc_case_d", "bc_case", (8.4, 7.2), 0.8), ("bc_cage_cabin", "bc_cage_lamp", (6.0, 4.4), 0.4, 3.0),
-    ("bc_tower_a", "bc_tower", (-6.5, 12.5), 15.0), ("bc_tower_b", "bc_tower", (-3.0, 17.5), 12.0), ("bc_tower_c", "bc_tower", (5.5, 12.0), 16.0), ("bc_tower_d", "bc_tower", (7.5, 17.5), 11.0),
+    ("bc_rack_a", "bc_rack", (8.5, 3.1), 1.5), ("bc_rack_b", "bc_rack", (8.5, 7.4), 1.5), ("bc_case_d", "bc_case", (7.4, 8.0), 0.8), ("bc_cage_cabin", "bc_cage_lamp", (6.0, 4.4), 0.4, 3.0),
+    ("bc_tower_a", "bc_tower", (-6.5, 12.5), 12.5), ("bc_tower_b", "bc_tower_b", (-5.6, 18.4), 13.0), ("bc_tower_c", "bc_tower_c", (5.5, 12.0), 12.0), ("bc_tower_d", "bc_tower", (7.5, 17.5), 11.0),
     ("bc_forklift", "bc_forklift", (4.5, 17.0), 1.5), ("bc_yard_case_a", "bc_case", (6.5, 16.5), 1.2), ("bc_yard_case_b", "bc_case", (-5.5, 17.5), 1.2),
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y above that sector's floor, emissive (the wall's own yaw: StoryMap places it)
 DECALS = [
-    ("bc_dc_eq_a", "bc_eq_pink", (-6.3, 5.4), 2.6, 0.3, True), ("bc_dc_eq_b", "bc_eq_pink", (-6.3, 2.6), 2.4, 0.5, True), ("bc_dc_eq_c", "bc_eq_violet", (-5.0, 0.2), 1.6, 0.4, True),
+    ("bc_dc_eq_a", "bc_eq_pink", (-6.3, 5.4), 2.6, 0.3, True), ("bc_dc_eq_b", "bc_eq_pink", (-6.3, 2.6), 2.4, 0.5, True), ("bc_dc_eq_c", "bc_eq_violet", (-6.4, -5.6), 1.6, 0.4, True),
     ("bc_dc_window", "bc_window_glow", (3.3, 1.7), 1.8, 0.9, True), ("bc_dc_pipes", "bc_pipes", (3.3, 8.0), 2.8, 0.0, False),
     ("bc_dc_led_a", "bc_led", (4.4, 3.0), 0.22, 2.4, True), ("bc_dc_led_b", "bc_led", (8.85, 6.2), 0.22, 2.4, True),
-    ("bc_dc_lace", "bc_lace", (0.0, 18.8), 3.6, 1.0, False), ("bc_dc_led_c", "bc_led", (-1.2, 18.8), 0.2, 2.0, True),
-    ("bc_dc_sky_a", "bc_skyline", (-8.8, 12.5), 6.0, 6.5, True), ("bc_dc_sky_b", "bc_skyline", (8.8, 12.5), 6.0, 6.5, True),
+    ("bc_dc_lace", "bc_lace", (0.0, 18.8), 3.6, 2.3, False), ("bc_dc_tower_door", "bc_tower_door", (0.5, 18.8), 2.3, 0.0, True), ("bc_dc_led_c", "bc_led", (-1.2, 18.8), 0.2, 2.0, True),
+    ("bc_dc_alley_door", "bc_alley_door", (-5.0, -6.9), 2.6, 0.0, True), ("bc_dc_eq_d", "bc_eq_pink", (-6.4, -3.5), 2.0, 0.6, True),
+    ("bc_dc_stair_glow", "bc_stair_glow", (10.4, 5.0), 2.3, 0.0, True),
     ("bc_dc_win_a", "bc_windows", (-8.8, 17.5), 7.0, 2.0, True), ("bc_dc_win_b", "bc_windows", (8.8, 17.0), 7.0, 2.0, True),
     ("bc_dc_shut_a", "bc_shutters", (-5.0, 18.8), 3.0, 0.2, True), ("bc_dc_shut_b", "bc_shutters", (5.5, 18.8), 3.0, 0.2, True),
 ]
@@ -130,6 +142,12 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength   (moon blue over the d
     ("bc_lt_red_a", (-5.0, 12.0), 3.0, 6.0, "#ff2a20", 1.2), ("bc_lt_red_b", (6.0, 12.0), 3.0, 6.0, "#ff2a20", 1.2),
     ("bc_lt_yard", (5.0, 17.0), -6.0, 9.0, "#4a90ff", 1.4), ("bc_lt_yard2", (-5.0, 17.5), -6.0, 9.0, "#4a90ff", 1.2),
     ("bc_lt_bridge", (0.0, 13.0), 2.6, 5.0, "#ffb060", 1.4), ("bc_lt_isle", (0.0, 17.5), 3.0, 5.5, "#d8c8ff", 1.5),
+    # stage D polish: the alley's lamps and its side door's blue spill, the stairwell's warm glow, more moonlight and puddle colour on the deck
+    ("bc_lt_alley", (-5.0, -3.0), 3.0, 6.0, "#ff8a40", 1.4), ("bc_lt_alley_door", (-5.0, -6.2), 1.4, 5.0, "#5a7aff", 1.8),
+    ("bc_lt_stairwell", (10.0, 5.0), 1.6, 4.5, "#ffa850", 1.8), ("bc_lt_deck_s", (0.5, 3.0), 3.5, 7.0, "#6a90e0", 1.2),
+    ("bc_lt_deck_red", (2.0, 4.5), 0.8, 4.0, "#ff3a3a", 1.0), ("bc_lt_deck_cyan", (-1.5, 6.5), 0.8, 4.0, "#3ad0ff", 1.0),
+    ("bc_lt_twr_a", (-6.0, 12.0), 1.5, 9.0, "#7a90e8", 1.6), ("bc_lt_twr_b", (5.0, 12.0), 1.5, 9.0, "#7a90e8", 1.6), ("bc_lt_tower_door", (0.5, 18.0), 1.4, 4.5, "#a070ff", 1.8),
+    ("bc_lt_door_spill", (3.0, 5.2), 1.6, 5.0, "#ffa850", 1.6), ("bc_lt_deck_n", (0.0, 8.0), 3.0, 7.0, "#8aa0e8", 1.2), ("bc_lt_brick_wash", (-3.8, 4.0), 3.0, 6.0, "#ff9a58", 1.2),
 ]
 CROWD_SECTORS = ["deck", "cabin"]
 
@@ -229,14 +247,24 @@ def main():
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, lift(tint), step
         s["lip_tex"] = "bc_trim"
         s["room"] = "main"
-        s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        s["light"] = LIGHT
+        s["ambient"] = AMBIENT.get(nm, 0.5)
+        s.pop("wet", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
+        if nm in SKY_SECTORS:
+            s["ceil_tex"] = "sky"
         if nm in VOIDS:
             s["void"] = True
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
-            used[s[k]] = True
+            if s[k] != "sky":
+                used[s[k]] = True
+    sky_ids = {s["id"] for s in d["sectors"] if names[int(s["doom_sector"])] in SKY_SECTORS}
     for w in d["walls"]:
+        if w.get("portal") and w["sector"] in sky_ids and w["portal"] in sky_ids:
+            w["upper_tex"] = "sky"  # two open sectors with different wall heights (the deck and the low-ceilinged drops): no band in the air, the sky shows
         for k in ("lower_tex", "upper_tex"):
-            if w.get(k):
+            if w.get(k) and w[k] != "sky":
                 used[w[k]] = True
     used[RAIL_TEX] = True
     tex = {}
@@ -287,8 +315,9 @@ def main():
     d["waypoints"] = keep
     d["start"] = "bc_arrive"
     barriers(d, names)
-    d["sky"] = {}
-    d["fog"] = {"color": "#0e1626", "density": 0.022}
+    d["sky"] = dict(SKY)
+    d["weather"] = {"rain": WEATHER["rain"], "wind": WEATHER["wind"], "drips": [dict(x) for x in WEATHER["drips"]]}
+    d["fog"] = {"color": "#1c2848", "density": 0.016}
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("bc_")]
@@ -330,6 +359,8 @@ def main():
             dec[k] = [e for e in dec.get(k, []) if not (isinstance(e, dict) and str(e.get("action", "")).startswith("player_"))]
     for e in ch["endings"].values():
         e["journey"] = []
+    ch["actors"], ch["silhouettes"] = [], []  # stage D polish: nobody on the roof but the three guides (the painting)
+    ch["groups"] = {k: [] for k in ch["groups"]}
     open(os.path.join(ROOT, "content", "run", "doom", "story_doom_balcony.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(ch, indent=1) + "\n")
     wp = {w["id"]: (w["at"][0], w["at"][1]) for w in d["waypoints"]}
     segs = []
