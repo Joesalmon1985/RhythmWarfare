@@ -123,3 +123,20 @@ keys; split voids).
    `check_rail_paths.gd`; count SCRIPT ERROR lines; `make_doom.py` + `--import` if you touched a generator.
 5. Scene doc: the lead's list ticked or carried; measured p50/contrast per shot; crop vs procedural per guide;
    refreshed `docs/shots/doom/<scene>/`.
+
+## Additions from the independent review of the branch (9 November)
+
+- **Dock** `route_ahead` holds on an empty dark street with no opening and no guide: turn the hold into the lit far
+  end (a doorway, the fourth lamp's pool, a figure) per round 1 step 2.
+- **Balcony** 0 of 8 shots in the rule; at the reference view the Mothership guide (72 px) cannot be picked out by
+  eye: light her, or move her nearer.
+- **Lounge** guides are 66–86 px at 6 m: the smallest in any scene; bring the thresholds nearer or the guides forward.
+- **Every scene:** add a **selected** and a **committed** guide-state capture to the shot set (brief §8 of
+  `DOOM_WORLDS_BRIEF.md`): the shoot script taps the guide at beat 50 and shoots the hold and the first walk frame.
+- **Warehouse, Bar, Booth** blocks of `test_doom_views.gd` lack the wall-sightline check the other five have: add it.
+- **Walk legs:** ruling 42 (walk-outs at ≤ 3 m/s, 2..8 bars) lands in the engine this round. Legs longer than
+  about 33 m must be shortened or given a hold: wh up 28.3 m, uw right 22.7 m, lg up 21.8 m, dk up 17.7 m are fine
+  but will now take 5–7 bars; check each walk strip still reads and no hold stares at a wall on the longer walk.
+- **Docs:** `docs/doom/LAUNCH.md` sends the pilot to other worktrees (`MusicGame-envwh`, `MusicGame-env-chill`) and
+  its "Known limits (7 November)" are stale: the lead rewrites it after round 2; scene docs must not claim a match the
+  sheet does not show (the Mothership's "void and ribs match", the Balcony's "moon and city match" were both wrong).
