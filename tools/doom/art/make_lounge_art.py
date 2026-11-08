@@ -103,7 +103,10 @@ def tufted(seed, cols=MUSTARD, cell=32):
     return out
 
 
-def curtain(seed, cols=RED):
+OXBLOOD = ["#12040a", "#2c0a12", "#4a1420", "#6c1e2a", "#94303a"]  # stage D: the painting's curtains are deep oxblood velvet in shadow (the first pass read orange)
+
+
+def curtain(seed, cols=OXBLOOD):
     f = 0.5 + 0.38 * np.sin(XX / S * 2 * math.pi * 8 + noise(8, seed) * 2.0) + (noise(24, seed + 1) - 0.5) * 0.2
     f = f * (0.8 + 0.2 * (1 - YY / S))
     return quant(f * 0.9, cols)
@@ -176,10 +179,13 @@ def street(seed, wall=False):
 
 
 def blue_deck(seed, wall=False):
-    if wall:
-        f = 0.28 + noise(12, seed) * 0.2
+    if wall:  # stage D: deep cobalt glass (the painting's passage is dark glass lit by streaks and an LED strip, not a bright tiled box)
+        f = 0.22 + noise(12, seed) * 0.16
         glass = (XX % 64 > 3) & (YY % 96 > 3)
-        f = np.where(glass, f + 0.22 + 0.25 * (XX % 64) / 64.0, 0.06)
+        streak = (np.abs(((XX + YY // 6) % 64) - 40) < 3) & glass
+        f = np.where(glass, f + 0.08 + 0.14 * (1 - (YY % 96) / 96.0), 0.04)
+        f = np.where(streak, f + 0.35, f)
+        f = np.where((YY % 96 > 88) & (YY % 96 < 92), 0.95, f)  # the LED strip along each mullion's foot
         return quant(f, BLUE)
     f = 0.18 + noise(24, seed) * 0.18
     f = np.where((XX % 64 < 2) | (YY % 64 < 2), 0.06, f)

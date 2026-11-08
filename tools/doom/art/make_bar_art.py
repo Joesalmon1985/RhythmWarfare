@@ -703,7 +703,7 @@ def polish_tiles():
     the red velvet stool and the copper counter with its whisky glass and bottles (the painting's right foreground)."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import make_warehouse_art as wa
-    STONE = ["#0e0a0c", "#1c1416", "#2c2020", "#3e2e2a", "#524038", "#6a5446"]
+    STONE = ["#140e10", "#241a1a", "#362828", "#4a3832", "#604c40", "#7a6250"]  # stage D exposure pass: a notch lighter (lit block faces)
     LIT = ["#140a08", "#2a1610", "#44261a", "#603822", "#7e4c2c", "#9e6436"]
     out = {"bar_brick": wa.tile_brick_wall(201, STONE, "#08060a", moss=True, bh=32, bw=64), "bar_brick_b": wa.tile_brick_wall(202, STONE, "#08060a", moss=True, bh=32, bw=56),
            "bar_brick_c": wa.tile_brick_wall(203, STONE, "#08060a", moss=False, bh=32, bw=72), "bar_brick_lit": wa.tile_brick_wall(204, LIT, "#0c0604", bh=32, bw=64),
@@ -732,19 +732,19 @@ def polish_tiles():
     out["bar_cobble"] = img
     v = 0.25 + (wa.noise(N, N, 210, 8) - 0.5) * 0.2
     img = wa.ramp(v, ["#0e0806", "#1c100a", "#2c1a10", "#3e2616"], 0.7)
-    for y0, h in ((40, 72), (160, 52)):  # the two mains, riveted collars
+    for y0, h in ((96, 64),):  # one main per 2 m tile, riveted collars (transposed below: it runs along the passage, as the painting's mains do)
         t = np.clip((yy - y0) / float(h), 0, 1)
         cyl = 1 - np.abs(t - 0.35) * 1.8
-        pim = wa.ramp(np.clip(cyl + (wa.noise(N, N, 211 + y0, 4) - 0.5) * 0.15, 0, 1), COPPER, 0.8)
+        pim = wa.ramp(np.clip(cyl * 0.78 + (wa.noise(N, N, 211 + y0, 4) - 0.5) * 0.15, 0, 1), COPPER, 0.8)  # stage D: the mains in the ceiling's shadow, lit, not glowing
         m = (yy >= y0) & (yy < y0 + h)
         img[m] = pim[m]
-        for x0 in (60, 188):
+        for x0 in (60,):
             c = (xx >= x0) & (xx < x0 + 14) & (yy >= y0 - 4) & (yy < y0 + h + 4)
             cv = np.clip(1 - np.abs((yy - y0 - h / 2.0) / (h / 2.0 + 4)), 0, 1)
             cim = wa.ramp(cv, COPPER, 0.6)
             img[c] = cim[c]
             img[c & ((yy - y0) % 10 == 3) & ((xx - x0) % 7 == 3)] = hexc("#ffe0a0")
-    out["bar_ceiling"] = img
+    out["bar_ceiling"] = np.ascontiguousarray(img.transpose(1, 0, 2))
     v = 0.35 + 0.18 * np.sin(xx / 14.0 + np.sin(yy / 9.0) * 2) + 0.14 * np.sin(yy / 7.0 + xx / 25.0) + (wa.noise(N, N, 213, 8) - 0.5) * 0.3
     img = wa.ramp(v, ["#04161c", "#0a3a42", "#106a70", "#1c9a9a", "#5ad2c4", "#b0f4e0"], 0.8)
     spark = (wa.noise(N, N, 214, 4) > 0.8) & (BAYER[yy % 4, xx % 4] < 0.6)
@@ -757,6 +757,11 @@ def polish_tiles():
     save("bar_p_stool", rgb, al.astype(float))
     rgb, al = wa.cut((1262, 500, 1672, 941), [(1268, 600), (1300, 560), (1360, 528), (1440, 505), (1540, 500), (1600, 340), (1660, 340), (1672, 340), (1672, 941), (1300, 941), (1290, 760), (1268, 700)], paint=paint)
     save("bar_p_counter", rgb, al.astype(float))
+    # the riveted copper downpipe at the passage's left (stage D: the first pass was a flat drawn plank), collars wider than the shaft
+    pipe = [(452, 0), (528, 0), (528, 60), (518, 60), (518, 140), (528, 140), (528, 165), (518, 165), (518, 405), (528, 405), (528, 430), (518, 430), (518, 605), (462, 605),
+            (462, 430), (452, 430), (452, 405), (462, 405), (462, 165), (452, 165), (452, 140), (462, 140), (462, 60), (452, 60)]
+    rgb, al = wa.cut((450, 0, 530, 606), pipe, paint=paint)
+    save("bar_p_pipe", rgb, al.astype(float))
 
 
 def main():

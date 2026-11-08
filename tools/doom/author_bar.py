@@ -43,7 +43,7 @@ def face(a, b):
 WAYPOINTS = [
     ("wb_arrive", (-6.2, 1.5), (0.0, 1.5), 0, "arrival: the west end of the way from the Floor, facing east (you came in from the Floor); a walk to the reference viewpoint"),
     ("wb_ref", (0.1, -0.5), (0.1, 5.0), 8, "THE reference viewpoint: the south end of the passage looking north: the stairs to the booth ahead, the Floor way left, the bar and the lounge right"),
-    ("wb_bridge", (2.0, 4.3), (2.0, 10.0), 2, "reveal: on the first grate crossing looking up the channel, the bar nook right, the stairs left"),
+    ("wb_bridge", (2.0, 4.3), (3.6, 8.4), 2, "reveal: on the first grate crossing looking up the channel and into the nook (stage D: turned off the channel's end wall)"),
     ("wb_counter", (2.6, 2.8), (6.5, 2.0), 2, "reveal: in the bar looking along the counter, taps, bottles and pendants"),
     ("wb_way", (-4.8, 1.4), (-8.0, 1.4), 2, "reveal: in the way to the Floor looking west at its blue door"),
     ("wb_stairs_foot", (0.1, 5.4), (0.1, 10.0), 0, "ahead, leg 1: the foot of the four stairs, the booth above"),
@@ -83,7 +83,7 @@ for k in ("bridge_1", "bridge_2"):
     STYLE[k] = ("bar_grate", "bar_quay", "bar_ceiling", "#c8b0a0", "bar_quay")
 for k in ("bar_w", "bar_back", "bar_e", "bar_front"):
     STYLE[k] = ("bar_planks", "bar_brick_lit", "bar_ceiling", "#ffc080", "bar_step")
-OWN_TEX = ["bar_brick", "bar_brick_b", "bar_brick_c", "bar_p_stool", "bar_p_counter", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
+OWN_TEX = ["bar_brick", "bar_brick_b", "bar_brick_c", "bar_p_stool", "bar_p_counter", "bar_p_pipe", "bar_brick_lit", "bar_cobble", "bar_planks", "bar_step", "bar_counter_front", "bar_copper", "bar_water", "bar_grate", "bar_quay", "bar_ceiling", "bar_booth_wall", "bar_railing",
            "bar_pendant", "bar_lantern", "bar_crate", "bar_crate_tall", "bar_jug", "bar_stool", "bar_taps", "bar_bottles", "bar_bottles_b", "bar_glass", "bar_pipe_col", "bar_sofa",
            "bar_tapestry", "bar_poster_a", "bar_poster_b", "bar_sign_booth", "bar_sign_floor", "bar_sign_chill", "bar_shelf", "bar_ivy", "bar_pipe_h", "bar_rack", "bar_window", "bar_door_floor",
            "bar_curtain"]
@@ -108,30 +108,34 @@ DECALS = [
     ("bar_d_tapestry_s", "bar_tapestry", (6.95, 7.8), 0.9, 1.8, False), ("bar_d_sign_chill", "bar_sign_chill", (4.8, 8.55), 2.55, 0.42, True),
     ("bar_d_door_floor", "bar_door_floor", (-6.95, 2.25), 0.0, 2.3, True), ("bar_d_pipe_way", "bar_pipe_h", (-4.4, 3.55), 2.5, 0.3, False),
     ("bar_d_ivy_way", "bar_ivy", (-3.2, 3.55), 0.6, 2.3, False),
+    # stage D exposure pass: a second caged lantern on the passage's west wall near the viewer (the painting's wall lantern repeated), with its pool (LIGHTS)
+    ("bar_d_lantern_w2", "bar_lantern", (-1.75, -1.6), 1.55, 0.7, True),
 ]
 THINGS = [  # extra dressing, billboards: id, sprite, point (m), y (centre above the sector's floor), height (m)
     ("bar_pendant_c1", "bar_pendant", (3.8, 1.9), 2.55, 1.0), ("bar_pendant_c2", "bar_pendant", (5.0, 1.9), 2.55, 1.0), ("bar_pendant_c3", "bar_pendant", (6.2, 1.9), 2.55, 1.0),
-    ("bar_pendant_l", "bar_pendant", (4.6, 5.0), 2.6, 1.0), ("bar_pendant_p", "bar_pendant", (1.0, 1.6), 2.7, 0.9), ("bar_pendant_b", "bar_pendant", (-0.3, 4.6), 2.7, 0.9),
+    ("bar_pendant_l", "bar_pendant", (4.6, 5.0), 2.6, 1.0), ("bar_pendant_p", "bar_pendant", (1.0, 1.6), 2.7, 0.9), ("bar_pendant_b", "bar_pendant", (-0.3, 4.6), 2.7, 0.9), ("bar_pendant_s", "bar_pendant", (0.1, 5.8), 2.75, 0.9),
     ("bar_taps", "bar_taps", (4.6, 1.85), 0.3, 0.62), ("bar_bottles", "bar_bottles", (3.7, 1.85), 0.25, 0.5), ("bar_bottles_b", "bar_bottles_b", (6.0, 1.85), 0.25, 0.5),
     ("bar_glass", "bar_glass", (5.5, 2.0), 0.1, 0.2), ("bar_jug", "bar_jug", (4.0, 1.8), 0.25, 0.5),
     ("bar_stool_1", "bar_stool", (3.4, 2.75), 0.45, 0.9), ("bar_stool_2", "bar_stool", (4.4, 2.75), 0.45, 0.9), ("bar_stool_3", "bar_stool", (5.4, 2.75), 0.45, 0.9), ("bar_stool_4", "bar_stool", (6.3, 2.75), 0.45, 0.9),
-    ("bar_col_a", "bar_pipe_col", (-1.62, 3.75), 1.6, 3.2), ("bar_crate_a", "bar_crate_tall", (-1.15, 3.95), 0.55, 1.1), ("bar_crate_b", "bar_crate", (-0.75, 3.95), 0.3, 0.6),
-    ("bar_jug_c", "bar_jug", (-1.15, 3.95), 1.32, 0.45), ("bar_col_b", "bar_pipe_col", (1.3, 0.1), 1.6, 3.2), ("bar_crate_c", "bar_crate", (1.0, -2.5), 0.3, 0.6),
+    ("bar_col_a", "bar_p_pipe", (-1.62, 3.75), 1.6, 3.2), ("bar_crate_a", "bar_crate_tall", (-1.15, 3.95), 0.55, 1.1), ("bar_crate_b", "bar_crate", (-0.75, 3.95), 0.3, 0.6),
+    ("bar_jug_c", "bar_jug", (-1.15, 3.95), 1.32, 0.45), ("bar_col_b", "bar_p_pipe", (1.3, 0.1), 1.6, 3.2), ("bar_crate_c", "bar_crate", (1.0, -2.5), 0.3, 0.6),
     ("bar_sofa", "bar_sofa", (5.9, 5.9), 0.5, 1.0),
     # the painting's foreground (stage D polish): its red velvet stool and the end of its copper counter with the whisky glass, cut from the painting, at the passage's east side
-    ("bar_fg_stool", "bar_p_stool", (0.45, 1.3), 0.38, 0.75), ("bar_fg_counter", "bar_p_counter", (1.05, 1.1), 0.62, 1.25),
+    ("bar_fg_stool", "bar_p_stool", (0.45, 1.3), 0.38, 0.75), ("bar_fg_counter", "bar_p_counter", (1.45, 0.75), 0.62, 1.25),  # 47 degrees right of wb_ref: the Chill-out guide (34 degrees) stays clear
 ]
+WET = {"pass": 0.8, "way_w": 0.8, "chan": 1.0, "bridge": 0.6}  # stage D: the painting's wet cobbles and glittering channel (the weather engine's gloss of the practicals, a dry map)
 BRICKS = ["bar_brick", "bar_brick_b", "bar_brick_c"]  # the stone wall's three variants, one per piece (a hash of its id): no long wall repeats one tile
 LIGHTS = [  # id, point (m), y, radius, colour, strength: warm practical lamps (pendants, lanterns) against cool depths (teal water, blue way, violet passage)
     ("bar_lt_counter", (4.8, 1.9), 2.6, 6.5, "#ffa84a", 1.8), ("bar_lt_front", (3.4, 2.9), 3.0, 5.0, "#ffb860", 1.4),
     ("bar_lt_lounge", (5.0, 5.5), 2.8, 6.0, "#ffb860", 1.6), ("bar_lt_lounge2", (6.2, 7.2), 2.6, 4.5, "#ff9a50", 1.2),
     ("bar_lt_pass", (1.0, 1.5), 2.8, 8.0, "#ffb050", 1.4), ("bar_lt_lantern_w", (-1.5, 4.0), 2.2, 5.5, "#ffa040", 1.6), ("bar_lt_ref", (0.0, -1.0), 2.8, 8.0, "#8a70e0", 1.2),
     ("bar_lt_stairs", (-0.8, 7.0), 2.6, 6.0, "#ffb050", 1.3), ("bar_lt_chan_a", (2.0, 4.3), 0.4, 5.5, "#2ab6b0", 1.4), ("bar_lt_chan_b", (2.0, 8.3), 0.6, 5.5, "#2ab6b0", 1.3),
+    ("bar_lt_lantern_w2", (-1.45, -1.6), 2.0, 5.0, "#ffa040", 1.6), ("bar_lt_stairs_foot", (0.1, 5.8), 2.7, 6.0, "#ffb050", 1.5),
     ("bar_lt_way", (-5.0, 2.2), 2.6, 7.0, "#4a6aff", 1.7), ("bar_lt_booth", (0.1, 9.4), 3.2, 6.0, "#40d0d8", 1.3), ("bar_lt_booth_red", (0.1, 12.0), 2.6, 4.0, "#ff4a3a", 0.9),
 ]
 CAST = {"actors": ["c01", "c02", "c03", "c04", "c05", "c06", "c07"], "silhouettes": ["s01", "s02", "s03"]}
-HOMES = {"c01": (3.8, 0.8), "c02": (4.8, 0.8), "c03": (5.8, 3.05), "c04": (6.4, 3.05), "c05": (6.4, 4.2), "c06": (6.2, 7.6), "c07": (3.4, 7.8)}  # (none stands in the picture at the reference viewpoint but the two far ones in the nook: the counter and the stools are the foreground)
-SILS = {"s01": (6.5, 6.0), "s02": (2.4, 1.0), "s03": (5.0, 0.8)}
+HOMES = {"c01": (3.8, 0.8), "c02": (4.8, 0.8), "c03": (5.8, 3.05), "c04": (6.4, 3.05), "c05": (5.6, 0.6), "c06": (6.1, 1.1), "c07": (2.7, 0.9)}  # stage D: all at the bar, none in the nook (the painting has no patrons)  # (none stands in the picture at the reference viewpoint but the two far ones in the nook: the counter and the stools are the foreground)
+SILS = {"s01": (6.0, 2.6), "s02": (2.4, 1.0), "s03": (5.0, 0.8)}
 
 
 def barriers(d):
@@ -190,6 +194,11 @@ def main():
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, _lift(tint), step
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        wet = WET.get(s["name"], WET.get(s["name"].rstrip("_abc12"), None))
+        if wet is None:
+            s.pop("wet", None)
+        else:
+            s["wet"] = wet
     tex = {k: OWN + k + ".png" for k in OWN_TEX}
     for who in GUIDES:
         for st, n in STATES.items():
@@ -207,7 +216,7 @@ def main():
         s["lip_tex"] = "bar_brick"
         s.pop("name", None)
     d["sky"] = {}
-    d["fog"] = {"color": "#2a1838", "density": 0.032}
+    d["fog"] = {"color": "#3a2448", "density": 0.032}
     d["palette_weight"] = 1.0
     # waypoints
     keep = [w for w in d["waypoints"] if not w["id"].startswith("wb_")]
@@ -253,7 +262,7 @@ def main():
         things.append(t)
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = mz(*at)
-        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
+        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.7, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})  # stage D: wider pools (was 1.3)
     for who, (at, size, lamp) in GUIDES.items():  # the lamp over each guide: a light thing the choice layer brightens (hotspot show.light names it)
         x, z = mz(*lamp)
         things.append({"id": "wb_lamp_" + who, "kind": "light", "at": [x, z], "y": 2.8 if who != "booth" else 3.6, "radius": 3.0, "color": "#ffd9a0", "strength": 0.6})

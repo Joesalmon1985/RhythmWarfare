@@ -114,7 +114,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_1",
@@ -156,7 +157,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_2",
@@ -206,7 +208,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_3",
@@ -256,7 +259,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_4",
@@ -306,7 +310,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_5",
@@ -336,7 +341,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_6",
@@ -366,7 +372,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_7",
@@ -396,7 +403,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_8",
@@ -426,7 +434,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_9",
@@ -456,7 +465,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "0_10",
@@ -486,7 +496,8 @@
    "doom_sector": 0,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "concourse"
+   "room_name": "concourse",
+   "wet": 0.45
   },
   {
    "id": "1_0",
@@ -520,7 +531,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_1",
@@ -554,7 +566,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_2",
@@ -588,7 +601,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_3",
@@ -622,7 +636,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_4",
@@ -656,7 +671,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_5",
@@ -690,7 +706,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_6",
@@ -724,7 +741,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "1_7",
@@ -758,7 +776,8 @@
    "doom_sector": 1,
    "step_tex": "wall_marble",
    "lip_tex": "wall_beam",
-   "room_name": "step_ring"
+   "room_name": "step_ring",
+   "wet": 0.45
   },
   {
    "id": "2_0",
@@ -2772,7 +2791,8 @@
    "doom_sector": 14,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_step_a"
+   "room_name": "ahead_step_a",
+   "wet": 0.6
   },
   {
    "id": "15_0",
@@ -2806,7 +2826,8 @@
    "doom_sector": 15,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_step_b"
+   "room_name": "ahead_step_b",
+   "wet": 0.6
   },
   {
    "id": "16_0",
@@ -2841,14 +2862,16 @@
    "floor_tex": "floor_street",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_street",
-   "light": 0.8,
+   "light": 1.0,
    "tint": "#ebeff8",
    "room": "main",
    "flags": [],
    "doom_sector": 16,
    "step_tex": "wall_stone",
    "lip_tex": "wall_stone",
-   "room_name": "ahead_street"
+   "room_name": "ahead_street",
+   "wet": 0.9,
+   "rain": true
   },
   {
    "id": "17_0",
@@ -3087,14 +3110,15 @@
    "floor_tex": "floor_blue",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_blue",
-   "light": 0.85,
+   "light": 1.0,
    "tint": "#e6edff",
    "room": "main",
    "flags": [],
    "doom_sector": 20,
    "step_tex": "wall_blue",
    "lip_tex": "wall_stone",
-   "room_name": "right_vest"
+   "room_name": "right_vest",
+   "wet": 0.5
   },
   {
    "id": "21_0",
@@ -3129,14 +3153,15 @@
    "floor_tex": "floor_blue",
    "ceil_tex": "ceil_street",
    "wall_tex": "wall_blue",
-   "light": 0.8,
+   "light": 1.0,
    "tint": "#dee6ff",
    "room": "main",
    "flags": [],
    "doom_sector": 21,
    "step_tex": "wall_blue",
    "lip_tex": "wall_blue",
-   "room_name": "right_passage"
+   "room_name": "right_passage",
+   "wet": 0.5
   },
   {
    "id": "22_0",
@@ -6032,6 +6057,66 @@
    "strength": 2.5
   },
   {
+   "id": "lg_lt_dock_key",
+   "kind": "light",
+   "at": [
+    0.0,
+    -10.0
+   ],
+   "y": 2.7,
+   "radius": 4.5,
+   "color": "#dce6ff",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_dock_warm",
+   "kind": "light",
+   "at": [
+    0.0,
+    -8.4375
+   ],
+   "y": 2.2,
+   "radius": 5.2,
+   "color": "#ffc080",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_w",
+   "kind": "light",
+   "at": [
+    -1.875,
+    -10.3125
+   ],
+   "y": 2.2,
+   "radius": 5.9,
+   "color": "#ffd090",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_e",
+   "kind": "light",
+   "at": [
+    1.875,
+    -12.1875
+   ],
+   "y": 2.2,
+   "radius": 5.9,
+   "color": "#c8d8ff",
+   "strength": 2.5
+  },
+  {
+   "id": "lg_lt_st_n",
+   "kind": "light",
+   "at": [
+    -1.25,
+    -13.125
+   ],
+   "y": 2.4,
+   "radius": 5.9,
+   "color": "#ffd090",
+   "strength": 2.5
+  },
+  {
    "id": "lg_lt_floor",
    "kind": "light",
    "at": [
@@ -6099,8 +6184,8 @@
     -2.3125,
     -7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6111,8 +6196,8 @@
     2.3125,
     -7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6123,8 +6208,8 @@
     7.4062,
     2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6135,8 +6220,8 @@
     -7.4062,
     2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6147,8 +6232,8 @@
     7.4062,
     -2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6159,8 +6244,8 @@
     -7.4062,
     -2.3125
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6171,8 +6256,8 @@
     -2.3125,
     7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6183,8 +6268,8 @@
     2.3125,
     7.4062
    ],
-   "y": 1.7,
-   "size": 0.95,
+   "y": 1.6,
+   "size": 1.25,
    "emissive": true
   },
   {
@@ -6330,6 +6415,42 @@
    ],
    "y": 0.0,
    "size": 2.6
+  },
+  {
+   "id": "lg_st_lamp_w",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    -2.4375,
+    -10.3125
+   ],
+   "y": 2.2,
+   "size": 0.8,
+   "emissive": true
+  },
+  {
+   "id": "lg_st_lamp_e",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    2.4375,
+    -12.1875
+   ],
+   "y": 2.2,
+   "size": 0.8,
+   "emissive": true
+  },
+  {
+   "id": "lg_st_lamp_n",
+   "kind": "decal",
+   "sprite": "deco_sconce",
+   "at": [
+    -1.25,
+    -13.6875
+   ],
+   "y": 2.4,
+   "size": 0.8,
+   "emissive": true
   }
  ],
  "homes": [],
@@ -7025,5 +7146,9 @@
    ]
   },
   "note": "authored by tools/doom/author_lounge.py; routes are lists of waypoint ids (via points included); hold_bars on a waypoint is the still hold at a choice window"
+ },
+ "weather": {
+  "rain": 0.8,
+  "wind": 6
  }
 }

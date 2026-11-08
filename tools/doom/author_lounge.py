@@ -59,17 +59,19 @@ style("rug_stripe_a rug_stripe_b", "floor_rug_cream", "wall_sofa", "ceil_beam", 
 style("rug_in", "floor_rug_orange", "wall_sofa", "ceil_beam", "#ffe0b0", step="wall_table", light=0.95)
 style("table", "floor_table", "wall_table", "ceil_beam", "#ffe8c0", step="wall_table", light=1.0)
 style("ahead_step_a ahead_step_b", "floor_marble", "wall_stone", "ceil_street", "#c8d4e8", step="wall_stone", lip="wall_stone", light=0.85)
-style("ahead_street", "floor_street", "wall_street", "ceil_street", "#b8c8e8", step="wall_stone", lip="wall_stone", light=0.8)
+style("ahead_street", "floor_street", "wall_street", "ceil_street", "#b8c8e8", step="wall_stone", lip="wall_stone", light=1.0)
 style("left_vest", "floor_wood", "wall_wood", "ceil_beam", "#ffd0a0", step="wall_wood", lip="wall_stone", light=0.9)
 style("left_bar", "floor_wood", "wall_wood", "ceil_beam", "#ffc890", step="wall_copper", lip="wall_stone", light=0.9)
 style("left_counter", "floor_table", "wall_copper", "ceil_beam", "#ffd8a8", step="wall_copper", light=1.0)
-style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#a8c0ff", step="wall_blue", lip="wall_stone", light=0.85)
-style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#8ca8ff", step="wall_blue", lip="wall_blue", light=0.8)
+style("right_vest", "floor_blue", "wall_blue", "ceil_street", "#a8c0ff", step="wall_blue", lip="wall_stone", light=1.0)
+style("right_passage", "floor_blue", "wall_blue", "ceil_street", "#8ca8ff", step="wall_blue", lip="wall_blue", light=1.0)
 style("niche_e niche_w niche_s niche_se niche_sw", "floor_curtain", "wall_curtain", "ceil_beam", "#ffc8a0", step="wall_curtain", lip="wall_stone", light=0.85)
 OWN_TEX = ["wall_stone", "wall_marble", "wall_sofa", "wall_curtain", "wall_wood", "wall_copper", "wall_table", "wall_street", "wall_blue", "wall_beam",
            "floor_marble", "floor_rug_red", "floor_rug_cream", "floor_rug_orange", "floor_sofa", "floor_table", "floor_wood", "floor_street", "floor_blue", "floor_curtain",
            "ceil_beam", "ceil_street", "thing_plant", "thing_lamp", "thing_vase", "thing_cushion", "thing_cushion_b",
            "deco_studs", "deco_vinyl", "deco_sconce", "deco_bottles", "deco_beads", "wall_stone_b", "wall_stone_c", "lg_p_sofa", "lg_p_palm_l", "lg_p_palm_r"]
+RAIN_IN = ("ahead_street",)
+WET = {"concourse": 0.45, "step_ring": 0.45, "ahead_street": 0.9, "ahead_step_a": 0.6, "ahead_step_b": 0.6, "right_vest": 0.5, "right_passage": 0.5}  # stage D: the painting's polished marble and the rain street (gloss)
 STONES = ["wall_stone", "wall_stone_b", "wall_stone_c"]  # the stone's three variants, one per piece (a hash of its id): no wall repeats one tile
 GUIDE_OWN = {"dock": OWN, "floor": OWN, "bar": SHARED}  # where each guide's sprite set lives
 
@@ -128,13 +130,16 @@ LIGHTS = [  # id, doom point, y, radius, colour, strength   (warm lamps in the h
     ("lg_lt_ref", (0, -200), 3.4, 8.0, "#ffc070", 1.2),
     ("lg_lt_dock", (0, 330), 3.0, 8.0, "#8cacd8", 1.5), ("lg_lt_dock2", (0, 250), 3.0, 6.0, "#9ab4d8", 1.1),
     ("lg_lt_bar", W("nw", 0, 110), 2.8, 7.0, "#ffa040", 1.8), ("lg_lt_bar2", W("nw", 60, 150), 2.6, 5.0, "#ffb860", 1.4),
+    # stage D: the Dock guide is lit from the street lamp over him and the hub's amber behind the viewer (the first pass left him a silhouette in the doorway)
+    ("lg_lt_dock_key", W("n", 0, 80), 2.7, 3.5, "#dce6ff", 1.8), ("lg_lt_dock_warm", W("n", 0, 30), 2.2, 4.0, "#ffc080", 1.4),
+    ("lg_lt_st_w", (-60, 330), 2.2, 4.5, "#ffd090", 1.6), ("lg_lt_st_e", (60, 390), 2.2, 4.5, "#c8d8ff", 1.6), ("lg_lt_st_n", (-40, 420), 2.4, 4.5, "#ffd090", 1.4),
     ("lg_lt_floor", W("ne", 0, 100), 2.8, 8.0, "#3c64ff", 1.7), ("lg_lt_floor2", W("ne", 0, 40), 2.6, 5.0, "#5a80ff", 1.3),
 ]
 DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, height m, emissive
-    ("lg_sc_n1", "deco_sconce", (-74, 237), 1.7, 0.95, True), ("lg_sc_n2", "deco_sconce", (74, 237), 1.7, 0.95, True),
-    ("lg_sc_e1", "deco_sconce", (237, -74), 1.7, 0.95, True), ("lg_sc_w1", "deco_sconce", (-237, -74), 1.7, 0.95, True),
-    ("lg_sc_e2", "deco_sconce", (237, 74), 1.7, 0.95, True), ("lg_sc_w2", "deco_sconce", (-237, 74), 1.7, 0.95, True),
-    ("lg_sc_s1", "deco_sconce", (-74, -237), 1.7, 0.95, True), ("lg_sc_s2", "deco_sconce", (74, -237), 1.7, 0.95, True),
+    ("lg_sc_n1", "deco_sconce", (-74, 237), 1.6, 1.25, True), ("lg_sc_n2", "deco_sconce", (74, 237), 1.6, 1.25, True),
+    ("lg_sc_e1", "deco_sconce", (237, -74), 1.6, 1.25, True), ("lg_sc_w1", "deco_sconce", (-237, -74), 1.6, 1.25, True),
+    ("lg_sc_e2", "deco_sconce", (237, 74), 1.6, 1.25, True), ("lg_sc_w2", "deco_sconce", (-237, 74), 1.6, 1.25, True),
+    ("lg_sc_s1", "deco_sconce", (-74, -237), 1.6, 1.25, True), ("lg_sc_s2", "deco_sconce", (74, -237), 1.6, 1.25, True),
     ("lg_studs_nw1", "deco_studs", W("nw", 98, -2), 0.9, 1.9, False), ("lg_studs_nw2", "deco_studs", W("nw", -98, -2), 0.9, 1.9, False),
     ("lg_studs_ne1", "deco_studs", W("ne", 98, -2), 0.9, 1.9, False), ("lg_studs_ne2", "deco_studs", W("ne", -98, -2), 0.9, 1.9, False),
     ("lg_studs_se1", "deco_studs", W("se", 94, -2), 0.9, 1.9, False), ("lg_studs_se2", "deco_studs", W("se", -94, -2), 0.9, 1.9, False),
@@ -142,6 +147,9 @@ DECALS = [  # id, sprite, doom point (a metre of the wall at most), bottom m, he
     ("lg_bottles", "deco_bottles", W("nw", -40, 188), 1.2, 1.3, True), ("lg_vinyl", "deco_vinyl", W("nw", 50, 188), 1.7, 1.0, False),
     ("lg_beads_w", "deco_beads", (-281, 0), 0.0, 2.6, False), ("lg_beads_e", "deco_beads", (281, 0), 0.0, 2.6, False),
     ("lg_beads_s", "deco_beads", (0, -281), 0.0, 2.6, False),
+    # stage D: the street's wall lamps (the painting's rain street is lined with them), each with a cool pool (LIGHTS)
+    ("lg_st_lamp_w", "deco_sconce", (-78, 330), 2.2, 0.8, True), ("lg_st_lamp_e", "deco_sconce", (78, 390), 2.2, 0.8, True),
+    ("lg_st_lamp_n", "deco_sconce", (-40, 438), 2.4, 0.8, True),
 ]
 
 
@@ -191,6 +199,14 @@ def main():
         s["step_tex"], s["lip_tex"] = step, lip
         s["room"] = "main"
         s["light"] = round(light if light is not None else min(1.0, max(LIGHT_FLOOR, float(s["light"]) * LIGHT_GAIN)), 3)
+        if nm in RAIN_IN:
+            s["rain"] = True
+        else:
+            s.pop("rain", None)
+        if nm in WET:
+            s["wet"] = WET[nm]
+        else:
+            s.pop("wet", None)
         s["room_name"] = nm  # (readable by the Magic rave's authoring; the engine ignores unknown keys)
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):
             used[s[k]] = True
@@ -208,6 +224,7 @@ def main():
     barriers(d)
     d["sky"] = {}
     d["fog"] = {"color": "#2a1608", "density": 0.016}
+    d["weather"] = {"rain": 0.8, "wind": 6}  # stage D: the painting's rain in the street beyond the Dock door (only `ahead_street` lets it in: RAIN_IN)
     d["palette_weight"] = 1.0
     keep = [w for w in d["waypoints"] if not w["id"].startswith("lg_")]
     for wid, at, look, hold, _why in WAYPOINTS:
