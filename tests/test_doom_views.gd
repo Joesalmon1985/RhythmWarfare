@@ -1752,3 +1752,52 @@ func test_balcony_railing_voids_decals_and_the_art_are_in_the_map() -> void:
 		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
 			assert_true(textures.has("guide_%s_%s" % [stem, st]), "balcony: guide sprite %s_%s" % [stem, st])
 			assert_true(FileAccess.file_exists("res://assets/story/doom_balcony/textures/guide_%s_%s.png" % [stem, st]), "balcony: guide file %s_%s exists" % [stem, st])
+
+
+# ---- Per-world music (docs/doom/MUSIC.md): the track-scene entries of the eight Doom scenes ----
+const MUSIC_SCENES := ["doom_warehouse", "doom_bar", "doom_lounge", "doom_booth", "doom_dock", "doom_balcony", "doom_mothership", "doom_underworld"]
+
+
+func test_music_the_main_path_has_a_track_scene_entry_for_each_of_the_eight_doom_scenes() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/run/track_scenes.json"))
+	var main: Dictionary = doc["paths"]["main"]
+	var tracks := {}
+	for sid in MUSIC_SCENES:
+		assert_true(main.has(sid), "music: track_scenes.json paths.main has an entry for %s" % sid)
+		if main.has(sid):
+			tracks[str(main[sid]["track"])] = true
+	assert_eq(tracks.size(), 8, "music: the eight worlds name eight different tracks")
+	var run: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/run/doom/run.json"))
+	var ids: Array = []
+	for w in run["worlds"]:
+		ids.append(str(w["id"]))
+	for sid in ids:
+		assert_true(sid in MUSIC_SCENES, "music: %s (a world of the overlay) is one of the eight scenes with music" % sid)
+	assert_eq(ids.size(), MUSIC_SCENES.size(), "music: the overlay has exactly the eight worlds")
+
+
+func test_music_each_doom_scene_names_a_pack_that_exists_and_plays_as_a_track_scene() -> void:
+	var dir := OS.get_environment("RW_TRACKS_DIR")
+	if dir == "":
+		print("  [SKIPPED, counted] music: RW_TRACKS_DIR is not set, so the pack checks of the eight Doom scenes did not run")
+		assert_true(true, "music: pack checks skipped (RW_TRACKS_DIR unset); the entry check above still ran")
+		return
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/run/track_scenes.json"))
+	var main: Dictionary = doc["paths"]["main"]
+	for sid in MUSIC_SCENES:
+		var tr: String = str(main[sid]["track"])
+		assert_true(FileAccess.file_exists(dir.path_join(tr).path_join("track.json")), "music: %s names pack %s, which exists in RW_TRACKS_DIR" % [sid, tr])
+	OS.set_environment("RW_DOOM_WORLDS", "1")
+	var d := RunData.load_default()
+	OS.set_environment("RW_DOOM_WORLDS", "")
+	var was := RunTrackScenes.enabled
+	RunTrackScenes.enabled = 1
+	RunTrackScenes.attach(d)
+	RunTrackScenes.enabled = was
+	assert_true(d.track_scenes != null, "music: the doom run has track scenes attached")
+	assert_eq(d.errors.size(), 0, "music: the doom run loads with no errors (%s)" % str(d.errors))
+	for sid in MUSIC_SCENES:
+		var plan: Dictionary = d.track_scenes.plan_of(sid) if d.track_scenes != null else {}
+		assert_false(plan.is_empty(), "music: %s is a track scene" % sid)
+		if not plan.is_empty():
+			assert_eq(str(plan["pack"].id), str(main[sid]["track"]), "music: %s plays %s" % [sid, main[sid]["track"]])
