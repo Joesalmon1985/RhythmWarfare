@@ -875,7 +875,7 @@
    "ceil_tex": "sky",
    "wall_tex": "bc_wall_brick_b",
    "light": 1.0,
-   "tint": "#dbcbe5",
+   "tint": "#faf0f5",
    "room": "main",
    "flags": [],
    "doom_sector": 19,
@@ -1744,10 +1744,10 @@
    "sprite": "bc_window_glow",
    "at": [
     3.4,
-    -8.0
+    -8.05
    ],
-   "y": 0.8,
-   "size": 2.2,
+   "y": 1.0,
+   "size": 1.4,
    "emissive": true
   },
   {
@@ -1783,7 +1783,8 @@
     -18.8
    ],
    "y": 2.4,
-   "size": 3.4
+   "size": 4.2,
+   "emissive": true
   },
   {
    "id": "bc_dc_tower_door",
@@ -1794,7 +1795,7 @@
     -18.8
    ],
    "y": 0.0,
-   "size": 2.3,
+   "size": 2.4,
    "emissive": true
   },
   {
@@ -2679,12 +2680,12 @@
    "kind": "light",
    "at": [
     -5.0,
-    2.0
+    1.0
    ],
    "y": 3.0,
-   "radius": 5.2,
+   "radius": 3.9,
    "color": "#ff8a40",
-   "strength": 2.5
+   "strength": 2.4
   },
   {
    "id": "bc_lt_alley_door",
@@ -3028,7 +3029,7 @@
     -1.8,
     -3.8
    ],
-   "yaw": 62.4,
+   "yaw": 30.8,
    "sector": "0_0",
    "hold_bars": 2
   },
@@ -3038,7 +3039,7 @@
     1.9,
     -6.0
    ],
-   "yaw": -95.6,
+   "yaw": -45.7,
    "sector": "0_0",
    "hold_bars": 2
   },
@@ -3056,7 +3057,7 @@
    "id": "bc_stair_foot",
    "at": [
     -5.0,
-    3.2
+    4.5
    ],
    "yaw": -180.0,
    "sector": "19_0",
@@ -3065,7 +3066,7 @@
   {
    "id": "bc_cabin_in",
    "at": [
-    7.2,
+    8.1,
     -5.0
    ],
    "yaw": -90.0,
@@ -3522,7 +3523,7 @@
  },
  "fog": {
   "color": "#1c2848",
-  "density": 0.016
+  "density": 0.008
  },
  "palette_weight": 1.0,
  "scene": {

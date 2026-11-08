@@ -559,6 +559,14 @@ def p_floor_grate2():
 TEXTURES.update({"bc_floor_grate": p_floor_grate2})
 
 
+def p_alley_door2():
+    """Round 2: the alley's end, the club's side door open on the dance floor: a brighter core (the light the alley is lit by), blue to white, magenta and violet beams."""
+    return dk.to_img(_door_glow(561, ("#141a4a", "#2a3a9a", "#4a6ae0", "#8aa8ff", "#d8e4ff"), ((40, 14, "#ff7ac0"), (90, -12, "#b890ff"))))
+
+
+DECALS.update({"bc_alley_door": p_alley_door2})
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, fn in {**TEXTURES, **PROPS, **DECALS}.items():

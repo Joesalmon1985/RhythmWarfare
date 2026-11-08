@@ -1598,7 +1598,7 @@ func test_balcony_map_loads_clean_with_routes_holds_and_the_reference_viewpoint(
 	for s in m.sectors:
 		if bool(s.get("void", false)):
 			voids += 1
-	assert_eq(voids, 4, "the four pits round the roof are voids")
+	assert_eq(voids, 5, "the five pits of the drop (four round the bridge, one beyond the tower) are voids")
 
 
 func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
@@ -1607,6 +1607,10 @@ func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the
 		fail("balcony map did not load")
 		return
 	var pose := _bc_pose(m, "bc_ref")
+	var good: Array = _doom_run().nodes["doom_balcony"]["rail"]["good"]
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
+	assert_true(pitch < 0.0 and pitch >= -35.0, "balcony: round 2, the choice viewpoint holds a small downward pitch (%.1f)" % pitch)
+	pose["pitch"] = pitch  # the guides are checked at the pose the rail holds through the window
 	for asp in ASPECTS:
 		var view: Vector2 = ASPECTS[asp]
 		var rects := {}
@@ -1623,6 +1627,8 @@ func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the
 		for i in BC_GUIDES.size():
 			for j in range(i + 1, BC_GUIDES.size()):
 				assert_false((rects[BC_GUIDES[i]] as Rect2).intersects(rects[BC_GUIDES[j]]), "balcony %s: %s and %s do not overlap" % [asp, BC_GUIDES[i], BC_GUIDES[j]])
+				var gap := absf((rects[BC_GUIDES[i]] as Rect2).get_center().x - (rects[BC_GUIDES[j]] as Rect2).get_center().x)
+				assert_true(gap >= 60.0, "balcony %s: %s and %s read at least 60 px apart at the pitched pose (%.0f)" % [asp, BC_GUIDES[i], BC_GUIDES[j], gap])
 
 
 func test_balcony_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:

@@ -55,11 +55,11 @@ WAYPOINTS = [
     ("bc_ref_back", (1.1, 0.7), (0.3, 16), 0, "recovery: a stumble back into the corner"),
     ("bc_sw_corner", (-1.1, 1.0), (0.3, 16), 0, "recovery: along the south wall"),
     ("bc_bridge_view", (0.0, 6.5), (0.0, 17.5), 2, "reveal: up the deck at the bridge, the drop either side and the mothership guide on the platform"),
-    ("bc_stair_view", (-1.8, 3.8), (-6.0, 6.0), 2, "reveal: the deck's west side looking over the railing at the brick stair and the landing"),
-    ("bc_cabin_view", (1.9, 6.0), (7.0, 5.5), 2, "reveal: the deck's east side looking through the open cabin door at the lit control room"),
+    ("bc_stair_view", (-1.8, 3.8), (-5.5, 10.0), 2, "reveal: the deck's west side looking over the railing at the brick stair and the landing"),
+    ("bc_cabin_view", (1.9, 6.0), (6.0, 10.0), 2, "reveal: the deck's east side looking through the open cabin door at the lit control room"),
     ("bc_bridge_end", (0.0, 15.2), (0.4, 19), 1, "THRESHOLD ahead (Mothership): the far end of the bridge facing the tower's lit violet door under the lace dome; the world transition happens here"),
-    ("bc_stair_foot", (-5.0, -3.2), (-5.0, -7), 1, "THRESHOLD left (Floor): down the brick stair and along the alley, before the club's lit side door; the world transition happens here"),
-    ("bc_cabin_in", (7.2, 5.0), (10.5, 5.0), 1, "THRESHOLD right (Booth): through the cabin, at its open back door onto the lit stairwell down; the world transition happens here"),
+    ("bc_stair_foot", (-5.0, -4.5), (-5.0, -7), 1, "THRESHOLD left (Floor): down the brick stair and along the alley, before the club's lit side door; the world transition happens here"),
+    ("bc_cabin_in", (8.1, 5.0), (10.5, 5.0), 1, "THRESHOLD right (Booth): through the cabin, at its open back door onto the lit stairwell down; the world transition happens here"),
     # via points (corners of the polyline moves)
     ("bc_v_a1", (0.0, 4.5), (0.0, 8), 0, "via: the deck, mid way"),
     ("bc_v_a2", (-0.8, 5.0), (-3, 5.5), 0, "via: the deck's middle, before the stair view"),
@@ -101,7 +101,7 @@ STYLE = {
     "b_c": ("bc_floor_grate", "bc_wall_steel", "bc_ceil", "#e0e8ff", "bc_wall_steel"),
     "bridge": ("bc_floor_grate", "bc_wall_steel", "bc_ceil", "#e0e8ff", "bc_wall_steel"),
     "isle": ("bc_floor_wet", "bc_wall_conc", "bc_ceil", "#ece4ff", "bc_wall_steel"),
-    "alley": ("bc_floor_alley", "bc_wall_brick_b", "bc_ceil", "#c8b0d8", "bc_wall_steel"),
+    "alley": ("bc_floor_alley", "bc_wall_brick_b", "bc_ceil", "#f8e8f0", "bc_wall_steel"),
     "cback": ("bc_floor_cabin", "bc_wall_steel", "bc_ceil", "#ffc080", "bc_wall_steel"),
     "vw1": ("bc_floor_conc", "bc_facade_a", "bc_ceil", "#e0e8ff", "bc_facade_a"),
     "vw2": ("bc_floor_conc", "bc_facade_b", "bc_ceil", "#e0e8ff", "bc_facade_b"),
@@ -125,9 +125,9 @@ THINGS = [  # round 2: no tower billboards in the drop (they hid the moon and wa
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y above that sector's floor, emissive (the wall's own yaw: StoryMap places it)
 DECALS = [  # round 2: the pink equaliser graffiti is gone (the lead's list); the drop's far walls are lit facades: shutters at the yard's floor, single windows in rows above
-    ("bc_dc_window", "bc_window_glow", (3.3, 1.7), 1.8, 0.9, True), ("bc_dc_window_b", "bc_window_glow", (3.4, 8.0), 2.2, 0.8, True),  # (the cabin's lit windows; round 2: the pipe decal gives way to the second)
+    ("bc_dc_window", "bc_window_glow", (3.3, 1.7), 1.8, 0.9, True), ("bc_dc_window_b", "bc_window_glow", (3.4, 8.05), 1.4, 1.0, True),  # (the cabin's lit windows; round 2: the pipe decal gives way to the second)
     ("bc_dc_led_a", "bc_led", (4.4, 3.0), 0.22, 2.4, True), ("bc_dc_led_b", "bc_led", (8.85, 6.2), 0.22, 2.4, True),
-    ("bc_dc_lace", "bc_lace", (0.0, 18.8), 3.4, 2.4, False), ("bc_dc_tower_door", "bc_tower_door", (0.5, 18.8), 2.3, 0.0, True), ("bc_dc_led_c", "bc_led", (-1.2, 18.8), 0.2, 2.0, True),
+    ("bc_dc_lace", "bc_lace", (0.0, 18.8), 4.2, 2.4, True), ("bc_dc_tower_door", "bc_tower_door", (0.5, 18.8), 2.4, 0.0, True), ("bc_dc_led_c", "bc_led", (-1.2, 18.8), 0.2, 2.0, True),
     ("bc_dc_alley_door", "bc_alley_door", (-5.0, -6.9), 2.6, 0.0, True),
     ("bc_dc_stair_glow", "bc_stair_glow", (10.4, 5.0), 2.3, 0.0, True),
     ("bc_dc_shut_a", "bc_shutters", (-6.0, 32.9), 3.4, 0.0, True), ("bc_dc_shut_b", "bc_shutters", (5.5, 32.9), 3.4, 0.0, True), ("bc_dc_shut_c", "bc_shutters", (-15.9, 26.0), 3.0, 0.0, True),
@@ -165,7 +165,7 @@ LIGHTS = [  # id, point (m), y, radius, colour, strength   (moon blue over the d
     ("bc_lt_window", (3.0, 1.7), 1.8, 4.5, "#a050ff", 1.5), ("bc_lt_window_b", (2.9, 8.0), 1.8, 3.5, "#a050ff", 1.5), ("bc_lt_puddle", (1.8, 1.2), 0.6, 4.0, "#d03aa0", 1.2),
     ("bc_lt_bridge", (0.0, 13.0), 2.6, 5.0, "#ffb060", 1.4), ("bc_lt_isle", (-0.7, 15.4), 2.8, 4.0, "#ffe0c0", 1.8), ("bc_lt_moth_rim", (-0.4, 18.2), 2.2, 3.5, "#c090ff", 1.8),
     # stage D polish: the alley's lamps and its side door's blue spill, the stairwell's warm glow, more moonlight and puddle colour on the deck
-    ("bc_lt_alley", (-5.0, -2.0), 3.0, 4.0, "#ff8a40", 1.4), ("bc_lt_alley_door", (-5.0, -6.2), 1.4, 5.0, "#5a7aff", 1.8),
+    ("bc_lt_alley", (-5.0, -1.0), 3.0, 3.0, "#ff8a40", 1.0), ("bc_lt_alley_door", (-5.0, -6.2), 1.4, 5.0, "#5a7aff", 1.8),
     ("bc_lt_stairwell", (10.0, 5.0), 1.6, 4.5, "#ffa850", 1.8), ("bc_lt_deck_s", (0.5, 3.0), 3.5, 5.0, "#6a90e0", 1.2),
     ("bc_lt_deck_red", (2.0, 4.5), 0.8, 4.0, "#ff3a3a", 1.0), ("bc_lt_deck_cyan", (-1.5, 6.5), 0.8, 4.0, "#3ad0ff", 1.0),
     ("bc_lt_tower_door", (0.5, 18.0), 1.4, 4.5, "#a070ff", 1.8),
@@ -343,7 +343,7 @@ def main():
     barriers(d, names)
     d["sky"] = dict(SKY)
     d["weather"] = {"rain": WEATHER["rain"], "wind": WEATHER["wind"], "drips": [dict(x) for x in WEATHER["drips"]]}
-    d["fog"] = {"color": "#1c2848", "density": 0.016}
+    d["fog"] = {"color": "#1c2848", "density": 0.008}  # round 2: thinner, so the far lit windows keep their light
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("bc_")]
