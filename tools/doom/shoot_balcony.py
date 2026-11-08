@@ -3,7 +3,7 @@
 (1600x720), written as ONE contact sheet (docs/shots/doom/balcony/contact.jpg, under 1 MB) and one walk strip of the three routes (walk_strip.jpg). No per-frame dump is kept.
 
     python3 tools/doom/shoot_balcony.py [out_dir]            default out_dir docs/shots/doom/balcony     (needs a window: the real run scene, like tools/doom/shoot_scene.sh)
-    RW_SHOTS=<regex> only the shots whose name matches.   RW_KEEP=<dir> also keeps each full-size shot there (for frame_check.py; do not commit them).
+    RW_SHOTS=<regex> only the shots whose name matches ("state": the guide-state row).   RW_KEEP=<dir> also keeps each full-size shot there (for frame_check.py; do not commit them).
 
 The camera poses of the walks come from tools/doom/walk_balcony.gd (the polyline moves of the balcony's rail, the eye's real height); each pose is shot on the real run scene (RW_STORY_CAM=@x:z:yaw:pitch:eye).
 """
@@ -18,13 +18,15 @@ from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import shoot_scene as ss  # noqa: E402
+import guide_states as gs  # noqa: E402
 
 ROOT = ss.ROOT
 SCENE = "doom_balcony"
 PAINTING = os.path.join(ROOT, "art", "reference", "doom_worlds", "Rainy industrial rooftop, three musical paths-8.png")
-SHOTS = [("ref", "bc_ref"), ("hold_bridge", "bc_bridge_view"), ("hold_stair", "bc_stair_view"), ("hold_cabin", "bc_cabin_view"), ("route_ahead", "bc_bridge_end"), ("route_left", "bc_stair_foot"),
+SHOTS = [("ref", "bc_ref,0,-4"), ("hold_bridge", "bc_bridge_view"), ("hold_stair", "bc_stair_view"), ("hold_cabin", "bc_cabin_view"), ("route_ahead", "bc_bridge_end"), ("route_left", "bc_stair_foot"),
          ("route_right", "bc_cabin_in"), ("arrive", "bc_arrive")]
 ROUTES = ["up", "left", "right"]
+STATE_TAP = ("bc_ref,0,-4", "doom_balcony.exit_mothership")  # round 2: the guide-state captures (tools/doom/guide_states.py): the reference viewpoint and the guide tapped
 RATE = 0.5
 
 
@@ -91,7 +93,7 @@ def main(out):
         pt = Image.open(PAINTING).convert("RGB")
         row = Image.new("RGB", (2 * W, 360 + 16 + 16), (12, 12, 20))
         row.paste(label(pt, "the painting (Rainy industrial rooftop, three musical paths-8)", W, 360), (0, 0))
-        row.paste(label(shots[("ref", "16x9")], "ref 16:9 (bc_ref, choice viewpoint, 8 bars still)", W, 360), (W, 0))
+        row.paste(label(shots[("ref", "16x9")], "ref 16:9 (bc_ref, choice viewpoint, 8 bars still, pitched -4 as the rail holds it)", W, 360), (W, 0))
         rows.append(row)
         rows.append(None)  # (the 20:9 ref goes in the next pair with a blank on the left)
     names = [n for n, _ in SHOTS]
@@ -110,6 +112,14 @@ def main(out):
         r20.paste(label(shots[("ref", "20x9")], "ref 20:9", W, 288), (0, 0))
         rows[rows.index(None)] = r20
     rows = [r for r in rows if r is not None]
+    if not only or re.search(only, "state"):  # round 2: the selected and committed guide states and the first walk frame, one row under the shots
+        states = gs.shoot(SCENE, None, STATE_TAP[1], tmp)  # (the real rail: it holds at the choice viewpoint through the window)
+        if states:
+            row = Image.new("RGB", (2 * W, 240 + 16), (12, 12, 20))
+            for k, (nm, im) in enumerate(states):
+                row.paste(label(im, "%s (%s tapped)" % (nm, STATE_TAP[1]), 2 * W // 3, 240), (k * (2 * W // 3), 0))
+            rows.append(row)
+            print("states", len(states))
     if rows:
         sheet = Image.new("RGB", (2 * W, sum(r.height for r in rows)), (12, 12, 20))
         y = 0

@@ -19,15 +19,15 @@ GUIDE = {  # name: (guide thing, route node, sprite stem)
 
 
 def _rail(P):
+    # round 2: one reveal, then the choice viewpoint. The run moves the rail one place per passed block and holds the choice only when the camera stands on the choice place
+    # by the window (beat 49): round 1's four-place loop was still walking when the window opened (a real run, the bot, RW_RUN_VIRTUAL). The other reveals stay in the map as views.
     good = [
         P("dk_street_view", bars=4, hold=2, via=["dk_v_s1"]),
-        P("dk_door_view", bars=4, hold=2, via=["dk_v_a1"]),
-        P("dk_yard_view", bars=4, hold=2, via=["dk_v_u1"]),
         P("dk_ref", bars=4, hold=8, choice=True, via=["dk_v_r1"]),
     ]
     bad = [P("dk_ref_back", "queasy", "walk", 2), P("dk_sw_corner", "queasy", "stagger", 3)]
     routes = {
-        "up": P("dk_moth", "dancer", bars=6, hold=1, via=["dk_v_s1", "dk_v_s2", "dk_v_s3"]),
+        "up": P("dk_moth", "dancer", bars=5, hold=1, via=["dk_v_s1"]),
         "left": P("dk_floor_door", "dancer", bars=5, hold=1, via=["dk_v_a1", "dk_v_w1", "dk_v_w2", "dk_v_d"]),
         "right": P("dk_under", "dancer", bars=5, hold=1, via=["dk_v_u1", "dk_v_u2", "dk_v_u3"]),
         "stumble": P("dk_ref", "recovered", "stagger", bars=3, via=["dk_ref_back", "dk_sw_corner"]),

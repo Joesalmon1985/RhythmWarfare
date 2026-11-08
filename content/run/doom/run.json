@@ -303,26 +303,6 @@
        "hold_bars": 2
       },
       {
-       "to": "bt_window_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "bt_v_a2"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "bt_dock_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "bt_v_a3"
-       ],
-       "hold_bars": 2
-      },
-      {
        "to": "bt_ref",
        "role": "dancer",
        "style": "walk",
@@ -848,26 +828,6 @@
        "hold_bars": 2
       },
       {
-       "to": "dk_door_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "dk_v_a1"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "dk_yard_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "dk_v_u1"
-       ],
-       "hold_bars": 2
-      },
-      {
        "to": "dk_ref",
        "role": "dancer",
        "style": "walk",
@@ -905,11 +865,9 @@
        "to": "dk_moth",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 5,
        "via": [
-        "dk_v_s1",
-        "dk_v_s2",
-        "dk_v_s3"
+        "dk_v_s1"
        ],
        "hold_bars": 1
       },
@@ -1348,26 +1306,6 @@
        "hold_bars": 2
       },
       {
-       "to": "bc_stair_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "bc_v_a2"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "bc_cabin_view",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "bc_v_a3"
-       ],
-       "hold_bars": 2
-      },
-      {
        "to": "bc_ref",
        "role": "dancer",
        "style": "walk",
@@ -1376,7 +1314,8 @@
         "bc_v_a4"
        ],
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -4
       }
      ],
      "bad": [

@@ -1,14 +1,14 @@
-MOVE bc_stair_foot via=6 length=12.0
+MOVE bc_stair_foot via=6 length=17.0
 WALK left 0 t=0.00 @0.500:-1.900:0.8:0.0:1.600 sector=0_0 ground=0.000 above=1.60 still=0.00
-WALK left 1 t=0.63 @0.392:-2.158:10.3:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
-WALK left 2 t=1.25 @0.096:-2.864:22.2:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
-WALK left 3 t=1.88 @-0.347:-3.920:33.7:0.0:1.597 sector=0_0 ground=0.000 above=1.60 still=0.00
-WALK left 4 t=2.51 @-1.040:-5.041:55.3:0.0:1.584 sector=0_0 ground=0.000 above=1.58 still=0.00
-WALK left 5 t=3.13 @-2.595:-5.308:85.6:0.0:1.574 sector=0_0 ground=0.000 above=1.57 still=0.00
-WALK left 6 t=3.76 @-4.134:-5.394:119.6:0.0:1.574 sector=1_0 ground=0.000 above=1.57 still=0.00
-WALK left 7 t=4.39 @-4.940:-4.102:160.4:0.0:1.140 sector=2_0 ground=-0.444 above=1.62 still=0.00
-WALK left 8 t=5.02 @-5.000:-2.690:176.9:0.0:0.472 sector=4_0 ground=-1.125 above=1.60 still=0.00
-WALK left 9 t=5.64 @-5.000:-1.546:179.9:0.0:0.094 sector=5_0 ground=-1.500 above=1.59 still=0.00
-WALK left 10 t=6.27 @-5.000:-0.779:180.0:0.0:-0.281 sector=6_0 ground=-1.875 above=1.59 still=0.00
-WALK left 11 t=6.90 @-5.000:-0.500:180.0:0.0:-0.275 sector=6_0 ground=-1.875 above=1.60 still=0.00
+WALK left 1 t=0.63 @0.347:-2.265:10.3:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK left 2 t=1.25 @-0.073:-3.266:23.9:0.0:1.594 sector=0_0 ground=0.000 above=1.59 still=0.00
+WALK left 3 t=1.88 @-0.700:-4.762:47.4:0.0:1.597 sector=0_0 ground=0.000 above=1.60 still=0.00
+WALK left 4 t=2.51 @-2.521:-5.296:83.6:0.0:1.584 sector=0_0 ground=0.000 above=1.58 still=0.00
+WALK left 5 t=3.13 @-4.478:-4.993:134.1:0.0:1.378 sector=2_0 ground=-0.197 above=1.57 still=0.00
+WALK left 6 t=3.76 @-5.000:-2.843:175.3:0.0:0.472 sector=4_0 ground=-1.102 above=1.54 still=0.00
+WALK left 7 t=4.39 @-5.000:-0.608:180.0:0.0:-0.291 sector=6_0 ground=-1.875 above=1.58 still=0.00
+WALK left 8 t=5.02 @-5.000:1.397:180.0:0.0:-0.278 sector=19_0 ground=-1.875 above=1.60 still=0.00
+WALK left 9 t=5.64 @-5.000:3.019:180.0:0.0:-0.281 sector=19_0 ground=-1.875 above=1.59 still=0.00
+WALK left 10 t=6.27 @-5.000:4.104:180.0:0.0:-0.281 sector=19_0 ground=-1.875 above=1.59 still=0.00
+WALK left 11 t=6.90 @-5.000:4.500:180.0:0.0:-0.275 sector=19_0 ground=-1.875 above=1.60 still=0.00
 HOLD bc_stair_foot 1.0 moved=0.0028 turned=0.000

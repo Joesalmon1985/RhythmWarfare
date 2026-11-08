@@ -23,17 +23,17 @@ OWN = "textures/"
 MARGIN = 0.5
 MARGINS = {"bt_bal_door": 0.33, "bt_v_door": 0.33, "bt_v_dockdoor": 0.33, "bt_hatch": 0.45}
 MAX_STEP = 0.5
-RAIL_HEIGHTS = {"dais|terrace": 2.75, "dstep_a|terrace": 2.75, "dstep_b|terrace": 2.75}  # stage D: the desk is on the floor, the window mesh runs floor to ceiling behind it  # metres above the higher floor (the window tops out at the 2.75 m ceiling)
-RAIL_TEX = {"dais|aisle": "bt_rail"}  # every other railing is the window mesh
+RAIL_HEIGHTS = {"dais|terrace": 2.75, "dstep_a|terrace": 2.75, "dstep_b|terrace": 2.75, "terrace|drop_a": 1.1}  # stage D: the desk is on the floor, the window mesh runs floor to ceiling behind it  # metres above the higher floor (the window tops out at the 2.75 m ceiling)
+RAIL_TEX = {"dais|aisle": "bt_rail", "terrace|drop_a": "bt_iron_rail"}  # every other railing is the window (round 2: glass with rain on it, not mesh); the balcony's edge is iron
 WINDOW_TEX = "bt_window"
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.4, 0.52, 0.35, 2.4  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN, REACH = 1.4, 0.52, 0.35, 2.4, 1.0  # round 2: REACH 1.0 (was 1.3): smaller pools, darker between them (contrast)  # exposure (A1 night interior): the Doom lights are low for this renderer, so each sector is lit at least LIGHT_FLOOR
 # stage D polish (docs/briefs/DOOM_POLISH_BRIEF.md): every sector's song-time light at 1.0 (a gain of 1.5) with the flat light away from the lamps at AMBIENT; the iron balcony outside
 # the window is open to the storm sky (rain falls there, drips from the window's lintel and the double door), the dock annex floor is wet from its open shutter; nobody but the guides
 SKY = {"tex": "textures/bt_sky.png", "mode": "cylinder"}
-SKY_SECTORS = ["terrace", "porch", "bal_step_a", "bal_step_b", "bal_top"]
-AMBIENT = {"aisle": 0.75, "dais": 0.75, "landing": 0.75, "terrace": 0.7, "porch": 0.7, "dock": 0.7, "moth": 0.7}
+SKY_SECTORS = ["terrace", "porch", "bal_step_a", "bal_step_b", "bal_top", "drop_a", "drop_b"]
+AMBIENT = {"aisle": 0.42, "dais": 0.5, "landing": 0.45, "terrace": 0.7, "porch": 0.7, "dock": 0.38, "moth": 0.9, "drop_a": 1.0, "drop_b": 1.0}  # round 2: the Mothership chamber dark, lit by its violet portal
 WEATHER = {"rain": 0.85, "wind": 8, "drips": [{"at": [-4.2, -2.0], "h": 2.6}, {"at": [-4.2, -5.0], "h": 2.6}, {"at": [-5.0, -9.0], "h": 2.2}]}
-WET = {"dock": 0.6, "dock_door": 0.3}
+WET = {"dock": 1.0, "dock_door": 0.6, "moth": 0.9, "aisle": 0.9, "dais": 0.6, "landing": 0.8, "hatch": 0.7}  # round 2: the gloss bands under the lamps carry the highlights
 
 
 def M(x, y):
@@ -56,7 +56,7 @@ WAYPOINTS = [
     ("bt_dock_view", (1.1, 4.2), (6.5, 4.4), 2, "reveal: against the aisle's east wall looking through the open steel door into the dock"),
     ("bt_hatch", (0.0, 11.5), (0.0, 17), 1, "THRESHOLD ahead (Mothership): in the hatch, the world transition happens here"),
     ("bt_bal_top", (-9.1, 9.75), (-9.1, 3), 1, "THRESHOLD left (Balcony): the top of the balcony stair, the world transition happens here"),
-    ("bt_dock_in", (3.6, 4.25), (8.5, 4.5), 1, "THRESHOLD right (Dock): through the steel door onto the dock, the world transition happens here"),
+    ("bt_dock_in", (5.4, 4.4), (8.8, 4.5), 1, "THRESHOLD right (Dock): through the steel door and across the dock to its open shutter on the rainy street, the world transition happens here"),
     # via points (corners of the polyline moves)
     ("bt_v_a1", (0.0, 5.0), (0.0, 8), 0, "via: the aisle, mid way"),
     ("bt_v_a2", (-0.5, 9.6), (-2.9, 9.8), 0, "via: the aisle's north end, at the landing"),
@@ -81,21 +81,23 @@ ROUTES = {
 }
 # sector name -> floor, wall, ceiling texture, tint, step_tex (the riser of a step up onto it)
 STYLE = {
-    "aisle": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#ffc890", "bt_wall_steel"),
-    "dais": ("bt_floor_plate", "bt_wall_foam", "bt_ceil", "#ffc080", "bt_wall_steel"),
+    "aisle": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#fff0d8", "bt_wall_steel"),
+    "dais": ("bt_floor_plate", "bt_wall_foam", "bt_ceil", "#ffecd0", "bt_wall_steel"),
     "dstep_a": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc080", "bt_wall_steel"),
     "dstep_b": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc080", "bt_wall_steel"),
-    "landing": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#ffc890", "bt_wall_steel"),
+    "landing": ("bt_floor_grate", "bt_wall_foam", "bt_ceil", "#fff0d8", "bt_wall_steel"),
     "bal_door": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc890", "bt_wall_steel"),
-    "porch": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "terrace": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#8aa0e8", "bt_wall_steel"),
-    "bal_step_a": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "bal_step_b": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
-    "bal_top": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#9ab0f0", "bt_wall_steel"),
+    "porch": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "terrace": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d0dcff", "bt_wall_steel"),
+    "bal_step_a": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "bal_step_b": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
+    "bal_top": ("bt_floor_plate", "bt_wall_dock", "bt_ceil", "#d8e0ff", "bt_wall_steel"),
     "hatch": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#d0b0ff", "bt_wall_steel"),
-    "moth": ("bt_floor_moth", "bt_wall_moth", "bt_ceil", "#c8a8ff", "bt_wall_steel"),
+    "moth": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#e0d0ff", "bt_wall_steel"),
+    "drop_a": ("bt_floor_conc", "bt_facade", "bt_ceil", "#e0e8ff", "bt_facade"),
+    "drop_b": ("bt_floor_conc", "bt_facade", "bt_ceil", "#e0e8ff", "bt_facade"),
     "dock_door": ("bt_floor_plate", "bt_wall_steel", "bt_ceil", "#ffc080", "bt_wall_steel"),
-    "dock": ("bt_floor_conc", "bt_wall_dock", "bt_ceil", "#ffb870", "bt_wall_steel"),
+    "dock": ("bt_floor_conc", "bt_wall_dock", "bt_ceil", "#ffe0b8", "bt_wall_steel"),
 }
 BORROWED = ["thing_pendant", "trim"]
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
@@ -108,7 +110,7 @@ GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
 THINGS = [
     # stage D polish: the painting's big desk (turntable, mixer, lamp, mug, headphones, records: cropped from the painting) as the foreground billboard on the dais's aisle edge,
     # standing on the floor, so from bt_ref it fills the lower left as the painting's desk does; the stool before it
-    ("bt_desk_big", "bt_desk_big", (-0.75, 5.1), 1.6, 0.85), ("bt_stool", "bt_stool", (-0.1, 3.6), 0.7),
+    ("bt_stool", "bt_stool", (-0.1, 3.6), 0.7), ("bt_case_gap", "bt_case", (-9.2, 0.55), 0.9),
     ("bt_dais_cables", "bt_cables", (-2.1, 6.4), 0.45), ("bt_deck_c", "bt_turntable", (-2.6, 6.5), 0.5),
     ("bt_rack_a", "bt_rack", (1.35, 7.4), 1.5), ("bt_rack_b", "bt_rack", (1.35, 8.7), 1.5), ("bt_case_a", "bt_case", (1.3, 9.9), 0.7), ("bt_case_b", "bt_case", (1.3, 1.0), 0.6),
 ("bt_rack_c", "bt_rack_short", (-1.35, 10.3), 1.0),
@@ -116,25 +118,40 @@ THINGS = [
     ("bt_dock_case_a", "bt_case", (4.6, 1.3), 0.9), ("bt_dock_case_b", "bt_case", (5.6, 1.1), 0.7), ("bt_dock_case_c", "bt_case", (8.2, 2.2), 1.0), ("bt_dock_case_d", "bt_case", (8.4, 7.6), 0.9),
     ("bt_dock_pend_a", "thing_pendant", (4.6, 4.6), 1.0, 3.3), ("bt_dock_pend_b", "thing_pendant", (6.9, 2.6), 1.0, 3.3),
     ("bt_cage_a", "bt_cage_lamp", (0.0, 2.6), 0.4, 2.55), ("bt_cage_b", "bt_cage_lamp", (0.0, 6.6), 0.4, 2.55), ("bt_cage_c", "bt_cage_lamp", (0.0, 9.8), 0.4, 2.55),
-    ("bt_crystal_a", "bt_crystal", (1.9, 15.9), 2.2), ("bt_crystal_b", "bt_crystal", (-2.0, 16.0), 1.8), ("bt_moth_console", "bt_moth_console", (0.0, 16.9), 0.9),
 ]
 # decals (hung on a solid wall within 0.35 m): id, sprite, point (m), size (height m), bottom y, emissive (the wall's own yaw: StoryMap places it)
 DECALS = [
     ("bt_dc_vent_door", "bt_vent_door", (1.6, 6.15), 2.2, 0.0, False), ("bt_dc_pipes", "bt_pipes", (1.65, 7.55), 2.6, 0.0, False), ("bt_dc_shelf", "bt_cable_shelf", (1.6, 9.0), 1.3, 0.55, False),
     ("bt_dc_led_a", "bt_led", (1.6, 1.5), 0.22, 2.1, True), ("bt_dc_led_b", "bt_led", (1.6, 9.9), 0.22, 2.1, True), ("bt_dc_led_c", "bt_led", (-1.6, 10.8), 0.2, 2.15, True),
     ("bt_dc_screen_a", "bt_screen", (-3.3, 10.8), 0.55, 1.5, True), ("bt_dc_screen_b", "bt_screen_wave", (-2.5, 10.8), 0.55, 1.5, True), ("bt_dc_screen_c", "bt_screen", (1.5, 10.85), 0.5, 1.5, True),
-    ("bt_dc_skyline", "bt_skyline", (-9.6, 4.25), 3.0, 0.3, True), ("bt_dc_shutter", "bt_shutter_open", (8.85, 4.5), 3.0, 0.0, True),
+    ("bt_dc_shutter", "bt_shutter_open", (8.85, 4.5), 3.6, 0.0, True), ("bt_dc_steel_leaf", "bt_steel_leaf", (1.65, 2.4), 2.2, 0.0, False),
+    ("bt_dc_moth_portal", "bt_moth_portal", (0.0, 17.4), 4.0, 0.0, True),
+    ("bt_dc_w00", "bt_win_amber", (-14.9, 0.9), 1.6, 6.7, True),
+    ("bt_dc_w01", "bt_win_dark", (-14.9, 2.3), 1.6, 6.9, False),
+    ("bt_dc_w02", "bt_win_violet", (-14.9, 3.8), 1.6, 6.6, True),
+    ("bt_dc_w03", "bt_win_amber", (-14.9, 5.2), 1.6, 6.8, True),
+    ("bt_dc_w04", "bt_win_amber", (-14.9, 6.7), 1.6, 6.6, True),
+    ("bt_dc_w05", "bt_win_dark", (-14.9, 8.0), 1.6, 6.9, False),
+    ("bt_dc_w06", "bt_win_violet", (-14.9, 1.6), 1.6, 8.9, True),
+    ("bt_dc_w07", "bt_win_amber", (-14.9, 3.0), 1.6, 9.0, True),
+    ("bt_dc_w08", "bt_win_dark", (-14.9, 4.5), 1.6, 8.8, False),
+    ("bt_dc_w09", "bt_win_amber", (-14.9, 6.0), 1.6, 9.0, True),
+    ("bt_dc_w10", "bt_win_amber", (-14.9, 7.4), 1.6, 8.9, True),
+    # round 2: the facade across the drop beyond the balcony, its windows placed one by one (the void's haze darkens its concrete; the lit windows carry it)
     ("bt_dc_led_d", "bt_led", (0.0, 0.2), 0.3, 2.2, True),
 ]
+# round 2: the painting's big desk (cropped) as a FIXED quad facing the reference viewpoint (a decal with a yaw, docs/art/WALL_DECALS.md): it reads as the painting's desk from bt_ref
+# and, walking up the aisle, it stays where it stands instead of turning to the camera (the review: the camera-facing cut-out loomed on the aisle walk). id, sprite, point, size, bottom y, faces
+FREE_DECALS = [("bt_desk_big", "bt_desk_big", (-0.75, 5.1), 1.6, 0.05, (0.5, 1.9))]
 LIGHTS = [  # id, point (m), y, radius, colour, strength   (amber task light over the desk, red LED glow at the racks, the caged lamps in the aisle, moonlight on the balcony, violet ahead, sodium on the dock)
     ("bt_lt_desk_a", (-3.2, 2.2), 2.1, 4.5, "#ffa040", 1.7), ("bt_lt_desk_b", (-3.4, 5.6), 2.0, 4.5, "#ffb050", 1.6),
     ("bt_lt_aisle_a", (0.0, 2.5), 2.5, 7.0, "#ffb060", 1.5), ("bt_lt_aisle_b", (0.0, 6.5), 2.5, 7.0, "#ffb060", 1.5), ("bt_lt_aisle_c", (0.0, 9.8), 2.5, 6.0, "#ffa850", 1.3),
     ("bt_lt_rack", (1.1, 7.9), 1.2, 3.5, "#ff3028", 1.3), ("bt_lt_landing", (-2.9, 10.0), 2.3, 4.0, "#ff6a30", 1.1),
     ("bt_lt_balcony", (-6.8, 4.2), 3.0, 9.0, "#5a80d8", 1.5), ("bt_lt_balcony2", (-6.5, 9.8), 3.0, 6.0, "#6a90e0", 1.2),
-    ("bt_lt_hatch", (0.0, 11.5), 2.2, 3.0, "#d0a0ff", 1.2), ("bt_lt_moth", (0.0, 14.5), 3.4, 8.0, "#a070ff", 1.6), ("bt_lt_moth2", (0.0, 16.6), 2.0, 4.5, "#70ffc8", 1.2),
+    ("bt_lt_hatch", (0.0, 11.5), 2.2, 3.0, "#d0a0ff", 1.2), ("bt_lt_moth", (0.0, 16.6), 1.6, 5.0, "#a070ff", 1.8), ("bt_lt_moth_fig", (0.6, 13.4), 2.4, 2.6, "#e0c8ff", 1.2),
     ("bt_lt_dock", (4.6, 4.6), 3.0, 8.0, "#ffa850", 1.8), ("bt_lt_dock2", (6.9, 2.6), 3.0, 6.0, "#ffb860", 1.5), ("bt_lt_dock3", (7.0, 7.0), 3.0, 6.0, "#ff9840", 1.2),
     ("bt_lt_shutter", (8.3, 4.5), 1.4, 5.0, "#ffb050", 1.6), ("bt_lt_desk_lamp", (-1.6, 5.4), 1.3, 4.0, "#ffb060", 2.0),
-    ("bt_lt_window_moon", (-3.6, 4.0), 2.0, 5.0, "#6a90e0", 1.4), ("bt_lt_terrace_lamp", (-8.0, 6.0), 2.6, 6.0, "#ff8a40", 1.4), ("bt_lt_aisle_floor", (0.6, 4.5), 0.6, 4.0, "#ffb060", 1.2),
+    ("bt_lt_window_moon", (-3.6, 4.0), 2.0, 5.0, "#6a90e0", 1.4), ("bt_lt_drop_a", (-13.5, 4.0), 7.0, 8.0, "#8a80d0", 1.2), ("bt_lt_drop_b", (-13.0, 6.5), 3.0, 6.0, "#ffa850", 1.2), ("bt_lt_terrace_lamp", (-8.0, 6.0), 2.6, 6.0, "#ff8a40", 1.4), ("bt_lt_aisle_floor", (0.6, 4.5), 0.6, 4.0, "#ffb060", 1.2),
 ]
 CROWD_POINTS_SECTOR = "terrace"
 
@@ -199,6 +216,13 @@ def barriers(d, names):
                     queue.append(n)
         return len(seen) == len(sec)
 
+    # (round 2: the railings first, so the drops left open are the ones that keep the map connected)
+    for w in walls:
+        a, b = sec[w["sector"]], sec[w["portal"]]
+        key = "|".join(sorted((names[int(a["doom_sector"])], names[int(b["doom_sector"])]), key=lambda n: -RAIL_ORDER.get(n, 0)))
+        if key in RAIL_HEIGHTS:
+            w["kind"], w["tex"], w["height"] = "railing", RAIL_TEX.get(key, WINDOW_TEX), RAIL_HEIGHTS[key]
+            w["blocked"] = True
     for w in walls:
         a, b = sec[w["sector"]], sec[w["portal"]]
         if abs(float(a["floor"]) - float(b["floor"])) > MAX_STEP + 1e-6 and not w.get("blocked"):
@@ -206,12 +230,6 @@ def barriers(d, names):
             if not all_reachable():
                 del w["blocked"]
                 print("  a drop of %.2f m between %s and %s stays open (it keeps the map connected)" % (abs(float(a["floor"]) - float(b["floor"])), w["sector"], w["portal"]))
-    for w in walls:
-        a, b = sec[w["sector"]], sec[w["portal"]]
-        key = "|".join(sorted((names[int(a["doom_sector"])], names[int(b["doom_sector"])]), key=lambda n: -RAIL_ORDER.get(n, 0)))
-        if key in RAIL_HEIGHTS:
-            w["kind"], w["tex"], w["height"] = "railing", RAIL_TEX.get(key, WINDOW_TEX), RAIL_HEIGHTS[key]
-            w["blocked"] = True
 
 
 RAIL_ORDER = {"dais": 3, "dstep_a": 2, "dstep_b": 2, "aisle": 1, "terrace": 1}
@@ -246,7 +264,7 @@ def main():
         for k in ("lower_tex", "upper_tex"):
             if w.get(k) and w[k] != "sky":
                 used[w[k]] = True
-    used.update({"bt_rail": True, WINDOW_TEX: True})
+    used.update({"bt_rail": True, WINDOW_TEX: True, "bt_iron_rail": True})
     tex = {}
     for k in sorted(used):
         tex[k] = OWN + k + ".png"
@@ -255,7 +273,7 @@ def main():
     for _id, spr, *_r in THINGS:
         if spr not in tex:
             tex[spr] = OWN + spr + ".png"
-    for _id, spr, *_r in DECALS:
+    for _id, spr, *_r in DECALS + FREE_DECALS:
         tex[spr] = OWN + spr + ".png"
     for who in GUIDES:
         for st, n in STATES.items():
@@ -297,7 +315,7 @@ def main():
     barriers(d, names)
     d["sky"] = dict(SKY)
     d["weather"] = {"rain": WEATHER["rain"], "wind": WEATHER["wind"], "drips": [dict(x) for x in WEATHER["drips"]]}
-    d["fog"] = {"color": "#1a0e10", "density": 0.018}
+    d["fog"] = {"color": "#1a0e10", "density": 0.008}  # round 2: thinner (the far lamps and the window's city keep their light: the exposure rule)
     d["palette_weight"] = 1.0
     # things
     things = [t for t in d["things"] if not str(t["id"]).startswith("bt_")]
@@ -315,9 +333,12 @@ def main():
         if emissive:
             t["emissive"] = True
         things.append(t)
+    for tid, spr, at, size, y, faces in FREE_DECALS:  # (a decal with an explicit yaw: a fixed quad facing `faces`)
+        x, z = M(*at)
+        things.append({"id": tid, "kind": "decal", "sprite": spr, "at": [x, z], "y": y, "size": size, "yaw": face(at, faces)})
     for lid, at, y, rad, col, st in LIGHTS:
         x, z = M(*at)
-        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * 1.3, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
+        things.append({"id": lid, "kind": "light", "at": [x, z], "y": y, "radius": round(rad * REACH, 1), "color": col, "strength": round(min(2.5, st * LAMP_GAIN), 2)})
     for who, (at, size, lamp) in GUIDES.items():  # the lamp over each guide (the choice layer brightens it)
         x, z = M(*lamp)
         things.append({"id": "bt_lamp_" + who, "kind": "light", "at": [x, z], "y": 2.6, "radius": 3.0, "color": "#ffd9a0", "strength": 0.6})

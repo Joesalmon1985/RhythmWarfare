@@ -387,6 +387,42 @@ func test_booth_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_r
 				assert_false((rects[BOOTH_GUIDES[i]] as Rect2).intersects(rects[BOOTH_GUIDES[j]]), "booth %s: %s and %s do not overlap" % [asp, BOOTH_GUIDES[i], BOOTH_GUIDES[j]])
 
 
+func test_booth_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	# round 2 (the independent review): the wall-sightline check the other blocks have. A projection cannot see walls; this walks the line from bt_ref to each guide against the
+	# solid walls (the window onto the balcony is a railing over a portal: the eye passes through its glass)
+	var m := _booth_map()
+	if m == null:
+		fail("booth map did not load")
+		return
+	var cam: Vector2 = m.waypoint("bt_ref")["at"]
+	for g in BOOTH_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "booth %s: the sightline from bt_ref stays clear of solid walls" % g)
+
+
+func test_booth_the_desk_is_anchored_facing_the_reference_viewpoint() -> void:
+	# round 2: the painting's desk is a fixed quad (a decal with a yaw) facing bt_ref, not a camera-facing billboard that turns and looms on the aisle walk
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % BOOTH_MAP))
+	var desk: Dictionary = {}
+	for t in doc["things"]:
+		if str(t["id"]) == "bt_desk_big":
+			desk = t
+	assert_eq(str(desk.get("kind", "")), "decal", "booth: the desk is a decal (a fixed quad)")
+	assert_true(desk.has("yaw"), "booth: the desk has its own yaw")
+	var m := _booth_map()
+	if m == null or not desk.has("yaw"):
+		return
+	var to_ref: Vector2 = ((m.waypoint("bt_ref")["at"] as Vector2) - Vector2(desk["at"][0], desk["at"][1])).normalized()
+	assert_true(m.forward_of_yaw(float(desk["yaw"])).dot(to_ref) > 0.99, "booth: the desk faces the reference viewpoint")
+
+
 func test_booth_guides_keep_their_distance_from_the_camera_places() -> void:
 	var m := _booth_map()
 	if m == null:
@@ -419,12 +455,12 @@ func test_booth_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		for k in ["up", "left", "right"]:
 			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
 	var good: Array = on.nodes["doom_booth"]["rail"]["good"]
-	assert_eq(good.size(), 4, "booth: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "booth: reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "booth: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "bt_ref", "booth: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "booth: bt_ref is a choice viewpoint holding the whole window")
+	# round 2: one reveal, then the choice viewpoint (the run moves one place per passed block: with four places the camera was still walking when the window opened)
+	assert_eq(good.size(), 2, "booth: the stay loop is one reveal and the choice viewpoint")
+	assert_eq(float(good[0]["hold_bars"]), REVEAL_HOLD, "booth: reveal viewpoint %s holds 2 bars" % good[0]["to"])
+	assert_false(bool(good[0].get("choice", false)), "booth: reveal viewpoint %s is not a choice viewpoint" % good[0]["to"])
+	assert_eq(str(good[1]["to"]), "bt_ref", "booth: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "booth: bt_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_booth", [])
 	assert_eq(hs.size(), 4, "booth: three guides and the stay hotspot")
 	var dests := []
@@ -1057,12 +1093,12 @@ func test_dock_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		for i in 3:
 			assert_eq(str(routes[dirs[i]]["to"]), DK_EXITS[i], "%s: the route's move ends at the threshold" % id)
 	var good: Array = on.nodes["doom_dock"]["rail"]["good"]
-	assert_eq(good.size(), 4, "dock: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "dock: reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "dock: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "dk_ref", "dock: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "dock: dk_ref is a choice viewpoint holding the whole window")
+	# round 2: one reveal, then the choice viewpoint (the run moves one place per passed block: with four places the camera was still walking when the window opened)
+	assert_eq(good.size(), 2, "dock: the stay loop is one reveal and the choice viewpoint")
+	assert_eq(float(good[0]["hold_bars"]), REVEAL_HOLD, "dock: reveal viewpoint %s holds 2 bars" % good[0]["to"])
+	assert_false(bool(good[0].get("choice", false)), "dock: reveal viewpoint %s is not a choice viewpoint" % good[0]["to"])
+	assert_eq(str(good[1]["to"]), "dk_ref", "dock: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "dock: dk_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_dock", [])
 	assert_eq(hs.size(), 4, "dock: three guides and the stay hotspot")
 	var dests := []
@@ -1639,7 +1675,7 @@ func test_balcony_map_loads_clean_with_routes_holds_and_the_reference_viewpoint(
 	for s in m.sectors:
 		if bool(s.get("void", false)):
 			voids += 1
-	assert_eq(voids, 4, "the four pits round the roof are voids")
+	assert_eq(voids, 5, "the five pits of the drop (four round the bridge, one beyond the tower) are voids")
 
 
 func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
@@ -1648,6 +1684,10 @@ func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the
 		fail("balcony map did not load")
 		return
 	var pose := _bc_pose(m, "bc_ref")
+	var good: Array = _doom_run().nodes["doom_balcony"]["rail"]["good"]
+	var pitch := float((good[good.size() - 1] as Dictionary).get("pitch", 0.0))
+	assert_true(pitch < 0.0 and pitch >= -35.0, "balcony: round 2, the choice viewpoint holds a small downward pitch (%.1f)" % pitch)
+	pose["pitch"] = pitch  # the guides are checked at the pose the rail holds through the window
 	for asp in ASPECTS:
 		var view: Vector2 = ASPECTS[asp]
 		var rects := {}
@@ -1664,6 +1704,8 @@ func test_balcony_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the
 		for i in BC_GUIDES.size():
 			for j in range(i + 1, BC_GUIDES.size()):
 				assert_false((rects[BC_GUIDES[i]] as Rect2).intersects(rects[BC_GUIDES[j]]), "balcony %s: %s and %s do not overlap" % [asp, BC_GUIDES[i], BC_GUIDES[j]])
+				var gap := absf((rects[BC_GUIDES[i]] as Rect2).get_center().x - (rects[BC_GUIDES[j]] as Rect2).get_center().x)
+				assert_true(gap >= 60.0, "balcony %s: %s and %s read at least 60 px apart at the pitched pose (%.0f)" % [asp, BC_GUIDES[i], BC_GUIDES[j], gap])
 
 
 func test_balcony_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
@@ -1719,12 +1761,12 @@ func test_balcony_overlay_world_nodes_hotspots_and_rail_validate() -> void:
 		assert_eq([str(routes["up"]["to"]), str(routes["left"]["to"]), str(routes["right"]["to"])], BC_EXITS, "%s: the route moves end at the thresholds" % id)
 		assert_eq([str(rail["exits"]["up"]), str(rail["exits"]["left"]), str(rail["exits"]["right"])], BC_EXITS, "%s: rail.exits are the doorways" % id)
 	var good: Array = on.nodes["doom_balcony"]["rail"]["good"]
-	assert_eq(good.size(), 4, "balcony: the stay loop has four places")
-	for i in 3:
-		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "balcony: reveal viewpoint %s holds 2 bars" % good[i]["to"])
-		assert_false(bool(good[i].get("choice", false)), "balcony: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
-	assert_eq(str(good[3]["to"]), "bc_ref", "balcony: the loop ends at the reference viewpoint")
-	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "balcony: bc_ref is a choice viewpoint holding the whole window")
+	# round 2: one reveal, then the choice viewpoint (the run moves one place per passed block: with four places the camera was still walking when the window opened)
+	assert_eq(good.size(), 2, "balcony: the stay loop is one reveal and the choice viewpoint")
+	assert_eq(float(good[0]["hold_bars"]), REVEAL_HOLD, "balcony: reveal viewpoint %s holds 2 bars" % good[0]["to"])
+	assert_false(bool(good[0].get("choice", false)), "balcony: reveal viewpoint %s is not a choice viewpoint" % good[0]["to"])
+	assert_eq(str(good[1]["to"]), "bc_ref", "balcony: the loop ends at the reference viewpoint")
+	assert_true(bool(good[1].get("choice", false)) and float(good[1]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "balcony: bc_ref is a choice viewpoint holding the whole window")
 	var hs: Array = on.hotspots.get("doom_balcony", [])
 	assert_eq(hs.size(), 4, "balcony: three guides and the stay hotspot")
 	var dests := []

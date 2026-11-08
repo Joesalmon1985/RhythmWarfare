@@ -18,12 +18,15 @@ GUIDE = {  # name: (guide thing, route node, sprite stem)
 }
 
 
+PITCH = -4  # degrees at the choice viewpoint (docs/engine/GEOGRAPHY_WORLDS.md); tests/test_doom_views.gd checks the guides at this pose
+
+
 def _rail(P):
+    # round 2: one reveal, then the choice viewpoint. The run moves the rail one place per passed block and holds the choice only when the camera stands on the choice place
+    # by the window (beat 49): round 1's four-place loop was still walking when the window opened (a real run, the bot, RW_RUN_VIRTUAL). The other reveals stay in the map as views.
     good = [
         P("bc_bridge_view", bars=4, hold=2, via=["bc_v_a1"]),
-        P("bc_stair_view", bars=3, hold=2, via=["bc_v_a2"]),
-        P("bc_cabin_view", bars=3, hold=2, via=["bc_v_a3"]),
-        P("bc_ref", bars=4, hold=8, choice=True, via=["bc_v_a4"]),
+        {**P("bc_ref", bars=4, hold=8, choice=True, via=["bc_v_a4"]), "pitch": PITCH},  # round 2: a small downward pitch held through the window, so the drop and the city fill the frame
     ]
     bad = [P("bc_ref_back", "queasy", "walk", 2), P("bc_sw_corner", "queasy", "stagger", 3)]
     routes = {

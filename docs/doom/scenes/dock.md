@@ -63,3 +63,52 @@ ALL                     0.13  0.28  0.56  0.40    0.0%   0.1%  contrast p95-p5 0
 ## Placeholders and not done
 
 Placeholders: the textures, props and decals are procedural (`tools/doom/art/make_dock_art.py`; the 256 px tiles drawn to the style guide, the props older); the music (Warehouse arrangements). The guides are crops of the paintings, not placeholders. No `src/` change was made. Regenerate: `python -I tools/doom/art/make_dock_art.py; python -I tools/doom/author_dock.py`, then `--import`, then `python tools/doom/shoot_dock.py`.
+
+## Stage D polish, round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md)
+
+**The lead's list, ticked or carried:**
+
+- [x] **The skyline is a repeating lit-window tile on tall walls.** The tower tiles are gone. The street's own walls are the club's brick (west) and corrugated steel (east), 6.5 m, and the far buildings are dark facades (`dk_wall_bldg_a/b/c`, `dk_wall_brown_a/b`) in 3-4 m stretches of three variants. Single windows are placed one at a time as decals, few of them lit. The city is a silhouette skyline in the sky strip (`make_dock_art.p_sky2`), and it shows over the lower walls.
+- [~] **The wet street must read as warm sodium pools with deep shadow between.** Done in part. Every open sector's floor is fully wet (`wet` 1.0), so the engine's gloss bands under the sodium lamps are the brightest thing on the ground. The flat fills (the moon fill, the blue street fill) are cut to 0.3. The street lamps' reach is smaller (6 m). Carried: between the pools the asphalt is still a blue-grey mid-tone. The exposure rule (p50 at least 0.25) does not allow the painting's near-black street (the painting measures p50 0.14).
+- [x] **The club passage is a flat blue LED corridor.** It is now a dark brick tunnel (`dk_wall_tunnel`, a dark sooty ceiling, a wet floor with gloss) with three caged wall lamps. It ends at a violet-lit door (`dk_violet_door`). The doorway keeps the painting's blue light and two blue LED strips at its jambs. The left threshold stands 4 m before the violet door.
+- [x] **`route_ahead` p50 0.22, `route_left` contrast 0.27, `arrive` and `hold_door` just under.** All eight shots are inside the rule (table below).
+- [x] **The street is straight; the painting's curves left.** The street now runs 12.5 m and turns left (`bend`, a second sector) in front of the brown building at its end (`street_far`). That building has a lit doorway, shopfront windows, a lamp and the fourth lamp's pool. It is a square turn, not a curve.
+- [x] **(Review) `route_ahead` held on an empty dark street.** The ahead threshold `dk_moth` now stops at (0.4, 12.4), 4 m before the Mothership guide. It faces her, with the brown building's lit door, windows and lamps behind her and the street turning left.
+- [x] **(Review) Selected and committed guide-state captures.** They are the last row of `contact.jpg`, shot on the real run by `tools/doom/guide_states.py` with the Mothership guide tapped: selected (a pre-window touch), committed (a tap in the window) and the first walk frame.
+- [x] **(Found in round 2) The choice window did not happen at the reference viewpoint.** On a real run (the bot, `RW_RUN_VIRTUAL`), the rail moves one place per passed block. With round 1's four-place stay loop the camera was still walking between the door and the yard views when the window opened (beats 49-60). The stay loop is now one reveal (`dk_street_view`) and the choice viewpoint. A real-run timeline (beats 44-62) shows the camera still at `dk_ref` through the window. `dk_door_view` and `dk_yard_view` stay in the map as views (they are shot below) but are no longer on the rail.
+
+Also carried: the near right of the painting (the big flight case, the shutter close by) is still thin. The furnace and van are flat billboards. The fence is a wall decal.
+
+**Guides at the reference viewpoint (`test_doom_views`, 16:9 and 20:9 alike):** Mothership 74 px, Floor 163 px, Underworld 107 px; all three CROPPED (unchanged from round 1). No rings or beacons.
+
+**Exposure (`tools/doom/frame_check.py`, 16:9 shots, the picture only), 8 of 8 shots inside the rule (p50 0.25 to 0.38, p95 - p5 over 0.4).** Before round 2 (the merged head, same tool):
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.15  0.29  0.54  0.34    0.0%   0.0%  off
+hold_door               0.13  0.28  0.50  0.51    0.0%   0.1%  off
+hold_street             0.13  0.25  0.61  0.38    0.0%   0.1%  ok
+hold_yard               0.12  0.33  0.60  0.25    0.0%   0.0%  ok
+ref                     0.14  0.29  0.54  0.35    0.0%   0.0%  ok
+route_ahead             0.12  0.22  0.48  0.43    0.0%   0.0%  off
+route_left              0.13  0.26  0.40  0.64    0.0%   0.1%  off
+route_right             0.11  0.29  0.58  0.29    0.0%   0.1%  ok
+ALL                     0.13  0.28  0.56  0.40    0.0%   0.1%  contrast p95-p5 0.43
+```
+
+After:
+
+```
+shot                      p5   p50   p95   sat   crush  blown  target
+arrive                  0.12  0.29  0.55  0.33    0.0%   0.1%  ok
+hold_door               0.11  0.26  0.55  0.39    0.0%   0.1%  ok
+hold_street             0.11  0.27  0.60  0.35    0.0%   0.2%  ok
+hold_yard               0.14  0.33  0.60  0.23    0.0%   0.0%  ok
+ref                     0.11  0.29  0.54  0.33    0.0%   0.1%  ok
+route_ahead             0.13  0.26  0.55  0.38    0.0%   0.0%  ok
+route_left              0.12  0.26  0.70  0.44    0.0%   1.2%  ok
+route_right             0.13  0.30  0.53  0.26    0.0%   0.1%  ok
+ALL                     0.12  0.28  0.57  0.34    0.0%   0.2%  contrast p95-p5 0.45
+```
+
+**Shots:** `docs/shots/doom/dock/contact.jpg` (the painting beside the reference shot, every viewpoint at 16:9 and 20:9, and a last row of guide states on the real rail: selected at beat 47, committed at 51.5 and the walk at 52.5. The tap commits at its own beat (ruling 39), so the committed frame is already on the walk-off. At the reference view the tapped guide's state sprite is small) and `walk_strip.jpg` with `walk_*.txt`. Regenerate them with `python3 tools/doom/shoot_dock.py` (`RW_KEEP=<dir>` keeps the full-size frames for `frame_check`). The hold views that left the rail (see above) are still shot as views.

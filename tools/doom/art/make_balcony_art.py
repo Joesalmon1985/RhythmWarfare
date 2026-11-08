@@ -474,6 +474,99 @@ def p_tower_door():
 DECALS.update({"bc_alley_door": p_alley_door, "bc_stair_glow": p_stair_glow, "bc_tower_door": p_tower_door})
 
 
+
+
+# --- round 2 (docs/briefs/DOOM_POLISH_ROUND2_BRIEF.md, Balcony): the drop and the city dominate the reference view. The drops' far walls stop under the eye and are the lit
+# facades of the buildings below (dark concrete in three variants, single windows placed one by one as decals, the yard's blue-lit shutters at their feet); the sky keeps the moon
+# where the reference view (pitched 4 degrees down) frames it, over a lower skyline drawn first (so no tower hides it)
+
+def p_sky2():
+    """The painting's sky: torn storm cloud, a searchlight beam, a dense low skyline of towers with lit windows and red mast lamps, and the full moon (drawn over the skyline, at
+    the upper left of the view north: az -21 degrees, 16 degrees up)."""
+    arr = dk.sky_strip(462, clouds=("#1e2c48", "#28385c", "#344870", "#445c88", "#5a74a2", "#7894c0"), glow="#6a7ac0", lift=0.08, moon=None,
+                       beams=((900, 22, 7), (140, -14, 6)), stars=0,
+                       skyline={"layers": (("#2c3a5c", 10, 36, 0.12), ("#222c4a", 14, 44, 0.14), ("#182038", 8, 30, 0.10)),
+                                "win": ("#e0a448", "#ffc068", "#5ad0ff", "#d070ff", "#ff5ab0"), "street": "#0a0c1a"})
+    H, W = arr.shape[:2]
+    hz = int(H * 0.76)
+    mx, my, r = 964, hz - 46, 13
+    yy, xx = np.indices((H, W))
+    d = np.sqrt((xx - mx) ** 2 + (yy - my) ** 2)
+    dk.mix_dither(arr, np.clip(1 - (d - r) / (r * 3.2), 0, 0.7) * (d > r), "#7a98d0", k=0.5)
+    disc = d <= r
+    mv = dk.vnoise(W, H, 471, ((64, 0.5), (128, 0.5)), True, False)
+    arr[disc] = dk.ramp(np.clip(0.8 + (mv[disc] - 0.5) * 0.5 - (xx[disc] - mx) / (r * 6), 0, 1)[None, :], ("#8aa0c8", "#c8d8ec", "#f0f4fc"))[0]
+    for cy, cx0, cx1 in ((my - 6, mx - 30, mx + 4), (my + 9, mx - 6, mx + 34)):  # torn cloud across the disc
+        band = (np.abs(yy - cy) < 2) & (xx > cx0) & (xx < cx1)
+        arr[band] = arr[band] * 0.4 + dk.hexa("#2c3c60") * 0.6
+    return dk.to_img(arr)
+
+
+def p_facade(seed, base):
+    return dk.p_wall_bldg(seed, base)
+
+
+TEXTURES.update({"bc_sky": p_sky2, "bc_facade_a": lambda: p_facade(601, ("#2c3854", "#3a4866", "#4a587a", "#5c6c90")),
+                 "bc_facade_b": lambda: p_facade(602, ("#2e3048", "#3c3e5a", "#4c4e6e", "#5e6286")), "bc_facade_c": lambda: p_facade(603, ("#342c44", "#423856", "#52466a", "#665a82"))})
+DECALS.update({"bc_win_amber": lambda: dk.p_window("#ffb050", 611), "bc_win_violet": lambda: dk.p_window("#c070ff", 612), "bc_win_cyan": lambda: dk.p_window("#5ad0ff", 613),
+               "bc_win_dark": lambda: dk.p_window(None, 614)})
+
+
+
+
+def p_lace():
+    """Round 2: the white lace dome over the Mothership's door (the painting's): an organic cream filigree (cell walls of a jittered Voronoi net) over a half-dome, lit warm from below,
+    the holes open (alpha), small warm lamps along its foot. Replaces the flat placeholder (a dark half-disc with ruled arcs)."""
+    W_, H_ = 256, 176
+    rng = np.random.default_rng(621)
+    pts = rng.random((70, 2)) * [W_, H_ * 1.1]
+    yy, xx = np.indices((H_, W_))
+    d = np.sqrt((xx[..., None] - pts[:, 0]) ** 2 + (yy[..., None] - pts[:, 1]) ** 2)
+    d.sort(axis=2)
+    edge = (d[..., 1] - d[..., 0]) < 3.2
+    cx, base = W_ / 2, H_ - 10
+    dome = (((xx - cx) / (W_ / 2 - 6)) ** 2 + ((yy - base) / (H_ - 18)) ** 2) <= 1.0
+    rim = dome & ((((xx - cx) / (W_ / 2 - 6)) ** 2 + ((yy - base) / (H_ - 18)) ** 2) > 0.86)
+    lace = (edge | rim) & dome & (yy <= base)
+    v = np.clip(0.55 + (yy / H_) * 0.4 + dk.vnoise(W_, H_, 622, ((8, 0.5), (32, 0.5)), False, False) * 0.2, 0, 1)
+    arr = dk.ramp(v, ("#8a8090", "#c8c0c8", "#ece4dc", "#fff4e0"))
+    alpha = lace.copy()
+    arr[base:base + 6, 10:W_ - 10] = dk.hexa("#d8d0d0")
+    alpha[base:base + 6, 10:W_ - 10] = True
+    for k in range(12):
+        x = 16 + k * (W_ - 32) // 11
+        arr[base - 3:base + 1, x:x + 4] = dk.hexa("#ffd890")
+        alpha[base - 3:base + 1, x:x + 4] = True
+    rgba = np.dstack([np.clip(arr, 0, 255).astype(np.uint8), np.where(alpha, 255, 0).astype(np.uint8)])
+    from PIL import Image as _I
+    return _I.fromarray(rgba, "RGBA")
+
+
+DECALS.update({"bc_lace": p_lace})
+
+
+def p_floor_grate2():
+    """Round 2: the bridge's grating with the lit drop showing through (a hazy blue-violet, not black) and lighter wet bars (the exposure rule)."""
+    arr = dk.ramp(dk.vnoise(T, T, 532, ((4, 0.5), (16, 0.5))) * 0.6 + 0.2, ("#141a2c", "#1c2438", "#262e48"), cell=2)
+    yy, xx = np.indices((T, T))
+    bars = (xx % 16 < 4) | (yy % 32 < 4)
+    v = dk.vnoise(T, T, 531, ((8, 0.5), (32, 0.5)))
+    arr[bars] = dk.ramp(v[bars][None, :] * 0.6 + 0.35, ("#2a323e", "#404a5a", "#5a6678", "#7a88a2"))[0]
+    dk.mix_dither(arr, np.where(bars, np.clip((v - 0.55) * 2.5, 0, 0.8), 0), "#a8bce8", k=0.5, cell=2)
+    return dk.to_img(arr)
+
+
+TEXTURES.update({"bc_floor_grate": p_floor_grate2})
+
+
+def p_alley_door2():
+    """Round 2: the alley's end, the club's side door open on the dance floor: a brighter core (the light the alley is lit by), blue to white, magenta and violet beams."""
+    return dk.to_img(_door_glow(561, ("#141a4a", "#2a3a9a", "#4a6ae0", "#8aa8ff", "#d8e4ff"), ((40, 14, "#ff7ac0"), (90, -12, "#b890ff"))))
+
+
+DECALS.update({"bc_alley_door": p_alley_door2})
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, fn in {**TEXTURES, **PROPS, **DECALS}.items():
