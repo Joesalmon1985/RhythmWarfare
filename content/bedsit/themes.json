@@ -681,17 +681,17 @@
     {
      "id": "wizard_blue",
      "body": "#6a7be8",
-     "kind": "hat"
+     "kind": "horn"
     },
     {
      "id": "witch_green",
      "body": "#6fcf7f",
-     "kind": "hat"
+     "kind": "horn"
     },
     {
      "id": "sprite_pink",
      "body": "#e87fb8",
-     "kind": "hat"
+     "kind": "horn"
     }
    ],
    "layout": {
@@ -903,17 +903,17 @@
     {
      "id": "driver_red",
      "body": "#e8604f",
-     "kind": "cap"
+     "kind": "hard_hat"
     },
     {
      "id": "driver_blue",
      "body": "#4f8fe8",
-     "kind": "cap"
+     "kind": "hard_hat"
     },
     {
      "id": "driver_yellow",
      "body": "#e8c84f",
-     "kind": "cap"
+     "kind": "hard_hat"
     }
    ],
    "layout": {

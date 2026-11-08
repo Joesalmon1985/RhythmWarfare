@@ -445,7 +445,7 @@ def place_activity_sheets(art: str, theme: str, knob_png: str) -> None:
     for name, (path, grid) in src.items():
         shutil.copyfile(path, os.path.join(dst, name + ".png"))
         with open(os.path.join(dst, name + ".json"), "w", encoding="utf-8", newline=chr(10)) as fh:
-            json.dump({"grid": grid}, fh)
+            json.dump({"grid": grid, "placeholder": True}, fh)  # (ruling 36: placeholder sheets are named so)
             fh.write(chr(10))
 
 

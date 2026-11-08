@@ -74,6 +74,11 @@ ORDER = ["space", "magic", "dinos", "transport"]  # the order the raves' nodes a
 # ANY one rave has its three activities done (the save's raves.<theme>.bass_fixed, cloakroom_done, bar_done): SpaceRaveHost.opening_done sets the run flag WAY_OUT_FLAG at every scene
 # start while that holds, so once open it stays open for the run; a visit alone does not open it, and every rave stays reachable from the bedsit.
 WAY_OUT_FLAG = "bedsit_way_out"
+# Where the way out stands (play round 2): the room's door, in the WEST facing, at the height of its handle and lock (x -1.9 just off the west wall, 1.35 m up, z 0.6 the door's
+# middle). From the camera (0, 0) at yaw 90 that lands in the middle of the picture, in the gap between the four regions (content/bedsit/themes.json `regions`: x 0.25..0.75,
+# y 0.42..0.72), where BedsitRoom.tap hits the room's own hotspots; the top of the same door (its fanlight and timetable) is the top region, the Transport threshold. Never a
+# threshold's waypoint, so it never ties with one (HotspotView.hit gives ties to the earlier entry; the thresholds are not in the gap's hit list at all).
+WAY_OUT_ANCHOR = {"pos": [-1.9, 1.35, 0.6]}
 
 
 def stations(theme: str) -> dict:
@@ -225,7 +230,7 @@ def hotspots_json() -> dict:
         rows.append(hotspot_row("bedsit.threshold_" + f.lower(), "bedsit", {"waypoint": thr}, scene_id, f == "N"))
     rows.append(hotspot_row("bedsit.dev_exit", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,
                             {"flags_all": ["bedsit_dev_exit"], "flags_none": [], "energy_min": 0, "once": False}))
-    rows.append(hotspot_row("bedsit.way_out", "bedsit", {"waypoint": "threshold_s"}, "bedsit.end", False,  # WAY_OUT (ruling 41)
+    rows.append(hotspot_row("bedsit.way_out", "bedsit", WAY_OUT_ANCHOR, "bedsit.end", False,  # WAY_OUT (ruling 41), on the door (west facing)
                             {"flags_all": [WAY_OUT_FLAG], "flags_none": [], "energy_min": 0, "once": False}))
     for scene_id, f in PLACEHOLDER_RAVES.items():
         ph = hotspot_row("%s.back" % scene_id, scene_id, {"waypoint": FACING[f][3]}, "run:warehouse", True)
