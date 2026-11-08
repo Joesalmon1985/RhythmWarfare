@@ -470,10 +470,15 @@ def stage_sprites() -> dict:
     return out
 
 
+# Ruling 36 / brief section 11: placeholder art is called placeholder. Every rave this kit builds (Magic, Dinosaurs, Transport) has procedural people (the Mothership's rigs recoloured,
+# not the 256 px Floor-guide standard), procedural props and copied activity sheets: the manifest says so (as the race's does), and so does every activity sheet's sidecar.
+PLACEHOLDER_NOTE = "PLACEHOLDER art: procedural rigs, props and activity sheets drawn by tools/story/rave_art.py, rave_people.py and rave_builder.py (borrowed Doom textures excepted: docs/bedsit/LAUNCH.md)"
+
+
 def write_manifest(art: Art, archetypes: dict, tex_names: list, pieces: list) -> None:
     """assets/story/<art>/manifest.json: the themed rigs, the shared stage sprites, the theme's pieces and the map textures."""
     tex = {n: {"file": "textures/%s.png" % n, "size": [art.made[n][0], art.made[n][1]], "metres": art.made[n][2]} for n in tex_names}
-    man = {"version": 1, "level": art.name, "px_scale_note": "texture px x px_scale = design px",
+    man = {"version": 1, "level": art.name, "placeholder": True, "placeholder_note": PLACEHOLDER_NOTE, "px_scale_note": "texture px x px_scale = design px",
            "archetypes": archetypes, "silhouettes": {},
            "stage": {"layers": [], "sprites": stage_sprites(), "pieces": pieces},
            "textures": tex, "people": {}}

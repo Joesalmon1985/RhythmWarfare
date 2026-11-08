@@ -1,6 +1,8 @@
 {
  "version": 1,
  "level": "rave_transport",
+ "placeholder": true,
+ "placeholder_note": "PLACEHOLDER art: procedural rigs, props and activity sheets drawn by tools/story/rave_art.py, rave_people.py and rave_builder.py (borrowed Doom textures excepted: docs/bedsit/LAUNCH.md)",
  "px_scale_note": "texture px x px_scale = design px",
  "archetypes": {
   "grey": {

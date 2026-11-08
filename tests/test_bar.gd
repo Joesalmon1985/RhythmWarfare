@@ -352,6 +352,24 @@ func test_every_theme_has_four_distinct_ingredients_recipes_and_customers() -> v
 	assert_eq(BarData.recipe_indices(["a"], {"a": 0}), [], "two or three")
 
 
+func test_every_pad_pictogram_is_drawn_bright_enough_and_only_the_dark_ones_are_lifted() -> void:
+	for th: String in ["space", "magic", "dinos", "transport"]:
+		var d: Dictionary = BarData.resolve({}, th)
+		for e: Dictionary in d["ingredients"]:
+			var c: Color = e["color"]
+			var drawn := ControlPictograms.legible(c)
+			assert_true(drawn.get_luminance() >= ControlPictograms.MIN_LUMA - 1e-6, "%s %s is drawn at luminance %.2f" % [th, e["id"], drawn.get_luminance()])
+			if c.get_luminance() >= ControlPictograms.MIN_LUMA:
+				assert_true(drawn.is_equal_approx(c), "%s %s keeps its colour" % [th, e["id"]])
+	var tr: Array = BarData.resolve({}, "transport")["ingredients"]
+	for i in [0, 1]:  # slots 1 and 2: diesel cola and tyre liquorice, dark on the dark slot before
+		var c0: Color = tr[i]["color"]
+		assert_true(c0.get_luminance() < ControlPictograms.MIN_LUMA, "%s is a dark material" % tr[i]["id"])
+		var up := ControlPictograms.legible(c0)
+		assert_true(up.get_luminance() > c0.get_luminance() + 0.05, "%s is lifted" % tr[i]["id"])
+		assert_near(up.h, c0.h, 0.02, "%s keeps its hue" % tr[i]["id"])
+
+
 func test_ingredient_sprites_are_64_px_with_a_silhouette_each() -> void:
 	var masks := {}
 	for shape: String in BarData.SHAPES:

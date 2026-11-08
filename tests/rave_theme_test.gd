@@ -393,6 +393,13 @@ func test_every_person_has_a_rig_in_this_raves_art_and_the_sheets_are_named_plac
 		assert_true(assets.texture(str(part["file"])) != null, "rig part %s loads" % part["name"])
 	var mani: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/story/%s/manifest.json" % cfg["art"]))
 	assert_eq(mani["archetypes"].keys().size(), 6)
+	assert_true(bool(mani.get("placeholder", false)), "the art is labelled placeholder (ruling 36: procedural rigs, props and sheets, as the race's)")
+	assert_contains(str(mani.get("placeholder_note", "")), "PLACEHOLDER")
+	for sheet in ["cloak_coat", "cloak_symbols_%s" % cfg["theme"], "bar_glass_%s" % cfg["theme"], "bar_order_%s" % cfg["theme"], "sr_knob"]:
+		var side: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://assets/story/%s/sprites/%s.json" % [cfg["art"], sheet]))
+		assert_true(bool((side as Dictionary).get("placeholder", false)), "%s's sidecar says placeholder" % sheet)
+	var bar_actor: Dictionary = (story["actors"] as Array).filter(func(a: Dictionary) -> bool: return str(a["id"]) == "customer")[0]
+	assert_true((assets.rig(str(bar_actor["archetype"]), str(bar_actor["variant"]))["_assets"] as StoryAssets).art == str(cfg["art"]), "the bar's customer wears this rave's dress (its own rig)")
 	assert_true(FileAccess.file_exists("res://tools/story/rave_people.gd") or FileAccess.file_exists("res://tools/story/rave_people.py"), "the generator is in the tree")
 
 
