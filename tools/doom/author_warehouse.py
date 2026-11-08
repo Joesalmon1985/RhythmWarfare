@@ -49,6 +49,9 @@ WAYPOINTS = [
     ("wh_fence", (-48, -474), (400, -500), 2, "reveal: on the floor against the south railing, looking along it, the platforms across the floor"),
     ("wh_plinths", (-640, 100), (0, 0), 2, "reveal: the west band north of the bar, the platforms across the railing"),
     ("wh_platform", (66, 22), (-300, -190), 2, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
+    # round 2: the stay rail's two near reveals (the first window must find the camera at wh_ref: see tools/run/make_doom.py GOOD)
+    ("wh_gate_view", (-372, -552), (-250, -150), 1.5, "reveal: the walkway outside the south gate, the floor and the stage's wall across the railing"),
+    ("wh_bar_side", (-540, -450), (66, 22), 1.5, "reveal: the walkway beside the bar's mouth, looking across the floor at the lit cube"),
     ("wh_stage_approach", (-360, -470), (-300, -190), 2, "approach to the stage, leg 1: through the south gate onto the floor"),
     ("wh_stage_steps", (-410, -150), (-300, -190), 0, "approach to the stage, leg 2: the foot of the stage steps (west side)"),
     ("wh_stage_top", (-224, -150), (-300, -190), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
@@ -72,8 +75,7 @@ ROUTES = {  # the destination routes and the stay loop as lists of waypoint ids,
     "ahead": ["wh_v_lounge_w", "wh_v_gate_s", "wh_stage_approach", "wh_stage_steps", "wh_stage_top"],
     "left": ["wh_bar_approach", "wh_bar_door"],
     "right": ["wh_lounge_approach", "wh_lounge_door"],
-    "stay": ["wh_v_bar_e1", "wh_v_bar_mid", "wh_v_bar_e2", "wh_plinths", "wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot", "wh_platform", "wh_ped_foot", "wh_fence",
-             "wh_v_court_sw", "wh_v_gate_s", "wh_v_lounge_w", "wh_ref"],
+    "stay": ["wh_v_lounge_w", "wh_gate_view", "wh_v_lounge_w", "wh_ref", "wh_bar_side", "wh_ref"],  # round 2: two near reveals, each back to wh_ref (tools/run/make_doom.py GOOD)
     "arrive": ["wh_arrive", "wh_ref"],
     "stumble": ["wh_ref_back", "wh_sw_corner", "wh_ref"],
 }

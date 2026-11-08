@@ -7822,6 +7822,26 @@
    "hold_bars": 2
   },
   {
+   "id": "wh_gate_view",
+   "at": [
+    -11.1631,
+    17.4413
+   ],
+   "yaw": -14.7,
+   "sector": "10_23",
+   "hold_bars": 1.5
+  },
+  {
+   "id": "wh_bar_side",
+   "at": [
+    -16.875,
+    14.0625
+   ],
+   "yaw": -52.1,
+   "sector": "10_0",
+   "hold_bars": 1.5
+  },
+  {
    "id": "wh_stage_approach",
    "at": [
     -11.25,
@@ -8371,20 +8391,11 @@
     "wh_lounge_door"
    ],
    "stay": [
-    "wh_v_bar_e1",
-    "wh_v_bar_mid",
-    "wh_v_bar_e2",
-    "wh_plinths",
-    "wh_v_gate_w_out",
-    "wh_v_gate_w_in",
-    "wh_v_court_n",
-    "wh_ped_foot",
-    "wh_platform",
-    "wh_ped_foot",
-    "wh_fence",
-    "wh_v_court_sw",
-    "wh_v_gate_s",
     "wh_v_lounge_w",
+    "wh_gate_view",
+    "wh_v_lounge_w",
+    "wh_ref",
+    "wh_bar_side",
     "wh_ref"
    ],
    "arrive": [

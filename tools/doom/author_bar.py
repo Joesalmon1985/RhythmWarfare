@@ -61,7 +61,7 @@ ROUTES = {
     "ahead": ["wb_stairs_foot", "wb_booth_door"],
     "left": ["wb_v_jamb", "wb_floor_door"],
     "right": ["wb_v_pass_e", "wb_chill_door"],
-    "stay": ["wb_v_pass_e", "wb_bridge", "wb_v_pass_e", "wb_v_pass_n", "wb_counter", "wb_v_pass_n", "wb_v_jamb", "wb_way", "wb_v_jamb", "wb_ref"],
+    "stay": ["wb_v_pass_e", "wb_bridge", "wb_v_pass_e", "wb_ref", "wb_v_jamb", "wb_way", "wb_v_jamb", "wb_ref"],  # round 2: two near reveals, each back to wb_ref
     "arrive": ["wb_arrive", "wb_v_jamb", "wb_ref"],
     "stumble": ["wb_ref_back", "wb_sw_corner", "wb_ref"],
 }

@@ -84,6 +84,7 @@ WAYPOINTS = [
     ("lg_west", (-196, -50), (150, 0), 2, "reveal: the west walkway, the pit and its sofas across to the blue passage"),
     ("lg_north", (0, 200), (0, 400), 2, "reveal: the north walkway under the door, the rain street beyond the steps and the Dock guide"),
     ("lg_east", (196, 45), (-175, 175), 2, "reveal: the east walkway looking back across the pit to the Bar arch"),
+    ("lg_se_view", (200, -100), (-175, 175), 1.5, "reveal (round 2, the stay rail's second): the south-east walkway looking across the pit to the Bar arch"),
     ("lg_ahead_door", W("n", 0, -6), (0, 330), 0, "THRESHOLD ahead (Dock): at the foot of the steps, 3.2 m before the Dock guide (stage D: held a step back so the pads do not cover him); the world transition happens here"),
     ("lg_bar_door", W("nw", 0, 22), (-220, 262), 0, "THRESHOLD left (Bar): inside the arch, before the Bar guide"),
     ("lg_floor_door", W("ne", 0, 2), (233, 205), 0, "THRESHOLD right (Floor): at the blue passage's mouth, a step back from the Floor guide (stage D)"),
@@ -102,7 +103,7 @@ ROUTES = {  # the three routes and the stay loop as waypoint ids, via points inc
     "ahead": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_v_nne", "lg_v_n", "lg_ahead_door"],
     "left": ["lg_v_ssw", "lg_v_wsw", "lg_v_wnw", "lg_bar_door"],
     "right": ["lg_v_sse", "lg_v_ese", "lg_v_ene", "lg_floor_door"],
-    "stay": ["lg_v_ssw", "lg_v_wsw", "lg_west", "lg_v_wnw", "lg_v_nnw", "lg_north", "lg_v_nne", "lg_v_ene", "lg_east", "lg_v_ese", "lg_v_sse", "lg_ref"],
+    "stay": ["lg_v_ssw", "lg_v_wsw", "lg_west", "lg_v_wsw", "lg_v_ssw", "lg_ref", "lg_v_sse", "lg_se_view", "lg_v_sse", "lg_ref"],  # round 2: two near reveals, each back to lg_ref
     "arrive": ["lg_arrive", "lg_v_ene", "lg_v_ese", "lg_v_sse", "lg_ref"],
     "stumble": ["lg_ref_back", "lg_sw_corner", "lg_ref"],
 }

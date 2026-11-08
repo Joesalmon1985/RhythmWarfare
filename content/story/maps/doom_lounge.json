@@ -6557,6 +6557,16 @@
    "hold_bars": 2
   },
   {
+   "id": "lg_se_view",
+   "at": [
+    6.25,
+    3.125
+   ],
+   "yaw": 53.7,
+   "sector": "0_3",
+   "hold_bars": 1.5
+  },
+  {
    "id": "lg_ahead_door",
    "at": [
     0.1531,
@@ -7122,13 +7132,11 @@
     "lg_v_ssw",
     "lg_v_wsw",
     "lg_west",
-    "lg_v_wnw",
-    "lg_v_nnw",
-    "lg_north",
-    "lg_v_nne",
-    "lg_v_ene",
-    "lg_east",
-    "lg_v_ese",
+    "lg_v_wsw",
+    "lg_v_ssw",
+    "lg_ref",
+    "lg_v_sse",
+    "lg_se_view",
     "lg_v_sse",
     "lg_ref"
    ],

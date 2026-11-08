@@ -111,50 +111,38 @@
     "rail": {
      "good": [
       {
-       "to": "wh_plinths",
+       "to": "wh_gate_view",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 2,
        "via": [
-        "wh_v_bar_e1",
-        "wh_v_bar_mid",
-        "wh_v_bar_e2"
+        "wh_v_lounge_w"
        ],
-       "hold_bars": 2
-      },
-      {
-       "to": "wh_platform",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "wh_v_gate_w_out",
-        "wh_v_gate_w_in",
-        "wh_v_court_n",
-        "wh_ped_foot"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "wh_fence",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3,
-       "via": [
-        "wh_ped_foot"
-       ],
-       "hold_bars": 2
+       "hold_bars": 1.5
       },
       {
        "to": "wh_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 3,
        "via": [
-        "wh_v_court_sw",
-        "wh_v_gate_s",
         "wh_v_lounge_w"
        ],
+       "hold_bars": 8,
+       "choice": true
+      },
+      {
+       "to": "wh_bar_side",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "hold_bars": 1.5
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
        "hold_bars": 8,
        "choice": true
       }
@@ -475,39 +463,38 @@
        "to": "wb_bridge",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 2,
        "via": [
         "wb_v_pass_e"
        ],
-       "hold_bars": 2
-      },
-      {
-       "to": "wb_counter",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "wb_v_pass_e",
-        "wb_v_pass_n"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "wb_way",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "wb_v_pass_n",
-        "wb_v_jamb"
-       ],
-       "hold_bars": 2
+       "hold_bars": 1.5
       },
       {
        "to": "wb_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1.5
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
        "via": [
         "wb_v_jamb"
        ],
@@ -652,46 +639,47 @@
        "to": "lg_west",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 2,
        "via": [
         "lg_v_ssw",
         "lg_v_wsw"
        ],
-       "hold_bars": 2
-      },
-      {
-       "to": "lg_north",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "lg_v_wnw",
-        "lg_v_nnw"
-       ],
-       "hold_bars": 2
-      },
-      {
-       "to": "lg_east",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 4,
-       "via": [
-        "lg_v_nne",
-        "lg_v_ene"
-       ],
-       "hold_bars": 2
+       "hold_bars": 1.5
       },
       {
        "to": "lg_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 4,
+       "bars": 3,
+       "hold_bars": 8,
+       "choice": true,
+       "pitch": -12,
        "via": [
-        "lg_v_ese",
+        "lg_v_wsw",
+        "lg_v_ssw"
+       ]
+      },
+      {
+       "to": "lg_se_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 2,
+       "via": [
         "lg_v_sse"
        ],
+       "hold_bars": 1.5
+      },
+      {
+       "to": "lg_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
        "hold_bars": 8,
-       "choice": true
+       "choice": true,
+       "pitch": -12,
+       "via": [
+        "lg_v_sse"
+       ]
       }
      ],
      "bad": [

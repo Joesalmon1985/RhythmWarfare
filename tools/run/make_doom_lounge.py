@@ -37,14 +37,21 @@ SCENES = [
 ]
 
 
+REF_PITCH = -12  # degrees, the choice viewpoint looks down into the pit (the painting's subject)
+
+
 def rail() -> dict:
     import make_doom as md
     P = md.P
+    # round 2 (9 November): the window opens at beat 49 and the rail climbs one place per block decision (beats 12.5, 28.5, 44.5): round 1's four places put the FIRST phase's
+    # window on the east reveal, so a first visit never chose from lg_ref. Now a near reveal and back by beat 40.5, twice (west, then south-east). The choice viewpoint
+    # holds a steady downward pitch through the window (docs/engine/GEOGRAPHY_WORLDS.md): the sunken sofa ring and the table come into the picture above the pads.
+    ref = dict(P("lg_ref", bars=3, hold=8, choice=True), pitch=REF_PITCH)
     good = [
-        P("lg_west", bars=4, hold=2, via=["lg_v_ssw", "lg_v_wsw"]),
-        P("lg_north", bars=4, hold=2, via=["lg_v_wnw", "lg_v_nnw"]),
-        P("lg_east", bars=4, hold=2, via=["lg_v_nne", "lg_v_ene"]),
-        P("lg_ref", bars=4, hold=8, choice=True, via=["lg_v_ese", "lg_v_sse"]),
+        P("lg_west", bars=2, hold=1.5, via=["lg_v_ssw", "lg_v_wsw"]),
+        dict(ref, via=["lg_v_wsw", "lg_v_ssw"]),
+        P("lg_se_view", bars=2, hold=1.5, via=["lg_v_sse"]),
+        dict(ref, via=["lg_v_sse"]),
     ]
     bad = [P("lg_ref_back", "queasy", "walk", 2), P("lg_sw_corner", "queasy", "stagger", 3)]
     routes = {

@@ -26,13 +26,15 @@ def P(to, role="dancer", style="walk", bars=3, hold=0, via=None, choice=False):
 
 
 EXITS = {"up": "wb_booth_door", "left": "wb_floor_door", "right": "wb_chill_door", "down": "wb_ref"}
-# The stay loop: out on the first grate crossing (the channel, the stairs), along the counter in the bar, down the way to the Floor, then back to the reference viewpoint, a choice
-# viewpoint (8 bars still). Via points are in the map (tools/doom/author_bar.py); tools/story/check_rail_paths.gd traces every leg.
+# The stay rail (round 2, 9 November): the rail climbs one place per block decision (beats 12.5, 28.5, 44.5, not while a leg holds) and the window opens at beat 49. Round 1's
+# four places put the FIRST phase's window on the third reveal (the camera walking to the way), so a first visit never chose from the reference viewpoint. Now: out to the first
+# grate crossing and back to wb_ref by beat 40.5 (still through the window); in a second phase, out to the way to the Floor and back. The counter reveal is off the rail
+# (its waypoint stays, for the shots).
 GOOD = [
-    P("wb_bridge", bars=4, hold=2, via=["wb_v_pass_e"]),
-    P("wb_counter", bars=4, hold=2, via=["wb_v_pass_e", "wb_v_pass_n"]),
-    P("wb_way", bars=4, hold=2, via=["wb_v_pass_n", "wb_v_jamb"]),
-    P("wb_ref", bars=4, hold=8, choice=True, via=["wb_v_jamb"]),
+    P("wb_bridge", bars=2, hold=1.5, via=["wb_v_pass_e"]),
+    P("wb_ref", bars=3, hold=8, choice=True, via=["wb_v_pass_e"]),
+    P("wb_way", bars=2, hold=1.5, via=["wb_v_jamb"]),
+    P("wb_ref", bars=3, hold=8, choice=True, via=["wb_v_jamb"]),
 ]
 BAD = [P("wb_ref_back", "queasy", "walk", 2), P("wb_sw_corner", "queasy", "stagger", 3)]  # a stumble back along the passage's end
 ROUTE_MOVES = {
