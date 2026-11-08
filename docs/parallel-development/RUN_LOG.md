@@ -173,3 +173,4 @@ Owner items unchanged: audition `docs/doom/MUSIC.md`, play one-pc, rulings 41/42
 
 - The four agents (polish A/B/C, cuts-pace) were cut off by the 5-hour limit mid-work; the lead resumed each by message (their transcripts are kept; they commit WIP checkpoints first). The "STOPPED HERE" list above stays valid as the plan.
 - Blackjack view regression: `wip/play-blackjack-view` (Sonnet, new worktree `MusicGame-bj` from 0be1589d) bisects 329d6aa6 → b3c784d6 → 0be1589d and fixes the cause.
+- The music agent's two-cut Godot (PIDs 9088/9828, started 11:12, `res://src/run/run_play.tscn` with `RW_RUN_UNTIL_PHASE=3`) never quit after printing its summary and held the `MusicGame-envmusic` godot.sh lock for three hours, blocking the cuts-pace agent. Lead ended it (its log was complete); lock released; agent resumed. Known limit to note in HANDOVER: the virtual run does not quit after `RW_RUN_UNTIL_PHASE` prints the summary (the suites' runner is unaffected).
