@@ -90,7 +90,8 @@ func test_the_hub_leads_to_five_places_and_the_stations_loop_back() -> void:
 	for to in [_ids()[1], _ids()[2], _ids()[3], _ids()[4], "bedsit"]:
 		assert_true(to in next, "the hub leads to %s" % to)
 	for id in [_ids()[2], _ids()[3], _ids()[4]]:
-		assert_eq(bool(d.nodes[id].get("placeholder", false)), id == _ids()[4], "%s: only the race entrance is still a placeholder" % id)
+		var race_real := FileAccess.file_exists("res://content/races/%s.json" % cfg["theme"])  # (the race data is the switch: tests/test_race_themes.gd)
+		assert_eq(bool(d.nodes[id].get("placeholder", false)), id == _ids()[4] and not race_real, "%s: the race entrance is a placeholder only until the theme has race data" % id)
 		assert_true(d.nodes[id]["next"].any(func(e: Dictionary) -> bool: return str(e["to"]) == "%s_rave" % p and bool(e.get("loop", false))), "%s loops back to the hub" % id)
 	assert_eq(ContractShapes.theme_data(theme), [], "content/raves/%s.json has the contract-2 shape" % cfg["theme"])
 	assert_eq(theme["race"]["entrance"], "hangar_view", "the race entrance is a placeholder pose the race agent wires")

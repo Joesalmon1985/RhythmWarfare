@@ -120,6 +120,26 @@ distance and eased lane (1.5 beats, smoothstep), the course heading plus a yaw o
 - Also changed: `tools/run/make_bedsit.py` (the hangar as an activity scene, the race hotspot replayable), regenerated `content/paths/bedsit/run.json` and
   `hotspots/space_rave.json`; `tools/story/build_space_rave.py` and `content/raves/space.json` (`race.course` = `race_space`).
 
+## The four races (per theme)
+
+`python3 tools/story/build_race.py --theme <space|magic|dinos|transport>` writes the street map, story file, course and art; for a theme other than Space it also writes the race data
+`content/races/<theme>.json` (Space's rules and numbers, the theme's own course, scene and return hotspot). That data file is the switch: `make_bedsit.py` makes the rave's race entrance
+(`<prefix>_race`) a real hangar scene wherever it exists, and `rave_builder.py` names `race_<theme>` as the theme file's `race.course` then. Shots: `docs/shots/bedsit/<theme>/race_contact.jpg`
+(`RACE_PREFIX=<space|magic|dino|transport> bash tools/dev/shoot_race.sh <out dir> <sheet.jpg>`). Tests: `tests/test_race_themes.gd` (all four) and `tests/test_race.gd` (Space numbers).
+
+| | Space | Magic | Dinos | Transport |
+| --- | --- | --- | --- | --- |
+| Street (scene prefix) | The Mothership Strip, `race_space` (`space`) | The Moonlit Lane, `race_magic` (`magic`) | The Lava Ledge, `race_dinos` (`dino`) | The Wet Rally Street, `race_transport` (`transport`) |
+| Course (2200 m + run-off) | 5 bends, long finishing straight | 6 gentle alternating bends (r 70 to 130) | 6 tighter bends up to 90 degrees (r 45 to 90), run-off 170 m | S-bends and one 90 degree corner (r 60) |
+| Setting | wet neon city, rain, Mothership in the sky | moonlit cobbles, castle walls with arched windows, castle and hills on the horizon, drifting fireflies | basalt cliffs with lava cracks and caves, torches, volcano and pterosaurs, falling embers | wet terraces and depots, sodium lamps, signal and bus-stop signs, cooling tower and gasometer, rain |
+| Vehicle (dash) | hover racer bonnet | broomstick: handle, gloved hands, lantern (brake light) | ranger jeep: bonnet, roll bar, spare wheel | rally hatchback: chequered stripe, number roundel |
+| Rivals (3) | hover racers | witches on brooms | jeeps | rally hatchbacks |
+| Traffic (braking car, van) | taxi, van | gilded coach, hay cart | ranger pick-up, truck (the van, recoloured) | black cab, double-decker bus |
+| Roadworks, cones | striped barrier, cones | planks with cream stripes, blue crystal cones (recoloured) | fallen planks with amber stripes, lava-red cones (recoloured) | striped barrier, cones |
+| Signs | neon noodles, alien, planet, cocktail, rocket | neon crescent, star, flask, wand, key | footprint, egg, bone, fern, volcano | arrow, signal, P roundel, bus, chevrons |
+| Art status | placeholder | placeholder | placeholder | placeholder |
+| Placeholder (all) | everything | everything: no painting; vehicles and signs are first drawings; traffic cart, coach and witches are simple sprites; no people in the lane | everything: no painting; the jeep, ute and truck are boxy; truck = recoloured Space van; barrier and cones are recolours of Space's | everything: no painting; barrier and cones identical to Space's; the bus is the van with a second window row |
+
 ## Placeholders (not finished art)
 
 Everything under `assets/story/race_space/` is PLACEHOLDER art drawn by `tools/story/race_art.py`: the asphalt, paving, kerb and roof tiles, the three facades, the sky
@@ -140,4 +160,9 @@ engine sound, no tyre or contact sound (the run's sfx bus has no race cues yet).
 - The swap is a cut on the seat's downbeat from the hangar's racer to the driver's seat (ruling 37's "stage swap"); ruling 38's "seamless" is met by no fade, no card and
   the same HUD and pads, not by a continuous camera move from the room into the street.
 - No speed FOV effect (`speed_fov_gain` 0): the projector's field of view is fixed (`StoryProjector.FOV_V`), the dynamic things would drift off their places.
-- Only the Space theme is authored; nothing has been tried on a phone.
+- Nothing has been tried on a phone.
+- The three new streets have no concept painting behind them (`art/reference/doom_worlds/` is not in this branch): all their art is placeholder, labelled so in each
+  `assets/story/race_<theme>/manifest.json` (`placeholder: true`, `px_scale_note`). Sprite cells are at the Space race's size (160 x 104 vehicles, 448 x 56 dash cells), not yet at the
+  ruling 36 256 px class. No engine, tyre or contact sound for any theme.
+- Ride heights, speeds and the calibration table above were measured on Space only; the other themes use the same numbers (same rules), so their finish times match Space's for the
+  same play (a race is a function of distance, not of the street's bends).

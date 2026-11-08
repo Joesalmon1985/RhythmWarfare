@@ -5,6 +5,8 @@ computes the centreline from) and the PLACEHOLDER art under assets/story/race_<t
 
     python3 tools/story/build_race.py --theme space            # the Space rave's street (the city outside the Mothership: neon and rain)
     python3 tools/story/build_race.py --theme space --sheet F  # also a contact sheet of the placeholder art
+    python3 tools/story/build_race.py --theme magic            # the moonlit lane (broomstick); dinos = the lava ledge (jeep); transport = the wet rally street (rally hatchback)
+                                                               # (a theme other than space also writes its race data content/races/<theme>.json: the switch that makes its hangar a real scene)
 
 THE STREET. A finite course of straight runs and circular bends (THEMES[theme]["layout"]), `lanes` lanes wide, kerbed pavements both sides, and the buildings as
 Doom-style blocks: a sector per block whose floor is the roof, so the step face up to it is the facade (its texture, its window decals, its neon) and the skyline
@@ -12,8 +14,8 @@ varies block by block; their outer walls are "sky" (not drawn). Every piece of s
 cut every `straight_step` metres on the straights and every `arc_step_deg` degrees on the bends; neighbouring pieces share their cut exactly, so the portals meet.
 Lamps on the pavement every `lamp_every` metres (their light reaches the road and pavements of three pieces), cat's eyes on the lane lines, shop windows and neon
 signs on the facades, approach banners before the finish, the finish gantry at `length_m`, and the street ends at a building `runoff` metres later.
-Waypoints: one per lane per piece (`ln<k>_<i>`, the lane's middle in that piece), `race_grid` (the start, middle lane), `race_finish`. Only the space theme is authored;
-another theme is a THEMES entry (its palette, layout and lengths), nothing else.
+Waypoints: one per lane per piece (`ln<k>_<i>`, the lane's middle in that piece), `race_grid` (the start, middle lane), `race_finish`. Space, Magic, Dinos and Transport are authored;
+another theme is a THEMES entry (its palette, layout, art kinds and lengths), nothing else.
 """
 from __future__ import annotations
 
@@ -49,6 +51,81 @@ THEMES = {
         "rivals": [("#1a0610", "#6a0a2a", "#d0205a", "#ff6aa0"), ("#06140a", "#145a24", "#2ac85a", "#9aff7a"), ("#140c02", "#6a3a08", "#e08a10", "#ffd060")],
         "taxi": ("#2a2006", "#7a6010", "#e0b820", "#ffe070"), "van": ("#14161e", "#3a3e4e", "#7a8094", "#c8ccd8"),
         "fog": {"color": "#120a24", "density": 0.016}, "road_tint": "#8c84ff", "pave_tint": "#a08cff", "block_tint": "#7a70c8",
+    },
+    "magic": {
+        "title": "The Moonlit Lane",
+        "blurb": "The lane outside the Magic rave: a moonlit cobbled night, three lanes between stone walls, a castle on the hill; the racer is a broomstick.",
+        "lanes": 3, "lane_w": 3.4, "pavement": 3.0, "block_depth": 7.0, "heights": [6.0, 22.0], "seed": 21,
+        "length_m": 2200.0, "runoff": 160.0, "back_m": 30.0,
+        "straight_step": 30.0, "arc_step_deg": 6.0, "lamp_every": 40.0, "stud_every": 9.0, "shop_p": 0.2, "neon_p": 0.45,
+        "layout": [("straight", 200), ("bend", -35, 100), ("straight", 180), ("bend", 55, 70), ("straight", 160), ("bend", -50, 90), ("straight", 240), ("bend", 40, 110),
+                   ("straight", 200), ("bend", -30, 120), ("straight", 220), ("bend", 25, 130), ("straight", 780)],
+        "sky_kind": "moon", "facade_kind": "stone", "neon_set": "magic", "vehicle": "broom", "weather": "motes",
+        "vehicles": {"racer": "witch", "taxi": "coach", "van": "cart"},
+        "road_dark": "#0e1426", "road_mid": "#1a2440", "road_lite": "#2e3c64", "sodium": "#ffd27a", "sodium_hot": "#fff4c8", "neon_a": "#c8a0ff", "neon_b": "#8ae8ff",
+        "neon_c": "#a0ff8a", "neon_d": "#ffb0e0", "stud": "#e8f0ff", "city_glow": "#6a8aff", "nebula": "#3a2a7a", "choice": "#fff4d0",
+        "sky": ["#04061a", "#0a1236", "#142058", "#22348a", "#3a58b0"],
+        "facades": [(("#1c2030", "#2a3048", "#3a4262", "#505a80"), ["#ffd88a", "#ffeab0", "#c8e0ff"]),
+                    (("#201a2c", "#2e2440", "#42345c", "#5a4a7c"), ["#ffc870", "#ffb0e0", "#ffe8b0"]),
+                    (("#142026", "#1e303a", "#2c4552", "#41616f"), ["#9af0ff", "#ffd88a", "#d0b8ff"])],
+        "shop": ["#ffd88a", "#9af4ff", "#e0b0ff"],
+        "pave_ramp": ("#1e2438", "#2e3652", "#424c70", "#5a6690"), "pave_seam": "#10142a", "kerb_ramp": ("#343a58", "#565e84", "#8890b8", "#c0c8e8"), "roof_ramp": ("#0a0e1c", "#141a30", "#202a48"),
+        "hood": ("#2a1408", "#5a3412", "#9a6024", "#d89a48"),
+        "rivals": [("#1a0830", "#4a1a8a", "#8a4ae0", "#c8a0ff"), ("#06200e", "#14602a", "#2ab05a", "#9affa0"), ("#2a0810", "#7a1428", "#d02a50", "#ff9ab0")],
+        "taxi": ("#2a0a3a", "#6a2a9a", "#c068e0", "#f0b8ff"), "van": ("#2a1c08", "#6a4a18", "#b08a38", "#e8c870"),
+        "barrier_ramp": ("#201008", "#5a3010", "#a05a20"), "barrier_stripe": "#e8d8a0", "cone_ramp": ("#10305a", "#2060b0", "#80d0ff"),
+        "fog": {"color": "#0a1030", "density": 0.014}, "road_tint": "#8090e0", "pave_tint": "#90a0f0", "block_tint": "#7080c8",
+        "placeholder_note": "no painting of the moonlit lane yet: everything is drawn by race_art.py / race_art_themes.py",
+    },
+    "dinos": {
+        "title": "The Lava Ledge",
+        "blurb": "The basalt ledge outside the Dinosaur rave: a lava-lit ranger road between cliffs and a jungle treeline, a volcano on the horizon; the racer is a ranger jeep.",
+        "lanes": 3, "lane_w": 3.4, "pavement": 3.0, "block_depth": 7.0, "heights": [8.0, 28.0], "seed": 31,
+        "length_m": 2200.0, "runoff": 170.0, "back_m": 30.0,
+        "straight_step": 30.0, "arc_step_deg": 6.0, "lamp_every": 36.0, "stud_every": 9.0, "shop_p": 0.12, "neon_p": 0.5,
+        "layout": [("straight", 220), ("bend", 70, 60), ("straight", 160), ("bend", -80, 50), ("straight", 200), ("bend", 60, 70), ("straight", 260), ("bend", -40, 90),
+                   ("straight", 200), ("bend", 90, 45), ("straight", 300), ("bend", -50, 80), ("straight", 720)],
+        "sky_kind": "volcano", "facade_kind": "rock", "neon_set": "dinos", "vehicle": "jeep", "weather": "embers",
+        "vehicles": {"racer": "jeep", "taxi": "ute", "van": None},
+        "road_dark": "#140c0a", "road_mid": "#241410", "road_lite": "#3a2218", "sodium": "#ff8a2a", "sodium_hot": "#ffe0a0", "neon_a": "#ff4a1a", "neon_b": "#ffc040",
+        "neon_c": "#7aff5a", "neon_d": "#ff8a5a", "stud": "#ffd8a0", "city_glow": "#ff5a20", "nebula": "#5a1a08", "choice": "#fff0c8",
+        "sky": ["#100404", "#2a0a06", "#4a1408", "#7a2410", "#b04418"],
+        "facades": [(("#1a1210", "#2a1c16", "#3c281e", "#523828"), ["#ff6a1a", "#ffa030", "#ff4010"]),
+                    (("#14100e", "#241a16", "#36281f", "#4c382c"), ["#ff8a2a", "#ffc040", "#ff5a1a"]),
+                    (("#10140e", "#1c241a", "#2c3a26", "#40523a"), ["#ff7a20", "#ffb040", "#ff4a10"])],
+        "shop": ["#ffb060", "#ffd080", "#ff8a40"],
+        "pave_ramp": ("#241a14", "#38281e", "#503a2a", "#6a4e38"), "pave_seam": "#120a06", "kerb_ramp": ("#3a2a20", "#5e4634", "#8a6a50", "#c0a080"), "roof_ramp": ("#140c08", "#201410", "#2e1c14"),
+        "hood": ("#14180a", "#3a4418", "#6a7a28", "#a8bc48"),
+        "rivals": [("#1a0a06", "#6a2a0a", "#d06a1a", "#ffb060"), ("#0a1a1a", "#145a5a", "#20b0a0", "#80ffe8"), ("#1a1a08", "#5a5a14", "#c0c020", "#ffff80")],
+        "taxi": ("#0a1a10", "#1a5a34", "#2ac870", "#90ffc0"), "van": ("#1a180a", "#5a5020", "#a09440", "#e0d078"),
+        "barrier_ramp": ("#1a1008", "#4a3018", "#7a5028"), "barrier_stripe": "#ffb030", "cone_ramp": ("#3a1008", "#a02a10", "#ff6a20"),
+        "fog": {"color": "#200a06", "density": 0.018}, "road_tint": "#ff9a6a", "pave_tint": "#e09a70", "block_tint": "#c07a5a",
+        "placeholder_note": "no painting of the ledge yet: everything is drawn by race_art.py / race_art_themes.py",
+    },
+    "transport": {
+        "title": "The Wet Rally Street",
+        "blurb": "The street outside the Transport rave: a wet dusk rally stage through a railway town, three lanes of rain-slick tarmac between terraces and depots; the racer is the rally hatchback.",
+        "lanes": 3, "lane_w": 3.4, "pavement": 3.0, "block_depth": 7.0, "heights": [8.0, 24.0], "seed": 41,
+        "length_m": 2200.0, "runoff": 160.0, "back_m": 30.5,
+        "straight_step": 30.0, "arc_step_deg": 6.0, "lamp_every": 40.0, "stud_every": 9.0, "shop_p": 0.5, "neon_p": 0.4,
+        "layout": [("straight", 300), ("bend", -25, 150), ("straight", 260), ("bend", 45, 100), ("straight", 200), ("bend", -45, 100), ("straight", 300), ("bend", 90, 60),
+                   ("straight", 200), ("bend", -30, 140), ("straight", 760)],
+        "sky_kind": "town", "facade_kind": "windows", "neon_set": "transport", "vehicle": "rally", "weather": "rain",
+        "vehicles": {"racer": "hatch", "taxi": "cab", "van": "bus"},
+        "road_dark": "#0e1014", "road_mid": "#1a1e24", "road_lite": "#2c323c", "sodium": "#ffb040", "sodium_hot": "#fff0c0", "neon_a": "#ff3a2a", "neon_b": "#40e8a0",
+        "neon_c": "#ffd84a", "neon_d": "#4aa8ff", "stud": "#e0ecff", "city_glow": "#ff9a5a", "nebula": "#2a3a4a", "choice": "#f0fcff",
+        "sky": ["#0a0e14", "#141c26", "#222e3c", "#3a4658", "#6a6a78"],
+        "facades": [(("#201816", "#30221e", "#44302a", "#5e4238"), ["#ffc870", "#ffe0a0", "#9ad8ff"]),
+                    (("#181a1e", "#242a30", "#343e48", "#4a5864"), ["#ffb060", "#e8f0ff", "#ffe8b0"]),
+                    (("#1a1610", "#2a241a", "#3e3626", "#564a34"), ["#ffd27a", "#ffa850", "#c8e8ff"])],
+        "shop": ["#ffcf8a", "#9af4ff", "#ffa8d8"],
+        "pave_ramp": ("#22262c", "#343a42", "#4a525c", "#646e7a"), "pave_seam": "#12151a", "kerb_ramp": ("#383c44", "#5a606c", "#8a909c", "#c0c4d0"), "roof_ramp": ("#0c0e12", "#161a20", "#22282e"),
+        "hood": ("#0a1020", "#1a3a6a", "#2a70d0", "#80c0ff"),
+        "rivals": [("#1a0808", "#8a1010", "#e83030", "#ff9090"), ("#08101a", "#102a6a", "#2060e0", "#80b0ff"), ("#101008", "#6a6a10", "#e0e020", "#ffff90")],
+        "taxi": ("#08080c", "#1a1a22", "#2e2e3a", "#5a5a6c"), "van": ("#2a0808", "#7a1010", "#d02020", "#ff8070"),
+        "barrier_ramp": ("#401808", "#a03c10", "#ff7a20"), "barrier_stripe": "#f0f0f0", "cone_ramp": ("#5a1a08", "#c04010", "#ff7a30"),
+        "fog": {"color": "#10141a", "density": 0.016}, "road_tint": "#90a0b0", "pave_tint": "#a0a8b8", "block_tint": "#8890a0",
+        "placeholder_note": "no painting of the rally street yet: everything is drawn by race_art.py / race_art_themes.py",
     },
 }
 
@@ -178,10 +255,10 @@ def build(theme: str) -> dict:
     s = 14.0
     while s < end - 20:
         for side in ("L", "R"):
-            if rng.rand() < 0.55:
+            if rng.rand() < t.get("shop_p", 0.55):
                 decal("shop_%d" % n, "rc_shop_%d" % int(rng.randint(0, 3)), s + rng.uniform(-4, 4), side, 0.3, 2.0)
                 n += 1
-            if rng.rand() < 0.45:
+            if rng.rand() < t.get("neon_p", 0.45):
                 k = int(rng.randint(0, 5))
                 ys = round(float(rng.uniform(3.2, 7.5)), 2)
                 ss = s + rng.uniform(-6, 6)
@@ -251,6 +328,25 @@ def story(theme: str) -> dict:
     }
 
 
+# per theme: the Space data (content/races/space.json: same four regions, same rules, same numbers) with the theme's own names (course, scene) and view sizes
+RACE_SCENE = {"magic": "magic_race", "dinos": "dino_race", "transport": "transport_race"}
+
+
+def race_data(theme: str) -> dict:
+    with open(os.path.join(ROOT, "content", "races", "space.json"), encoding="utf-8") as fh:
+        d = json.load(fh)
+    t = THEMES[theme]
+    d["id"] = theme
+    d["title"] = t["title"]
+    d["course"] = "race_%s" % theme
+    d["stage_world"] = "race_%s" % theme
+    d["scene"] = RACE_SCENE[theme]
+    d["return_hotspot"] = "%s.back" % RACE_SCENE[theme]
+    if theme == "magic":  # a rider on a broom is narrower than a car
+        d["view"]["car_size"] = [1.7, 1.3]
+    return d
+
+
 def write(path: str, data: dict) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
@@ -279,7 +375,7 @@ def write_art(theme: str) -> list:
             fh.write("\n")
         shown.append((name, cv))
     write(os.path.join(base, "manifest.json"), {"version": 1, "level": "race_%s" % theme, "placeholder": True,
-                                                "px_scale_note": "PLACEHOLDER art drawn by tools/story/race_art.py (build_race.py)", "archetypes": {}, "silhouettes": {}, "stage": {},
+                                                "px_scale_note": "PLACEHOLDER art drawn by tools/story/race_art.py and race_art_themes.py (build_race.py): %s" % t.get("placeholder_note", ""), "archetypes": {}, "silhouettes": {}, "stage": {},
                                                 "textures": man_tex, "people": {}})
     return shown
 
@@ -318,6 +414,8 @@ def main(argv: list) -> int:
     write(os.path.join(ROOT, "content", "story", "maps", "race_%s.json" % theme), m)
     write(os.path.join(ROOT, "content", "story", "race_%s.json" % theme), story(theme))
     write(os.path.join(ROOT, "content", "races", "courses", "race_%s.json" % theme), course)
+    if theme != "space":
+        write(os.path.join(ROOT, "content", "races", "%s.json" % theme), race_data(theme))
     if "--sheet" in argv:
         contact(argv[argv.index("--sheet") + 1], shown)
     print("race_%s: %d sectors, %d walls, %d things, %d waypoints, %.0f m to the finish (+%.0f run-off), %d placeholder images" % (

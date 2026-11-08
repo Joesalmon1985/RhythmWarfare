@@ -2,7 +2,7 @@
  "version": 1,
  "level": "race_space",
  "placeholder": true,
- "px_scale_note": "PLACEHOLDER art drawn by tools/story/race_art.py (build_race.py)",
+ "px_scale_note": "PLACEHOLDER art drawn by tools/story/race_art.py and race_art_themes.py (build_race.py): ",
  "archetypes": {},
  "silhouettes": {},
  "stage": {},
