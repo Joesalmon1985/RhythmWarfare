@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 WORLD = {"id": WORLD_ID, "title": "The Underworld (Doom worlds)", "map": "doom_underworld", "depth": 2, "geography": True, "story": "res://content/run/doom/story_doom_underworld.json",
          "blurb": "A black basalt plateau over a lava abyss. The ledge ahead climbs to the Mothership, the cave on the left leads to the Dance Floor, the stair on the right to the Dock: follow the guide you like."}
 EXITS = {"up": "uw_gate", "left": "uw_cave_in", "right": "uw_shelf_end", "down": "uw_ref"}
+PITCH = -14.0  # degrees (negative looks down): the choice hold at uw_ref looks down across the abyss, the lava lake fills the lower half (docs/engine/GEOGRAPHY_WORLDS.md)
 DIR_OF = {"mothership": "up", "floor": "left", "dock": "right"}
 GUIDE = {  # name: (guide thing, route node, sprite stem)
     "mothership": ("uw_guide_mothership", "doom_mothership", "mothership"),
@@ -28,7 +29,7 @@ def _rail(P):
         P("uw_ledge_view", bars=4, hold=2, via=["uw_v_s1"]),
         P("uw_cave_view", bars=3, hold=2, via=["uw_v_s2"]),
         P("uw_stair_view", bars=4, hold=2, via=["uw_v_s1"]),
-        P("uw_ref", bars=4, hold=8, choice=True, via=["uw_v_s1"]),
+        {**P("uw_ref", bars=4, hold=8, choice=True, via=["uw_v_s1"]), "pitch": PITCH},  # the steady downward look over the lava lake through the whole choice window
     ]
     bad = [P("uw_ref_back", "queasy", "walk", 2), P("uw_sw_corner", "queasy", "stagger", 3)]
     routes = {
