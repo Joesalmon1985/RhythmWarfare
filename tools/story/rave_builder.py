@@ -392,7 +392,7 @@ def theme_json(spec: dict) -> dict:
         "props": spec["props"], "customers": spec["customers"], "guides": spec["guides"], "ingredients": spec["ingredients"], "cloakroom_symbols": spec["cloakroom_symbols"],
         "stations": {"stage": {"waypoint": "deck_view", "route": "%s.to_stage" % tid}, "cloakroom": {"waypoint": "cloak_hold", "route": "%s.to_cloak" % tid},
                      "bar": {"waypoint": "bar_hold", "route": "%s.to_bar" % tid}},
-        "race": {"entrance": "hangar_view", "course": "race_street_%s" % tid, "activity": "race"},
+        "race": {"entrance": "hangar_view", "course": "race_space", "activity": "race"},
         "home": {"threshold": "home_door", "route": "home"},
         "activities": {"stage": "bass_knob", "cloakroom": "cloakroom", "bar": "bar", "race": "race"},
         "routes": routes,

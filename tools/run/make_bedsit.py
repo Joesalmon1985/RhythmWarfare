@@ -42,23 +42,26 @@ FACING = {
 }
 LANDED = {"space_rave": "N", "magic_rave": "S", "dino_rave": "E"}  # raves that exist as real nodes (src/bedsit/space_rave_host.gd, tools/story/build_<theme>_rave.py)
 PLACEHOLDER_RAVES = {FACING[f][1]: f for f in FACINGS if FACING[f][1] not in LANDED}  # scene id -> facing it leaves from (resolve to the bedsit)
-# the raves that are real worlds: theme -> (scene id prefix, title, world blurb, hub blurb, stage blurb, race station title, race hub label, cloakroom blurb, bar blurb)
+# the raves that are real worlds: theme -> (scene id prefix, title, world blurb, hub blurb, stage blurb, race station title, race hub label, cloakroom blurb, bar blurb, race blurb)
 RAVES = {
     "space": ("space", "The Space Rave", "The Mothership's ring round a void: a stage, a cloakroom, a bar and a hangar.",
               "The Mothership's ring round a void. A DJ waves from the stage; the cloakroom, the bar and the hangar are across the ring.",
               "The dais at the north of the ring: two steps up to the DJ deck. The bass knob is stuck.", "Hangar", "The hangar: a race",
               "The coat check in the ring's west alcove: a counter, a rail of coats and an attendant who wants the right coat for each symbol.",
-              "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks."),
+              "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks.",
+              "The hangar in the ring's south-west alcove: a hover racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
     "magic": ("magic", "The Magic Rave", "An octagonal lounge of stepped tiers round a sunken dance well: a stage, a cloakroom, a bar and a carriage house.",
               "An enchanted lounge: stepped rings of moss and velvet going down to a sunken dance well. A unicorn DJ waves from the stage; the cloakroom, the bar and the carriage house are round the walls.",
               "The dais at the north of the lounge: two steps up to the DJ deck. The bass knob is stuck.", "Carriage house", "The carriage house: a race",
               "The coat check in the lounge's north-west alcove: a counter, a rail of capes and an attendant who wants the right cape for each symbol.",
-              "The bar in the lounge's north-east alcove: a cauldron counter, a back shelf of potions and a bartender who remembers the drinks."),
+              "The bar in the lounge's north-east alcove: a cauldron counter, a back shelf of potions and a bartender who remembers the drinks.",
+              "The carriage house off the lounge's south side: an enchanted racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
     "dinos": ("dino", "The Dinosaur Rave", "A basalt ledge over a lava gulf, a causeway to the stage and two islands: a stage, a cloakroom, a bar and a ranger garage.",
               "A rave over the lava: a basalt ledge, a long railed causeway to the stage and two islands off it. A dinosaur DJ waves from the stage; the cloakroom cave, the tent bar and the ranger garage are across the lava.",
               "The dais at the end of the causeway: two steps up to the DJ deck under a ribcage arch. The bass knob is stuck.", "Ranger garage", "The ranger garage: a race",
               "The coat check in a cave on the west island: a stone desk, a rack of hides and an attendant who wants the right hide for each symbol.",
-              "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks."),
+              "The bar in a tent on the east island: a log counter, a shelf of jars and a bartender who remembers the drinks.",
+              "The ranger garage off the ledge: an off-road racer and its pilot. Touch the racer: the street race through the city outside (docs/bedsit/RACE.md)."),
 }
 ORDER = ["space", "magic", "dinos"]  # the order the raves' nodes are written in
 
@@ -72,7 +75,13 @@ def stations(theme: str) -> dict:
 def activity_scenes(theme: str) -> dict:
     """The stations that are real scenes (ruling 38, contract 10): scene id -> (scene name, hold waypoint the activity is played from, the thing the hotspot is anchored on, minigame id, blurb)."""
     p, r = RAVES[theme][0], RAVES[theme]
-    return {"%s_cloakroom" % p: ("cloakroom", "cloak_hold", "cloak_counter", "cloakroom", r[7]), "%s_bar" % p: ("bar", "bar_hold", "bar_counter", "bar", r[8])}
+    scenes = {"%s_cloakroom" % p: ("cloakroom", "cloak_hold", "cloak_counter", "cloakroom", r[7]), "%s_bar" % p: ("bar", "bar_hold", "bar_counter", "bar", r[8])}
+    if (ROOT / "content" / "races" / ("%s.json" % theme)).exists():  # the race is a real scene once the theme has its race data (content/races/<theme>.json, docs/bedsit/RACE.md); until then a placeholder
+        scenes["%s_race" % p] = ("hangar", "hangar_view", "hangar_racer", "race", r[9])
+    return scenes
+
+
+REPLAYABLE = ["race"]  # activities whose hotspot stays after completion (the race may be run again; its record is the save's raves.<theme>.race)
 
 
 def place(home: str) -> dict:
@@ -105,7 +114,7 @@ def srail(home: str, good: list, exits: dict, arrive: str = "") -> dict:
 def rave_nodes(theme: str) -> list:
     """A rave (content/story/maps/<prefix>_rave.json): the hub (a choice viewpoint holding 8 bars: the stage, the cloakroom, the bar, the race entrance and the way home), the stage (the deck with the
     bass knob), the cloakroom and the bar (real scenes, ruling 38) and a placeholder node for the race (the race agent builds it: the activity id is in content/raves/<theme>.json `activities`)."""
-    pre, title, _wb, hub_blurb, stage_blurb, race_title, race_label, _cb, _bb = RAVES[theme]
+    pre, title, _wb, hub_blurb, stage_blurb, race_title, race_label, _cb, _bb, _rb = RAVES[theme]
     world = "%s_rave" % pre
     base = {"world": world, "role": "dancer", "relaxed": True, "treatment": "none"}
     hub_next = [{"to": "bedsit", "dir": "up", "label": "Home through the %s" % ("airlock" if theme == "space" else "door")}, {"to": "%s_stage" % pre, "dir": "n", "label": "Up to the stage"},
@@ -261,7 +270,7 @@ def rave_hotspots(theme: str) -> list:
         if sid in scenes:  # the activity's hotspot: the counter, an object whose success outcome is {activity: id} (content/bedsit/cloakroom_hotspot_example.json); any window seats it at the end of the block
             scene, hold, thing, mg, blurb = scenes[sid]
             h = row("%s.%s" % (sid, mg), sid, {"thing": thing}, "object", window="any", success={"activity": mg},
-                    available={"flags_all": [], "flags_none": ["%s_%s_done" % (theme, mg)], "energy_min": 0, "once": False})
+                    available={"flags_all": [], "flags_none": [] if mg in REPLAYABLE else ["%s_%s_done" % (theme, mg)], "energy_min": 0, "once": False})
             h["radius_m"] = 2.4
             h["min_px"] = 220
             rows.append(h)

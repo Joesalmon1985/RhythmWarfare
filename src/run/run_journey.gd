@@ -14,6 +14,7 @@ var skip_arrival := false  # the next phase start is a resume (the Bassment's re
 var log: Array = []  # [{phase, block, node, place, kind, role, pos}] one per block decision
 var actions: Array = []  # every action emitted, with its world
 var door_style := "walk"  # the walking style of the next door walk (an exit failure staggers)
+var leaving := false  # a threshold walk out of this phase's scene is under way (H1.6, ruling 39): the rail takes no more steps until the next phase
 var cine_until := -1.0  # song time a hotspot cinematic's move ends (the next scene's door walk waits for it)
 ## (node id, the rail's place after the block-2 decision) -> [[x, z, keep, height], ...]: the window's hotspots, the default kept ([] none). The run scene gives it; the camera frames them with a
 ## StoryPlayer `face` look (StoryPlayer.best_facing from wherever the rail is); unset, block 3 keeps its ordinary glance and stroll.
@@ -87,6 +88,7 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 			t_walk = cine_until
 		out.append_array(rail.door_walk(t_walk, engine.level.notes, walked))
 	door_target = ""
+	leaving = false
 	var looks := herald_looks(id, t0, engine)
 	out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
 	out.append_array(looks)
@@ -112,20 +114,79 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 ## A world exit's approach (CONTRACTS.md 1, H1.6): the player walks to the threshold spot `wp` from song time `t` and is there by the boundary `t_boundary`, where the
 ## world transition (the passage frame, the stage swap) takes over: walk first, then the transition. `bars` is the leg's length (2 to 4); a walk that would run past
 ## the boundary is shortened to end on it (the guard before a boundary is shorter than a bar: CONTRACTS.md 3, the leg-length disagreement).
-func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0) -> Array:
+## `move` (optional) is the route's move {to, via?, bars?, hold_bars?, style?} (threshold_move): the walk follows its `via` polyline over its bars, still ending by the boundary, and keeps
+## its hold at the threshold only when there is time for it before the boundary.
+func threshold_walk(t: float, t_boundary: float, wp: String, bars := 2.0, move: Dictionary = {}) -> Array:
 	if rail == null or wp == "" or t_boundary <= t:
 		return []
-	var b := minf(clampf(bars, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), (t_boundary - t) / rail.bar_s())
-	rail.busy_until = t + b * rail.bar_s()
-	var tagged := _tag([{"t0": t, "action": "player_move", "args": {"to": wp, "style": door_style, "bars": b, "threshold": true}}], world)
+	var avail := (t_boundary - t) / rail.bar_s()
+	var want := float(move.get("bars", bars)) if not move.is_empty() else bars
+	var b := minf(clampf(want, RunRail.MOVE_BARS_MIN, RunRail.MOVE_BARS_MAX), avail)
+	var style := str(move.get("style", door_style)) if door_style == "walk" else door_style  # (an exit failure's stagger wins over the route's own style)
+	var args := {"to": wp, "style": style, "bars": b, "threshold": true}
+	if typeof(move.get("via")) == TYPE_ARRAY and not (move["via"] as Array).is_empty():
+		args["via"] = (move["via"] as Array).duplicate()
+	var hold := minf(maxf(float(move.get("hold_bars", 0.0)), 0.0), avail - b)
+	if hold > 1.0e-6:
+		args["hold_bars"] = hold
+	if hold > 1.0e-6:
+		rail.hold_from = t + b * rail.bar_s()
+	rail.busy_until = t + (b + maxf(hold, 0.0)) * rail.bar_s()
+	var tagged := _tag([{"t0": t, "action": "player_move", "args": args}], world)
 	door_style = "walk"
+	leaving = true
 	actions.append_array(tagged)
 	return tagged
 
 
-## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1; "" when it names none).
+## The walk out of scene `from` toward `to` in another world, started at `t` and ending by the boundary `t_boundary` (the lock handler, RunPlay._update_passage): the route's
+## move when the scene has one (its polyline), else a straight walk to the threshold spot; [] when the route has no threshold.
+func threshold_leave(t: float, t_boundary: float, from: String, to: String) -> Array:
+	var wp := threshold_of(from, to)
+	if wp == "":
+		return []
+	var move := threshold_move(from, to)
+	return threshold_walk(t, t_boundary, wp, 2.0, move if str(move.get("to", "")) == wp else {})
+
+
+## The walk out at a committed choice (lead ruling on H1.6, "you chose, you go"): a `hotspot_commit` event `ev` of the final window for a touched choice (not the untouched default)
+## whose route leads to another world with a threshold starts the threshold walk at the commit's own time, with the route move's authored bars (clamped 2 to 4) and its hold, each only
+## as far as it fits before the phase's boundary (a late commit is shortened, never run past it). [] otherwise: the lock (beat 61) then walks the default as before.
+func commit_walk(ev: Dictionary, engine: RunEngine) -> Array:
+	var out: Dictionary = ev.get("outcome", {})
+	if out.is_empty() or str(out.get("window", "")) != "final" or not bool(out.get("tapped", false)) or bool(out.get("stays", false)):
+		return []
+	var to := str(out.get("route", ""))
+	var from := str(ev.get("node", engine.node_id))
+	if not data.nodes.has(to) or not data.nodes.has(from) or to == from or str(data.nodes[to]["world"]) == str(data.nodes[from]["world"]):
+		return []
+	return threshold_leave(float(ev["t"]), engine.t_of(float(engine.timing("phase_beats"))), from, to)
+
+
+## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1), else the route's own move
+## (threshold_move: its `to`); "" when there is neither.
 func threshold_of(from: String, to: String) -> String:
-	return str(((data.nodes.get(from, {}) as Dictionary).get("thresholds", {}) as Dictionary).get(to, ""))
+	var explicit := str(((data.nodes.get(from, {}) as Dictionary).get("thresholds", {}) as Dictionary).get(to, ""))
+	if explicit != "":
+		return explicit
+	return str(threshold_move(from, to).get("to", ""))
+
+
+## The route move of scene `from` toward `to` (docs/engine/GEOGRAPHY_WORLDS.md): the `next` entry leading to `to` gives the direction, the rail's `routes[dir]` is the move
+## {to (the threshold waypoint), via?, bars?, hold_bars?, style?}. {} when the route is the stay (`down`), is not a world exit, or the rail has no move for it.
+func threshold_move(from: String, to: String) -> Dictionary:
+	var n: Dictionary = data.nodes.get(from, {})
+	if n.is_empty() or not data.nodes.has(to) or str(data.nodes[to]["world"]) == str(n["world"]):
+		return {}
+	for e in n.get("next", []):
+		if str(e["to"]) != to:
+			continue
+		var dir := str(e["dir"])
+		if dir == "down":
+			return {}
+		var mv: Variant = ((n.get("rail", {}) as Dictionary).get("routes", {}) as Dictionary).get(dir)
+		return (mv as Dictionary) if typeof(mv) == TYPE_DICTIONARY and str((mv as Dictionary).get("to", "")) != "" else {}
+	return {}
 
 
 ## The rail actions of a hotspot outcome's cinematic ({steps: [{move, to, bars, role, style, look_at}]}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free
@@ -173,12 +234,15 @@ func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_fn: Cal
 func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	var b := int(ev["block"])
 	var notes := engine.level.notes
+	if leaving:  # (the player is walking out to another world: no rail step, no glance, no stroll; the walk is the camera's move)
+		log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": rail.place(), "kind": "leaving", "role": rail.role, "pos": rail.pos})
+		return []
 	var out: Array = rail.step(bool(ev["passed"]), float(ev["t"]), notes, engine.t_of(FACE_TURN_BEAT) if b == 2 else -1.0)
 	var last: Dictionary = rail.visited[rail.visited.size() - 1]
 	log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": last["place"], "kind": last["kind"], "role": last["role"], "pos": last["pos"]})
 	if b == 2 and rail.at_choice():  # a choice viewpoint (docs/story/HEIGHTS_AND_PATHS.md): the camera stands still through the whole choice window, the viewpoint frames the choices
 		var w0 := engine.t_of(FACE_TURN_BEAT)
-		out.append({"t0": w0, "action": "player_hold", "args": {"bars": (engine.t_of(FACE_RELEASE_BEAT) - w0) / rail.bar_s()}})
+		out.append({"t0": w0, "action": "player_hold", "args": {"bars": (engine.t_of(FACE_RELEASE_BEAT) - w0) / rail.bar_s(), "hold": "window"}})
 	elif b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
 		var face: Array = face_fn.call(str(ev["node"]), rail.place()) if b == 2 and face_fn.is_valid() else []
 		if not face.is_empty():

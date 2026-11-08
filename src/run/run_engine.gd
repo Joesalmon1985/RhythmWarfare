@@ -99,6 +99,7 @@ var _next_lap_track_t0 := 0.0  # ... and at the next lap's (decided at the lap's
 var _track_e: Dictionary = {}  # the energy numbers of a track scene's blocks (run.json energy, with energy.track over it)
 var _susp_from := INF  # rhythm suspended (a replace activity, CONTRACTS.md 4/5, hook H5.1): blocks starting in [_susp_from, _susp_to) chart no cue and decide neutral
 var _susp_to := INF
+var _tap_routed := false  # (ruling 39) this phase's route was committed at a geography exit's tap: the lock and the boundary give no second commit
 
 
 func _init(p_data: RunData = null) -> void:
@@ -204,6 +205,7 @@ func arrive(start_id: String, t0: float, p_energy: float, p_phase_n: int, p_lap_
 
 
 func _enter(id: String, t0: float, chart_now: bool) -> void:
+	_tap_routed = false
 	var prev := node_id if phase_n > 0 else ""
 	var tp := track_plan_of(id)  # ({} for an ordinary scene, and always when track scenes are off)
 	if not _gate_latch.is_empty():  # (the gate's answers for the routes not taken are forgotten: their next visit asks again)
@@ -561,8 +563,10 @@ func _commit() -> void:
 		_emit(ho)
 		_track_end(t0, "handoff", to)
 		return
-	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
-		"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
+	if not _tap_routed:  # (ruling 39: a commit at the tap already gave the route_commit)
+		_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
+			"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
+	_tap_routed = false
 	window_open = false
 	_track_end(t0, "route", to)
 	_enter(to, t0, false)
@@ -663,6 +667,8 @@ func _decide(b: int, t_dec: float) -> void:
 				rw["last"] = lap == laps
 				rw["track"] = str(track["track"])
 			_emit(rw)
+			if hotspots != null:
+				tap_commit(t_of(boundary_beat))  # (ruling 39: a geography exit picked before the window opened commits as it opens)
 	elif lap < laps:
 		_chart_next_lap(passed and not neutral)  # the scene goes on: the next lap's first block, in the stage this block leaves the mix in
 	else:
@@ -723,6 +729,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 	var out: Dictionary = {}
 	if b <= 2:
 		out = hotspots.on_block(b, passed, credit)
+	elif hotspots.committed != "":
+		return  # (ruling 39: a geography exit committed at its tap; the lock has nothing more to decide)
 	elif lap < laps and not (_doors_open() and _exit_touched()):
 		return  # (no window, no commit before the last lap; on a track scene's open lap, none unless an exit was touched)
 	elif relaxed() and hotspots.selected == "":
@@ -739,6 +747,28 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 	_emit({"kind": "hotspot_commit", "t": t_dec, "block": b, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
 	if (out["cinematic"] as Dictionary).has("cast"):  # a setback that is acted: the cinematic's cast lines run from the commit
 		_queue_cinematic_cast(out["cinematic"], str(out["cinematic_name"]), t_dec)
+
+
+## (lead ruling 39) In a geography world a guide's tap is the decision: when the selected hotspot is a geography exit (RunHotspots.is_geography_exit) and the choice window is open, it commits at
+## song time `t` (the tap's own beat, or the window's opening for a pick made before it): `hotspot_commit` at `t`, the engine's choice set, and the `route_commit` given now (its `t` stays the
+## boundary the route is taken on; `at` is the tap). Later taps change nothing. False (nothing happens) for every other hotspot, outside the window, or once committed.
+func tap_commit(t: float) -> bool:
+	if hotspots == null or not window_open or hold or _tap_routed or (lap < laps and not _doors_open()):
+		return false
+	hotspots.energy = energy
+	var out := hotspots.commit_tap()
+	if out.is_empty():
+		return false
+	choice = str(out["route"])
+	if float(out["energy"]) != 0.0:
+		energy = clampf(energy + float(out["energy"]), 1.0, float(cfg["energy"]["max"]))
+		hotspots.energy = energy
+	_emit({"kind": "hotspot_commit", "t": t, "block": block, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
+	if (out["cinematic"] as Dictionary).has("cast"):
+		_queue_cinematic_cast(out["cinematic"], str(out["cinematic_name"]), t)
+	_tap_routed = true
+	_emit({"kind": "route_commit", "from": node_id, "to": choice, "chosen": true, "t": t_of(timing("phase_beats")), "at": t, "treatment": data.nodes[choice]["treatment"], "same_world": false, "tapped": true})
+	return true
 
 
 ## On a track scene's open lap: an available final-window hotspot is selected (touching it leaves by it, or by its outcome's route).

@@ -95,6 +95,7 @@ var _stage_hidden := ""
 var rave_host := SpaceRaveHost.new()  # the Space rave's bass lock and stage change (src/bedsit/space_rave_host.gd; inert outside its scenes)
 var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
 var _mg: RunMinigameHost
+var race_host: RaceStageHost  # the street race's stage swap (src/minigames/race/race_stage_host.gd; inert outside a race)
 var card_table: RunCardTable  # the day room's card table in the room: its players follow the table's hotspot (docs/BLACKJACK_INTEGRATION.md, "The table in the room")
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 var run_path := ""  # the path being played ("" = the main run); `data`, `engine`, `hotspots` and `journey` are always the active run's
@@ -115,6 +116,10 @@ var director: TransitionDirector  # the transition seam (src/transition/transiti
 var _track_stay_phase := -1  # the phase whose open window is not the last lap's (route_window.last false): touching nothing stays, so no door shows the way out
 
 
+## (tests only: the run's data for the next scene instead of content/run/run.json, e.g. tests/test_geography.gd's fixture; read and cleared by _ready)
+static var data_for_test: RunData = null
+
+
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var want_path := OS.get_environment("RW_RUN_PATH") if OS.get_environment("RW_RUN_PATH") != "" else Session.run_start_path
@@ -122,7 +127,8 @@ func _ready() -> void:
 		want_path = BedsitNav.PATH_ID
 	Session.run_start_path = ""
 	playtest = PlaytestMode.consume_launch()
-	data = RunData.load_path(want_path) if want_path != "" else RunData.load_default()
+	data = data_for_test if data_for_test != null else (RunData.load_path(want_path) if want_path != "" else RunData.load_default())
+	data_for_test = null
 	if not data.errors.is_empty():
 		_fatal("The run data is invalid:\n" + "\n".join(PackedStringArray(data.errors)))
 		return
@@ -155,6 +161,7 @@ func _ready() -> void:
 	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
 	minigames.load_registry()
 	_mg = RunMinigameHost.new(self)
+	race_host = RaceStageHost.new(self)
 	if not virtual_mode:  # (the audio before the first scene: a track scene's stems are decoded now, before the countdown, and the engine asks the audio whether a track is ready)
 		audio = RunAudio.new()
 		add_child(audio)
@@ -844,6 +851,7 @@ func _advance(t: float, audio_t: float) -> void:
 		_playtest_back()
 		return
 	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
+	race_host.step(t)  # the race's street stage (before the host walks the camera home)
 	_rave_step(t)
 	_mg.step(t)
 	_card_table_feed(t)
@@ -894,8 +902,8 @@ func _update_passage(t: float, audio_t: float) -> void:
 		if data.nodes.has(to0) and _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
 			for a in journey.leave_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), to0, engine):
 				_journey_apply(a)
-		elif data.nodes.has(to0) and to0 != engine.node_id and journey.threshold_of(engine.node_id, to0) != "":  # another world by a threshold (H1.6): walk there, then the frame and the swap
-			for a in journey.threshold_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), engine.t_of(64.0), journey.threshold_of(engine.node_id, to0)):
+		elif data.nodes.has(to0) and to0 != engine.node_id:  # another world by a threshold (H1.6): walk there (the route's polyline when the rail has one), then the frame and the swap
+			for a in journey.threshold_leave(engine.t_of(64.0 - RunPassage.DOOR_BEATS), engine.t_of(64.0), engine.node_id, to0):
 				_journey_apply(a)
 	if engine.exit_pending() and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
@@ -1094,7 +1102,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 		hud.show_title(str(node["world_title"]).to_upper(), str(node["title"]).to_upper(), t0)
 	if world_changed and _passage_swap < 0.0:
 		_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
-	if world != active_world:
+	if world != active_world and not race_host.owns_stage():  # (the race's street stays on through the race scene's phase starts)
 		_show_world(world)
 	_run_world = world_key
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
@@ -1480,6 +1488,8 @@ func hotspot_select(id: String) -> bool:
 			"again": same, "from": prev})
 		if not same:
 			_choice_picked(id, prev)
+		if hotspots.selected == id:
+			engine.tap_commit(hud.now_t)  # (ruling 39: in a geography world a guide's tap is the decision; nothing for any other hotspot)
 	return ok
 
 
@@ -2020,6 +2030,12 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)
+	if _door_phase != engine.phase_n and trial_state == "":  # a chosen route to another world (H1.6, the lead's ruling): the threshold walk starts at the commit; the lock then walks nothing more
+		var walk := journey.commit_walk(ev, engine)
+		for a in walk:
+			_journey_apply(a)
+		if not walk.is_empty():
+			_door_phase = engine.phase_n
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
 		_trial_entry = {"way": "legacy", "object": str(out["hotspot"])}  # (the wizard: committed to the route state when the trial begins, commit_legacy)
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard

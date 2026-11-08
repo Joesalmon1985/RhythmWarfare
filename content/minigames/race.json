@@ -1,0 +1,18 @@
+{
+	"id": "race",
+	"kind": "race",
+	"script": "res://src/minigames/race/race_activity.gd",
+	"mode": "overlay",
+	"controls": 0,
+	"wobble_at": 0,
+	"fall_at": 0,
+	"course": "race_space",
+	"decision_s": 4.0,
+	"rivals": 3,
+	"min_speed_frac": 0.35,
+	"target_s": [60, 90],
+	"resolve_at_deadline": "current_selection",
+	"races": "res://content/races/{theme}.json",
+	"theme_keys": ["race"],
+	"flags_on_complete": []
+}

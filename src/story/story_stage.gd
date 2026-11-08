@@ -25,6 +25,7 @@ var lines := 0  # internal resolution lines for the low-res world (0: the defaul
 var high_contrast := false
 var palette := "low"
 var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
+var pose_fn: Callable = Callable()  # H8.2 (CONTRACTS.md 8): (t) -> pose overriding the player's (the race's cockpit camera, RaceStageHost); unset: the rail's
 var crowd_cap := 100.0  # the energy the crowd shows is at most this (action crowd_cap: the Space rave's crowd stands about until the bass is back)
 var _pieces: Dictionary = {}  # id -> {on_t, off_t, pulse_t, bars}
 var _ambient: Dictionary = {}  # ids of the extra rooms' own pieces
@@ -53,6 +54,7 @@ var world: StoryWorld
 var free_look := StoryFreeLook.new()
 var world_active := false
 var fx3d: StoryWorldFx  # the light show in the 3D world (beams, pools, haze, LED, tiles, ...)
+var weather: StoryWeather  # rain, drips and wet floors in the 3D world (hook H10); null on a map without weather
 var _overlay: CanvasLayer
 var _vis: Dictionary = {}
 var _vis_geo: Dictionary = {}
@@ -164,6 +166,10 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	fx3d = StoryWorldFx.new()
 	world.add_child(fx3d)
 	fx3d.build(self, map, assets, world)
+	if StoryWeather.wanted(map):  # (a map without weather gets no node: it draws exactly what it drew before)
+		weather = StoryWeather.new()
+		world.add_child(weather)
+		weather.build(self, map, world)
 	for id in crowds:
 		(crowds[id] as StoryCrowd).tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 		(crowds[id] as StoryCrowd).light_fn = _figure_light
@@ -176,13 +182,15 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	if ppl != null:
 		ppl.set_fog(Color.html(str(map.fog.get("color", "#08051a"))).darkened(0.35))
 	world_active = true
-	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx hides those parts to measure what each costs
+	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx,weather hides those parts to measure what each costs
 	if "crowd" in hide:
 		_overlay.visible = false
 	if "world" in hide:
 		world.visible = false
 	if "fx" in hide:
 		fx3d.visible = false
+	if "weather" in hide and weather != null:
+		weather.visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
 
 
@@ -351,6 +359,8 @@ func update(t: float, p_energy: float) -> void:
 		player.reduced = reduced or motion >= 1
 		player.cut = motion >= 2
 		pose = player.pose_at(t)
+		if pose_fn.is_valid():
+			pose = pose_fn.call(t)
 		if _cam_override != "":
 			pose = _override_pose(pose)
 		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)
@@ -542,6 +552,8 @@ func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": people_gain(t)}  # (the room swell and a darkening sky light the room as they light the people)
 	world.update(t, _world_ctx)
 	fx3d.update(t)
+	if weather != null:  # on the stage's clock: a paused song holds the rain still
+		weather.update(t, lowres.camera, world.light_of(map.sector(str(pose.get("sector", ""))), t, _world_ctx) if map.sector(str(pose.get("sector", ""))).size() > 0 else Color.WHITE, _vis_geo)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
 
 
