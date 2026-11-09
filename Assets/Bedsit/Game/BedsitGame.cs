@@ -45,12 +45,18 @@ namespace Bedsit.Game
         public InteractionTarget DoorTarget, EastTarget, MirrorTarget, WestTarget, CorridorNpcTarget, CorridorBackTarget;
 
         public readonly List<string> Log = new List<string>();
+        /// <summary>When set, the north door's interaction calls this instead of walking out into the corridor (Act One).</summary>
+        public System.Action DoorOverride;
 
         void Awake()
         {
             Instance = this;
             if (EvidenceRunner.Requested) gameObject.AddComponent<EvidenceRunner>();
-            if (MusicPoc.Requested) gameObject.AddComponent<MusicPoc>();            // music/rhythm POC (feature flag)
+            if (MusicPoc.Requested)                                                  // music/rhythm POC + Act One (feature flag)
+            {
+                gameObject.AddComponent<MusicPoc>();
+                gameObject.AddComponent<ActOne>();
+            }
         }
         void OnDestroy() { if (Instance == this) Instance = null; }
 
@@ -207,7 +213,7 @@ namespace Bedsit.Game
             CorridorBackTarget = MakeTarget("back_to_bedsit", ZoneCorridor, CompassDirection.South,
                 new Vector3(0f, 2.3f, BedsitWorldBuilder.CorridorInnerZ0 + 0.35f));
 
-            DoorTarget.Interacted += _ => EnterCorridor();
+            DoorTarget.Interacted += _ => { if (DoorOverride != null) DoorOverride(); else EnterCorridor(); };
             EastTarget.Interacted += _ => React(NpcEast, AnimationKeys.Wave, "east window: NPC waves");
             WestTarget.Interacted += _ => React(NpcWest, AnimationKeys.Clap, "west window: NPC claps");
             MirrorTarget.Interacted += _ => React(Player, AnimationKeys.Wave, "mirror: reflected player waves");

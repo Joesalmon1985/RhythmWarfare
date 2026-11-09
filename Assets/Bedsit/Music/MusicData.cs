@@ -51,13 +51,21 @@ namespace Bedsit.Music
         public int restoreAfterHits = 2;
         public double prepMarginBeats = 8, evalLeadSeconds = 0.2, startDelaySeconds = 3.0;
         public double judgePerfectSeconds = 0.045, judgeGoodSeconds = 0.09;
-        public float customGain = 0.8f, customGainUnderRecording = 0.6f, recordedGain = 0.9f;
+        public float customGain = 0.8f, customGainUnderRecording = 0.6f, recordedGain = 0.9f, knockGain = 1.0f;
     }
 
     /// <summary>One 32-beat phase of a playable build. gate = must reach the threshold to move on (else the phase repeats);
     /// recording = the recorded song's own buildup (its last 32 beats before the drop) plays under this phase.</summary>
     [Serializable]
-    public class BuildLoopDef { public string id; public bool gate, recording; public string[] charted, audible; }
+    public class BuildLoopDef
+    {
+        public string id;
+        public bool gate;             // must reach the threshold to move on (else the LAST loop repeats as a recovery attempt)
+        public bool aggregate;        // the gate judges every charted loop of this build so far, not just this loop
+        public bool recording;        // the recorded song's own run-in plays under this phase (no judged notes)
+        public int beats;             // phase length in beats (0 = one loop, 32)
+        public string[] charted, audible;
+    }
 
     [Serializable]
     public class LegDef
@@ -75,6 +83,7 @@ namespace Bedsit.Music
         public string[] order;
         public BuildLoopDef[] buildLoops;
         public LegDef[] legs;
+        public int stopAfterLegs;      // >0: after this many drops the plan stops (the music just plays on in MIXING mode); 0 = cycle forever
         public static PlanDef Parse(string json) => JsonUtility.FromJson<PlanDef>(json);
     }
 

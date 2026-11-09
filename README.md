@@ -25,7 +25,7 @@ visual and interaction architecture of RhythmWarfare and DuelMasterBattle. It do
 
 ## Music / rhythm layer
 
-A rhythm-and-mixing layer over the bedsit (Gatekeeper-only first pass) lives behind `-music` / `BEDSIT_MUSIC=1`: see [Docs/music/README.md](Docs/music/README.md).
+A rhythm-and-mixing layer over the bedsit (Gatekeeper-only first pass) and "Act One" (headphones, a messy room to tidy, a knock at the drop, a visitor at the door) live behind `-music` / `BEDSIT_MUSIC=1`: see [Docs/music/README.md](Docs/music/README.md) and [Docs/music/ACT_ONE.md](Docs/music/ACT_ONE.md).
 
 ## Controls (exactly three)
 

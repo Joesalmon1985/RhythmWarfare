@@ -162,6 +162,7 @@ namespace Bedsit.Music
             s.Mixer = new Mixer(sampleRate);
             s.Judge = new RhythmJudge();
             s.Director = new MusicDirector(s.Mixer, s.Judge, s.Songs, s.Plan, s.Loops, s.SongPcm, s.StemPcm);
+            s.Director.KnockClip = KnockSynth.Make(sampleRate);
             return s;
         }
 

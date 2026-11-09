@@ -532,3 +532,142 @@ namespace Bedsit.Tests
         }
     }
 }
+
+namespace Bedsit.Tests
+{
+    /// <summary>Act One in the real bedsit scene: nobody but the player, a messy room to tidy, a door that waits for the knock.</summary>
+    public class ActOneSceneTests : BedsitFixtureBase
+    {
+        protected override void BeforeLoad() { MusicPoc.ForceRequest = true; }
+        [TearDown] public void ResetFlag() { MusicPoc.ForceRequest = false; }
+
+        ActOne Act => ActOne.Instance;
+
+        IEnumerator ActReady()
+        {
+            yield return WaitUntil(() => Act != null && Act.SetupDone, 30f, "Act One to set up");
+        }
+
+        static bool OnScreen(Camera cam, Vector3 world)
+        {
+            var sp = cam.WorldToScreenPoint(world);
+            return sp.z > 0.2f && sp.x > 0 && sp.x < Screen.width && sp.y > 0 && sp.y < Screen.height;
+        }
+
+        [UnityTest]
+        public IEnumerator OnlyThePlayerExistsInTheWorldAndShowsOnlyInTheMirror()
+        {
+            yield return ActReady();
+            Assert.IsFalse(Game.NpcEast.gameObject.activeInHierarchy, "no Sim at the east window");
+            Assert.IsFalse(Game.NpcWest.gameObject.activeInHierarchy, "no Sim at the west window");
+            Assert.IsFalse(Game.NpcCorridor.gameObject.activeInHierarchy, "no Sim in the corridor");
+            Assert.IsTrue(Game.Player.gameObject.activeInHierarchy, "the player is there");
+            Assert.AreEqual(BedsitLayers.PlayerMirrorOnly, Game.Player.gameObject.layer == 0 ? BedsitLayers.PlayerMirrorOnly : Game.Player.gameObject.layer, "player only on the mirror layer");
+            Assert.AreEqual(0, (Game.EyeCamera.cullingMask & BedsitLayers.PlayerMirrorOnlyMask), "the eye camera never renders the player");
+            Assert.IsFalse(Game.EastTarget.Interactable || Game.WestTarget.Interactable, "nobody at the windows to react");
+            // facing the mirror, the eye camera sees no Sim at all (no skin-coloured NPC pixels) - checked by the old NPC tests' paint method
+            foreach (var d in new[] { CompassDirection.North, CompassDirection.East, CompassDirection.West })
+            {
+                yield return Face(d);
+                Paint(Game.NpcEast, Magenta); Paint(Game.NpcWest, Magenta); Paint(Game.NpcCorridor, Magenta);
+                Assert.AreEqual(0, CountPixels(Game.EyeCamera, IsMagenta), "no Sim visible facing " + d);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator TheRoomIsMessyFromEveryViewpoint()
+        {
+            yield return ActReady();
+            Assert.GreaterOrEqual(Act.TotalItems, 12);
+            foreach (var d in new[] { CompassDirection.North, CompassDirection.East, CompassDirection.South, CompassDirection.West })
+            {
+                yield return Face(d);
+                int visible = Act.Items.Count(i => !i.Tidied && OnScreen(Game.EyeCamera, i.PickCentre));
+                Assert.GreaterOrEqual(visible, 3, "pieces of mess on screen facing " + d);
+                Assert.Greater(Act.Remaining(d), 0, "compass pips for " + d);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator TappingMessTidiesItAwayAndTheMeterRises()
+        {
+            yield return ActReady();
+            yield return Face(CompassDirection.East);
+            var item = Act.Items.First(i => i.Kind == "mug" && OnScreen(Game.EyeCamera, i.PickCentre));
+            var px = (Vector2)Game.EyeCamera.WorldToScreenPoint(item.PickCentre);
+            Assert.AreEqual(0f, Act.TidyFraction);
+            Assert.IsFalse(Act.TryTidyAtScreen(new Vector2(Screen.width * 0.5f, Screen.height * 0.9f)), "tapping bare wall tidies nothing");
+            Assert.IsTrue(Act.TryTidyAtScreen(px), "tapping the mug tidies it");
+            Assert.IsTrue(item.Tidying || item.Tidied);
+            yield return new WaitForSeconds(0.8f);
+            Assert.IsTrue(item.Tidied && !item.gameObject.activeSelf, "the item is gone");
+            Assert.AreEqual(1, Act.TidiedCount);
+            Assert.Greater(Act.TidyFraction, 0f);
+            Assert.IsFalse(Act.TryTidyAtScreen(px), "it cannot be tidied twice");
+        }
+
+        [UnityTest]
+        public IEnumerator TidyClicksTakePriorityOverTheTurnZones()
+        {
+            yield return ActReady();
+            yield return Face(CompassDirection.East);
+            Assert.IsNotNull(Game.Input.ClickHandler, "Act One hooks the click router");
+            // an item in the right-hand turn zone is tidied rather than turning the view
+            var inZone = Act.Items.FirstOrDefault(i => { var sp = Game.EyeCamera.WorldToScreenPoint(i.PickCentre); return sp.z > 0 && sp.x > Screen.width * (1f - InputRegions.SideWidth) && sp.x < Screen.width; });
+            if (inZone != null)
+            {
+                var sp = (Vector2)Game.EyeCamera.WorldToScreenPoint(inZone.PickCentre);
+                Assert.IsTrue(Game.Input.ClickHandler(sp));
+            }
+            Assert.AreEqual(CompassDirection.East, Game.View.Facing, "tidying never turns the view");
+        }
+
+        [UnityTest]
+        public IEnumerator DoorStaysShutUntilTheKnockThenOpensForAWomanIfTheRoomIsClean()
+        {
+            yield return ActReady();
+            yield return Face(CompassDirection.North);
+            Assert.IsFalse(Game.World.Door.IsOpen, "the door starts shut");
+            Assert.IsFalse(Game.DoorTarget.Interactable, "locked before the knock");
+            Game.Input.Raise(PlayerAction.Interact); yield return new WaitForSeconds(0.3f);
+            Assert.IsFalse(Act.DoorOpened, "nothing happens before the knock");
+            foreach (var it in Act.Items.ToArray()) Act.Tidy(it);
+            Assert.IsTrue(Act.IsClean);
+            Act.ForceKnock();
+            yield return null;
+            Assert.IsTrue(Act.Knocked); Assert.IsTrue(Game.DoorTarget.Interactable, "unlocked by the knock");
+            Game.Interactions.Refresh();
+            Game.Input.Raise(PlayerAction.Interact);
+            yield return WaitUntil(() => Game.World.Door.IsOpen, 6f, "the door to open");
+            Assert.AreEqual("woman", Act.VisitorKind);
+            Assert.AreSame(Game.NpcEast, Act.Visitor, "Pleasantview Sim 13 (female)");
+            Assert.IsTrue(Act.Visitor.gameObject.activeInHierarchy);
+            Assert.IsFalse(Game.NpcCorridor.gameObject.activeInHierarchy, "only one visitor");
+        }
+
+        [UnityTest]
+        public IEnumerator AMessyRoomGetsAMan()
+        {
+            yield return ActReady();
+            yield return Face(CompassDirection.North);
+            foreach (var it in Act.Items.Take(5).ToArray()) Act.Tidy(it);          // 5 of 15: not clean
+            Assert.IsFalse(Act.IsClean);
+            Act.ForceKnock(); yield return null;
+            Game.Interactions.Refresh();
+            Game.Input.Raise(PlayerAction.Interact);
+            yield return WaitUntil(() => Game.World.Door.IsOpen, 6f, "the door to open");
+            Assert.AreEqual("man", Act.VisitorKind);
+            Assert.AreSame(Game.NpcCorridor, Act.Visitor, "Pleasantview Sim 11 (male)");
+            Assert.IsFalse(Game.NpcEast.gameObject.activeInHierarchy);
+        }
+
+        [UnityTest]
+        public IEnumerator HeadphonesGoOnAfterWakingAndTheMusicWaitsForThem()
+        {
+            yield return ActReady();
+            yield return WaitUntil(() => Act.HeadphonesStarted, 5f, "headphones to start");
+            yield return WaitUntil(() => Act.HeadphonesOn, 5f, "headphones on");
+            Assert.AreEqual(1f, Act.HeadphonesProgress, 1e-4f);
+        }
+    }
+}

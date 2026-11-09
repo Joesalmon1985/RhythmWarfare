@@ -14,6 +14,9 @@ namespace Bedsit
         /// <summary>A rhythm pad (0..3) was tapped. Only raised while <see cref="PadsEnabled"/> (RHYTHM mode).</summary>
         public event Action<int> PadTriggered;
         public bool PadsEnabled;
+        /// <summary>Optional: offered every click/tap (after the rhythm pads) BEFORE the three screen-region controls; return true to consume it
+        /// (Act One uses it to tidy a piece of clutter under the pointer).</summary>
+        public Func<Vector2, bool> ClickHandler;
 
         /// <summary>When true all input is ignored (e.g. during the wake-up sequence).</summary>
         public bool Locked { get; set; }
@@ -41,6 +44,7 @@ namespace Bedsit
             }
             if (Input.GetMouseButtonDown(0))
             {
+                if (ClickHandler != null && ClickHandler(Input.mousePosition)) return;
                 var action = InputRegions.ClassifyScreen(Input.mousePosition, Screen.width, Screen.height);
                 if (action != PlayerAction.None) Raise(action);
             }

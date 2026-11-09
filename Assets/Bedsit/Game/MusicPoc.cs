@@ -122,8 +122,9 @@ namespace Bedsit.Game
             if (Session == null) return;
             if (!_started)
             {
-                if (_game != null && _game.WakeUpFinished) { StartMusic(); }
-                else return;
+                // Act One: the music starts as the player puts the headphones on (after the wake-up)
+                bool go = _game != null && _game.WakeUpFinished && (ActOne.Instance == null || ActOne.Instance.HeadphonesStarted);
+                if (go) StartMusic(); else return;
             }
 
             // no audio device? pump the mixer ourselves so the game still runs (and can be recorded)
@@ -165,6 +166,7 @@ namespace Bedsit.Game
         {
             _started = true;
             if (_game != null && _game.Input != null) _game.Input.PadTriggered += OnPad;
+            Session.Director.DropReached += t => { if (ActOne.Instance != null) ActOne.Instance.OnKnock(t); };
             Session.Director.Start();
             Status = "running";
             Debug.Log("[MusicPoc] music started. audio device callbacks: " + (DeviceActive ? "yes" : "pending/no"));
@@ -191,7 +193,7 @@ namespace Bedsit.Game
             var path = Path.Combine(dir, _recordName + ".wav");
             PcmClip.SaveWav16(path, data, _rate);
             var rep = AudioStats.Analyze(data, _rate, -60, 3.2);
-            var log = string.Join("\n", Session.Director.Log);
+            var log = string.Join("\n", Session.Director.Log) + (ActOne.Instance != null ? "\n--- act one ---\n" + string.Join("\n", ActOne.Instance.Log) : "");
             File.WriteAllText(Path.Combine(dir, _recordName + ".txt"), rep + "\n" + Session.Director.StatusText(Session.Mixer.Time) + "\n" + log);
             Debug.Log("[MusicPoc] recorded " + path + " : " + rep);
             if (Array.IndexOf(Environment.GetCommandLineArgs(), "-quit") >= 0) Application.Quit();

@@ -46,18 +46,22 @@ Classes named Baked* repeat the first-person and interaction tests with the BAKE
 | Passed | InteractionTests.WestWindowInteractionAnimatesTheNpc | 3.0s |
 | Passed | WakeUpTests.WakeUpFadesInRisesAndHandsOverControl | 8.6s |
 
-## Music POC additions (branch feature/bedroom-music-poc)
+## Music POC + Act One additions (branch feature/bedroom-music-poc)
 
-Full suite after the music work (3-loop build): **55 tests, 55 passed** (the 37 above + 15 `MusicEngineTests` + 3 `MusicPocSceneTests`).
-In one earlier full run `FirstPersonTests.StartingCameraIsFirstPerson` timed out once in cold content loading ("creating characters", 90 s)
-and passed on immediate rerun (3.5 s); it is unrelated to the music code.
+Full suite: **65 tests, 65 passed** (the 37 original + 18 `MusicEngineTests` + 3 `MusicPocSceneTests` + 7 `ActOneSceneTests`).
+A cold-start `Bedsit did not become ready: creating characters` timeout (90 s) occurred in the first live-content test after a recompile in two separate runs; both passed on rerun
+(not diagnosed; see Docs/music/README.md). One run also failed 11 tests because `BEDSIT_MUSIC=1` was left set in the editor process (my own capture session) - unset, all pass.
 
 | Result | Test |
 |---|---|
+| Passed | MusicEngineTests.ActOnePlansOnlyTheFirstDropThenMusicPlaysOn |
+| Passed | MusicEngineTests.AggregateGateToleratesAFewEarlyMissesButNotAWholeLoop |
 | Passed | MusicEngineTests.CuesBeforeTheFileStartAreRejectedNotClamped |
-| Passed | MusicEngineTests.FailureGetsRecoveryLoopsThenTheDropWithoutRewindOrSilence |
+| Passed | MusicEngineTests.DropIsAThreeKnockDoorCueOnBeatsZeroOneTwo |
+| Passed | MusicEngineTests.FailureGetsRecoveryLoopsThenTheRecordingWithoutRewindOrSilence |
 | Passed | MusicEngineTests.HandoverIntoAnInvalidEntryCueIsRejected |
 | Passed | MusicEngineTests.HandoverNeverSchedulesFromAnAnchorAlreadyReached |
+| Passed | MusicEngineTests.KnockSoundIsAShortLowThumpWithAFastDecay |
 | Passed | MusicEngineTests.MixingModeProducesNoPhantomMisses |
 | Passed | MusicEngineTests.MutedStemReturnsInSyncAndOnlyDuringTheMistake |
 | Passed | MusicEngineTests.PadStripRegionsAreFourPadsAboveTheBottomEdgeBetweenTheTurnZones |
@@ -68,10 +72,15 @@ and passed on immediate rerun (3.5 s); it is unrelated to the music code.
 | Passed | MusicEngineTests.SecondBuildReturnsToRhythmWithoutCountingOldNotes |
 | Passed | MusicEngineTests.SuppliedCueEntriesMatchTheBrief |
 | Passed | MusicEngineTests.ThreeTrackSequenceAndRepeatReachEveryIntendedDrop (simulated Drop Dis / Levels) |
-| Passed | MusicEngineTests.WarmUpLoopIsNotGatedButTheBassLoopIs |
 | Passed | MusicPocSceneTests.PadTapsInTheBottomStripDoNotTurn |
 | Passed | MusicPocSceneTests.PauseFreezesTheTimelineInTheRunningGame |
 | Passed | MusicPocSceneTests.TurningFollowsCompassOrderAndNeverResetsMusicOrScoring |
+| Passed | ActOneSceneTests.OnlyThePlayerExistsInTheWorldAndShowsOnlyInTheMirror |
+| Passed | ActOneSceneTests.TheRoomIsMessyFromEveryViewpoint |
+| Passed | ActOneSceneTests.TappingMessTidiesItAwayAndTheMeterRises |
+| Passed | ActOneSceneTests.TidyClicksTakePriorityOverTheTurnZones |
+| Passed | ActOneSceneTests.DoorStaysShutUntilTheKnockThenOpensForAWomanIfTheRoomIsClean |
+| Passed | ActOneSceneTests.AMessyRoomGetsAMan |
+| Passed | ActOneSceneTests.HeadphonesGoOnAfterWakingAndTheMusicWaitsForThem |
 
-Runtime recordings from the built exe and their signal analysis: see `Docs/music/README.md` and `Docs/music/results/`. Those are automated
-checks, not listening.
+Runtime recordings from the built exe and their signal analysis: see `Docs/music/README.md` and `Docs/music/results/`. Those are automated checks, not listening.

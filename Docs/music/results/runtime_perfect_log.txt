@@ -1,17 +1,39 @@
-121.8s peak -0.2 dBFS, rms -7.9 dB, clipped samples 0, longest silence 6.79s at 3.20s, silences>250ms 1, max sample step 1.29
-mode MIXING   t=125.65s   song gatekeeper  pos 152.23s
-beat 364.4   next anchor gatekeeper:secondDrop in 49.8s
+131.8s peak -0.2 dBFS, rms -10.3 dB, clipped samples 0, longest silence 6.83s at 3.20s, silences>250ms 1, max sample step 1.23
+mode MIXING   t=135.77s   song gatekeeper  pos 107.13s
+beat 393.7   next anchor gatekeeper:secondDrop in 94.9s
 incoming - 
 window -
 stems muted: none
-plan: build gatekeeper:secondDrop start 142.389 drop 175.493
-builds 1/2 passed, recoveries 0, handovers 0, stray taps 0, energy 100%
+plan: plan complete: the recording plays on in MIXING mode
+builds 1/1 passed, recoveries 0, handovers 0, stray taps 0, energy 100%
 
-[6.976] BUILD gatekeeper:firstDrop scheduled: start 9.976, drop 43.079 (3 phases: drums / bass / buildup)
-[20.821] gatekeeper:firstDrop drums: 18/18 = 100.0% (warm-up loop, not gated)
-[31.851] EVAL gatekeeper:firstDrop bass: 12/12 = 100.0% (threshold 80%) -> PASS
-[31.851] buildup: gatekeeper enters at 32.045 (clip 58.621s), eases in over 8 beats; drop 43.079
-[41.515] EVAL gatekeeper:firstDrop buildup: 16/16 = 100.0% (threshold 80%) -> PASS
-[41.515] DROP gatekeeper:firstDrop at 43.079
-[43.093] BUILD gatekeeper:secondDrop scheduled: start 142.389, drop 175.493 (3 phases: drums / bass / buildup)
-[43.093] L2: handover to 'dropdis' unavailable -> fallback build gatekeeper:secondDrop
+[7.019] BUILD gatekeeper:firstDrop scheduled: start 10.019, drop 98.295 (5 phases: drums / bass / drums2 / bass2 / runin)
+[20.864] gatekeeper:firstDrop drums: 18/18 = 100.0% (not gated)
+[31.893] gatekeeper:firstDrop bass: 12/12 = 100.0% (not gated)
+[42.923] gatekeeper:firstDrop drums2: 18/18 = 100.0% (not gated)
+[53.973] EVAL gatekeeper:firstDrop bass2 (all 4 loops): 60/60 = 100.0% (threshold 80%) -> PASS
+[53.973] run-in: gatekeeper enters at 54.157 (clip 25.517s), eases in over 8 beats; rhythm game off; drop 98.295
+[98.112] DROP gatekeeper:firstDrop at 98.295
+[98.304] plan complete after 1 drop(s): no further builds
+--- act one ---
+act one ready: 15 pieces of clutter, clean at 80%
+headphones: putting them on
+headphones: on
+tidied bag (1/15)
+tidied pizza (2/15)
+tidied shirt (3/15)
+tidied books (4/15)
+tidied mug (5/15)
+tidied bottles (6/15)
+tidied laundry (7/15)
+tidied plate (8/15)
+tidied cups (9/15)
+tidied magazines (10/15)
+tidied takeaway (11/15)
+tidied paper (12/15)
+tidied mug (13/15)
+tidied shirt (14/15)
+tidied trainers (15/15)
+knock at the door (timeline 98.295)
+door opened: room clean (15/15) -> a woman is at the door
+screenshot C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\Builds\Windows\Evidence\screenshots\actone_exe_woman.png

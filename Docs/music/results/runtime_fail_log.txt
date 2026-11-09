@@ -1,64 +1,58 @@
-106.8s peak -0.2 dBFS, rms -11.8 dB, clipped samples 0, longest silence 6.79s at 3.20s, silences>250ms 1, max sample step 1.23
-mode MIXING   t=110.59s   song gatekeeper  pos 93.03s
-beat 320.7   next anchor gatekeeper:secondDrop in 109.0s
+146.8s peak -0.2 dBFS, rms -11.5 dB, clipped samples 0, longest silence 6.83s at 3.20s, silences>250ms 1, max sample step 1.23
+mode MIXING   t=150.78s   song gatekeeper  pos 100.08s
+beat 437.3   next anchor gatekeeper:secondDrop in 102.0s
 incoming - 
 window -
-stems muted: none
-plan: build gatekeeper:secondDrop start 186.527 drop 219.631
-builds 0/2 passed, recoveries 4, handovers 0, stray taps 0, energy 4%
+stems muted: bass
+plan: plan complete: the recording plays on in MIXING mode
+builds 0/1 passed, recoveries 2, handovers 0, stray taps 0, energy 0%
 
-[6.976] BUILD gatekeeper:firstDrop scheduled: start 9.976, drop 43.079 (3 phases: drums / bass / buildup)
-[11.797] MISS kick pad 1: stem muted (timeline keeps running)
-[12.139] MISS snare pad 4: stem muted (timeline keeps running)
-[14.464] RECOVERED kick: stem restored at its current musical position
-[20.821] gatekeeper:firstDrop drums: 11/18 = 61.1% (warm-up loop, not gated)
-[22.485] MISS bass pad 2: stem muted (timeline keeps running)
-[25.856] RECOVERED bass: stem restored at its current musical position
-[29.397] MISS bass pad 2: stem muted (timeline keeps running)
-[31.851] EVAL gatekeeper:firstDrop bass: 6/12 = 50.0% (threshold 80%) -> FAIL
-[31.851] RECOVERY #1: bass again 32.045 -> 43.079
-[32.149] MISS bass pad 1: stem muted (timeline keeps running)
-[37.568] RECOVERED bass: stem restored at its current musical position
-[39.040] MISS bass pad 3: stem muted (timeline keeps running)
-[42.880] EVAL recovery#1 gatekeeper:firstDrop bass: 2/12 = 16.7% (threshold 60%) -> FAIL
-[42.880] RECOVERY #2: bass again 43.079 -> 54.114
-[43.179] MISS bass pad 1: stem muted (timeline keeps running)
-[45.163] RECOVERED bass: stem restored at its current musical position
-[47.317] MISS bass pad 2: stem muted (timeline keeps running)
-[51.371] RECOVERED bass: stem restored at its current musical position
-[52.480] MISS bass pad 2: stem muted (timeline keeps running)
-[53.781] RECOVERED bass: stem restored at its current musical position
-[53.931] EVAL recovery#2 gatekeeper:firstDrop bass: 7/12 = 58.3% (threshold 60%) -> FAIL
-[53.931] recovery attempts exhausted: moving on anyway (no soft-lock)
-[53.931] buildup: gatekeeper enters at 54.114 (clip 58.621s), eases in over 8 beats; drop 65.148
-[54.208] MISS kick pad 1: stem muted (timeline keeps running)
-[54.912] MISS snare pad 4: stem muted (timeline keeps running)
-[58.944] RECOVERED snare: stem restored at its current musical position
-[60.416] MISS snare pad 4: stem muted (timeline keeps running)
-[62.400] RECOVERED kick: stem restored at its current musical position
-[62.827] MISS kick pad 1: stem muted (timeline keeps running)
-[63.083] RECOVERED snare: stem restored at its current musical position
-[63.573] EVAL gatekeeper:firstDrop buildup: 7/16 = 43.8% (threshold 80%) -> FAIL
-[63.573] RECOVERY #1: buildup again 65.148 -> 76.183 (buildup re-enters, drop held)
-[63.573] buildup: gatekeeper enters at 65.148 (clip 58.621s), eases in over 8 beats; drop 76.183
-[65.152] RECOVERED kick: stem restored at its current musical position
-[65.941] MISS snare pad 4: stem muted (timeline keeps running)
-[68.011] MISS kick pad 1: stem muted (timeline keeps running)
-[69.995] RECOVERED snare: stem restored at its current musical position
-[70.677] RECOVERED kick: stem restored at its current musical position
-[71.445] MISS snare pad 4: stem muted (timeline keeps running)
-[73.515] MISS kick pad 1: stem muted (timeline keeps running)
-[74.133] RECOVERED snare: stem restored at its current musical position
-[74.624] EVAL recovery#1 gatekeeper:firstDrop buildup: 9/16 = 56.3% (threshold 60%) -> FAIL
-[74.624] RECOVERY #2: buildup again 76.183 -> 87.217 (buildup re-enters, drop held)
-[74.624] buildup: gatekeeper enters at 76.183 (clip 58.621s), eases in over 8 beats; drop 87.217
-[76.288] MISS kick pad 1: stem muted (timeline keeps running)
-[76.971] MISS snare pad 4: stem muted (timeline keeps running)
-[81.024] RECOVERED snare: stem restored at its current musical position
-[81.707] RECOVERED kick: stem restored at its current musical position
-[84.565] MISS kick pad 1: stem muted (timeline keeps running)
-[85.653] EVAL recovery#2 gatekeeper:firstDrop buildup: 9/16 = 56.3% (threshold 60%) -> FAIL
-[85.653] recovery attempts exhausted: moving on anyway (no soft-lock)
-[85.653] DROP gatekeeper:firstDrop at 87.217
-[87.232] BUILD gatekeeper:secondDrop scheduled: start 186.527, drop 219.631 (3 phases: drums / bass / buildup)
-[87.232] L2: handover to 'dropdis' unavailable -> fallback build gatekeeper:secondDrop
+[7.019] BUILD gatekeeper:firstDrop scheduled: start 10.019, drop 98.295 (5 phases: drums / bass / drums2 / bass2 / runin)
+[11.840] MISS kick pad 1: stem muted (timeline keeps running)
+[12.181] MISS snare pad 4: stem muted (timeline keeps running)
+[14.507] RECOVERED kick: stem restored at its current musical position
+[20.864] gatekeeper:firstDrop drums: 11/18 = 61.1% (not gated)
+[22.528] MISS bass pad 2: stem muted (timeline keeps running)
+[25.899] RECOVERED bass: stem restored at its current musical position
+[29.440] MISS bass pad 2: stem muted (timeline keeps running)
+[31.893] gatekeeper:firstDrop bass: 6/12 = 50.0% (not gated)
+[32.192] MISS kick pad 1: stem muted (timeline keeps running)
+[32.875] MISS snare pad 4: stem muted (timeline keeps running)
+[40.725] RECOVERED kick: stem restored at its current musical position
+[41.067] RECOVERED snare: stem restored at its current musical position
+[42.197] MISS kick pad 1: stem muted (timeline keeps running)
+[42.539] MISS snare pad 4: stem muted (timeline keeps running)
+[42.923] gatekeeper:firstDrop drums2: 5/18 = 27.8% (not gated)
+[43.221] MISS bass pad 1: stem muted (timeline keeps running)
+[45.205] RECOVERED bass: stem restored at its current musical position
+[45.973] MISS bass pad 1: stem muted (timeline keeps running)
+[47.957] RECOVERED bass: stem restored at its current musical position
+[48.747] MISS bass pad 3: stem muted (timeline keeps running)
+[52.437] RECOVERED bass: stem restored at its current musical position
+[53.227] MISS bass pad 4: stem muted (timeline keeps running)
+[53.973] EVAL gatekeeper:firstDrop bass2 (all 4 loops): 28/60 = 46.7% (threshold 80%) -> FAIL
+[53.973] RECOVERY #1: bass2 again 54.157 -> 65.191
+[54.251] MISS bass pad 1: stem muted (timeline keeps running)
+[58.987] RECOVERED bass: stem restored at its current musical position
+[61.163] MISS bass pad 3: stem muted (timeline keeps running)
+[63.488] RECOVERED bass: stem restored at its current musical position
+[64.939] MISS bass pad 3: stem muted (timeline keeps running)
+[65.003] EVAL recovery#1 gatekeeper:firstDrop bass2: 6/12 = 50.0% (threshold 60%) -> FAIL
+[65.003] RECOVERY #2: bass2 again 65.191 -> 76.226
+[66.667] MISS bass pad 2: stem muted (timeline keeps running)
+[69.333] RECOVERED bass: stem restored at its current musical position
+[72.192] MISS bass pad 3: stem muted (timeline keeps running)
+[74.517] RECOVERED bass: stem restored at its current musical position
+[75.285] MISS bass pad 4: stem muted (timeline keeps running)
+[76.032] EVAL recovery#2 gatekeeper:firstDrop bass2: 7/12 = 58.3% (threshold 60%) -> FAIL
+[76.032] recovery attempts exhausted: moving on anyway (no soft-lock)
+[76.032] run-in: gatekeeper enters at 76.226 (clip 25.517s), eases in over 8 beats; rhythm game off; drop 120.363
+[120.171] DROP gatekeeper:firstDrop at 120.363
+[120.384] plan complete after 1 drop(s): no further builds
+--- act one ---
+act one ready: 15 pieces of clutter, clean at 80%
+headphones: putting them on
+headphones: on
+knock at the door (timeline 120.363)
+door opened: room messy (0/15) -> a man is at the door
+screenshot C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\Builds\Windows\Evidence\screenshots\actone_exe_man.png

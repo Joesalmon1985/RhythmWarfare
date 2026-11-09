@@ -26,7 +26,17 @@ namespace Bedsit.Tests
                 Assert.Ignore("LocalAudio/songs/gatekeeper.wav not found: run Tools/music/prepare_audio.py");
         }
 
-        static MusicSession New(bool simulate = false) => MusicSession.Create(Root, Sr, simulate);
+        /// <param name="cycle">true = keep cycling through the plan's legs after the first drop (Act One stops after one).</param>
+        static MusicSession New(bool simulate = false, bool cycle = false)
+        {
+            var s = MusicSession.Create(Root, Sr, simulate);
+            if (cycle) s.Plan.stopAfterLegs = 0;
+            return s;
+        }
+
+        const double Bs = 60.0 / 174.0;
+        /// <summary>Planned drop of the first build when music starts at t=0: 3 s start delay + 4 rhythm loops + 128-beat run-in.</summary>
+        static readonly double D1 = 3.0 + (4 * 32 + 128) * Bs;
 
         // ================================================================================================ cues
 
@@ -63,11 +73,11 @@ namespace Bedsit.Tests
         [Test]
         public void HandoverIntoAnInvalidEntryCueIsRejected()
         {
-            var s = New(true);
+            var s = New(true, true);
             // Make Drop Dis' first drop so early that 128 beats before it would start before the file does.
             s.Songs.Find("dropdis").firstDrop = 30.0;
             s.Director.Start();
-            s.RenderOffline(60.0, MusicBot.Perfect());
+            s.RenderOffline(D1 + 5.0, MusicBot.Perfect());
             Assert.IsTrue(s.Director.Log.Any(l => l.Contains("before the start of the file")), string.Join("\n", s.Director.Log));
         }
 
@@ -78,29 +88,27 @@ namespace Bedsit.Tests
         {
             var s = New();
             s.Director.Start();
-            double bs = 60.0 / 174.0;
-            double D1 = 3.0 + 96 * bs;                       // 3 s start delay + three 32-beat phases
+            double bs = Bs;
             var mix = s.RenderOffline(D1 + 20.0, MusicBot.Perfect());
-            var ws = s.Judge.Windows.Take(3).ToList();          // the 4th window already belongs to the next build (scheduled at the drop)
-            Assert.AreEqual(3, ws.Count, "drums, bass, buildup");
-            Assert.IsTrue(ws[0].Label.EndsWith("drums") && ws[1].Label.EndsWith("bass") && ws[2].Label.EndsWith("buildup"), string.Join(" | ", ws.Select(w => w.Label)));
+            var ws = s.Judge.Windows;
+            Assert.AreEqual(4, ws.Count, "drums, bass, drums, bass");
+            Assert.IsTrue(ws[0].Label.EndsWith("drums") && ws[1].Label.EndsWith("bass") && ws[2].Label.EndsWith("drums2") && ws[3].Label.EndsWith("bass2"), string.Join(" | ", ws.Select(w => w.Label)));
             foreach (var w in ws) { Assert.AreEqual(w.Total, w.Hits, w.Label + ": all notes hit"); Assert.AreEqual(0, w.Misses); }
-            Assert.AreEqual(0.0, ws[0].Threshold, "the first drum loop is a warm-up, not gated");
-            Assert.AreEqual(0.8, ws[1].Threshold, 1e-9); Assert.AreEqual(0.8, ws[2].Threshold, 1e-9);
             Assert.AreEqual(1, s.Director.BuildsPassed);
             Assert.AreEqual(0, s.Director.RecoveryAttempts);
-            Assert.AreEqual(MusicMode.Mixing, s.Director.Mode, "the rhythm game drops away after the drop");
+            Assert.AreEqual(MusicMode.Mixing, s.Director.Mode, "the rhythm game is gone after the minigame");
             Assert.AreEqual("gatekeeper", s.Director.CurrentSongId);
-            // the recording's own buildup enters exactly one loop (32 beats) before the drop, and its drop lands at the planned time
+            // the recording enters exactly 128 beats before its drop (cue 'firstDrop -128'), and its drop lands at the planned time
             var rec = s.Mixer.Voices.First(v => v.Role == "recorded");
             Assert.AreEqual(69.655, s.Mixer.ClipTimeAt(rec, D1), 0.0006);
             Assert.AreEqual(D1, s.Mixer.TimelineOfClipTime(rec, 69.655), 0.0006);
-            Assert.AreEqual(D1 - 32 * bs, s.Mixer.TimelineOfClipTime(rec, 69.655 - 32 * bs), 0.0006);
-            Assert.IsTrue(s.Director.Log.Any(l => l.Contains($"buildup: gatekeeper enters at {D1 - 32 * bs:0.000}")), string.Join("\n", s.Director.Log));
-            // chart is sane: 96 beats in three loops, nothing charted in the last 4 beats before the drop
+            Assert.AreEqual(D1 - 128 * bs, s.Mixer.TimelineOfClipTime(rec, 69.655 - 128 * bs), 0.0006);
+            Assert.AreEqual(25.517, 69.655 - 128 * bs, 0.001, "entry cue matches the cue table");
+            Assert.IsTrue(s.Director.Log.Any(l => l.Contains($"run-in: gatekeeper enters at {D1 - 128 * bs:0.000}")), string.Join("\n", s.Director.Log));
+            // no rhythm notes after the minigame: every note is before the run-in
+            Assert.LessOrEqual(ws.Max(w => w.Notes.Max(n => n.Time)), D1 - 128 * bs + 1e-6);
             int total = ws.Sum(w => w.Total);
             Assert.Greater(total, 40); Assert.Less(total, 130);
-            Assert.LessOrEqual(ws[2].Notes.Max(n => n.Time), D1 - 4 * bs + 1e-6);
             var rep = AudioStats.Analyze(mix, Sr, -60, 3.2);            // 0..3 s is the intentional start delay
             Debug.Log("[music] perfect first pass: " + rep);
             Assert.AreEqual(0, rep.ClippedSamples, "no clipping after the limiter");
@@ -109,42 +117,84 @@ namespace Bedsit.Tests
         }
 
         [Test]
-        public void WarmUpLoopIsNotGatedButTheBassLoopIs()
+        public void DropIsAThreeKnockDoorCueOnBeatsZeroOneTwo()
         {
-            double bs = 60.0 / 174.0;
-            // miss the whole first drum loop: the build still passes with no recovery
-            var a = New(); a.Director.Start();
-            var botA = new MusicBot { Rule = n => !a.Judge.WindowOf(n.Window).Label.EndsWith("drums") };
-            a.RenderOffline(3.0 + 96 * bs + 8.0, botA);
-            Assert.AreEqual(0, a.Director.RecoveryAttempts, string.Join("\n", a.Director.Log));
-            Assert.AreEqual(1, a.Director.BuildsPassed);
-            Assert.IsNotNull(a.Mixer.Voices.FirstOrDefault(v => v.Role == "recorded"));
-
-            // miss the bass loop: the bass comes round again (custom loops never stop) and the buildup waits
-            var b = New(); b.Director.Start();
-            var botB = new MusicBot { Rule = n => { var w = b.Judge.WindowOf(n.Window); return !(w.Label.EndsWith("bass") && !w.Label.StartsWith("recovery")); } };
-            b.RenderOffline(3.0 + 32 * bs * 2 + 2.0, botB);                // just after the first bass loop has been evaluated
-            Assert.IsTrue(b.Director.Log.Any(l => l.Contains("RECOVERY #1: bass again")), string.Join("\n", b.Director.Log));
-            Assert.IsNull(b.Mixer.Voices.FirstOrDefault(v => v.Role == "recorded"), "the recording's buildup has not entered yet");
+            var s = New();
+            double dropAt = -1; int raised = 0;
+            s.Director.DropReached += t => { dropAt = t; raised++; };
+            s.Director.Start();
+            var seen = new System.Collections.Generic.Dictionary<long, double>();          // knock voices (they are dropped from the mixer once finished)
+            var mix = s.RenderOffline(D1 + 8.0, MusicBot.Perfect(), 512, now => { foreach (var v in s.Mixer.Voices) if (v.Role == "fx") seen[v.StartFrame] = v.StartTime(Sr); });
+            Assert.AreEqual(1, raised, "DropReached raised exactly once");
+            Assert.AreEqual(D1, dropAt, 0.001);
+            var knocks = seen.Values.OrderBy(x => x).ToList();
+            Assert.AreEqual(3, knocks.Count);
+            for (int i = 0; i < 3; i++) Assert.AreEqual(D1 + i * Bs, knocks[i], 0.001, "knock " + i);
+            // audible: the mix just after the first knock has a sharp attack from near-silence relative to the drop's own level
+            Assert.Greater(AudioStats.Rms(mix, Sr, D1 + 0.002, D1 + 0.06), 0.05);
+            Assert.AreEqual(0, AudioStats.Analyze(mix, Sr, -60, 3.2).ClippedSamples);
         }
 
         [Test]
-        public void FailureGetsRecoveryLoopsThenTheDropWithoutRewindOrSilence()
+        public void KnockSoundIsAShortLowThumpWithAFastDecay()
+        {
+            var k = KnockSynth.Make(Sr);
+            Assert.AreEqual(0.42, k.Seconds, 0.01);
+            double early = AudioStats.Rms(k.Data, Sr, 0.0, 0.08), late = AudioStats.Rms(k.Data, Sr, 0.30, 0.42);
+            Assert.Greater(early, 0.1, "audible attack");
+            Assert.Less(late, early * 0.15, "decays away (no ringing tail)");
+            double peak = 0; foreach (var x in k.Data) peak = System.Math.Max(peak, System.Math.Abs(x));
+            Assert.LessOrEqual(peak, 0.86); Assert.Greater(peak, 0.8);
+            Assert.AreEqual(0f, k.Data[0], 0.02f, "starts from zero (no click)");
+        }
+
+        [Test]
+        public void ActOnePlansOnlyTheFirstDropThenMusicPlaysOn()
         {
             var s = New();
             s.Director.Start();
-            double bs = 60.0 / 174.0, D1 = 3.0 + 96 * bs;
-            var mix = s.RenderOffline(3.0 + 7 * 32 * bs + 25.0, MusicBot.Failing());      // warm-up + 3 bass + 3 buildup attempts
-            Assert.GreaterOrEqual(s.Director.RecoveryAttempts, 3, "recovery loops were offered");
+            s.RenderOffline(D1 + 140.0, MusicBot.Perfect());          // far beyond where the old plan would have started the next build
+            Assert.AreEqual(4, s.Judge.Windows.Count, "no second build was scheduled");
+            Assert.AreEqual(MusicMode.Mixing, s.Director.Mode);
+            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("plan complete")));
+            Assert.AreEqual(1, s.Director.BuildsStarted);
+        }
+
+        [Test]
+        public void AggregateGateToleratesAFewEarlyMissesButNotAWholeLoop()
+        {
+            // a few early misses (hit 95 %): passes first time, no recovery
+            var a = New(); a.Director.Start();
+            int missed = 0;
+            var botA = new MusicBot { Rule = n => !(a.Judge.WindowOf(n.Window).Label.EndsWith("drums") && missed++ < 3) };
+            a.RenderOffline(D1 + 5.0, botA);
+            Assert.AreEqual(0, a.Director.RecoveryAttempts, string.Join("\n", a.Director.Log));
+            Assert.AreEqual(1, a.Director.BuildsPassed);
+
+            // miss the whole first drum loop (70 % overall): the last (bass) loop is repeated, and the recording waits for it
+            var b = New(); b.Director.Start();
+            var botB = new MusicBot { Rule = n => { var w = b.Judge.WindowOf(n.Window); return !(w.Label.EndsWith(" drums") && !w.Label.StartsWith("recovery")); } };
+            b.RenderOffline(3.0 + 128 * Bs + 2.0, botB);                // just after the 4th loop has been evaluated
+            Assert.IsTrue(b.Director.Log.Any(l => l.Contains("RECOVERY #1: bass2 again")), string.Join("\n", b.Director.Log));
+            Assert.IsNull(b.Mixer.Voices.FirstOrDefault(v => v.Role == "recorded"), "the recording has not entered yet");
+        }
+
+        [Test]
+        public void FailureGetsRecoveryLoopsThenTheRecordingWithoutRewindOrSilence()
+        {
+            var s = New();
+            s.Director.Start();
+            double dFail = 3.0 + (4 * 32 + 2 * 32 + 128) * Bs;           // 2 recovery loops delay the run-in and the drop
+            var mix = s.RenderOffline(dFail + 10.0, MusicBot.Failing());
+            Assert.AreEqual(2, s.Director.RecoveryAttempts, "recovery loops were offered");
             Assert.IsTrue(s.Judge.Windows.Any(w => w.Label.StartsWith("recovery")));
-            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("drop held")), "a failed buildup holds the drop");
-            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("exhausted")), "no soft-lock: the drop plays after the attempts run out");
-            var rec = s.Mixer.Voices.Where(v => v.Role == "recorded").OrderBy(v => s.Mixer.TimelineOfClipTime(v, 69.655)).LastOrDefault();
-            Assert.IsNotNull(rec, "the recorded drop eventually plays");
-            // the recording is never started past its drop anchor; its drop lands later than the original plan
+            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("exhausted")), "no soft-lock: the run-in plays after the attempts run out");
+            var rec = s.Mixer.Voices.FirstOrDefault(v => v.Role == "recorded");
+            Assert.IsNotNull(rec, "the recorded song eventually plays");
             Assert.AreEqual(69.655, s.Mixer.ClipTimeAt(rec, s.Mixer.TimelineOfClipTime(rec, 69.655)), 0.0006);
-            Assert.Greater(s.Mixer.TimelineOfClipTime(rec, 69.655), D1 + 32 * bs);
-            // never silent after the custom build starts, even while a failed buildup is eased out and re-entered
+            Assert.AreEqual(dFail, s.Mixer.TimelineOfClipTime(rec, 69.655), 0.001);
+            Assert.Greater(dFail, D1);
+            // never silent after the custom build starts
             var rep = AudioStats.Analyze(mix, Sr, -60, 3.5, mix.Length / 2.0 / Sr);
             Debug.Log("[music] failure/recovery: " + rep);
             Assert.Less(rep.LongestSilenceSeconds, 0.25, "no audible gap");
@@ -156,15 +206,13 @@ namespace Bedsit.Tests
         {
             var s = New();
             s.Director.Start();
-            double bs = 60.0 / 174.0;
-            // fail both gates first time round (hit none), then hit everything in the recovery loops
+            // fail the gate first time round (hit none), then hit everything in the recovery loop
             var bot = new MusicBot { Rule = n => s.Judge.WindowOf(n.Window).Label.StartsWith("recovery") };
-            s.RenderOffline(3.0 + 5 * 32 * bs + 12.0, bot);
+            s.RenderOffline(3.0 + 5 * 32 * Bs + 128 * Bs + 5.0, bot);
             Assert.AreEqual(1, s.Director.BuildsFailed);
-            Assert.AreEqual(2, s.Director.RecoveryAttempts, "one bass recovery and one buildup recovery");
-            Assert.IsTrue(s.Director.LastBuildPassed, "the recovery attempts passed");
-            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("RECOVERY #1: bass again")));
-            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("RECOVERY #1: buildup again")));
+            Assert.AreEqual(1, s.Director.RecoveryAttempts);
+            Assert.IsTrue(s.Director.LastBuildPassed, "the recovery attempt passed");
+            Assert.IsTrue(s.Director.Log.Any(l => l.Contains("RECOVERY #1: bass2 again")));
             Assert.IsNotNull(s.Mixer.Voices.FirstOrDefault(v => v.Role == "recorded"));
         }
 
@@ -173,7 +221,6 @@ namespace Bedsit.Tests
         {
             var s = New();
             s.Director.Start();
-            double bs = 60.0 / 174.0, D1 = 3.0 + 96 * bs;
             var bot = MusicBot.Perfect();
             s.RenderOffline(D1 + 3.0, bot);
             Assert.AreEqual(MusicMode.Mixing, s.Director.Mode);
@@ -189,16 +236,16 @@ namespace Bedsit.Tests
         [Test]
         public void SecondBuildReturnsToRhythmWithoutCountingOldNotes()
         {
-            var s = New();
+            var s = New(false, true);                                   // cycling plan (not Act One)
             s.Director.Start();
-            double bs = 60.0 / 174.0, D1 = 3.0 + 96 * bs, D2 = D1 + (202.0685 - 69.655);
-            s.RenderOffline(D2 - 96 * bs + 6.0, MusicBot.Perfect());
+            double bs = Bs, D2 = D1 + (202.0685 - 69.655);
+            s.RenderOffline(D2 - 256 * bs + 6.0, MusicBot.Perfect());
             Assert.AreEqual(MusicMode.Rhythm, s.Director.Mode, "rhythm mode restored for the next playable build");
-            Assert.AreEqual(4, s.Judge.Windows.Count, "three windows of the first build + the first loop of the second");
-            var w2 = s.Judge.Windows[3];
+            Assert.AreEqual(5, s.Judge.Windows.Count, "four windows of the first build + the first loop of the second");
+            var w2 = s.Judge.Windows[4];
             Assert.AreEqual(0, w2.Misses);
-            Assert.IsTrue(w2.Notes.All(n => n.Time >= D2 - 96 * bs - 1e-3), "only notes of the new build: first note " + w2.Notes.Min(n => n.Time) + " vs " + (D2 - 96 * bs) + " | " + string.Join(" // ", s.Director.Log));
-            for (int i = 0; i < 3; i++) Assert.AreEqual(s.Judge.Windows[i].Hits, s.Judge.Windows[i].Total, "first build unchanged");
+            Assert.IsTrue(w2.Notes.All(n => n.Time >= D2 - 256 * bs - 1e-3), "only notes of the new build");
+            for (int i = 0; i < 4; i++) Assert.AreEqual(s.Judge.Windows[i].Hits, s.Judge.Windows[i].Total, "first build unchanged");
         }
 
         [Test]
@@ -257,7 +304,7 @@ namespace Bedsit.Tests
         [Test]
         public void ThreeTrackSequenceAndRepeatReachEveryIntendedDrop()
         {
-            var s = New(true);
+            var s = New(true, true);
             Assert.IsTrue(s.Songs.Find("dropdis").simulated && s.Songs.Find("levels").simulated, "tracks 2 and 3 are SIMULATED in this test");
             s.Director.Start();
             var mix = s.RenderOffline(700.0, MusicBot.Perfect(), 1024);
@@ -276,7 +323,7 @@ namespace Bedsit.Tests
             Assert.IsTrue(legsDone[1].Contains("levels:firstDrop"));
             Assert.IsTrue(legsDone[2].Contains("gatekeeper:firstDrop"), "repeat path returns to Gatekeeper");
             // first handover timing: Drop Dis' first drop aligns with Gatekeeper's second drop
-            double bs = 60.0 / 174.0, D1 = 3.0 + 96 * bs, D2 = D1 + (202.0685 - 69.655);
+            double bs = Bs, D2 = D1 + (202.0685 - 69.655);
             Assert.IsTrue(log.Any(l => l.Contains($"drop {D2:0.000}")), "handover 1 drop at Gatekeeper's second drop " + D2.ToString("0.000"));
             // incoming enters exactly 128 beats before the shared drop, outgoing is gone by the drop (no double drop)
             Assert.IsTrue(log.Any(l => l.Contains($"enters {D2 - 128 * bs:0.000}")));
@@ -289,7 +336,7 @@ namespace Bedsit.Tests
         [Test]
         public void HandoverNeverSchedulesFromAnAnchorAlreadyReached()
         {
-            var s = New(true);
+            var s = New(true, true);
             s.Director.Start();
             s.RenderOffline(700.0, MusicBot.Perfect(), 1024);
             // the repeat leg must have rejected the already-reached second drop and chosen the ending
@@ -304,7 +351,7 @@ namespace Bedsit.Tests
             string dir = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Evidence", "audio"));
             Directory.CreateDirectory(dir);
             var report = new System.Text.StringBuilder();
-            double bs = 60.0 / 174.0, D1 = 3.0 + 96 * bs;
+            double bs = Bs;
             void Run(string name, MusicBot bot, double secs, bool simulate = false)
             {
                 var s = New(simulate); s.Director.Start();
@@ -316,7 +363,7 @@ namespace Bedsit.Tests
             }
             Run("demo_perfect_build_drop_mix", MusicBot.Perfect(), D1 + 40.0);
             Run("demo_partial_stem_mutes", MusicBot.Partial(), D1 + 30.0);
-            Run("demo_failure_recovery", MusicBot.Failing(), 3.0 + 7 * 32 * bs + 30.0);
+            Run("demo_failure_recovery", MusicBot.Failing(), 3.0 + (4 * 32 + 2 * 32 + 128) * bs + 20.0);
             File.WriteAllText(Path.Combine(dir, "analysis.md"), report.ToString());
             Assert.IsTrue(File.Exists(Path.Combine(dir, "demo_perfect_build_drop_mix.wav")));
         }

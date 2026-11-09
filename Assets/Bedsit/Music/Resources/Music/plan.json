@@ -1,6 +1,6 @@
 {
   "format": "bedsit.music.plan.v1",
-  "notes": "All values are adjustable after listening. Beats are 174 BPM beats. A playable build is 3 x 32 beats: drums (warm-up, not gated) -> bass (gated) -> drums with the recording's own buildup easing in underneath (gated) -> recorded drop -> MIXING (no judging). Layering levels have NOT been auditioned yet.",
+  "notes": "All values are adjustable after listening. Beats are 174 BPM beats. Act One: four 32-beat rhythm loops (drums, bass, drums, bass), judged together at the end (gate 80 %), then the recording run-in of 128 beats to its drop with the minigame gone, then a three-knock door cue and MIXING. stopAfterLegs=1: only the first drop is played in this act. Layering levels have NOT been auditioned yet.",
   "settings": {
     "threshold": 0.8,
     "recoveryThreshold": 0.6,
@@ -11,7 +11,7 @@
     "customFadeInBeats": 4.0,
     "recordedFadeBeatsAtBuild": 4.0,
     "buildupFadeInBeats": 8.0,
-    "buildupCrossfadeBeats": 4.0,
+    "buildupCrossfadeBeats": 8.0,
     "buildupFreeBeats": 4.0,
     "stemMuteRampSeconds": 0.03,
     "stemMuteLevel": 0.15,
@@ -24,13 +24,16 @@
     "judgeGoodSeconds": 0.09,
     "customGain": 0.8,
     "customGainUnderRecording": 0.6,
-    "recordedGain": 0.9
+    "recordedGain": 0.9,
+    "knockGain": 1.0
   },
   "order": ["gatekeeper", "dropdis", "levels"],
   "buildLoops": [
-    { "id": "drums",   "gate": false, "recording": false, "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] },
-    { "id": "bass",    "gate": true,  "recording": false, "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] },
-    { "id": "buildup", "gate": true,  "recording": true,  "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] }
+    { "id": "drums",  "gate": false, "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] },
+    { "id": "bass",   "gate": false, "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] },
+    { "id": "drums2", "gate": false, "charted": ["kick", "snare"], "audible": ["kick", "snare", "bass", "backing"] },
+    { "id": "bass2",  "gate": true,  "aggregate": true, "charted": ["bass"], "audible": ["kick", "snare", "bass", "backing"] },
+    { "id": "runin",  "recording": true, "beats": 128, "charted": [], "audible": [] }
   ],
   "padMap": {
     "kick": "pad 1 (RhythmWarfare kick cue pad)",
@@ -38,6 +41,7 @@
     "bass": "pads 1-4 by pitch (RhythmWarfare bass cues)",
     "backing": "not playable (hats accompaniment)"
   },
+  "stopAfterLegs": 1,
   "legs": [
     { "id": "L1", "type": "build", "song": "gatekeeper", "anchor": "firstDrop" },
     { "id": "L2", "type": "handover", "from": "gatekeeper", "fromAnchor": "secondDrop", "to": "dropdis", "toAnchor": "firstDrop",
