@@ -138,3 +138,6 @@ The tests need the local Sims 2 install and skip themselves (Ignore) if `config.
 * Some OpenTS2 face resources print a warning (`Bone or blend for animation channel ... not found`: blend shapes for eyes/hair
   not present on the rig); expression blends are therefore limited.
 * Not verified on a phone, with real touch, or by a human tester other than via the automated and screenshot evidence.
+
+## Bedroom art overhaul
+See [Docs/art/ROOM_PIPELINE.md](Docs/art/ROOM_PIPELINE.md), [ASSET_INVENTORY](Docs/art/ASSET_INVENTORY.md) and [LIMITATIONS](Docs/art/LIMITATIONS.md). Room 01 is a data-driven room (`Resources/Rooms/room01.json`) built from original Blender props; `-legacyroom` restores the old Sims 2 furniture.

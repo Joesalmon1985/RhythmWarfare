@@ -63,7 +63,7 @@ namespace Bedsit.Editor
             ("metal", new Rule { Normal = "metal_worn", Tile = 2f, NormalScale = 0.5f, Metal = 0.9f, Smooth = 0.6f }),
             ("foil", new Rule { Metal = 0.85f, Smooth = 0.7f }),
             ("ceramic", new Rule { Smooth = 0.82f }),
-            ("glass", new Rule { Smooth = 0.95f, Alpha = 0.3f }),
+            ("glass", new Rule { Smooth = 0.95f, Alpha = 0.1f }),
             ("paper", new Rule { Smooth = 0.1f }),
             ("cardboard", new Rule { Smooth = 0.04f, Normal = "cotton", Tile = 4f, NormalScale = 0.4f }),
             ("liquid", new Rule { Smooth = 0.92f }),

@@ -685,20 +685,6 @@
       "scale": 1.0
     },
     {
-      "prop": "textiles_curtain_pair",
-      "pos": {
-        "x": 2.0,
-        "y": 0.95,
-        "z": -0.65
-      },
-      "euler": {
-        "x": 0,
-        "y": 270,
-        "z": 0
-      },
-      "scale": 1.0
-    },
-    {
       "prop": "furniture_picture_frame_b",
       "pos": {
         "x": -2.08,
@@ -1361,6 +1347,67 @@
         "scale": 1.0,
         "parent": "radiator"
       }
+    },
+    {
+      "id": "mug_dresser",
+      "label": "Clear the mug",
+      "action": "slide",
+      "view": "W",
+      "messy": {
+        "prop": "kitchen_mug_dirty_c",
+        "pos": {
+          "x": -0.42,
+          "y": 0.95,
+          "z": -0.14
+        },
+        "euler": {
+          "x": 0,
+          "y": 60,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dresser"
+      },
+      "radius": 0.12,
+      "height": 0.1,
+      "tidy": {
+        "prop": "kitchen_mug_dirty_c",
+        "pos": {
+          "x": 0.0,
+          "y": 0.06,
+          "z": -0.06
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dishtray"
+      }
+    },
+    {
+      "id": "bottles_sill",
+      "label": "Bin the bottles",
+      "action": "bin",
+      "view": "W",
+      "messy": {
+        "prop": "kitchen_bottle_cola",
+        "pos": {
+          "x": -1.97,
+          "y": 1.03,
+          "z": -0.17
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0
+      },
+      "radius": 0.12,
+      "height": 0.23,
+      "target": "bin"
     },
     {
       "id": "laundry",

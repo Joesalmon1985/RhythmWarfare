@@ -137,7 +137,6 @@ def build():
     D.append(W("paper_sticky_poster_roll", -1.9, 0.0, 0.1, 0))
 
     # curtains + wall dressing (rave identity: flyers/prints, clock)
-    D.append(W("textiles_curtain_pair", 2.0, 0.95, -0.65, 270))
     D.append(W("furniture_picture_frame_b", -2.08, 1.55, -0.85, 90))
     D.append(W("furniture_picture_frame_c", -2.08, 1.62, -1.15, 90))
     D.append(W("furniture_picture_frame_a", -0.75, 1.65, -2.33, 0))
@@ -180,6 +179,10 @@ def build():
                     PL("textiles_backpack_open_spilled", "chair", 0, 0.5, 0, 0), PL("textiles_backpack_closed", "chair", 0, 0.5, 0, 0), radius=0.3, height=0.4))
     CL.append(clean("towel", "Fold the towel", "fold", "S",
                     PL("textiles_towel_crumpled", "radiator", 0.0, 0.72, 0.0, 0), PL("textiles_towel_folded", "radiator", 0.0, 0.72, 0.0, 0), radius=0.25, height=0.18))
+    CL.append(clean("mug_dresser", "Clear the mug", "slide", "W",
+                    PL("kitchen_mug_dirty_c", "dresser", -0.42, 0.95, -0.14, 60), PL("kitchen_mug_dirty_c", "dishtray", 0.0, 0.06, -0.06, 0), radius=0.12, height=0.1))
+    CL.append(clean("bottles_sill", "Bin the bottles", "bin", "W",
+                    W("kitchen_bottle_cola", -1.97, 1.03, -0.17, 0), target="bin", radius=0.12, height=0.23))
     CL.append(clean("laundry", "Put the laundry in the basket", "bin", "W",
                     PL("textiles_clothes_pile_b", "bookcase", 0.0, 0.768, 0.0, 0), target="basket", radius=0.3, height=0.2))
 
