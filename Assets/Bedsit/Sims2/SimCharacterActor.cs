@@ -25,6 +25,9 @@ namespace Bedsit.Sims2
         public string AppearanceSource { get; private set; }
 
         public SimCharacterComponent Sim { get; private set; }
+        BakedActorData _baked;                                   // non-null when running from baked assets (no OpenTS2 data)
+        Dictionary<string, Transform> _bakedBones;
+        public bool IsBaked => _baked != null;
         Animation _animation;
         readonly Dictionary<string, string> _clipNames = new Dictionary<string, string>();   // key -> clip name on this actor
         Coroutine _oneShot;
@@ -64,6 +67,25 @@ namespace Bedsit.Sims2
             return Wrap(actorId, sim, $"{neighborhoodPrefix}_User{userInstanceId:D5}.package (CAS outfit, Casual1)");
         }
 
+        /// <summary>Instantiate a baked character prefab (see ContentBaker): plain skinned meshes + sampled animation clips.</summary>
+        public static SimCharacterActor InstantiateBaked(GameObject prefab, string actorId)
+        {
+            var go = UnityEngine.Object.Instantiate(prefab);
+            go.name = "Actor_" + actorId;
+            var actor = go.GetComponent<SimCharacterActor>();
+            if (actor == null) actor = go.AddComponent<SimCharacterActor>();
+            actor.ActorId = actorId;
+            actor._baked = go.GetComponent<BakedActorData>();
+            actor.AppearanceSource = "baked: " + (actor._baked != null ? actor._baked.SourceNote : "?");
+            actor._animation = go.GetComponentInChildren<Animation>(true);
+            if (actor._animation != null) actor._animation.cullingType = AnimationCullingType.AlwaysAnimate;
+            actor._bakedBones = new Dictionary<string, Transform>();
+            if (actor._animation != null)
+                foreach (var t in actor._animation.GetComponentsInChildren<Transform>(true))
+                    if (!actor._bakedBones.ContainsKey(t.name)) actor._bakedBones[t.name] = t;
+            return actor;
+        }
+
         static SimCharacterActor Wrap(string actorId, SimCharacterComponent sim, string source)
         {
             var go = new GameObject("Actor_" + actorId);
@@ -96,6 +118,16 @@ namespace Bedsit.Sims2
         string EnsureClip(string key, int layer)
         {
             if (_clipNames.TryGetValue(key, out var existing)) return existing;
+            if (IsBaked)
+            {
+                if (_animation == null || !_baked.TryGet(key, out var bakedClip)) return null;
+                bakedClip.legacy = true;
+                bakedClip.wrapMode = key == AnimationKeys.Idle ? WrapMode.Loop : WrapMode.Once;
+                _animation.AddClip(bakedClip, key);
+                _animation[key].layer = key == AnimationKeys.Idle ? 0 : 1;
+                _clipNames[key] = key;
+                return key;
+            }
             var res = SimAnimationLibrary.Resolve(key);
             if (res == null || _animation == null || Sim == null) return null;
             var clip = res.Asset.CreateClipFromResource(Sim.Scenegraph.BoneNamesToRelativePaths, Sim.Scenegraph.BlendNamesToRelativePaths,
@@ -112,6 +144,7 @@ namespace Bedsit.Sims2
         /// <summary>Activate the IK chains needed by the base pose plus the given animation (they play together).</summary>
         void SetIk(string key)
         {
+            if (Sim == null) return;
             var pose = SimAnimationLibrary.Resolve(AnimationKeys.Pose);
             var res = SimAnimationLibrary.Resolve(key);
             Sim.AdjustInverseKinematicWeightsForAnimations(pose?.Asset.AnimResource, res?.Asset.AnimResource);
@@ -119,12 +152,26 @@ namespace Bedsit.Sims2
 
         void EnsureBasePose()
         {
+            if (IsBaked)
+            {
+                var idleBase = EnsureClip(AnimationKeys.Idle, 0);
+                if (idleBase != null && !_animation.IsPlaying(idleBase)) { _animation.Play(idleBase); _animation[idleBase].weight = 1f; }
+                return;
+            }
             var pose = EnsureClip(AnimationKeys.Pose, LayerPose);
             if (pose != null && !_animation.IsPlaying(pose))
             {
                 _animation.Play(pose);
                 _animation[pose].weight = 1f;
             }
+        }
+
+        /// <summary>Stop everything (including frozen scrubbed states) and return to the idle loop.</summary>
+        public void ResetToIdle()
+        {
+            if (_animation != null) _animation.Stop();
+            _activeOneShotClip = null;
+            PlayIdle();
         }
 
         public void PlayIdle()
@@ -134,6 +181,7 @@ namespace Bedsit.Sims2
             if (_activeOneShotClip != null) { _animation.Blend(_activeOneShotClip, 0f, 0.25f); _activeOneShotClip = null; }
             IsPlayingOneShot = false;
             EnsureBasePose();
+            if (IsBaked) { CurrentKey = AnimationKeys.Idle; return; }
             var idle = EnsureClip(AnimationKeys.Idle, LayerIdle);
             if (idle != null)
             {
@@ -145,7 +193,8 @@ namespace Bedsit.Sims2
 
         public bool PlayOneShot(string key)
         {
-            if (_animation == null || !SimAnimationLibrary.Has(key)) return false;
+            if (_animation == null) return false;
+            if (!IsBaked && !SimAnimationLibrary.Has(key)) return false;
             if (EnsureClip(key, LayerOneShot) == null) return false;
             if (_oneShot != null) StopCoroutine(_oneShot);
             _oneShot = StartCoroutine(OneShotRoutine(key));
@@ -179,11 +228,34 @@ namespace Bedsit.Sims2
             OneShotFinished?.Invoke(key);
         }
 
+        /// <summary>Freeze a library animation at a normalised time (0..1) over the base pose. Used by the sprite baker; the
+        /// pose is applied by the Animation/IK graph on the following frame(s).</summary>
+        public bool ScrubTo(string key, float normalizedTime)
+        {
+            if (_animation == null) return false;
+            if (_oneShot != null) { StopCoroutine(_oneShot); _oneShot = null; }
+            EnsureBasePose();
+            var clipName = EnsureClip(key, LayerOneShot);
+            if (clipName == null) return false;
+            SetIk(key);
+            var st = _animation[clipName];
+            _animation.Play(clipName);
+            st.weight = 1f;
+            st.speed = 0f;
+            st.normalizedTime = Mathf.Clamp01(normalizedTime);
+            var idle = EnsureClip(AnimationKeys.Idle, LayerIdle);
+            if (idle != null && idle != clipName) _animation[idle].weight = 0f;
+            CurrentKey = key;
+            return true;
+        }
+
         // ------------------------------------------------------------------------------------------------ pose + placement
 
         /// <summary>Local rotation of every skeleton bone: used to prove an original animation visibly changes the pose.</summary>
         public Quaternion[] CapturePose()
         {
+            if (IsBaked)
+                return _bakedBones.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => kv.Value.localRotation).ToArray();
             if (Sim == null) return new Quaternion[0];
             return Sim.Scenegraph.BoneNamesToTransform.OrderBy(kv => kv.Key, StringComparer.Ordinal)
                 .Select(kv => kv.Value != null ? kv.Value.localRotation : Quaternion.identity).ToArray();
@@ -199,6 +271,7 @@ namespace Bedsit.Sims2
         }
 
         public Transform Bone(string name) =>
+            IsBaked ? (_bakedBones.TryGetValue(name, out var bt) ? bt : null) :
             Sim != null && Sim.Scenegraph.BoneNamesToTransform.TryGetValue(name, out var t) ? t : null;
 
         public void FaceTowards(Vector3 worldPoint)

@@ -55,8 +55,7 @@ namespace Bedsit.Game
 
         IEnumerator Start()
         {
-            Application.targetFrameRate = 60;
-            QualitySettings.vSyncCount = 0;
+            ApplyPlatformQuality();
             BuildRig();
             Hud = new GameObject("Hud").AddComponent<HudOverlay>();
             Hud.transform.SetParent(transform, false);
@@ -65,7 +64,7 @@ namespace Bedsit.Game
             yield return null;
 
             Status = "building world";
-            World = BedsitWorldBuilder.Build();
+            World = BedsitContent.CreateWorld();
             if (World == null) { Status = "FAILED: " + Sims2Runtime.LastError; Debug.LogError(Status); yield break; }
             yield return null;
 
@@ -80,6 +79,22 @@ namespace Bedsit.Game
 
             if (SkipWakeUp) { StartAtStandpoint(); Hud.SetFade(0f); WakeUpFinished = true; Hud.SetHintsVisible(true); }
             else yield return WakeUp();
+        }
+
+        /// <summary>Phone-friendly settings: 30 fps, hard shadows, no MSAA, smaller mirror texture. Desktop keeps full quality.</summary>
+        void ApplyPlatformQuality()
+        {
+            QualitySettings.vSyncCount = 0;
+            if (Application.isMobilePlatform)
+            {
+                Application.targetFrameRate = 30;
+                QualitySettings.shadows = ShadowQuality.HardOnly;
+                QualitySettings.shadowDistance = 9f;
+                QualitySettings.antiAliasing = 0;
+                QualitySettings.pixelLightCount = 2;
+                Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            }
+            else Application.targetFrameRate = 60;
         }
 
         // ------------------------------------------------------------------------------------------------------ build
@@ -98,7 +113,7 @@ namespace Bedsit.Game
             EyeCamera.farClipPlane = 120f;
             EyeCamera.clearFlags = CameraClearFlags.SolidColor;
             EyeCamera.backgroundColor = new Color(0.62f, 0.78f, 0.95f);
-            EyeCamera.allowMSAA = true;
+            EyeCamera.allowMSAA = !Application.isMobilePlatform;
 
             View = Rig.gameObject.AddComponent<FirstPersonViewController>();
             View.YawPivot = yaw; View.PitchPivot = pitch; View.EyeCamera = EyeCamera;
@@ -110,10 +125,10 @@ namespace Bedsit.Game
 
         void CreateCast()
         {
-            Player = SimCharacterActor.CreateFromNeighborhood("player", "N001", PlayerSim);
-            NpcCorridor = SimCharacterActor.CreateFromNeighborhood("npc_corridor", "N001", CorridorSim);
-            NpcEast = SimCharacterActor.CreateFromNeighborhood("npc_east", "N001", EastSim);
-            NpcWest = SimCharacterActor.CreateFromNeighborhood("npc_west", "N001", WestSim);
+            Player = BedsitContent.CreateActor("player", PlayerSim);
+            NpcCorridor = BedsitContent.CreateActor("npc_corridor", CorridorSim);
+            NpcEast = BedsitContent.CreateActor("npc_east", EastSim);
+            NpcWest = BedsitContent.CreateActor("npc_west", WestSim);
 
             // The player's own body: invisible to the eye camera (mirror-only layer), casts no shadows.
             if (Player != null)
@@ -155,7 +170,7 @@ namespace Bedsit.Game
             var mirrorGo = World.MirrorFrame.gameObject;
             Mirror = mirrorGo.AddComponent<MirrorReflectionController>();
             Mirror.GlassLayer = BedsitLayers.MirrorGlass;
-            Mirror.Initialize(EyeCamera, World.MirrorGlassSize, BedsitLayers.PlayerMirrorOnly);
+            Mirror.Initialize(EyeCamera, World.MirrorGlassSize, BedsitLayers.PlayerMirrorOnly, Application.isMobilePlatform ? 512 : 1024);
             Mirror.ExcludeFromReflection(World.MirrorFrameObject);
 
             // visual cue

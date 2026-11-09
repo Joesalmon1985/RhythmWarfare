@@ -19,10 +19,12 @@ namespace Bedsit.Sims2
         public bool IsOpening { get; private set; }
         public float OpenFraction { get; private set; }
         public string ResolvedAnimationResource { get; private set; }
+        public Animation AnimationComponent => _animation;
+        public string ClipName => _clipName;
 
-        Animation _animation;
+        [SerializeField] Animation _animation;
         AnimationState _state;
-        string _clipName;
+        [SerializeField] string _clipName;
 
         /// <summary>Wire the door up. <paramref name="doorObject"/> is the root created from the door's CRES.</summary>
         public bool Setup(GameObject doorObject, string openAnimation)
@@ -38,6 +40,21 @@ namespace Bedsit.Sims2
             _clipName = openAnimation;
             _animation.AddClip(clip, _clipName);
             ResolvedAnimationResource = openAnimation;
+            SetFraction(AjarNormalizedTime);
+            return true;
+        }
+
+        /// <summary>Baked prefab path: the Animation component and clip were serialised at bake time; just set the rest pose.</summary>
+        public bool RebindBaked()
+        {
+            if (_animation == null) return false;
+            if (string.IsNullOrEmpty(_clipName) || _animation[_clipName] == null)
+            {
+                if (_animation.clip == null) return false;
+                _clipName = _animation.clip.name;                 // baked clip may carry its asset file name
+            }
+            _animation.playAutomatically = false;
+            ResolvedAnimationResource = _clipName;
             SetFraction(AjarNormalizedTime);
             return true;
         }

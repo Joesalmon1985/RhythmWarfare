@@ -53,7 +53,8 @@ namespace Bedsit.EditorTools
         /// (config.json holds only paths into the user's own Sims 2 install; it is git-ignored.)</summary>
         static void PostProcess(string dir)
         {
-            if (File.Exists("config.json")) File.Copy("config.json", Path.Combine(dir, "config.json"), true);
+            // The build is self-contained when baked content exists (Assets/LocalBaked): no config.json is copied, so it runs
+            // without any Sims 2 install. Without baked content the player needs config.json (see config.example.json).
             File.Copy("config.example.json", Path.Combine(dir, "config.example.json"), true);
             File.WriteAllText(Path.Combine(dir, "README_RUN.txt"),
                 "UnityBedsitPOC - first-person Sims 2 bedsit proof of concept\r\n\r\n" +

@@ -21,12 +21,16 @@ namespace Bedsit.Tests
         protected Material Magenta, Cyan;
 
         protected virtual bool SkipWakeUp => true;
+        protected virtual Bedsit.Sims2.BedsitContent.ContentMode Mode => Bedsit.Sims2.BedsitContent.ContentMode.Auto;
 
         [UnitySetUp]
         public IEnumerator LoadBedsit()
         {
-            if (Sims2Runtime.FindConfig() == null) Assert.Ignore("config.json (Sims 2 install) not found: these tests need a local Sims 2 install.");
+            if (Sims2Runtime.FindConfig() == null && !BedsitContent.BakedAvailable)
+                Assert.Ignore("Neither config.json (Sims 2 install) nor baked content (Assets/LocalBaked) found: these tests need one of them.");
             BedsitGame.SkipWakeUp = SkipWakeUp;
+            BedsitContent.ForceMode = Mode;
+            if (Mode == BedsitContent.ContentMode.Baked && !BedsitContent.BakedAvailable) Assert.Ignore("baked content not present (run Bedsit/Bake)");
             var load = SceneManager.LoadSceneAsync("Bedsit", LoadSceneMode.Single);
             while (!load.isDone) yield return null;
             float t = 0f;
@@ -44,6 +48,7 @@ namespace Bedsit.Tests
         public void Cleanup()
         {
             BedsitGame.SkipWakeUp = false;
+            BedsitContent.ForceMode = BedsitContent.ContentMode.Auto;
         }
 
         // ---------------------------------------------------------------------------------------------------- helpers
@@ -287,12 +292,16 @@ namespace Bedsit.Tests
                 yield return null;
             }
             Assert.Greater(max, 20f, "the reflected player's skeleton must visibly change pose (max bone change " + max + " deg)");
-            var res = SimAnimationLibrary.Resolve(AnimationKeys.Wave);
-            Assert.IsNotNull(res);
-            StringAssert.StartsWith("a-", res.ResourceName);
-            StringAssert.EndsWith("_anim", res.ResourceName);
-            StringAssert.EndsWith(".package", res.Package);
-            Debug.Log($"[Test] mirror wave: {res.ResourceName} from {res.Package}, max bone change {max:0.0} deg");
+            if (!BedsitContent.UsingBaked)
+            {
+                var res = SimAnimationLibrary.Resolve(AnimationKeys.Wave);
+                Assert.IsNotNull(res);
+                StringAssert.StartsWith("a-", res.ResourceName);
+                StringAssert.EndsWith("_anim", res.ResourceName);
+                StringAssert.EndsWith(".package", res.Package);
+                Debug.Log($"[Test] mirror wave: {res.ResourceName} from {res.Package}, max bone change {max:0.0} deg");
+            }
+            else Debug.Log($"[Test] mirror wave (baked clip), max bone change {max:0.0} deg");
         }
 
         [UnityTest]
@@ -394,6 +403,7 @@ namespace Bedsit.Tests
         [UnityTest]
         public IEnumerator OriginalSims2AnimationVisiblyChangesACharactersPose()
         {
+            if (BedsitContent.UsingBaked) Assert.Ignore("needs the live Sims 2 data (resource-level checks)");
             var npc = Game.NpcCorridor;
             yield return new WaitForSeconds(0.5f);
             var rest = npc.CapturePose();
@@ -412,6 +422,7 @@ namespace Bedsit.Tests
         [UnityTest]
         public IEnumerator EveryLibraryAnimationResolvesToAnOriginalResource()
         {
+            if (BedsitContent.UsingBaked) Assert.Ignore("needs the live Sims 2 data (resource-level checks)");
             foreach (var key in SimAnimationLibrary.Definitions.Keys)
             {
                 var r = SimAnimationLibrary.Resolve(key);
@@ -420,5 +431,19 @@ namespace Bedsit.Tests
             }
             yield return null;
         }
+    }
+}
+
+namespace Bedsit.Tests
+{
+    /// <summary>The first-person and interaction tests again, but forcing the BAKED content path (no Sims 2 / OpenTS2 data).</summary>
+    public class BakedFirstPersonTests : FirstPersonTests
+    {
+        protected override Bedsit.Sims2.BedsitContent.ContentMode Mode => Bedsit.Sims2.BedsitContent.ContentMode.Baked;
+    }
+
+    public class BakedInteractionTests : InteractionTests
+    {
+        protected override Bedsit.Sims2.BedsitContent.ContentMode Mode => Bedsit.Sims2.BedsitContent.ContentMode.Baked;
     }
 }

@@ -36,3 +36,6 @@ crashlytics-build.gradle
 
 # Screenshots contain EA assets - keep local
 /Evidence/screenshots/
+/Evidence/sprites/
+/Assets/LocalBaked/
+/Assets/LocalBaked.meta

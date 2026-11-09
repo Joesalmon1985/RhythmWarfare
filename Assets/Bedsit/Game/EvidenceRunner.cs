@@ -89,7 +89,8 @@ namespace Bedsit.Game
             _g.Input.Raise(PlayerAction.TurnRight); yield return WaitTurn(); yield return new WaitForSeconds(0.3f); yield return Snap("57_corridor_south_back_to_bedsit");
             _g.Input.Raise(PlayerAction.TurnRight); yield return WaitTurn(); yield return new WaitForSeconds(0.3f); yield return Snap("58_corridor_west");
 
-            Log("provenance:\n" + SimAnimationLibrary.DescribeAll());
+            Log("content: " + (BedsitContent.UsingBaked ? "BAKED assets" : "LIVE Sims 2 install via OpenTS2"));
+            if (!BedsitContent.UsingBaked) Log("provenance:\n" + SimAnimationLibrary.DescribeAll());
             foreach (var line in _g.World.Report) Log("world: " + line);
             foreach (var line in _g.Log) Log("game: " + line);
             var path = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Evidence", "evidence_log.txt"));
