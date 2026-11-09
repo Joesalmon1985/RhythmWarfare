@@ -23,6 +23,10 @@ visual and interaction architecture of RhythmWarfare and DuelMasterBattle. It do
 | Characters / room | real 3D (decision: no sprites); converted locally to ordinary Unity assets for phones | `Docs/BAKING.md` |
 | Played on a phone / by a person with a real mouse | **NOT verified** (machine-verified only) | |
 
+## Music / rhythm layer
+
+A rhythm-and-mixing layer over the bedsit (Gatekeeper-only first pass) lives behind `-music` / `BEDSIT_MUSIC=1`: see [Docs/music/README.md](Docs/music/README.md).
+
 ## Controls (exactly three)
 
 | Action | Mouse / touch | Keyboard (convenience) |

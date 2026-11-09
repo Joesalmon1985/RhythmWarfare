@@ -1,0 +1,48 @@
+{
+  "format": "bedsit.music.plan.v1",
+  "notes": "All values are adjustable after listening. Beats are 174 BPM beats. The recorded track is silent during a playable build (the custom arrangement owns it); layering/ducking has NOT been auditioned yet.",
+  "settings": {
+    "threshold": 0.8,
+    "recoveryThreshold": 0.6,
+    "buildBeats": 128,
+    "recoveryBeats": 32,
+    "maxRecoveryAttempts": 3,
+    "fadeOutBeats": 32,
+    "customFadeBeats": 1.0,
+    "customFadeInBeats": 4.0,
+    "recordedFadeBeatsAtBuild": 4.0,
+    "stemMuteRampSeconds": 0.03,
+    "stemMuteLevel": 0.15,
+    "stemRestoreRampSeconds": 0.08,
+    "restoreAfterHits": 2,
+    "prepMarginBeats": 8,
+    "evalLeadSeconds": 0.2,
+    "startDelaySeconds": 3.0,
+    "judgePerfectSeconds": 0.045,
+    "judgeGoodSeconds": 0.09,
+    "customGain": 0.8,
+    "recordedGain": 0.9
+  },
+  "order": ["gatekeeper", "dropdis", "levels"],
+  "buildLoops": [
+    { "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] },
+    { "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] },
+    { "charted": ["kick", "snare"], "audible": ["kick", "snare", "bass", "backing"] },
+    { "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] }
+  ],
+  "padMap": {
+    "kick": "pad 1 (RhythmWarfare kick cue pad)",
+    "snare": "pad 4 (RhythmWarfare snare cue pad)",
+    "bass": "pads 1-4 by pitch (RhythmWarfare bass cues)",
+    "backing": "not playable (hats accompaniment)"
+  },
+  "legs": [
+    { "id": "L1", "type": "build", "song": "gatekeeper", "anchor": "firstDrop" },
+    { "id": "L2", "type": "handover", "from": "gatekeeper", "fromAnchor": "secondDrop", "to": "dropdis", "toAnchor": "firstDrop",
+      "fallbackType": "build", "fallbackSong": "gatekeeper", "fallbackAnchor": "secondDrop" },
+    { "id": "L3", "type": "build", "song": "dropdis", "anchor": "secondDrop" },
+    { "id": "L4", "type": "handover", "from": "dropdis", "fromAnchor": "ending", "to": "levels", "toAnchor": "firstDrop" },
+    { "id": "L5", "type": "build", "song": "levels", "anchor": "secondDrop" },
+    { "id": "L6", "type": "repeat", "to": "gatekeeper", "toAnchor": "firstDrop", "outgoingCandidates": ["secondDrop", "ending"] }
+  ]
+}

@@ -45,3 +45,32 @@ Classes named Baked* repeat the first-person and interaction tests with the BAKE
 | Passed | InteractionTests.NorthInteractionOpensTheDoorAndWalksIntoTheCorridorAtEyeHeight | 4.1s |
 | Passed | InteractionTests.WestWindowInteractionAnimatesTheNpc | 3.0s |
 | Passed | WakeUpTests.WakeUpFadesInRisesAndHandsOverControl | 8.6s |
+
+## Music POC additions (branch feature/bedroom-music-poc)
+
+Full suite after the music work: **54 tests, 54 passed** (the 37 above + 14 `MusicEngineTests` + 3 `MusicPocSceneTests`).
+In one earlier full run `FirstPersonTests.StartingCameraIsFirstPerson` timed out once in cold content loading ("creating characters", 90 s)
+and passed on immediate rerun (3.5 s); it is unrelated to the music code.
+
+| Result | Test |
+|---|---|
+| Passed | MusicEngineTests.CuesBeforeTheFileStartAreRejectedNotClamped |
+| Passed | MusicEngineTests.FailureGetsARecoveryPhraseThenTheDropWithoutRewindOrSilence |
+| Passed | MusicEngineTests.HandoverIntoAnInvalidEntryCueIsRejected |
+| Passed | MusicEngineTests.HandoverNeverSchedulesFromAnAnchorAlreadyReached |
+| Passed | MusicEngineTests.MixingModeProducesNoPhantomMisses |
+| Passed | MusicEngineTests.MutedStemReturnsInSyncAndOnlyDuringTheMistake |
+| Passed | MusicEngineTests.PadStripRegionsAreFourPadsAboveTheBottomEdgeBetweenTheTurnZones |
+| Passed | MusicEngineTests.PauseFreezesTheTimelineAndSchedulingThenResumesIdentically |
+| Passed | MusicEngineTests.PerfectPlayEnablesTheRecordedDropAtItsAnchor |
+| Passed | MusicEngineTests.RecoveryCanReachAnotherValidAttempt |
+| Passed | MusicEngineTests.RenderDemonstrationsAndAnalyseThem |
+| Passed | MusicEngineTests.SecondBuildReturnsToRhythmWithoutCountingOldNotes |
+| Passed | MusicEngineTests.SuppliedCueEntriesMatchTheBrief |
+| Passed | MusicEngineTests.ThreeTrackSequenceAndRepeatReachEveryIntendedDrop (simulated Drop Dis / Levels) |
+| Passed | MusicPocSceneTests.PadTapsInTheBottomStripDoNotTurn |
+| Passed | MusicPocSceneTests.PauseFreezesTheTimelineInTheRunningGame |
+| Passed | MusicPocSceneTests.TurningFollowsCompassOrderAndNeverResetsMusicOrScoring |
+
+Runtime recordings from the built exe and their signal analysis: see `Docs/music/README.md` and `Docs/music/results/`. Those are automated
+checks, not listening.

@@ -21,6 +21,7 @@ namespace Bedsit.Tests
         protected Material Magenta, Cyan;
 
         protected virtual bool SkipWakeUp => true;
+        protected virtual void BeforeLoad() { }
         protected virtual Bedsit.Sims2.BedsitContent.ContentMode Mode => Bedsit.Sims2.BedsitContent.ContentMode.Auto;
 
         [UnitySetUp]
@@ -28,6 +29,7 @@ namespace Bedsit.Tests
         {
             if (Sims2Runtime.FindConfig() == null && !BedsitContent.BakedAvailable)
                 Assert.Ignore("Neither config.json (Sims 2 install) nor baked content (Assets/LocalBaked) found: these tests need one of them.");
+            BeforeLoad();
             BedsitGame.SkipWakeUp = SkipWakeUp;
             BedsitContent.ForceMode = Mode;
             if (Mode == BedsitContent.ContentMode.Baked && !BedsitContent.BakedAvailable) Assert.Ignore("baked content not present (run Bedsit/Bake)");
@@ -445,5 +447,88 @@ namespace Bedsit.Tests
     public class BakedInteractionTests : InteractionTests
     {
         protected override Bedsit.Sims2.BedsitContent.ContentMode Mode => Bedsit.Sims2.BedsitContent.ContentMode.Baked;
+    }
+}
+
+namespace Bedsit.Tests
+{
+    /// <summary>The music session inside the real bedsit scene: looking around must never disturb it.</summary>
+    public class MusicPocSceneTests : BedsitFixtureBase
+    {
+        protected override void BeforeLoad()
+        {
+            if (Bedsit.Music.MusicSession.FindAudioRoot() == null) Assert.Ignore("LocalAudio not found (run Tools/music/prepare_audio.py)");
+            MusicPoc.ForceRequest = true;
+        }
+
+        [TearDown] public void ResetFlag() { MusicPoc.ForceRequest = false; }
+
+        IEnumerator StartMusicWithBot()
+        {
+            yield return WaitUntil(() => MusicPoc.Instance != null && MusicPoc.Instance.Session != null && MusicPoc.Instance.Status != "starting" && MusicPoc.Instance.Status != "waiting for wake-up", 40f, "music POC to start");
+            MusicPoc.Instance.Bot = Bedsit.Music.MusicBot.Perfect();
+            yield return WaitUntil(() => MusicPoc.Instance.Session.Judge.TotalHits >= 8, 40f, "the first notes to be played");
+        }
+
+        [UnityTest]
+        public IEnumerator TurningFollowsCompassOrderAndNeverResetsMusicOrScoring()
+        {
+            yield return StartMusicWithBot();
+            var poc = MusicPoc.Instance; var session = poc.Session;
+            var stems = session.Mixer.Voices.Where(v => v.Role == "custom").ToArray();
+            Assert.GreaterOrEqual(stems.Length, 4, "custom stems are playing");
+            double lastTime = session.Mixer.Time; int lastHits = session.Judge.TotalHits, lastLog = session.Director.Log.Count;
+            int started = session.Director.BuildsStarted;
+
+            var expected = new[] { CompassDirection.East, CompassDirection.South, CompassDirection.West, CompassDirection.North,
+                                   CompassDirection.West, CompassDirection.South, CompassDirection.East, CompassDirection.North };
+            Assert.AreEqual(CompassDirection.North, Game.View.Facing, "starts facing North (scene 1)");
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Game.Input.Raise(i < 4 ? PlayerAction.TurnRight : PlayerAction.TurnLeft);
+                yield return WaitForTurn();
+                yield return new WaitForSeconds(0.35f);
+                Assert.AreEqual(expected[i], Game.View.Facing, "compass order, not scene-number order (step " + i + ")");
+                Assert.AreSame(session, MusicPoc.Instance.Session, "same music session in every view");
+                Assert.Greater(session.Mixer.Time, lastTime, "music keeps playing");
+                Assert.GreaterOrEqual(session.Judge.TotalHits, lastHits, "score never resets");
+                Assert.GreaterOrEqual(session.Director.Log.Count, lastLog);
+                Assert.AreEqual(started, session.Director.BuildsStarted, "no new build/restart caused by looking around");
+                var now = session.Mixer.Voices.Where(v => v.Role == "custom").ToArray();
+                Assert.AreEqual(stems.Length, now.Length);
+                for (int k = 0; k < stems.Length; k++) Assert.AreSame(stems[k], now[k], "the same stem voices keep playing (no restart)");
+                lastTime = session.Mixer.Time; lastHits = session.Judge.TotalHits; lastLog = session.Director.Log.Count;
+            }
+            Assert.AreEqual(0, session.Judge.TotalMisses, "turning caused no misses for the scripted perfect player");
+        }
+
+        [UnityTest]
+        public IEnumerator PadTapsInTheBottomStripDoNotTurn()
+        {
+            yield return StartMusicWithBot();
+            var facing = Game.View.Facing;
+            Assert.AreEqual(PlayerAction.None, InputRegions.ClassifyScreen(new Vector2(640, 40), 1280, 720), "bottom strip is not a turn/interact zone");
+            for (int i = 0; i < 4; i++) { Game.Input.RaisePad(i); yield return null; }
+            Assert.AreEqual(facing, Game.View.Facing, "bottom keeps the current facing");
+            Assert.IsTrue(Game.Input.PadsEnabled == (MusicPoc.Instance.Session.Director.Mode == Bedsit.Music.MusicMode.Rhythm));
+        }
+
+        [UnityTest]
+        public IEnumerator PauseFreezesTheTimelineInTheRunningGame()
+        {
+            yield return StartMusicWithBot();
+            var poc = MusicPoc.Instance; var m = poc.Session.Mixer;
+            poc.SetPaused(true);
+            yield return null;
+            double t = m.Time; int hits = poc.Session.Judge.TotalHits, misses = poc.Session.Judge.TotalMisses;
+            yield return new WaitForSeconds(1.5f);
+            Assert.AreEqual(t, m.Time, 0.0, "timeline frozen");
+            Assert.AreEqual(hits, poc.Session.Judge.TotalHits);
+            Assert.AreEqual(misses, poc.Session.Judge.TotalMisses, "no misses while paused");
+            poc.SetPaused(false);
+            yield return new WaitForSeconds(0.6f);
+            Assert.Greater(m.Time, t + 0.3, "resumes from the same position");
+            Assert.AreEqual(0, poc.Session.Judge.TotalMisses);
+        }
     }
 }

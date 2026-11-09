@@ -1,0 +1,21 @@
+211.8s peak -0.2 dBFS, rms -8.8 dB, clipped samples 0, longest silence 6.70s at 3.20s, silences>250ms 1, max sample step 1.29
+mode MIXING   t=216.11s   song gatekeeper  pos 231.73s
+beat 626.7   next anchor gatekeeper:ending in 80.7s
+incoming - 
+window -
+stems muted: none
+plan: build gatekeeper:firstDrop start 298.167 drop 342.305
+builds 2/3 passed, recoveries 0, handovers 0, stray taps 0, energy 100%
+
+[6.891] BUILD gatekeeper:firstDrop scheduled: start 9.891, drop 54.029 (128 beats)
+[53.845] EVAL build gatekeeper:firstDrop: 60/60 = 100.0% (threshold 80%) -> PASS
+[53.845] DROP gatekeeper:firstDrop at 54.029
+[54.037] BUILD gatekeeper:secondDrop scheduled: start 142.304, drop 186.442 (128 beats)
+[54.037] L2: handover to 'dropdis' unavailable -> fallback build gatekeeper:secondDrop
+[186.261] EVAL build gatekeeper:secondDrop: 60/60 = 100.0% (threshold 80%) -> PASS
+[186.261] DROP gatekeeper:secondDrop at 186.442
+[186.453] L3 (build) skipped: unavailable or no valid future anchor
+[186.453] L4 (handover) skipped: unavailable or no valid future anchor
+[186.453] L5 (build) skipped: unavailable or no valid future anchor
+[186.453] REPEAT: restarting gatekeeper after the ending at 296.787
+[186.453] BUILD gatekeeper:firstDrop scheduled: start 298.167, drop 342.305 (128 beats)

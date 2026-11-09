@@ -1,7 +1,7 @@
 {
     "name": "Bedsit.Tests.PlayMode",
     "rootNamespace": "Bedsit.Tests",
-    "references": ["Bedsit.Core", "Bedsit.Sims2", "Bedsit.Game", "OpenTS2", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+    "references": ["Bedsit.Core", "Bedsit.Sims2", "Bedsit.Game", "Bedsit.Music", "OpenTS2", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

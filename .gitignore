@@ -40,3 +40,7 @@ crashlytics-build.gradle
 /Assets/LocalBaked/
 /Assets/LocalBaked.meta
 /.utmp/
+/LocalAudio/
+/Evidence/audio/
+/Evidence/runtime_logs/
+__pycache__/

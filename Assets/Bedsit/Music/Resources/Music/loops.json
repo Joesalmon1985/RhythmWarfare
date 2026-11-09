@@ -1,0 +1,167 @@
+{
+ "format": "bedsit.music.loops.v1",
+ "source": "RhythmWarfare songs/library/index.json (format rhythm_warfare.library.v1), 174 BPM, 8-bar loops",
+ "ticksPerBeat": 960,
+ "loopBeats": 32,
+ "stems": [
+  {
+   "id": "kick",
+   "clip": "groove_half_time",
+   "part": "kick",
+   "sound": "kick_half_time",
+   "file": "loops/groove_half_time__kick__kick_half_time.wav",
+   "key": "",
+   "cues": [
+    {
+     "tick": 0,
+     "pad": 1
+    },
+    {
+     "tick": 4800,
+     "pad": 1
+    },
+    {
+     "tick": 7680,
+     "pad": 1
+    },
+    {
+     "tick": 12480,
+     "pad": 1
+    },
+    {
+     "tick": 15360,
+     "pad": 1
+    },
+    {
+     "tick": 20160,
+     "pad": 1
+    },
+    {
+     "tick": 23040,
+     "pad": 1
+    },
+    {
+     "tick": 24000,
+     "pad": 1
+    },
+    {
+     "tick": 25920,
+     "pad": 1
+    },
+    {
+     "tick": 27840,
+     "pad": 1
+    }
+   ]
+  },
+  {
+   "id": "snare",
+   "clip": "groove_half_time",
+   "part": "snare",
+   "sound": "snare_backbeat",
+   "file": "loops/groove_half_time__snare__snare_backbeat.wav",
+   "key": "",
+   "cues": [
+    {
+     "tick": 1920,
+     "pad": 4
+    },
+    {
+     "tick": 5760,
+     "pad": 4
+    },
+    {
+     "tick": 9600,
+     "pad": 4
+    },
+    {
+     "tick": 13440,
+     "pad": 4
+    },
+    {
+     "tick": 17280,
+     "pad": 4
+    },
+    {
+     "tick": 21120,
+     "pad": 4
+    },
+    {
+     "tick": 24960,
+     "pad": 4
+    },
+    {
+     "tick": 28800,
+     "pad": 4
+    }
+   ]
+  },
+  {
+   "id": "bass",
+   "clip": "bass_sub_line",
+   "part": "bass",
+   "sound": "bass_sub_bright",
+   "file": "loops/bass_sub_line__bass__bass_sub_bright.wav",
+   "key": "F minor",
+   "cues": [
+    {
+     "tick": 0,
+     "pad": 1
+    },
+    {
+     "tick": 3840,
+     "pad": 2
+    },
+    {
+     "tick": 5760,
+     "pad": 2
+    },
+    {
+     "tick": 7680,
+     "pad": 1
+    },
+    {
+     "tick": 11520,
+     "pad": 2
+    },
+    {
+     "tick": 13440,
+     "pad": 2
+    },
+    {
+     "tick": 15360,
+     "pad": 3
+    },
+    {
+     "tick": 19200,
+     "pad": 3
+    },
+    {
+     "tick": 23040,
+     "pad": 2
+    },
+    {
+     "tick": 25920,
+     "pad": 2
+    },
+    {
+     "tick": 27840,
+     "pad": 4
+    },
+    {
+     "tick": 29760,
+     "pad": 3
+    }
+   ]
+  },
+  {
+   "id": "backing",
+   "clip": "acc_hats_driving",
+   "part": "other",
+   "sound": "hats_driving",
+   "file": "loops/acc_hats_driving__other__hats_driving.wav",
+   "key": "F minor",
+   "cues": []
+  }
+ ]
+}

@@ -1,0 +1,75 @@
+{
+  "file": "66 - Fresh - The Gatekeeper (Original Mix).mp3",
+  "duration_s": 323.448,
+  "sample_rate_decoded": 48000,
+  "channels": 2,
+  "bpm_autocorr_coarse": 162.162,
+  "bpm_comb_fit": 162.192,
+  "bpm_used": 174.0,
+  "beat_phase_s": 0.344,
+  "beat_origin_s": 0.344,
+  "peak": 1.3232269287109375,
+  "anchors": [
+    {
+      "t": 69.68,
+      "beats_from_origin": 201.075,
+      "offset_from_grid_ms": 25.7,
+      "strongest_low_onset_s": 69.985,
+      "onset_minus_anchor_ms": 305.0,
+      "rms_low_before_4s": 0.113,
+      "rms_low_after_4s": 0.5351
+    },
+    {
+      "t": 202.09,
+      "beats_from_origin": 585.063,
+      "offset_from_grid_ms": 21.9,
+      "strongest_low_onset_s": 202.315,
+      "onset_minus_anchor_ms": 225.0,
+      "rms_low_before_4s": 0.1101,
+      "rms_low_after_4s": 0.5355
+    },
+    {
+      "t": 312.43,
+      "beats_from_origin": 905.049,
+      "offset_from_grid_ms": 17.1,
+      "strongest_low_onset_s": 312.365,
+      "onset_minus_anchor_ms": -65.0,
+      "rms_low_before_4s": 0.136,
+      "rms_low_after_4s": 0.1071
+    }
+  ],
+  "key_candidates": [
+    {
+      "key": "F# major",
+      "r": 0.647
+    },
+    {
+      "key": "F# minor",
+      "r": 0.593
+    },
+    {
+      "key": "B major",
+      "r": 0.581
+    },
+    {
+      "key": "E major",
+      "r": 0.508
+    }
+  ],
+  "key_margin": 0.054,
+  "key_certain": false,
+  "chroma": [
+    0.0687,
+    0.0882,
+    0.0716,
+    0.0662,
+    0.0862,
+    0.0703,
+    0.1059,
+    0.0828,
+    0.0898,
+    0.085,
+    0.0894,
+    0.096
+  ]
+}

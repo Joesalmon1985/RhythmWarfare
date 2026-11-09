@@ -50,6 +50,7 @@ namespace Bedsit.Game
         {
             Instance = this;
             if (EvidenceRunner.Requested) gameObject.AddComponent<EvidenceRunner>();
+            if (MusicPoc.Requested) gameObject.AddComponent<MusicPoc>();            // music/rhythm POC (feature flag)
         }
         void OnDestroy() { if (Instance == this) Instance = null; }
 

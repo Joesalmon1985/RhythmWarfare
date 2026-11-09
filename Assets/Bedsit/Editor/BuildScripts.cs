@@ -61,7 +61,11 @@ namespace Bedsit.EditorTools
                 "Run UnityBedsitPOC.exe. The game reads your own Sims 2 installation at run time via config.json\r\n" +
                 "(copy config.example.json to config.json and set game_dir / user_dir). No Sims 2 content is included.\r\n\r\n" +
                 "Controls: click/tap the LEFT edge to turn left, the RIGHT edge to turn right, the TOP-CENTRE to interact / go through the door.\r\n" +
-                "(Keyboard: A/Left, D/Right, W/Up/Space.)  Evidence mode: UnityBedsitPOC.exe -evidence -quit\r\n");
+                "(Keyboard: A/Left, D/Right, W/Up/Space.)  Evidence mode: UnityBedsitPOC.exe -evidence -quit\r\n\r\n" +
+                "MUSIC POC (needs the local audio folder, see Docs/music/README.md): UnityBedsitPOC.exe -music\r\n" +
+                "  pads: bottom strip (4 pads) or keys D F J K;  F1 = diagnostics overlay;  P = pause\r\n" +
+                "  scripted players: -musicbot=perfect|partial|fail   record the mix: -musicrecord=SECONDS -quit\r\n" +
+                "  audio folder: BEDSIT_AUDIO_DIR env var, or LocalAudio next to the exe / in the project root\r\n");
         }
 
         [MenuItem("Bedsit/Build/Android APK")]

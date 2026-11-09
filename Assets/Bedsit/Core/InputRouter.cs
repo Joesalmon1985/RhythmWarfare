@@ -11,6 +11,9 @@ namespace Bedsit
     public class InputRouter : MonoBehaviour
     {
         public event Action<PlayerAction> ActionTriggered;
+        /// <summary>A rhythm pad (0..3) was tapped. Only raised while <see cref="PadsEnabled"/> (RHYTHM mode).</summary>
+        public event Action<int> PadTriggered;
+        public bool PadsEnabled;
 
         /// <summary>When true all input is ignored (e.g. during the wake-up sequence).</summary>
         public bool Locked { get; set; }
@@ -23,6 +26,19 @@ namespace Bedsit
         void Update()
         {
             if (Locked) return;
+            if (PadsEnabled)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    int pad = InputRegions.ClassifyPadScreen(Input.mousePosition, Screen.width, Screen.height);
+                    if (pad >= 0) { PadTriggered?.Invoke(pad); return; }
+                }
+                // keyboard pads D F J K; turning is then Left/Right arrows (A still turns left)
+                if (Input.GetKeyDown(KeyCode.D)) PadTriggered?.Invoke(0);
+                if (Input.GetKeyDown(KeyCode.F)) PadTriggered?.Invoke(1);
+                if (Input.GetKeyDown(KeyCode.J)) PadTriggered?.Invoke(2);
+                if (Input.GetKeyDown(KeyCode.K)) PadTriggered?.Invoke(3);
+            }
             if (Input.GetMouseButtonDown(0))
             {
                 var action = InputRegions.ClassifyScreen(Input.mousePosition, Screen.width, Screen.height);
@@ -30,9 +46,12 @@ namespace Bedsit
             }
             if (!KeyboardEnabled) return;
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) Raise(PlayerAction.TurnLeft);
-            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) Raise(PlayerAction.TurnRight);
+            else if (Input.GetKeyDown(KeyCode.RightArrow) || (!PadsEnabled && Input.GetKeyDown(KeyCode.D))) Raise(PlayerAction.TurnRight);
             else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) Raise(PlayerAction.Interact);
         }
+
+        /// <summary>Raise a pad tap programmatically (tests and bots).</summary>
+        public void RaisePad(int pad) { if (!Locked && PadsEnabled) PadTriggered?.Invoke(pad); }
 
         /// <summary>Raise an action programmatically (tests and automation).</summary>
         public void Raise(PlayerAction action)

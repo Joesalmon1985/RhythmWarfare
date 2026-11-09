@@ -1,7 +1,7 @@
 {
     "name": "Bedsit.Game",
     "rootNamespace": "Bedsit.Game",
-    "references": ["Bedsit.Core", "Bedsit.Sims2", "OpenTS2"],
+    "references": ["Bedsit.Core", "Bedsit.Sims2", "Bedsit.Music", "OpenTS2", "UnityEngine.UI"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
