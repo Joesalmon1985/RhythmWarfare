@@ -128,21 +128,39 @@ namespace Bedsit.Music
         double RecTimeOfAnchor(string anchor) => Mixer.TimelineOfClipTime(_rec, _recSong.Anchor(anchor));
 
         // ------------------------------------------------------------------------------------------------ builds
+        //
+        // A playable build is a short run of 32-beat phases (plan.json "buildLoops"): e.g. drums (warm-up) -> bass (gate) ->
+        // drums with the recording's own buildup fading in underneath (gate) -> the recorded drop. A failed gate repeats that
+        // phase as a recovery attempt: the custom loops never stop and the recording is never rewound mid-track (a failed
+        // buildup is faded out and re-entered fresh), so there is no silence. After maxRecoveryAttempts the build moves on anyway.
+
+        sealed class Build
+        {
+            public SongDef Song; public string Anchor;
+            public int Recoveries;
+            public Mixer.Voice Rec;            // the recording voice of the current buildup attempt
+            public double PlannedDrop;         // drop time if every remaining phase passes first time
+        }
+        Build _build;
+
+        double BuildTotalSeconds => _plan.buildLoops.Length * (double)_loops.loopBeats * BeatSeconds;
+        double BuildupClipStart(SongDef song, string anchor) => song.Anchor(anchor) - _loops.loopBeats * song.BeatSeconds;
 
         bool TryScheduleBuild(string songId, string anchor, double now)
         {
             var song = _songs.Find(songId);
-            double bs = BeatSeconds, D;
+            double bs = BeatSeconds, total = BuildTotalSeconds, D;
             if (_rec != null && _recSong.id == songId)
             {
                 D = RecTimeOfAnchor(anchor);
                 if (D <= now) { L($"build {songId}:{anchor} rejected: anchor already reached ({D:0.000} <= {now:0.000})"); return false; }
             }
-            else if (_rec == null) D = now + S.startDelaySeconds + S.buildBeats * bs;
+            else if (_rec == null) D = now + S.startDelaySeconds + total;
             else { L($"build {songId}:{anchor} rejected: a different recording is playing"); return false; }
 
-            double start = D - S.buildBeats * bs;
+            double start = D - total;
             if (start < now + S.prepMarginBeats * bs) { L($"build {songId}:{anchor} rejected: not enough time (start {start:0.000} < now+margin)"); return false; }
+            if (BuildupClipStart(song, anchor) < 0) { L($"build {songId}:{anchor} rejected: buildup entry cue {BuildupClipStart(song, anchor):0.000}s is before the start of the file"); return false; }
             ScheduleBuild(song, anchor, D, start);
             return true;
         }
@@ -151,12 +169,13 @@ namespace Bedsit.Music
         {
             double bs = BeatSeconds;
             BuildsStarted++;
+            var b = _build = new Build { Song = song, Anchor = anchor, PlannedDrop = D };
             PendingPlan = $"build {song.id}:{anchor} start {start:0.000} drop {D:0.000}";
-            L($"BUILD {song.id}:{anchor} scheduled: start {start:0.000}, drop {D:0.000} ({S.buildBeats} beats)");
+            L($"BUILD {song.id}:{anchor} scheduled: start {start:0.000}, drop {D:0.000} ({_plan.buildLoops.Length} phases: {string.Join(" / ", _plan.buildLoops.Select(l => l.id))})");
 
             At(start - 8 * bs, "rhythm lead-in", () => { Mode = MusicMode.Rhythm; });
 
-            // recording hands the floor to the custom arrangement (simultaneous cross-fade)
+            // a recording that was playing hands the floor to the custom arrangement (simultaneous cross-fade)
             if (_rec != null)
             {
                 double fade = S.recordedFadeBeatsAtBuild * bs;
@@ -166,16 +185,11 @@ namespace Bedsit.Music
                 At(start + fade, "recording cleared", () => { if (_rec == old) _rec = null; });
             }
 
-            CreateStemVoices(start, S.buildBeats / (double)_loops.loopBeats);
-            ScheduleLayout(start, 0, Math.Max(_plan.buildLoops.Length, 1), true);
-            var notes = new List<Note>();
-            for (int k = 0; k < _plan.buildLoops.Length; k++) notes.AddRange(NotesForLoop(start, k, _plan.buildLoops[k].charted));
-            var win = Judge.AddWindow($"build {song.id}:{anchor}", start, D - bs, S.threshold, notes);
-            At(start, "window open", () => { CurrentWindow = win; });
-            At(D - S.evalLeadSeconds, "evaluate build", () => EvaluateBuild(win, song, anchor, D, 0));
+            CreateStemVoices(start);
+            RunPhase(b, 0, start, 0);
         }
 
-        void CreateStemVoices(double start, double loopsCount)
+        void CreateStemVoices(double start)
         {
             _stemVoices.Clear(); _muted.Clear(); _hitsSinceMute.Clear();
             foreach (var st in _loops.stems)
@@ -186,24 +200,51 @@ namespace Bedsit.Music
             }
         }
 
-        /// <summary>Arrangement ramps: which stems are audible in each 8-bar loop of the build.</summary>
-        void ScheduleLayout(double start, int firstLoop, int loopCount, bool fadeIn)
+        /// <summary>Schedule phase <paramref name="k"/> of the build to start at timeline time <paramref name="t"/> (attempt 0 = first try).</summary>
+        void RunPhase(Build b, int k, double t, int attempt)
         {
             double bs = BeatSeconds;
-            for (int k = firstLoop; k < firstLoop + loopCount; k++)
+            int n = _plan.buildLoops.Length;
+            var def = _plan.buildLoops[k];
+            double loop = _loops.loopBeats * bs, end = t + loop;
+            bool buildup = def.recording;
+            double freeBeats = buildup ? S.buildupFreeBeats : 1;
+            string name = string.IsNullOrEmpty(def.id) ? "phase" + k : def.id;
+            string label = attempt == 0 ? $"{b.Song.id}:{b.Anchor} {name}" : $"recovery#{attempt} {b.Song.id}:{b.Anchor} {name}";
+            double threshold = !def.gate ? 0.0 : (attempt == 0 ? S.threshold : S.recoveryThreshold);
+            double plannedDrop = t + (n - k) * loop;
+
+            // arrangement: which custom stems are audible in this phase (eased in/out around the recording's buildup)
+            foreach (var kv in _stemVoices)
             {
-                var def = _plan.buildLoops[Math.Min(k, _plan.buildLoops.Length - 1)];
-                double t = start + k * _loops.loopBeats * bs;
-                foreach (var kv in _stemVoices)
-                {
-                    float target = def.audible.Contains(kv.Key) ? S.customGain : 0f;
-                    if (k == firstLoop && fadeIn) Mixer.RampTo(kv.Value, t, t + S.customFadeInBeats * bs, target);
-                    else Mixer.RampTo(kv.Value, t - 0.01, t + 0.04, target);
-                }
+                bool audible = def.audible.Contains(kv.Key);
+                float target = !audible ? 0f : (buildup ? S.customGainUnderRecording : S.customGain);
+                if (k == 0 && attempt == 0) Mixer.RampTo(kv.Value, t, t + S.customFadeInBeats * bs, target);
+                else if (buildup) Mixer.RampTo(kv.Value, t, t + S.buildupCrossfadeBeats * bs, target);
+                else Mixer.RampTo(kv.Value, t - 0.01, t + 0.04, target);
             }
+
+            // the recording's own buildup (its last loop before the drop) enters gradually
+            if (buildup)
+            {
+                double clip = BuildupClipStart(b.Song, b.Anchor);
+                var v = Mixer.Play(b.Song.id, _songPcm[b.Song.id], t, clip, 0f, role: "recorded");
+                Mixer.RampTo(v, t, t + S.buildupFadeInBeats * bs, S.recordedGain);
+                b.Rec = v;
+                L($"buildup: {b.Song.id} enters at {t:0.000} (clip {clip:0.000}s), eases in over {S.buildupFadeInBeats:0} beats; drop {plannedDrop:0.000}");
+            }
+
+            // judged notes (a note on the very last beat(s) before the drop is never charted)
+            double lastBeat = _loops.loopBeats - freeBeats - (buildup ? 1 : 0);
+            var notes = NotesForPhase(t, def.charted, lastBeat);
+            double winEnd = buildup ? end - S.buildupFreeBeats * bs : end - bs;
+            var win = Judge.AddWindow(label, t, winEnd, threshold, notes);
+            At(t, "phase start", () => { CurrentWindow = win; b.PlannedDrop = plannedDrop; RestoreAllStems(); PendingPlan = $"build {b.Song.id}:{b.Anchor} - {name}{(attempt > 0 ? " (recovery " + attempt + ")" : "")}, drop planned {plannedDrop:0.000}"; });
+            double evalAt = (buildup ? winEnd : end) - S.evalLeadSeconds;
+            At(evalAt, "phase end", () => OnPhaseEnd(b, k, win, end, attempt));
         }
 
-        List<Note> NotesForLoop(double start, int k, string[] charted)
+        List<Note> NotesForPhase(double t, string[] charted, double lastBeat)
         {
             var list = new List<Note>(); double bs = BeatSeconds;
             foreach (var stemId in charted)
@@ -212,66 +253,72 @@ namespace Bedsit.Music
                 foreach (var c in st.cues)
                 {
                     double beat = c.tick / (double)_loops.ticksPerBeat;
-                    if (beat > _loops.loopBeats - 1 + 1e-6) continue;             // keep the last beat before the drop free
-                    list.Add(new Note { Time = start + (k * _loops.loopBeats + beat) * bs, Pad = c.pad, Stem = stemId });
+                    if (beat > lastBeat + 1e-6) continue;
+                    list.Add(new Note { Time = t + beat * bs, Pad = c.pad, Stem = stemId });
                 }
             }
             return list;
         }
 
-        void EvaluateBuild(JudgeWindow win, SongDef song, string anchor, double D, int recoveryAttempt)
+        void OnPhaseEnd(Build b, int k, JudgeWindow win, double end, int attempt)
         {
             Judge.Update(Mixer.Time);
             Judge.Close(win);
+            var def = _plan.buildLoops[k];
+            bool last = k == _plan.buildLoops.Length - 1;
             double acc = win.Accuracy;
+            if (!def.gate)
+            {
+                L($"{win.Label}: {win.Hits}/{win.Total} = {acc * 100:0.0}% (warm-up loop, not gated)");
+                RunPhase(b, k + 1, end, 0);
+                return;
+            }
             bool pass = acc >= win.Threshold;
             L($"EVAL {win.Label}: {win.Hits}/{win.Total} = {acc * 100:0.0}% (threshold {win.Threshold * 100:0}%) -> {(pass ? "PASS" : "FAIL")}");
-            if (pass || recoveryAttempt >= S.maxRecoveryAttempts)
+            if (pass || attempt >= S.maxRecoveryAttempts)
             {
-                if (!pass) L("recovery attempts exhausted: continuing to the drop anyway (no soft-lock)");
-                if (recoveryAttempt == 0) { if (pass) BuildsPassed++; else BuildsFailed++; }
-                LastBuildPassed = pass;
-                EnterRecordedDrop(song, anchor, D);
+                if (!pass) L("recovery attempts exhausted: moving on anyway (no soft-lock)");
+                if (!last) RunPhase(b, k + 1, end, 0);
+                else FinishBuild(b, pass, end);
+                return;
             }
-            else
+            b.Recoveries++; RecoveryAttempts++;
+            if (last && b.Rec != null)
             {
-                if (recoveryAttempt == 0) BuildsFailed++;
-                RecoveryAttempts++;
-                ScheduleRecovery(song, anchor, D, recoveryAttempt + 1);
+                // the drop is withheld: the buildup eases out before it arrives, the drums go round again, and the buildup re-enters
+                Mixer.RampTo(b.Rec, Mixer.Time, end, 0f);
+                Mixer.StopAt(b.Rec, end);
+                b.Rec = null;
             }
+            L($"RECOVERY #{attempt + 1}: {def.id} again {end:0.000} -> {end + _loops.loopBeats * BeatSeconds:0.000}{(last ? " (buildup re-enters, drop held)" : "")}");
+            RunPhase(b, k, end, attempt + 1);
         }
 
-        void EnterRecordedDrop(SongDef song, string anchor, double D)
+        void FinishBuild(Build b, bool pass, double D)
         {
             double bs = BeatSeconds;
-            _rec = Mixer.Play(song.id, _songPcm[song.id], D, song.Anchor(anchor), S.recordedGain, role: "recorded");
-            _recSong = song;
+            if (b.Recoveries == 0) BuildsPassed++; else BuildsFailed++;
+            LastBuildPassed = pass;
+            _rec = b.Rec; _recSong = b.Song;
             foreach (var kv in _stemVoices)
             {
                 Mixer.RampTo(kv.Value, D, D + S.customFadeBeats * bs, 0f);
                 Mixer.StopAt(kv.Value, D + S.customFadeBeats * bs + 0.01);
             }
-            PendingPlan = $"mixing {song.id} from {anchor}";
-            L($"DROP {song.id}:{anchor} at {D:0.000}");
-            At(D, "mixing mode", () => { Mode = MusicMode.Mixing; CurrentWindow = null; Judge.Enabled = true; AdvanceAfterDrop(D); });
+            PendingPlan = $"mixing {b.Song.id} from {b.Anchor}";
+            L($"DROP {b.Song.id}:{b.Anchor} at {D:0.000}");
+            At(D, "mixing mode", () => { Mode = MusicMode.Mixing; CurrentWindow = null; _build = null; Judge.Enabled = true; AdvanceAfterDrop(D); });
         }
 
-        void ScheduleRecovery(SongDef song, string anchor, double start, int attempt)
+        void RestoreAllStems()
         {
-            double bs = BeatSeconds;
-            double end = start + S.recoveryBeats * bs;
-            L($"RECOVERY #{attempt}: custom phrase {start:0.000} -> {end:0.000}, then drop {song.id}:{anchor}");
-            PendingPlan = $"recovery #{attempt} until {end:0.000}, then {song.id}:{anchor}";
-            // custom stems keep looping (never silent); arrangement = loop 2 of the build layout
-            foreach (var kv in _stemVoices)
+            foreach (var id in _stemVoices.Keys)
             {
-                var def = _plan.buildLoops[Math.Min(2, _plan.buildLoops.Length - 1)];
-                Mixer.RampTo(kv.Value, start - 0.01, start + 0.04, def.audible.Contains(kv.Key) ? S.customGain : 0f);
+                if (!_muted[id]) continue;
+                _muted[id] = false; _hitsSinceMute[id] = 0;
+                double t = Mixer.Time + 0.005;
+                Mixer.TrimTo(_stemVoices[id], t, t + S.stemRestoreRampSeconds, 1f);
             }
-            var notes = NotesForLoop(start, 0, _plan.buildLoops[Math.Min(2, _plan.buildLoops.Length - 1)].charted);
-            var win = Judge.AddWindow($"recovery#{attempt} {song.id}:{anchor}", start, end - bs, S.recoveryThreshold, notes);
-            At(start, "recovery window open", () => { CurrentWindow = win; });
-            At(end - S.evalLeadSeconds, "evaluate recovery", () => EvaluateBuild(win, song, anchor, end, attempt));
         }
 
         // ------------------------------------------------------------------------------------------------ handovers
@@ -285,10 +332,10 @@ namespace Bedsit.Music
 
         bool ScheduleHandover(SongDef inSong, string inAnchor, double D, double now, string outAnchorName)
         {
-            double bs = BeatSeconds, lead = S.buildBeats * bs;
+            double bs = BeatSeconds, lead = S.handoverLeadBeats * bs;
             if (D <= now) { L($"handover rejected: outgoing anchor already reached ({D:0.000} <= {now:0.000})"); return false; }
             double entry = D - lead;
-            double clipPos = inSong.Anchor(inAnchor) - S.buildBeats * inSong.BeatSeconds;
+            double clipPos = inSong.Anchor(inAnchor) - S.handoverLeadBeats * inSong.BeatSeconds;
             if (clipPos < 0) { L($"handover into {inSong.id}:{inAnchor} rejected: entry cue {clipPos:0.000}s is before the start of the file"); return false; }
             if (entry < now + S.prepMarginBeats * bs) { L($"handover rejected: incoming entry {entry:0.000} too soon (now {now:0.000})"); return false; }
 
@@ -322,7 +369,7 @@ namespace Bedsit.Music
                 foreach (var a in leg.outgoingCandidates) cands.Add((RecTimeOfAnchor(a), a));
                 cands.Sort((x, y) => x.D.CompareTo(y.D));
                 foreach (var c in cands)
-                    if (c.D - S.buildBeats * bs >= now + S.prepMarginBeats * bs && ScheduleHandover(to, string.IsNullOrEmpty(leg.toAnchor) ? "firstDrop" : leg.toAnchor, c.D, now, c.a)) return true;
+                    if (c.D - S.handoverLeadBeats * bs >= now + S.prepMarginBeats * bs && ScheduleHandover(to, string.IsNullOrEmpty(leg.toAnchor) ? "firstDrop" : leg.toAnchor, c.D, now, c.a)) return true;
                 L("repeat: no outgoing anchor leaves enough time");
                 return false;
             }
@@ -337,7 +384,7 @@ namespace Bedsit.Music
                 var old = _rec;
                 At(endT, "recording ended", () => { if (_rec == old) _rec = null; });
             }
-            double start = endT + 4 * bs, D = start + S.buildBeats * bs;
+            double start = endT + 4 * bs, D = start + BuildTotalSeconds;
             L($"REPEAT: restarting {to.id} after the ending at {endT:0.000}");
             ScheduleBuild(to, "firstDrop", D, start);
             return true;
@@ -383,7 +430,7 @@ namespace Bedsit.Music
                 }
                 if (best != null) return (best, bt);
             }
-            if (CurrentWindow != null && !CurrentWindow.Closed) return ("drop (" + CurrentWindow.Label + ")", CurrentWindow.End + BeatSeconds);
+            if (_build != null) return ("drop (" + _build.Song.id + ":" + _build.Anchor + ", if the gates pass)", _build.PlannedDrop);
             return ("-", 0);
         }
 

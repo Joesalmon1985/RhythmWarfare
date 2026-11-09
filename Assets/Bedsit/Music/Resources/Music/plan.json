@@ -1,16 +1,18 @@
 {
   "format": "bedsit.music.plan.v1",
-  "notes": "All values are adjustable after listening. Beats are 174 BPM beats. The recorded track is silent during a playable build (the custom arrangement owns it); layering/ducking has NOT been auditioned yet.",
+  "notes": "All values are adjustable after listening. Beats are 174 BPM beats. A playable build is 3 x 32 beats: drums (warm-up, not gated) -> bass (gated) -> drums with the recording's own buildup easing in underneath (gated) -> recorded drop -> MIXING (no judging). Layering levels have NOT been auditioned yet.",
   "settings": {
     "threshold": 0.8,
     "recoveryThreshold": 0.6,
-    "buildBeats": 128,
-    "recoveryBeats": 32,
-    "maxRecoveryAttempts": 3,
+    "handoverLeadBeats": 128,
+    "maxRecoveryAttempts": 2,
     "fadeOutBeats": 32,
-    "customFadeBeats": 1.0,
+    "customFadeBeats": 2.0,
     "customFadeInBeats": 4.0,
     "recordedFadeBeatsAtBuild": 4.0,
+    "buildupFadeInBeats": 8.0,
+    "buildupCrossfadeBeats": 4.0,
+    "buildupFreeBeats": 4.0,
     "stemMuteRampSeconds": 0.03,
     "stemMuteLevel": 0.15,
     "stemRestoreRampSeconds": 0.08,
@@ -21,14 +23,14 @@
     "judgePerfectSeconds": 0.045,
     "judgeGoodSeconds": 0.09,
     "customGain": 0.8,
+    "customGainUnderRecording": 0.6,
     "recordedGain": 0.9
   },
   "order": ["gatekeeper", "dropdis", "levels"],
   "buildLoops": [
-    { "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] },
-    { "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] },
-    { "charted": ["kick", "snare"], "audible": ["kick", "snare", "bass", "backing"] },
-    { "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] }
+    { "id": "drums",   "gate": false, "recording": false, "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] },
+    { "id": "bass",    "gate": true,  "recording": false, "charted": ["bass"],          "audible": ["kick", "snare", "bass", "backing"] },
+    { "id": "buildup", "gate": true,  "recording": true,  "charted": ["kick", "snare"], "audible": ["kick", "snare", "backing"] }
   ],
   "padMap": {
     "kick": "pad 1 (RhythmWarfare kick cue pad)",

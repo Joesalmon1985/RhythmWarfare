@@ -48,14 +48,14 @@ Classes named Baked* repeat the first-person and interaction tests with the BAKE
 
 ## Music POC additions (branch feature/bedroom-music-poc)
 
-Full suite after the music work: **54 tests, 54 passed** (the 37 above + 14 `MusicEngineTests` + 3 `MusicPocSceneTests`).
+Full suite after the music work (3-loop build): **55 tests, 55 passed** (the 37 above + 15 `MusicEngineTests` + 3 `MusicPocSceneTests`).
 In one earlier full run `FirstPersonTests.StartingCameraIsFirstPerson` timed out once in cold content loading ("creating characters", 90 s)
 and passed on immediate rerun (3.5 s); it is unrelated to the music code.
 
 | Result | Test |
 |---|---|
 | Passed | MusicEngineTests.CuesBeforeTheFileStartAreRejectedNotClamped |
-| Passed | MusicEngineTests.FailureGetsARecoveryPhraseThenTheDropWithoutRewindOrSilence |
+| Passed | MusicEngineTests.FailureGetsRecoveryLoopsThenTheDropWithoutRewindOrSilence |
 | Passed | MusicEngineTests.HandoverIntoAnInvalidEntryCueIsRejected |
 | Passed | MusicEngineTests.HandoverNeverSchedulesFromAnAnchorAlreadyReached |
 | Passed | MusicEngineTests.MixingModeProducesNoPhantomMisses |
@@ -68,6 +68,7 @@ and passed on immediate rerun (3.5 s); it is unrelated to the music code.
 | Passed | MusicEngineTests.SecondBuildReturnsToRhythmWithoutCountingOldNotes |
 | Passed | MusicEngineTests.SuppliedCueEntriesMatchTheBrief |
 | Passed | MusicEngineTests.ThreeTrackSequenceAndRepeatReachEveryIntendedDrop (simulated Drop Dis / Levels) |
+| Passed | MusicEngineTests.WarmUpLoopIsNotGatedButTheBassLoopIs |
 | Passed | MusicPocSceneTests.PadTapsInTheBottomStripDoNotTurn |
 | Passed | MusicPocSceneTests.PauseFreezesTheTimelineInTheRunningGame |
 | Passed | MusicPocSceneTests.TurningFollowsCompassOrderAndNeverResetsMusicOrScoring |

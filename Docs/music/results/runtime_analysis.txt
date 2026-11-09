@@ -1,0 +1,12 @@
+perfect: 125.0s peak 0.979 clipped(>=0.999) 0
+  silent runs > 0.25 s (-60 dB): [(0.0, 9.98)]
+  last buildup entry 32.045: rms per second after entry: [0.073, 0.099, 0.158, 0.2, 0.278, 0.302, 0.19, 0.268, 0.179, 0.255]
+  drop at 43.079: rms 1.5 s before 0.234, 3 s after 0.519 (x2.2); first onset >2x the pre-drop level at +4 ms
+partial: 70.0s peak 0.979 clipped(>=0.999) 0
+  silent runs > 0.25 s (-60 dB): [(0.0, 10.01)]
+  last buildup entry 32.066: rms per second after entry: [0.073, 0.099, 0.158, 0.2, 0.278, 0.302, 0.189, 0.267, 0.176, 0.255]
+  drop at 43.101: rms 1.5 s before 0.234, 3 s after 0.519 (x2.2); first onset >2x the pre-drop level at +4 ms
+fail: 110.0s peak 0.978 clipped(>=0.999) 0
+  silent runs > 0.25 s (-60 dB): [(0.0, 9.98)]
+  last buildup entry 76.183: rms per second after entry: [0.055, 0.094, 0.155, 0.2, 0.276, 0.302, 0.19, 0.268, 0.177, 0.253]
+  drop at 87.217: rms 1.5 s before 0.233, 3 s after 0.519 (x2.2); first onset >2x the pre-drop level at +4 ms

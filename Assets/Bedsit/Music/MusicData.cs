@@ -41,18 +41,23 @@ namespace Bedsit.Music
     public class PlanSettings
     {
         public double threshold = 0.8, recoveryThreshold = 0.6;
-        public int buildBeats = 128, recoveryBeats = 32, maxRecoveryAttempts = 3;
-        public double fadeOutBeats = 32, customFadeBeats = 1, customFadeInBeats = 4, recordedFadeBeatsAtBuild = 4;
+        public int handoverLeadBeats = 128, maxRecoveryAttempts = 2;
+        public double fadeOutBeats = 32, customFadeBeats = 2, customFadeInBeats = 4, recordedFadeBeatsAtBuild = 4;
+        public double buildupFadeInBeats = 8;            // how gradually the recording's own buildup comes in under the last drum loop
+        public double buildupCrossfadeBeats = 4;         // custom layer eases to its under-recording level over this long
+        public double buildupFreeBeats = 4;              // last beats before the drop carry no judged notes (the recording leads in)
         public double stemMuteRampSeconds = 0.03, stemRestoreRampSeconds = 0.08;
         public float stemMuteLevel = 0.15f;              // gain a mistaken stem is REDUCED to (0 = full mute)
         public int restoreAfterHits = 2;
         public double prepMarginBeats = 8, evalLeadSeconds = 0.2, startDelaySeconds = 3.0;
         public double judgePerfectSeconds = 0.045, judgeGoodSeconds = 0.09;
-        public float customGain = 0.8f, recordedGain = 0.9f;
+        public float customGain = 0.8f, customGainUnderRecording = 0.6f, recordedGain = 0.9f;
     }
 
+    /// <summary>One 32-beat phase of a playable build. gate = must reach the threshold to move on (else the phase repeats);
+    /// recording = the recorded song's own buildup (its last 32 beats before the drop) plays under this phase.</summary>
     [Serializable]
-    public class BuildLoopDef { public string[] charted, audible; }
+    public class BuildLoopDef { public string id; public bool gate, recording; public string[] charted, audible; }
 
     [Serializable]
     public class LegDef
