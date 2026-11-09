@@ -36,7 +36,9 @@
     "flowerDaisy_cres",
     "fenceBalustradeWhiteRail_cres@x<0",
     "treeBirch01_cres@x<0",
-    "treeBirch01_cres@z<0"
+    "treeBirch01_cres@z<0",
+    "plantFicus_cres@z<3",
+    "Lawn@z<-2"
   ],
   "openings": [
     {
@@ -681,6 +683,104 @@
         "z": 0
       },
       "scale": 1.0
+    },
+    {
+      "prop": "textiles_curtain_pair",
+      "pos": {
+        "x": 2.0,
+        "y": 0.95,
+        "z": -0.65
+      },
+      "euler": {
+        "x": 0,
+        "y": 270,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_picture_frame_b",
+      "pos": {
+        "x": -2.08,
+        "y": 1.55,
+        "z": -0.85
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_picture_frame_c",
+      "pos": {
+        "x": -2.08,
+        "y": 1.62,
+        "z": -1.15
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_picture_frame_a",
+      "pos": {
+        "x": -0.75,
+        "y": 1.65,
+        "z": -2.33
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_picture_frame_b",
+      "pos": {
+        "x": -1.45,
+        "y": 2.0,
+        "z": 2.33
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "electronics_radio_cassette",
+      "pos": {
+        "x": -1.93,
+        "y": 0.768,
+        "z": 1.55
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "paper_flyers_a",
+      "pos": {
+        "x": -1.93,
+        "y": 1.468,
+        "z": 0.95
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
     }
   ],
   "cleanables": [
@@ -1001,8 +1101,8 @@
       "tidy": {
         "prop": "kitchen_mug_dirty_a",
         "pos": {
-          "x": 0.0,
-          "y": 0.905,
+          "x": 0.1,
+          "y": 0.06,
           "z": 0.0
         },
         "euler": {
@@ -1015,16 +1115,16 @@
       }
     },
     {
-      "id": "plate_dresser",
+      "id": "plate_bed",
       "label": "Take the plate to the tray",
       "action": "slide",
-      "view": "W",
+      "view": "N",
       "messy": {
         "prop": "kitchen_plate_leftovers_a",
         "pos": {
-          "x": 0.2,
-          "y": 0.95,
-          "z": 0.15
+          "x": -0.2,
+          "y": 0.575,
+          "z": 0.25
         },
         "euler": {
           "x": 0,
@@ -1032,7 +1132,7 @@
           "z": 0
         },
         "scale": 1.0,
-        "parent": "dresser"
+        "parent": "bed"
       },
       "radius": 0.18,
       "height": 0.05,
@@ -1040,7 +1140,7 @@
         "prop": "kitchen_plate_leftovers_a",
         "pos": {
           "x": 0.0,
-          "y": 0.905,
+          "y": 0.12,
           "z": 0.0
         },
         "euler": {
@@ -1077,9 +1177,9 @@
       "tidy": {
         "prop": "kitchen_mug_dirty_b",
         "pos": {
-          "x": 0.0,
-          "y": 0.905,
-          "z": 0.0
+          "x": -0.1,
+          "y": 0.06,
+          "z": 0.05
         },
         "euler": {
           "x": 0,
@@ -1118,12 +1218,12 @@
       "id": "pizza",
       "label": "Bin the pizza box",
       "action": "bin",
-      "view": "W",
+      "view": "S",
       "messy": {
         "prop": "kitchen_pizza_box_closed",
         "pos": {
-          "x": 0.3,
-          "y": 0.95,
+          "x": 0.0,
+          "y": 0.85,
           "z": 0.0
         },
         "euler": {
@@ -1132,7 +1232,7 @@
           "z": 0
         },
         "scale": 1.0,
-        "parent": "dresser"
+        "parent": "fridge"
       },
       "radius": 0.25,
       "height": 0.07,
@@ -1307,6 +1407,67 @@
       "role": "sun"
     },
     {
+      "name": "ClubMagenta",
+      "type": "point",
+      "pos": {
+        "x": -5.5,
+        "y": 3.0,
+        "z": 0.1
+      },
+      "color": {
+        "r": 1.0,
+        "g": 0.15,
+        "b": 0.75,
+        "a": 1
+      },
+      "intensity": 2.2,
+      "range": 9,
+      "shadows": "none",
+      "role": "venue",
+      "pulseHz": 2.9,
+      "pulseDepth": 0.55
+    },
+    {
+      "name": "ClubCyan",
+      "type": "point",
+      "pos": {
+        "x": -5.0,
+        "y": 2.2,
+        "z": 1.6
+      },
+      "color": {
+        "r": 0.1,
+        "g": 0.8,
+        "b": 1.0,
+        "a": 1
+      },
+      "intensity": 1.6,
+      "range": 8,
+      "shadows": "none",
+      "role": "venue",
+      "pulseHz": 1.45,
+      "pulseDepth": 0.5
+    },
+    {
+      "name": "ShopGlow",
+      "type": "point",
+      "pos": {
+        "x": 1.0,
+        "y": 2.5,
+        "z": -6.0
+      },
+      "color": {
+        "r": 1.0,
+        "g": 0.8,
+        "b": 0.5,
+        "a": 1
+      },
+      "intensity": 1.0,
+      "range": 10,
+      "shadows": "none",
+      "role": "shop"
+    },
+    {
       "name": "RoomPendant",
       "type": "point",
       "pos": {
@@ -1326,8 +1487,286 @@
       "role": "room"
     }
   ],
-  "exteriors": [],
-  "ground": [],
+  "exteriors": [
+    {
+      "id": "exterior_shop_corner",
+      "prop": "exterior_shop_corner",
+      "pos": {
+        "x": 1.0,
+        "y": 0,
+        "z": -12.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "terrace_left",
+      "prop": "exterior_terrace_a",
+      "pos": {
+        "x": -7.0,
+        "y": 0,
+        "z": -12.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "terrace_right",
+      "prop": "exterior_terrace_b",
+      "pos": {
+        "x": 9.0,
+        "y": 0,
+        "z": -12.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "exterior_parked_car_a",
+      "prop": "exterior_parked_car_a",
+      "pos": {
+        "x": 5.0,
+        "y": 0,
+        "z": -9.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "exterior_parked_car_b",
+      "prop": "exterior_parked_car_b",
+      "pos": {
+        "x": -3.0,
+        "y": 0,
+        "z": -5.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "exterior_street_lamp",
+      "prop": "exterior_street_lamp",
+      "pos": {
+        "x": -1.8,
+        "y": 0,
+        "z": -4.4
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    },
+    {
+      "id": "exterior_club_building",
+      "prop": "exterior_club_building",
+      "pos": {
+        "x": -12.7,
+        "y": 0,
+        "z": 0.1
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "club"
+    },
+    {
+      "id": "club_neighbour_n",
+      "prop": "exterior_terrace_a",
+      "pos": {
+        "x": -12.7,
+        "y": 0,
+        "z": 9.2
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "club"
+    },
+    {
+      "id": "club_neighbour_s",
+      "prop": "exterior_terrace_b",
+      "pos": {
+        "x": -12.7,
+        "y": 0,
+        "z": -9.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "club"
+    },
+    {
+      "id": "exterior_parked_car_b",
+      "prop": "exterior_parked_car_b",
+      "pos": {
+        "x": -6.2,
+        "y": 0,
+        "z": 8.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "club"
+    },
+    {
+      "id": "club_lamp",
+      "prop": "exterior_street_lamp",
+      "pos": {
+        "x": -4.3,
+        "y": 0,
+        "z": 1.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "club"
+    },
+    {
+      "id": "exterior_shop_props",
+      "prop": "exterior_shop_props",
+      "pos": {
+        "x": 1.0,
+        "y": 0,
+        "z": -11.4
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "view": "shop"
+    }
+  ],
+  "ground": [
+    {
+      "material": "paving",
+      "min": {
+        "x": -40,
+        "y": -0.08,
+        "z": -4.6
+      },
+      "max": {
+        "x": 40,
+        "y": 0.0,
+        "z": -2.46
+      },
+      "uvPerMetre": 1.0
+    },
+    {
+      "material": "asphalt",
+      "min": {
+        "x": -40,
+        "y": -0.08,
+        "z": -10.4
+      },
+      "max": {
+        "x": 40,
+        "y": 0.0,
+        "z": -4.6
+      },
+      "uvPerMetre": 1.0
+    },
+    {
+      "material": "paving",
+      "min": {
+        "x": -40,
+        "y": -0.08,
+        "z": -12.6
+      },
+      "max": {
+        "x": 40,
+        "y": 0.0,
+        "z": -10.4
+      },
+      "uvPerMetre": 1.0
+    },
+    {
+      "material": "paving",
+      "min": {
+        "x": -4.6,
+        "y": -0.08,
+        "z": -2.46
+      },
+      "max": {
+        "x": -2.46,
+        "y": 0.0,
+        "z": 30
+      },
+      "uvPerMetre": 1.0
+    },
+    {
+      "material": "asphalt",
+      "min": {
+        "x": -10.4,
+        "y": -0.08,
+        "z": -4.6
+      },
+      "max": {
+        "x": -4.6,
+        "y": 0.0,
+        "z": 30
+      },
+      "uvPerMetre": 1.0
+    },
+    {
+      "material": "paving",
+      "min": {
+        "x": -12.6,
+        "y": -0.08,
+        "z": -10.4
+      },
+      "max": {
+        "x": -10.4,
+        "y": 0.0,
+        "z": 30
+      },
+      "uvPerMetre": 1.0
+    }
+  ],
   "environment": {
     "sky": {
       "r": 0.2,

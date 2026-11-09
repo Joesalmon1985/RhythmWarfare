@@ -127,6 +127,7 @@ namespace Bedsit.Rooms
     {
         public EnvironmentDef environment = new EnvironmentDef();
         public List<GroundDef> ground = new List<GroundDef>();
+        public float standingPitch = 12f;       // resting view tilt (degrees, POSITIVE = looking down; negative looks up)
         public float wakeYaw = 270f;             // direction the player faces while lying in bed (degrees)
         public string id = "room01";
         public string title = "Bedsit";

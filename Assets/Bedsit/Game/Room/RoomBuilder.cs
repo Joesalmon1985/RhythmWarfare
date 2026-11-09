@@ -273,8 +273,11 @@ namespace Bedsit.Game
             }
             if (!string.IsNullOrEmpty(c.target) && Tags.TryGetValue(c.target, out var bin)) cl.BinTarget = bin;
             if (cl.MessyParts.Count == 0) { Missing.Add("cleanable:" + c.id); Destroy(root); return; }
+            // the root sits at the primary messy part (it is the pick point); keep every part where it was placed in the world
+            var all = cl.MessyParts.Concat(cl.TidyParts).ToList();
+            var poses = all.Select(t => (t.position, t.rotation)).ToList();
             root.transform.position = cl.MessyParts[0].position;
-            foreach (var t in cl.MessyParts.Concat(cl.TidyParts)) t.SetParent(root.transform, true);
+            for (int i = 0; i < all.Count; i++) { all[i].position = poses[i].position; all[i].rotation = poses[i].rotation; }
             cl.Init();
             cl.AttachGlow(BedsitLayers.MirrorGlass);
             Cleanables.Add(cl);
@@ -352,7 +355,7 @@ namespace Bedsit.Game
         void ApplyWorldHandles()
         {
             World.BedPillowEye = Def.bedPillowEye;
-            World.WakeYaw = Def.wakeYaw;
+            World.WakeYaw = Def.wakeYaw; World.StandingPitch = Def.standingPitch;
             foreach (var o in Def.openings)
             {
                 if (o.view == "club" || (o.wall == "W" && o.kind == "window")) { World.WestNpcSpot = new Vector3(-Def.halfWidth - 0.12f - 1.55f, 0f, o.along); World.WestNpcLookAt = new Vector3(0f, 0f, o.along); }

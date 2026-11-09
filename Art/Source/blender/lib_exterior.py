@@ -1116,6 +1116,17 @@ def preview_views(root, name, views=("front", "front34"), size=(1280, 800), eye=
     return outs
 
 
+def recentre_root(root, keep_xy=False):
+    """Shift the mesh data of root (+children) so the bbox bottom centre is the origin (object stays at 0,0,0)."""
+    lo, hi = dims(root)
+    off = Vector((0 if keep_xy else (lo.x + hi.x) / 2, 0 if keep_xy else (lo.y + hi.y) / 2, lo.z))
+    for o in all_mesh_objs(root):
+        for v in o.data.vertices:
+            v.co -= off
+        o.data.update()
+    return off
+
+
 MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "manifest_exterior.json")
 
 

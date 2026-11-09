@@ -296,7 +296,7 @@ namespace Bedsit.Game
         void StartAtStandpoint()
         {
             Zones.EnterZoneImmediate(ZoneBedsit, CompassDirection.North);
-            View.SetPitch(0f);
+            View.SetPitch(World != null ? World.StandingPitch : 0f);
             Interactions.Refresh();
             Input.Locked = false;
         }
@@ -323,7 +323,7 @@ namespace Bedsit.Game
                 float k = Mathf.SmoothStep(0f, 1f, t / dur);
                 float lift = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.6f)));      // sit up first, then move out
                 Rig.position = new Vector3(Mathf.Lerp(from.x, to.x, k), Mathf.Lerp(from.y, to.y, lift), Mathf.Lerp(from.z, to.z, k));
-                View.SetPitch(Mathf.Lerp(-66f, 0f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.85f)))));
+                View.SetPitch(Mathf.Lerp(-66f, World.StandingPitch, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.85f)))));
                 View.YawPivot.rotation = Quaternion.Euler(0f, Mathf.Lerp(World.WakeYaw, World.WakeYaw < 180f ? 0f : 360f, k), 0f);
                 yield return null;
             }

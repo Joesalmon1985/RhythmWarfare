@@ -51,7 +51,7 @@ def build():
                        "posterTeenAngst_cres", "lightingTableValue1_cres", "chairLivingValuePlain_cres",
                        "windowColonialDoubleHung_cres", "FloorBedsit", "CeilingBedsit", "WallSouth*", "WallNorth*",
                        "WallEast*", "WallWest*", "shrub4_cres", "flowerDaisy_cres", "fenceBalustradeWhiteRail_cres@x<0",
-                       "treeBirch01_cres@x<0", "treeBirch01_cres@z<0"],
+                       "treeBirch01_cres@x<0", "treeBirch01_cres@z<0", "plantFicus_cres@z<3", "Lawn@z<-2"],
         "openings": [
             {"id": "door", "kind": "door", "wall": "N", "along": 0.0, "sill": 0.0, "width": 1.0, "height": 2.4},
             {"id": "win_east", "kind": "window", "wall": "E", "along": -0.65, "sill": 1.0, "width": 1.04, "height": 1.62,
@@ -136,6 +136,15 @@ def build():
     D.append(W("furniture_wall_clock", 0.0, 2.35, HD - 0.04, 180))
     D.append(W("paper_sticky_poster_roll", -1.9, 0.0, 0.1, 0))
 
+    # curtains + wall dressing (rave identity: flyers/prints, clock)
+    D.append(W("textiles_curtain_pair", 2.0, 0.95, -0.65, 270))
+    D.append(W("furniture_picture_frame_b", -2.08, 1.55, -0.85, 90))
+    D.append(W("furniture_picture_frame_c", -2.08, 1.62, -1.15, 90))
+    D.append(W("furniture_picture_frame_a", -0.75, 1.65, -2.33, 0))
+    D.append(W("furniture_picture_frame_b", -1.45, 2.0, 2.33, 180))
+    D.append(W("electronics_radio_cassette", -1.93, 0.768, 1.55, 90))
+    D.append(W("paper_flyers_a", -1.93, 1.468, 0.95, 90))
+
     # ------------------------------------------------------------------ cleanable tasks (>= 8, 6+ different actions)
     CL.append(clean("bed", "Make the bed", "make", "N",
                     PL("textiles_bedding_messy", "bed", 0, 0, 0), PL("textiles_bedding_made", "bed", 0, 0, 0),
@@ -154,15 +163,15 @@ def build():
     CL.append(clean("cables", "Coil the cables", "coil", "E",
                     PL("kitchen_cables_tangled_a", "tvstand", 0.0, 0.45, 0.12, 0), PL("kitchen_cables_coiled", "tvstand", 0.0, 0.45, 0.12, 0), radius=0.2, height=0.06))
     CL.append(clean("mug_desk", "Take the mug to the tray", "slide", "E",
-                    PL("kitchen_mug_dirty_a", "desk", -0.2, 0.74, -0.15, 30), PL("kitchen_mug_dirty_a", "dishtray", 0.0, 0.905, 0.0, 0), radius=0.12, height=0.1))
-    CL.append(clean("plate_dresser", "Take the plate to the tray", "slide", "W",
-                    PL("kitchen_plate_leftovers_a", "dresser", 0.2, 0.95, 0.15, 0), PL("kitchen_plate_leftovers_a", "dishtray", 0.0, 0.905, 0.0, 0), radius=0.18, height=0.05))
+                    PL("kitchen_mug_dirty_a", "desk", -0.2, 0.74, -0.15, 30), PL("kitchen_mug_dirty_a", "dishtray", 0.1, 0.06, 0.0, 0), radius=0.12, height=0.1))
+    CL.append(clean("plate_bed", "Take the plate to the tray", "slide", "N",
+                    PL("kitchen_plate_leftovers_a", "bed", -0.2, 0.575, 0.25, 0), PL("kitchen_plate_leftovers_a", "dishtray", 0.0, 0.12, 0.0, 0), radius=0.18, height=0.05))
     CL.append(clean("mug_bedside", "Clear the mug", "slide", "N",
-                    PL("kitchen_mug_dirty_b", "bedside", -0.1, 0.5, 0.05, -20), PL("kitchen_mug_dirty_b", "dishtray", 0.0, 0.905, 0.0, 0), radius=0.12, height=0.11))
+                    PL("kitchen_mug_dirty_b", "bedside", -0.1, 0.5, 0.05, -20), PL("kitchen_mug_dirty_b", "dishtray", -0.1, 0.06, 0.05, 0), radius=0.12, height=0.11))
     CL.append(clean("cans_desk", "Bin the cans", "bin", "E",
                     PL("kitchen_can_c", "desk", 0.62, 0.74, 0.28, 0), target="bin", radius=0.12, height=0.08))
-    CL.append(clean("pizza", "Bin the pizza box", "bin", "W",
-                    PL("kitchen_pizza_box_closed", "dresser", 0.3, 0.95, 0.0, 0), target="bin", radius=0.25, height=0.07))
+    CL.append(clean("pizza", "Bin the pizza box", "bin", "S",
+                    PL("kitchen_pizza_box_closed", "fridge", 0.0, 0.85, 0.0, 0), target="bin", radius=0.25, height=0.07))
     CL.append(clean("takeaway", "Bin the takeaway", "bin", "S",
                     PL("kitchen_takeaway_cartons", "kitchen", 0.0, 0.905, 0.0, 0), target="bin", radius=0.2, height=0.28))
     CL.append(clean("crisps", "Bin the crisp packet", "bin", "N",
@@ -174,10 +183,38 @@ def build():
     CL.append(clean("laundry", "Put the laundry in the basket", "bin", "W",
                     PL("textiles_clothes_pile_b", "bookcase", 0.0, 0.768, 0.0, 0), target="basket", radius=0.3, height=0.2))
 
+    # ------------------------------------------------------------------ exterior: the street (south = shop, west = club)
+    G = room["ground"]
+    def box(mat, x0, x1, z0, z1, y0=-0.08, y1=0.0, uv=1.0):
+        return {"material": mat, "min": v(x0, y0, z0), "max": v(x1, y1, z1), "uvPerMetre": uv}
+    G.append(box("paving", -40, 40, -4.6, -2.46))          # near pavement (south)
+    G.append(box("asphalt", -40, 40, -10.4, -4.6))         # road (south)
+    G.append(box("paving", -40, 40, -12.6, -10.4))         # far pavement (south)
+    G.append(box("paving", -4.6, -2.46, -2.46, 30))        # near pavement (west)
+    G.append(box("asphalt", -10.4, -4.6, -4.6, 30))        # road (west)
+    G.append(box("paving", -12.6, -10.4, -10.4, 30))       # far pavement (west)
+    X = room["exteriors"]
+    def E(prop, x, y, z, yaw=0.0, view="", scale=1.0, id_=None):
+        return {"id": id_ or prop, "prop": prop, "pos": v(x, y, z), "euler": v(0, yaw, 0), "scale": scale, "view": view}
+    X.append(E("exterior_shop_corner", 1.0, 0, -12.6, 0, "shop"))
+    X.append(E("exterior_terrace_a", -7.0, 0, -12.6, 0, "shop", id_="terrace_left"))
+    X.append(E("exterior_terrace_b", 9.0, 0, -12.6, 0, "shop", id_="terrace_right"))
+    X.append(E("exterior_parked_car_a", 5.0, 0, -9.0, 0, "shop"))
+    X.append(E("exterior_parked_car_b", -3.0, 0, -5.6, 0, "shop"))
+    X.append(E("exterior_street_lamp", -1.8, 0, -4.4, 0, "shop"))
+    X.append(E("exterior_club_building", -12.7, 0, 0.1, 90, "club"))
+    X.append(E("exterior_terrace_a", -12.7, 0, 9.2, 90, "club", id_="club_neighbour_n"))
+    X.append(E("exterior_terrace_b", -12.7, 0, -9.6, 90, "club", id_="club_neighbour_s"))
+    X.append(E("exterior_parked_car_b", -6.2, 0, 8.0, 90, "club"))
+    X.append(E("exterior_street_lamp", -4.3, 0, 1.6, 0, "club", id_="club_lamp"))
+    X.append(E("exterior_shop_props", 1.0, 0, -11.4, 0, "shop"))
     L = room["lights"]
     def col(r, g, b): return {"r": r, "g": g, "b": b, "a": 1}
     L.append({"name": "Sun", "type": "directional", "euler": v(24, 95, 0), "color": col(1.0, 0.62, 0.36), "intensity": 0.55,
               "shadows": "soft", "role": "sun"})
+    L.append({"name": "ClubMagenta", "type": "point", "pos": v(-5.5, 3.0, 0.1), "color": col(1.0, 0.15, 0.75), "intensity": 2.2, "range": 9, "shadows": "none", "role": "venue", "pulseHz": 2.9, "pulseDepth": 0.55})
+    L.append({"name": "ClubCyan", "type": "point", "pos": v(-5.0, 2.2, 1.6), "color": col(0.1, 0.8, 1.0), "intensity": 1.6, "range": 8, "shadows": "none", "role": "venue", "pulseHz": 1.45, "pulseDepth": 0.5})
+    L.append({"name": "ShopGlow", "type": "point", "pos": v(1.0, 2.5, -6.0), "color": col(1.0, 0.8, 0.5), "intensity": 1.0, "range": 10, "shadows": "none", "role": "shop"})
     L.append({"name": "RoomPendant", "type": "point", "pos": v(0, H - 0.75, 0), "color": col(1.0, 0.84, 0.62), "intensity": 1.05,
               "range": 7, "shadows": "none", "role": "room"})
     return room
