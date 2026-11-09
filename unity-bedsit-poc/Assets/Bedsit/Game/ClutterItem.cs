@@ -14,9 +14,10 @@ namespace Bedsit.Game
         public float PickRadius = 0.25f;           // world radius used for hit testing and the glow size
         public float Height = 0.2f;                // for the pick centre
         public CompassDirection PrimaryView;       // the view that sees it best (for the compass pips)
-        public bool Tidied { get; private set; }
-        public bool Tidying { get; private set; }
+        public bool Tidied { get; protected set; }
+        public bool Tidying { get; protected set; }
         public event Action<ClutterItem> Gone;
+        protected void RaiseGone() { Gone?.Invoke(this); }
 
         public Vector3 PickCentre => transform.position + Vector3.up * (Height * 0.5f);
 
@@ -28,7 +29,7 @@ namespace Bedsit.Game
         Vector3 _baseScale;
         static Camera _cam;
 
-        void Awake()
+        protected virtual void Awake()
         {
             _renderers = GetComponentsInChildren<Renderer>(true);
             _mpb = new MaterialPropertyBlock();
@@ -36,7 +37,7 @@ namespace Bedsit.Game
             _phase = UnityEngine.Random.value * 6.28f;
         }
 
-        public void AttachGlow(int layer)
+        public virtual void AttachGlow(int layer)
         {
             var go = new GameObject("Glow");
             go.layer = layer;                                   // never rendered in the mirror
@@ -61,9 +62,9 @@ namespace Bedsit.Game
             _glint = gl.transform;
         }
 
-        public void SetHover(bool on) { _hover = on ? 1f : 0f; }
+        public virtual void SetHover(bool on) { _hover = on ? 1f : 0f; }
 
-        void LateUpdate()
+        protected virtual void LateUpdate()
         {
             if (Tidied) return;
             if (_cam == null) _cam = Camera.main;
@@ -96,7 +97,7 @@ namespace Bedsit.Game
         }
 
         /// <summary>Start the tidy-away animation. Safe to call once.</summary>
-        public bool Tidy()
+        public virtual bool Tidy()
         {
             if (Tidied || Tidying) return false;
             Tidying = true;

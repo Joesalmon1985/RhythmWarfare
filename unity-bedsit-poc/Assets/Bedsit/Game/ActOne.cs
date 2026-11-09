@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Bedsit.Sims2;
 using UnityEngine;
 
@@ -97,10 +98,22 @@ namespace Bedsit.Game
 
             _clutterRoot = new GameObject("Clutter").transform;
             _clutterRoot.SetParent(Game.World.transform, false);
-            foreach (var spot in ClutterFactory.Layout)
+            var room = Game.Room;
+            if (room != null && room.Cleanables.Count > 0)
             {
-                var item = ClutterFactory.Create(spot, _clutterRoot, BedsitLayers.MirrorGlass);
-                Items.Add(item);
+                // the data-driven room: real prop models with messy/tidy states (see RoomBuilder / Cleanable)
+                foreach (var c in room.Cleanables) Items.Add(c);
+                if (RoomSave.LoadRequested) { int n = RoomSave.Apply(room, RoomSave.Read(room.Def.id)); Log.Add($"room save loaded: {n} tasks restored"); }
+                foreach (var c in room.Cleanables) c.Gone += _ => { RoomSave.Save(room); };
+                TidiedCount = room.Cleanables.Count(c => c.Tidied);
+            }
+            else
+            {
+                foreach (var spot in ClutterFactory.Layout)
+                {
+                    var item = ClutterFactory.Create(spot, _clutterRoot, BedsitLayers.MirrorGlass);
+                    Items.Add(item);
+                }
             }
             TotalItems = Items.Count;
 

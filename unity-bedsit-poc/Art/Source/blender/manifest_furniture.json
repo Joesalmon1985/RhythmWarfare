@@ -1,0 +1,1017 @@
+[
+ {
+  "name": "furniture_bedside_table",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_bedside_table.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.42,
+   0.378,
+   0.502
+  ],
+  "tris": 2471,
+  "roles": [
+   "ceramic_white",
+   "hardboard_back",
+   "mdf_raw",
+   "scuff_dark",
+   "wood_light"
+  ],
+  "variant_of": null,
+  "notes": "Bedside table 0.40x0.35x0.50, pine. Top surface z=0.50; open shelf surface z=0.145. drawer_1 (knob) slides -Y. Back = +Y. Origin offset from bbox: x0.0 y-0.014 zmin0.0.",
+  "children": [
+   "body",
+   "drawer_1"
+  ]
+ },
+ {
+  "name": "furniture_bookcase",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_bookcase.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.802,
+   0.301,
+   1.8
+  ],
+  "tris": 3928,
+  "roles": [
+   "hardboard_back",
+   "laminate_edge_white",
+   "laminate_white",
+   "metal_steel",
+   "scuff_dark",
+   "sticker_b"
+  ],
+  "variant_of": null,
+  "notes": "Tall bookcase 0.8x0.3x1.8, back = +Y. Shelf top surfaces at z=0.068, 0.418, 0.768, 1.118 (sagging ~12 mm in the middle), 1.468; top at 1.80. Inner width 0.764. Origin offset from bbox: x0.0 y0.0 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_ceiling_light",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_ceiling_light.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.353,
+   0.353,
+   0.582
+  ],
+  "tris": 3844,
+  "roles": [
+   "bulb_warm",
+   "lamp_shade",
+   "metal_steel",
+   "plastic_white"
+  ],
+  "variant_of": null,
+  "notes": "Paper pendant shade dia 0.35, cord + ceiling rose. Total drop 0.60 from the rose (top, z=0.60) to the shade bottom (z=0). Place at origin z = ceiling height - 0.60. Shade role lamp_shade; bulb role bulb_warm. Origin offset from bbox: x0.0 y0.0 zmin0.018.",
+  "children": []
+ },
+ {
+  "name": "furniture_clothes_rail",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_clothes_rail.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.198,
+   0.687,
+   1.551
+  ],
+  "tris": 11676,
+  "roles": [
+   "cotton_black",
+   "cotton_yellow",
+   "denim",
+   "metal_chrome",
+   "metal_steel",
+   "plastic_black"
+  ],
+  "variant_of": null,
+  "notes": "Cheap chrome clothes rail 1.2 m wide, 1.55 m high, with 3 hangers and 2 garments. Rail bar at z=1.50. Origin offset from bbox: x0.0 y-0.0 zmin-0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_coat_hooks",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_coat_hooks.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.6,
+   0.091,
+   0.101
+  ],
+  "tris": 3155,
+  "roles": [
+   "metal_chrome",
+   "metal_steel",
+   "scuff_dark",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "Wall coat-hook board 0.6 x 0.10, three chrome hooks protruding 0.07 toward -Y. Back (wall) = +Y. Mount at ~1.6 m. Origin offset from bbox: x0.0 y-0.036 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_desk",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_desk.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.3,
+   0.651,
+   0.746
+  ],
+  "tris": 3529,
+  "roles": [
+   "hardboard_back",
+   "laminate_edge",
+   "laminate_oak",
+   "mdf_raw",
+   "metal_steel",
+   "plastic_black",
+   "plastic_cream",
+   "scuff_dark",
+   "scuff_light",
+   "sticker_a"
+  ],
+  "variant_of": null,
+  "notes": "Desk top surface at z=0.74. Pedestal (2 drawers + open shelf) on the RIGHT, panel leg on the LEFT. Cable grommet at x=+0.45 y=+0.20 on the top. Back = +Y. drawer_1/drawer_2 slide along -Y (origin front-bottom-centre). Origin offset from bbox: x0.0 y-0.0 zmin-0.002.",
+  "children": [
+   "body",
+   "drawer_1",
+   "drawer_2"
+  ]
+ },
+ {
+  "name": "furniture_desk_chair",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_desk_chair.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.59,
+   0.596,
+   1.019
+  ],
+  "tris": 14356,
+  "roles": [
+   "fabric_office_grey",
+   "fabric_office_worn",
+   "metal_chrome",
+   "metal_dark",
+   "metal_steel",
+   "plastic_black",
+   "stitch_thread"
+  ],
+  "variant_of": null,
+  "notes": "Swivel office chair. Seat top ~z=0.52, backrest top z=1.03, armrest top z=0.72. Footprint ~0.62 m. Front = -Y (where knees go). Worn/shiny patches on the seat front edge. Origin offset from bbox: x-0.003 y-0.009 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_door_frame_internal",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_door_frame_internal.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.946,
+   0.177,
+   2.04
+  ],
+  "tris": 4642,
+  "roles": [
+   "metal_steel",
+   "scuff_dark",
+   "scuff_light",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "Internal door: frame+architrave 0.83 x 2.04 (origin bottom centre of the frame, wall centre at y=0, room side -Y). Child `leaf` (0.76 x 1.98 x 0.04, 4 recessed panels, lever handles) hinged on the LEFT, origin on the hinge axis; opens AWAY from the room (+Y) with positive Z rotation. Fits a wall 0.10 thick. Origin offset from bbox: x0.0 y0.0 zmin0.0.",
+  "children": [
+   "body",
+   "leaf"
+  ]
+ },
+ {
+  "name": "furniture_dresser",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_dresser.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.93,
+   0.48,
+   0.952
+  ],
+  "tris": 5105,
+  "roles": [
+   "hardboard_back",
+   "mdf_raw",
+   "scuff_dark",
+   "scuff_light",
+   "wood_dark",
+   "wood_light",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "Chest of 4 drawers, painted white with pine top. Top surface z=0.95. Back = +Y. drawer_1 (top) .. drawer_4 slide -Y, origins front-bottom-centre. Drawer 3 is missing its left knob. Origin offset from bbox: x0.0 y-0.013 zmin0.0.",
+  "children": [
+   "body",
+   "drawer_1",
+   "drawer_2",
+   "drawer_3",
+   "drawer_4"
+  ]
+ },
+ {
+  "name": "furniture_fairy_lights",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_fairy_lights.fbx",
+  "category": "furniture",
+  "dims_m": [
+   2.218,
+   0.027,
+   0.319
+  ],
+  "tris": 2948,
+  "roles": [
+   "bulb_warm",
+   "wire_green"
+  ],
+  "variant_of": null,
+  "notes": "String of 20 warm fairy-light bulbs on a 2.2 m catenary (ends 0.28 above the lowest point, which is the origin). Pin the ends at x=+-1.1, z=+0.28. Bulbs role bulb_warm (emissive). Origin offset from bbox: x0.009 y-0.0 zmin-0.013.",
+  "children": []
+ },
+ {
+  "name": "furniture_kettle_unit",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_kettle_unit.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.628,
+   0.612,
+   0.965
+  ],
+  "tris": 2200,
+  "roles": [
+   "hardboard_back",
+   "laminate_edge_white",
+   "laminate_white",
+   "mdf_raw",
+   "metal_chrome",
+   "metal_steel",
+   "scuff_dark",
+   "scuff_light",
+   "sticker_c",
+   "worktop_laminate"
+  ],
+  "variant_of": null,
+  "notes": "Kitchenette base unit 0.6 wide with dark laminate worktop (top surface z=0.905) and 0.06 upstand at the back. drawer_1 at the top (slides -Y) and door_L below (hinge left, -Z opens). Back = +Y. Plinth 0.12. Origin offset from bbox: x0.004 y-0.016 zmin0.0.",
+  "children": [
+   "body",
+   "door_L",
+   "drawer_1"
+  ]
+ },
+ {
+  "name": "furniture_lamp_bedside",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_lamp_bedside.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.23,
+   0.282,
+   0.42
+  ],
+  "tris": 2556,
+  "roles": [
+   "bulb_warm",
+   "ceramic_blue",
+   "lamp_shade",
+   "metal_brass",
+   "metal_steel",
+   "plastic_white"
+  ],
+  "variant_of": null,
+  "notes": "Bedside lamp 0.42 high: glazed ceramic base (dia 0.14) + fabric drum shade (role lamp_shade, emissive in Unity), bulb role bulb_warm inside, inline cord switch. Shade top z=0.42. Origin offset from bbox: x0.005 y0.031 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_lamp_desk",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_lamp_desk.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.183,
+   0.482,
+   0.59
+  ],
+  "tris": 10999,
+  "roles": [
+   "bulb_warm",
+   "metal_dark",
+   "metal_steel",
+   "plastic_black",
+   "scuff_light"
+  ],
+  "variant_of": null,
+  "notes": "Anglepoise-style desk lamp, black metal. Base dia 0.16, reach ~0.45, head centre ~z=0.55. Child `head` (shade + bulb role bulb_warm), origin at the head pivot; aim by rotating `head`. Light points forward/down (-Y, -Z). Origin offset from bbox: x0.01 y-0.069 zmin-0.001.",
+  "children": [
+   "body",
+   "head"
+  ]
+ },
+ {
+  "name": "furniture_lamp_floor",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_lamp_floor.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.605,
+   1.458,
+   1.619
+  ],
+  "tris": 2924,
+  "roles": [
+   "bulb_warm",
+   "ceramic_white",
+   "metal_chrome",
+   "plastic_black"
+  ],
+  "variant_of": null,
+  "notes": "Arc floor lamp: marble-look round base (dia 0.30) at the origin, chrome arc sweeping 0.95 m forward (-Y) to a dome shade whose rim is at z=1.40 (top z=1.6). Shade interior role bulb_warm. Place with the base behind the seat/bed and the shade over it. Origin offset from bbox: x0.098 y-0.426 zmin-0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_mini_fridge",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_mini_fridge.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.5,
+   0.532,
+   0.851
+  ],
+  "tris": 2466,
+  "roles": [
+   "appliance_white",
+   "magnet_blue",
+   "magnet_red",
+   "magnet_yellow",
+   "metal_dark",
+   "metal_steel",
+   "plastic_black",
+   "scuff_light",
+   "sticker_a",
+   "sticker_b"
+  ],
+  "variant_of": null,
+  "notes": "Table-top/under-counter mini fridge 0.5x0.5x0.85, white. door_L hinged on the LEFT (-Z opens), origin on hinge axis. Top surface z=0.85. Back = +Y with condenser grille. 3 magnets + a sticker on the door. Origin offset from bbox: x0.0 y-0.013 zmin0.0.",
+  "children": [
+   "body",
+   "door_L"
+  ]
+ },
+ {
+  "name": "furniture_mirror_wall",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_mirror_wall.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.5,
+   0.038,
+   0.7
+  ],
+  "tris": 396,
+  "roles": [
+   "hardboard_back",
+   "metal_steel",
+   "mirror_glass",
+   "scuff_dark",
+   "scuff_light",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "Framed rectangular wall mirror 0.50 x 0.70 (portrait), white painted wood frame 0.045 wide, mirror plane role mirror_glass at y=-0.005. Back (wall) = +Y. Origin offset from bbox: x0.0 y-0.006 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_picture_frame_a",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_picture_frame_a.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.4,
+   0.032,
+   0.5
+  ],
+  "tris": 416,
+  "roles": [
+   "hardboard_back",
+   "paper_white",
+   "plastic_black",
+   "print_a",
+   "wood_light"
+  ],
+  "variant_of": null,
+  "notes": "Framed print A 0.40 x 0.50 (portrait): light oak frame with white mount; print plane role print_a. Back (wall) = +Y. Origin offset from bbox: x0.0 y0.001 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_picture_frame_b",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_picture_frame_b.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.3,
+   0.025,
+   0.4
+  ],
+  "tris": 390,
+  "roles": [
+   "hardboard_back",
+   "plastic_black",
+   "print_b"
+  ],
+  "variant_of": null,
+  "notes": "Framed print B 0.30 x 0.40 (portrait): thin black frame, no mount; print plane role print_b. Back (wall) = +Y. Origin offset from bbox: x0.0 y0.003 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_picture_frame_c",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_picture_frame_c.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.5,
+   0.05,
+   0.35
+  ],
+  "tris": 558,
+  "roles": [
+   "hardboard_back",
+   "plastic_black",
+   "print_c",
+   "wood_dark"
+  ],
+  "variant_of": null,
+  "notes": "Framed print C 0.50 x 0.35 (landscape): chunky dark-wood stepped frame; print plane role print_c. Back (wall) = +Y. Origin offset from bbox: x0.0 y-0.005 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_radiator",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_radiator.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.029,
+   0.103,
+   0.722
+  ],
+  "tris": 3363,
+  "roles": [
+   "metal_chrome",
+   "metal_copper",
+   "metal_steel",
+   "plastic_white",
+   "radiator_white",
+   "scuff_dark"
+  ],
+  "variant_of": null,
+  "notes": "Single panel radiator 0.9 wide, panel from z=0.12 to 0.72 (0.6 high), 0.08 deep + brackets; pipes to the floor. Back = +Y against the wall (wall face at y=+0.055). TRV valve on the left, lockshield on the right. Origin offset from bbox: x-0.003 y0.009 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_shoe_rack",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_shoe_rack.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.692,
+   0.322,
+   0.348
+  ],
+  "tris": 1424,
+  "roles": [
+   "metal_chrome",
+   "plastic_black"
+  ],
+  "variant_of": null,
+  "notes": "Two-tier chrome shoe rack 0.7 x 0.30 x 0.34. Tier bar tops at z=0.07 and z=0.32. Origin offset from bbox: x0.0 y0.0 zmin-0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_skirting_run",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_skirting_run.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.0,
+   0.019,
+   0.12
+  ],
+  "tris": 202,
+  "roles": [
+   "scuff_dark",
+   "scuff_light",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "1.0 m skirting board, 0.12 high, 0.018 thick, ogee top. Back (wall) = +Y at y=+0.009. Origin offset from bbox: x0.0 y-0.0 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_stool",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_stool.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.32,
+   0.32,
+   0.452
+  ],
+  "tris": 1318,
+  "roles": [
+   "plastic_black",
+   "scuff_dark",
+   "wood_light"
+  ],
+  "variant_of": null,
+  "notes": "Round pine kitchen stool, seat top z=0.45, seat diameter 0.32, splayed legs (footprint 0.38). Origin offset from bbox: x0.0 y0.0 zmin-0.002.",
+  "children": []
+ },
+ {
+  "name": "furniture_tv_stand",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_tv_stand.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.001,
+   0.428,
+   0.453
+  ],
+  "tris": 2359,
+  "roles": [
+   "hardboard_back",
+   "laminate_grey",
+   "metal_steel",
+   "scuff_dark",
+   "scuff_light",
+   "wood_light"
+  ],
+  "variant_of": null,
+  "notes": "Low TV unit 1.0x0.4x0.45, back = +Y. Top surface z=0.45; open shelf (left) surfaces at z=0.098 and z=0.265; cupboard door_R on the right (hinge right, +Z opens). Cable hole in the back panel. Origin offset from bbox: x-0.0 y-0.014 zmin-0.001.",
+  "children": [
+   "body",
+   "door_R"
+  ]
+ },
+ {
+  "name": "furniture_wall_clock",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_wall_clock.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.3,
+   0.078,
+   0.3
+  ],
+  "tris": 1792,
+  "roles": [
+   "clock_face",
+   "glass_clear",
+   "metal_steel",
+   "plastic_black",
+   "plastic_red"
+  ],
+  "variant_of": null,
+  "notes": "Round wall clock dia 0.30, depth 0.045, black plastic rim, paper face (role clock_face), hands at 10:10. Back (wall) = +Y. Origin offset from bbox: x0.0 y0.005 zmin-0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_wall_shelf",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_wall_shelf.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.8,
+   0.2,
+   0.165
+  ],
+  "tris": 724,
+  "roles": [
+   "metal_dark",
+   "metal_steel",
+   "wood_dark"
+  ],
+  "variant_of": null,
+  "notes": "Floating wall shelf 0.8x0.2, board top surface at z=0.035 above origin; brackets hang below (overall height 0.17). Back (wall side) = +Y. Mount so origin is at the desired board underside height. Origin offset from bbox: x0.0 y0.0 zmin0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_wardrobe",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_wardrobe.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.89,
+   0.592,
+   1.85
+  ],
+  "tris": 2877,
+  "roles": [
+   "hardboard_back",
+   "laminate_edge_white",
+   "laminate_white",
+   "metal_steel",
+   "plastic_cream",
+   "scuff_dark",
+   "scuff_light"
+  ],
+  "variant_of": null,
+  "notes": "Two-door wardrobe, back = +Y. Doors door_L (hinge left, opens with -Z rotation) / door_R (hinge right, +Z rotation), origins on hinge axes. Top of cornice z=1.85. Interior empty in this closed variant. Origin offset from bbox: x0.0 y-0.011 zmin0.0.",
+  "children": [
+   "body",
+   "door_L",
+   "door_R"
+  ]
+ },
+ {
+  "name": "furniture_wardrobe_open",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_wardrobe_open.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.905,
+   0.929,
+   1.85
+  ],
+  "tris": 24249,
+  "roles": [
+   "cotton_black",
+   "cotton_blue",
+   "cotton_green",
+   "cotton_hoodie_grey",
+   "cotton_red",
+   "cotton_white",
+   "hardboard_back",
+   "laminate_edge_white",
+   "laminate_white",
+   "metal_chrome",
+   "metal_steel",
+   "plastic_black",
+   "plastic_cream",
+   "scuff_dark",
+   "scuff_light"
+  ],
+  "variant_of": "furniture_wardrobe",
+  "notes": "Wardrobe with door_R open 58 deg, interior shelf (z=1.62), chrome rail (z=1.56) and 5 garments on hangers. Same footprint/origin as furniture_wardrobe. Origin offset from bbox: x0.007 y-0.18 zmin0.0.",
+  "children": [
+   "body",
+   "door_L",
+   "door_R"
+  ]
+ },
+ {
+  "name": "furniture_window_curtain_rail",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_window_curtain_rail.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.47,
+   0.111,
+   0.091
+  ],
+  "tris": 7724,
+  "roles": [
+   "metal_dark"
+  ],
+  "variant_of": null,
+  "notes": "Curtain pole 1.40 m (black metal) with 2 brackets, finials and 12 rings. Pole axis at z=0.065 above origin, y=-0.085 from the wall (wall face at y=+0.0 behind the bracket plates). Mount ~0.12 above the window frame. Origin offset from bbox: x0.0 y-0.056 zmin-0.0.",
+  "children": []
+ },
+ {
+  "name": "furniture_window_frame",
+  "file": "Assets/Bedsit/Art/Models/furniture/furniture_window_frame.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.14,
+   0.328,
+   1.625
+  ],
+  "tris": 1726,
+  "roles": [
+   "glass_clear",
+   "scuff_dark",
+   "scuff_light",
+   "upvc_white",
+   "wood_painted_white"
+  ],
+  "variant_of": null,
+  "notes": "uPVC window 1.04 x 1.62 (frame), origin at frame bottom centre. Frame depth 0.07 (y -0.035..+0.035); room side = -Y. Inner window board (sill) projects to y=-0.20 at z=0.0..0.025, width 1.14. Right casement opens; child `glass` (role glass_clear) is both panes. Place in a wall opening 1.04 x 1.62 with the frame centred in the wall thickness. Origin offset from bbox: x0.0 y-0.038 zmin-0.005.",
+  "children": [
+   "body",
+   "glass"
+  ]
+ },
+ {
+  "name": "_meta",
+  "file": "",
+  "category": "meta",
+  "dims_m": [
+   0,
+   0,
+   0
+  ],
+  "tris": 0,
+  "roles": [],
+  "variant_of": null,
+  "notes": "Family-level info. new_roles = roles added by this family: role -> [rgb, roughness, metallic] fallback. Emissive in Unity: bulb_warm, lamp_shade (soft). mirror_glass = mirror. print_a/b/c = framed print textures. scuff_dark/scuff_light/sticker_* are thin decal polygons 0.8 mm off the surface.",
+  "new_roles": {
+   "laminate_oak": [
+    [
+     0.66,
+     0.5,
+     0.32
+    ],
+    0.45,
+    0.0
+   ],
+   "laminate_white": [
+    [
+     0.86,
+     0.85,
+     0.8
+    ],
+    0.4,
+    0.0
+   ],
+   "laminate_grey": [
+    [
+     0.42,
+     0.41,
+     0.4
+    ],
+    0.45,
+    0.0
+   ],
+   "laminate_edge": [
+    [
+     0.56,
+     0.4,
+     0.24
+    ],
+    0.5,
+    0.0
+   ],
+   "laminate_edge_white": [
+    [
+     0.78,
+     0.77,
+     0.72
+    ],
+    0.5,
+    0.0
+   ],
+   "hardboard_back": [
+    [
+     0.55,
+     0.42,
+     0.28
+    ],
+    0.85,
+    0.0
+   ],
+   "mdf_raw": [
+    [
+     0.62,
+     0.52,
+     0.4
+    ],
+    0.9,
+    0.0
+   ],
+   "worktop_laminate": [
+    [
+     0.28,
+     0.26,
+     0.25
+    ],
+    0.35,
+    0.0
+   ],
+   "fabric_office_grey": [
+    [
+     0.2,
+     0.2,
+     0.22
+    ],
+    0.95,
+    0.0
+   ],
+   "fabric_office_worn": [
+    [
+     0.3,
+     0.3,
+     0.31
+    ],
+    0.98,
+    0.0
+   ],
+   "stitch_thread": [
+    [
+     0.1,
+     0.1,
+     0.1
+    ],
+    0.9,
+    0.0
+   ],
+   "lamp_shade": [
+    [
+     0.93,
+     0.87,
+     0.74
+    ],
+    0.9,
+    0.0
+   ],
+   "bulb_warm": [
+    [
+     1.0,
+     0.86,
+     0.55
+    ],
+    0.2,
+    0.0
+   ],
+   "mirror_glass": [
+    [
+     0.8,
+     0.85,
+     0.88
+    ],
+    0.02,
+    1.0
+   ],
+   "print_a": [
+    [
+     0.25,
+     0.45,
+     0.6
+    ],
+    0.8,
+    0.0
+   ],
+   "print_b": [
+    [
+     0.82,
+     0.38,
+     0.2
+    ],
+    0.8,
+    0.0
+   ],
+   "print_c": [
+    [
+     0.16,
+     0.16,
+     0.19
+    ],
+    0.8,
+    0.0
+   ],
+   "radiator_white": [
+    [
+     0.9,
+     0.9,
+     0.87
+    ],
+    0.35,
+    0.0
+   ],
+   "upvc_white": [
+    [
+     0.93,
+     0.93,
+     0.91
+    ],
+    0.3,
+    0.0
+   ],
+   "appliance_white": [
+    [
+     0.9,
+     0.9,
+     0.88
+    ],
+    0.3,
+    0.0
+   ],
+   "metal_copper": [
+    [
+     0.72,
+     0.45,
+     0.3
+    ],
+    0.3,
+    1.0
+   ],
+   "metal_chrome": [
+    [
+     0.85,
+     0.86,
+     0.88
+    ],
+    0.12,
+    1.0
+   ],
+   "sticker_a": [
+    [
+     0.95,
+     0.3,
+     0.55
+    ],
+    0.5,
+    0.0
+   ],
+   "sticker_b": [
+    [
+     0.2,
+     0.8,
+     0.85
+    ],
+    0.5,
+    0.0
+   ],
+   "sticker_c": [
+    [
+     0.95,
+     0.85,
+     0.2
+    ],
+    0.5,
+    0.0
+   ],
+   "scuff_dark": [
+    [
+     0.28,
+     0.24,
+     0.2
+    ],
+    0.85,
+    0.0
+   ],
+   "scuff_light": [
+    [
+     0.74,
+     0.7,
+     0.62
+    ],
+    0.85,
+    0.0
+   ],
+   "clock_face": [
+    [
+     0.95,
+     0.94,
+     0.9
+    ],
+    0.6,
+    0.0
+   ],
+   "magnet_red": [
+    [
+     0.85,
+     0.12,
+     0.1
+    ],
+    0.4,
+    0.0
+   ],
+   "magnet_yellow": [
+    [
+     0.95,
+     0.8,
+     0.15
+    ],
+    0.4,
+    0.0
+   ],
+   "magnet_blue": [
+    [
+     0.15,
+     0.35,
+     0.85
+    ],
+    0.4,
+    0.0
+   ],
+   "wire_green": [
+    [
+     0.08,
+     0.22,
+     0.1
+    ],
+    0.6,
+    0.0
+   ],
+   "paint_wall_magnolia": [
+    [
+     0.9,
+     0.86,
+     0.76
+    ],
+    0.9,
+    0.0
+   ],
+   "cotton_hoodie_grey": [
+    [
+     0.55,
+     0.55,
+     0.57
+    ],
+    0.97,
+    0.0
+   ],
+   "plastic_cream": [
+    [
+     0.88,
+     0.85,
+     0.75
+    ],
+    0.4,
+    0.0
+   ]
+  }
+ }
+]

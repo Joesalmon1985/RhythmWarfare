@@ -44,3 +44,9 @@ crashlytics-build.gradle
 /Evidence/audio/
 /Evidence/runtime_logs/
 __pycache__/
+
+# third-party raw downloads (CC0, see Art/inventory/third_party.csv) and render evidence
+Art/ThirdParty/
+Evidence/props/
+Art/Source/previews/
+Art/Source/blender/__pycache__/

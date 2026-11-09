@@ -1,0 +1,993 @@
+[
+ {
+  "name": "textiles_bed_frame",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_bed_frame.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.95,
+   2.0,
+   0.988
+  ],
+  "tris": 5388,
+  "roles": [
+   "wood_light"
+  ],
+  "variant_of": null,
+  "notes": "Pine single bed frame 0.95x2.0 m. Headboard end at +Y (back against wall), foot faces -Y. Slat top 0.32 m, side rail top 0.34 m, headboard top 0.88 m, footboard top 0.58 m. Mattress/bedding share this origin (floor, footprint centre).",
+  "bounds_min": [
+   -0.475,
+   -1.0,
+   0.0
+  ],
+  "bounds_max": [
+   0.475,
+   1.0,
+   0.988
+  ]
+ },
+ {
+  "name": "textiles_mattress",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_mattress.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.983,
+   1.998,
+   0.178
+  ],
+  "tris": 18668,
+  "roles": [
+   "cotton_white",
+   "fabric_ticking",
+   "cotton_grey",
+   "paper_white"
+  ],
+  "variant_of": null,
+  "notes": "Single mattress 0.93x1.98x0.18 m sitting on the bed frame slats; mesh spans z 0.32-0.50 so it shares the bed_frame origin (floor, footprint centre). Mattress top 0.50 m. Quilted white top/bottom, ticking border, piping, 4 fabric handles.",
+  "bounds_min": [
+   -0.492,
+   -0.999,
+   0.319
+  ],
+  "bounds_max": [
+   0.492,
+   0.999,
+   0.497
+  ]
+ },
+ {
+  "name": "textiles_bedding_made",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_bedding_made.fbx",
+  "category": "bedding",
+  "dims_m": [
+   1.107,
+   2.129,
+   0.369
+  ],
+  "tris": 18928,
+  "roles": [
+   "cotton_pale_blue",
+   "fabric_duvet",
+   "cotton_white"
+  ],
+  "variant_of": "textiles_bedding_messy",
+  "notes": "Made bed: fitted sheet (cotton_pale_blue), duvet pulled flat with hospital corners wrapping the foot, 0.2 m side overhang, flat sheet turned down over the duvet edge at y 0.47-0.78. Shares the bed_frame/mattress origin. Duvet top surface ~0.56-0.58 m; pillows go at y~0.70 on the turned-down sheet, z=0.555. Pairs with bedding_messy (tidy state).",
+  "bounds_min": [
+   -0.554,
+   -1.08,
+   0.225
+  ],
+  "bounds_max": [
+   0.553,
+   1.049,
+   0.594
+  ]
+ },
+ {
+  "name": "textiles_bedding_messy",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_bedding_messy.fbx",
+  "category": "bedding",
+  "dims_m": [
+   1.13,
+   2.109,
+   0.727
+  ],
+  "tris": 23256,
+  "roles": [
+   "cotton_pale_blue",
+   "fabric_duvet"
+  ],
+  "variant_of": null,
+  "notes": "Slept-in bed: wrinkled fitted sheet (cotton_pale_blue) exposed on the -X strip and head end; duvet bunched in ridges toward the foot, kicked half off the +X side, foot corner dragged to the floor at x~0.55-0.75. Shares the bed_frame/mattress origin. Duvet ridges reach ~0.68 m. Messy pillows go at head end y~0.72, z=0.505. Pairs with bedding_made.",
+  "bounds_min": [
+   -0.524,
+   -1.061,
+   0.017
+  ],
+  "bounds_max": [
+   0.606,
+   1.048,
+   0.745
+  ]
+ },
+ {
+  "name": "textiles_pillow_made_a",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_pillow_made_a.fbx",
+  "category": "bedding",
+  "dims_m": [
+   0.663,
+   0.433,
+   0.15
+  ],
+  "tris": 3548,
+  "roles": [
+   "cotton_white"
+  ],
+  "variant_of": null,
+  "notes": "Plumped pillow 0.66x0.43x0.15, cotton_white case with flap seam. Origin bottom centre; sits at z=0.555 on bedding_made. Pairs with pillow_messy_a.",
+  "bounds_min": [
+   -0.332,
+   -0.216,
+   0.0
+  ],
+  "bounds_max": [
+   0.332,
+   0.216,
+   0.15
+  ]
+ },
+ {
+  "name": "textiles_pillow_made_b",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_pillow_made_b.fbx",
+  "category": "bedding",
+  "dims_m": [
+   0.663,
+   0.433,
+   0.162
+  ],
+  "tris": 3548,
+  "roles": [
+   "cotton_pale_blue"
+  ],
+  "variant_of": "textiles_pillow_made_a",
+  "notes": "Plumped pillow, pale blue case, slightly fatter. Pairs with pillow_messy_b.",
+  "bounds_min": [
+   -0.332,
+   -0.216,
+   0.0
+  ],
+  "bounds_max": [
+   0.332,
+   0.216,
+   0.162
+  ]
+ },
+ {
+  "name": "textiles_pillow_messy_a",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_pillow_messy_a.fbx",
+  "category": "bedding",
+  "dims_m": [
+   0.72,
+   0.432,
+   0.172
+  ],
+  "tris": 2720,
+  "roles": [
+   "cotton_white"
+  ],
+  "variant_of": "textiles_pillow_made_a",
+  "notes": "Squashed, dented, creased pillow with bunched case end. Pairs with pillow_made_a (tidy).",
+  "bounds_min": [
+   -0.36,
+   -0.216,
+   0.0
+  ],
+  "bounds_max": [
+   0.36,
+   0.216,
+   0.172
+  ]
+ },
+ {
+  "name": "textiles_pillow_messy_b",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_pillow_messy_b.fbx",
+  "category": "bedding",
+  "dims_m": [
+   0.727,
+   0.431,
+   0.163
+  ],
+  "tris": 2720,
+  "roles": [
+   "cotton_pale_blue"
+  ],
+  "variant_of": "textiles_pillow_made_b",
+  "notes": "Squashed pale blue pillow, one corner lifted. Pairs with pillow_made_b (tidy).",
+  "bounds_min": [
+   -0.363,
+   -0.216,
+   0.0
+  ],
+  "bounds_max": [
+   0.363,
+   0.216,
+   0.163
+  ]
+ },
+ {
+  "name": "textiles_cushion_a",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_cushion_a.fbx",
+  "category": "soft_furnishing",
+  "dims_m": [
+   0.462,
+   0.462,
+   0.132
+  ],
+  "tris": 3040,
+  "roles": [
+   "cotton_yellow",
+   "cotton_white"
+  ],
+  "variant_of": null,
+  "notes": "Square scatter cushion 0.45x0.45x0.13, mustard with white piping. Origin bottom centre.",
+  "bounds_min": [
+   -0.231,
+   -0.231,
+   0.0
+  ],
+  "bounds_max": [
+   0.231,
+   0.231,
+   0.132
+  ]
+ },
+ {
+  "name": "textiles_cushion_b",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_cushion_b.fbx",
+  "category": "soft_furnishing",
+  "dims_m": [
+   0.52,
+   0.32,
+   0.122
+  ],
+  "tris": 1728,
+  "roles": [
+   "fabric_pattern",
+   "cotton_navy"
+  ],
+  "variant_of": "textiles_cushion_a",
+  "notes": "Rectangular cushion 0.52x0.32x0.12, patterned cover with two covered buttons and dimples. Origin bottom centre.",
+  "bounds_min": [
+   -0.26,
+   -0.16,
+   0.0
+  ],
+  "bounds_max": [
+   0.26,
+   0.16,
+   0.122
+  ]
+ },
+ {
+  "name": "textiles_throw_blanket_folded",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_throw_blanket_folded.fbx",
+  "category": "soft_furnishing",
+  "dims_m": [
+   0.48,
+   0.385,
+   0.08
+  ],
+  "tris": 9632,
+  "roles": [
+   "knit_mustard"
+  ],
+  "variant_of": null,
+  "notes": "Folded chunky-knit throw 0.48x0.36x0.075 with tassel fringe along -Y edge. Fold edge at +X, open layers at -X. Lay on bed foot or chair. Origin bottom centre.",
+  "bounds_min": [
+   -0.24,
+   -0.193,
+   0.0
+  ],
+  "bounds_max": [
+   0.24,
+   0.193,
+   0.08
+  ]
+ },
+ {
+  "name": "textiles_clothes_pile_a",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_clothes_pile_a.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.857,
+   0.82,
+   0.275
+  ],
+  "tris": 12632,
+  "roles": [
+   "cotton_black",
+   "cotton_marl",
+   "cotton_white",
+   "plastic_black",
+   "denim",
+   "cotton_grey"
+  ],
+  "variant_of": null,
+  "notes": "Floor heap ~0.66x0.6x0.26 m: grey-marl hoodie bunched on top (hood + one sleeve out), denim jeans leg trailing -X, black T-shirt half under, white socks at the front. MESSY state; tidy partner textiles_folded_stack_a. Origin bottom centre.",
+  "bounds_min": [
+   -0.476,
+   -0.426,
+   0.0
+  ],
+  "bounds_max": [
+   0.382,
+   0.394,
+   0.275
+  ]
+ },
+ {
+  "name": "textiles_clothes_pile_b",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_clothes_pile_b.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.848,
+   0.838,
+   0.307
+  ],
+  "tris": 10532,
+  "roles": [
+   "cotton_red",
+   "denim",
+   "cotton_yellow",
+   "cotton_navy",
+   "cotton_grey"
+  ],
+  "variant_of": "textiles_clothes_pile_a",
+  "notes": "Taller heap ~0.55x0.55x0.3 m: red T-shirt mass with jeans folded over the top (leg arching over, waistband visible), navy hoodie sleeve across the front, grey socks. MESSY state; tidy partner textiles_folded_stack_b. Origin bottom centre.",
+  "bounds_min": [
+   -0.424,
+   -0.419,
+   0.0
+  ],
+  "bounds_max": [
+   0.424,
+   0.419,
+   0.307
+  ]
+ },
+ {
+  "name": "textiles_clothes_pile_c",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_clothes_pile_c.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.912,
+   0.838,
+   0.219
+  ],
+  "tris": 14196,
+  "roles": [
+   "cotton_green",
+   "denim",
+   "cotton_yellow",
+   "cotton_black",
+   "cotton_white",
+   "plastic_black",
+   "cotton_grey"
+  ],
+  "variant_of": "textiles_clothes_pile_a",
+  "notes": "Wide low spread ~0.7x0.6x0.2 m: green T-shirt flat underneath, denim jeans crumpled with both legs and waistband on top, black hoodie hood over one corner, one white + one grey sock. MESSY state; tidy partner textiles_folded_stack_c. Origin bottom centre.",
+  "bounds_min": [
+   -0.487,
+   -0.394,
+   0.0
+  ],
+  "bounds_max": [
+   0.425,
+   0.444,
+   0.219
+  ]
+ },
+ {
+  "name": "textiles_folded_stack_a",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_folded_stack_a.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.309,
+   0.263,
+   0.214
+  ],
+  "tris": 3396,
+  "roles": [
+   "denim",
+   "cotton_marl",
+   "cotton_black",
+   "cotton_white"
+  ],
+  "variant_of": null,
+  "notes": "Neat folded stack ~0.3x0.25x0.2: folded jeans (denim) at the bottom, grey-marl hoodie, black T-shirt, white socks roll on top. TIDY partner of clothes_pile_a. Origin bottom centre.",
+  "bounds_min": [
+   -0.154,
+   -0.132,
+   0.0
+  ],
+  "bounds_max": [
+   0.154,
+   0.132,
+   0.214
+  ]
+ },
+ {
+  "name": "textiles_folded_stack_b",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_folded_stack_b.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.313,
+   0.278,
+   0.211
+  ],
+  "tris": 3396,
+  "roles": [
+   "cotton_red",
+   "denim",
+   "cotton_navy",
+   "cotton_grey"
+  ],
+  "variant_of": "textiles_folded_stack_a",
+  "notes": "Folded stack: red T-shirt, folded jeans, navy hoodie on top, grey socks. TIDY partner of clothes_pile_b. Origin bottom centre.",
+  "bounds_min": [
+   -0.157,
+   -0.139,
+   0.0
+  ],
+  "bounds_max": [
+   0.157,
+   0.139,
+   0.211
+  ]
+ },
+ {
+  "name": "textiles_folded_stack_c",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_folded_stack_c.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.322,
+   0.276,
+   0.208
+  ],
+  "tris": 3648,
+  "roles": [
+   "cotton_black",
+   "denim",
+   "cotton_green",
+   "cotton_white",
+   "cotton_grey"
+  ],
+  "variant_of": "textiles_folded_stack_a",
+  "notes": "Folded stack: black hoodie bottom, folded jeans, green T-shirt, white + grey socks. TIDY partner of clothes_pile_c. Origin bottom centre.",
+  "bounds_min": [
+   -0.161,
+   -0.138,
+   0.0
+  ],
+  "bounds_max": [
+   0.161,
+   0.138,
+   0.208
+  ]
+ },
+ {
+  "name": "textiles_tshirt_crumpled",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_tshirt_crumpled.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.749,
+   0.141,
+   0.448
+  ],
+  "tris": 5568,
+  "roles": [
+   "cotton_black",
+   "cotton_grey"
+  ],
+  "variant_of": null,
+  "notes": "Black T-shirt hung over a horizontal rail (chair back / radiator): rail axis along X at z=0.40 above the hem, front panel on -Y, sleeves hanging at the sides. Origin bottom centre of the hanging hem; place so z=0.40 lands on the chair-back top.",
+  "bounds_min": [
+   -0.374,
+   -0.081,
+   0.019
+  ],
+  "bounds_max": [
+   0.375,
+   0.06,
+   0.467
+  ]
+ },
+ {
+  "name": "textiles_jeans_crumpled",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_jeans_crumpled.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.633,
+   0.829,
+   0.126
+  ],
+  "tris": 4068,
+  "roles": [
+   "denim",
+   "cotton_yellow"
+  ],
+  "variant_of": null,
+  "notes": "Jeans stepped out of and left on the floor ~0.75x0.6x0.12: waistband ring, seat, one leg half inside-out folded back, belt loops, fly, back pockets. Origin bottom centre.",
+  "bounds_min": [
+   -0.317,
+   -0.414,
+   0.0
+  ],
+  "bounds_max": [
+   0.317,
+   0.414,
+   0.126
+  ]
+ },
+ {
+  "name": "textiles_hoodie_crumpled",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_hoodie_crumpled.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.845,
+   0.722,
+   0.19
+  ],
+  "tris": 6620,
+  "roles": [
+   "cotton_marl",
+   "cotton_white",
+   "plastic_black"
+  ],
+  "variant_of": null,
+  "notes": "Grey-marl hoodie dropped on the floor ~0.75x0.7x0.14: body bunched, hood up, one sleeve folded over the body, kangaroo pocket, drawstrings, ribbed cuffs/hem. Origin bottom centre.",
+  "bounds_min": [
+   -0.423,
+   -0.361,
+   0.0
+  ],
+  "bounds_max": [
+   0.423,
+   0.361,
+   0.19
+  ]
+ },
+ {
+  "name": "textiles_sock_pair",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_sock_pair.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.305,
+   0.283,
+   0.053
+  ],
+  "tris": 2304,
+  "roles": [
+   "cotton_white",
+   "cotton_grey"
+  ],
+  "variant_of": null,
+  "notes": "Pair of white sports socks on the floor ~0.3x0.2x0.05, one half inside-out (grey heel/toe), ribbed cuffs. Origin bottom centre.",
+  "bounds_min": [
+   -0.153,
+   -0.142,
+   0.0
+  ],
+  "bounds_max": [
+   0.153,
+   0.142,
+   0.053
+  ]
+ },
+ {
+  "name": "textiles_towel_crumpled",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_towel_crumpled.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.72,
+   0.548,
+   0.135
+  ],
+  "tris": 3328,
+  "roles": [
+   "terry_teal"
+  ],
+  "variant_of": null,
+  "notes": "Damp bath towel dropped in a heap ~0.55x0.45x0.14 (teal terry) with a tail flopped out. Tidy partner textiles_towel_folded. Origin bottom centre.",
+  "bounds_min": [
+   -0.36,
+   -0.274,
+   0.0
+  ],
+  "bounds_max": [
+   0.36,
+   0.274,
+   0.135
+  ]
+ },
+ {
+  "name": "textiles_towel_folded",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_towel_folded.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.357,
+   0.262,
+   0.077
+  ],
+  "tris": 1048,
+  "roles": [
+   "terry_white",
+   "cotton_blue"
+  ],
+  "variant_of": "textiles_towel_crumpled",
+  "notes": "Folded white bath towel 0.36x0.26x0.07 with a blue woven stripe near the open end (-X). Fold edge +X. Messy partner textiles_towel_crumpled. Origin bottom centre.",
+  "bounds_min": [
+   -0.176,
+   -0.132,
+   -0.002
+  ],
+  "bounds_max": [
+   0.181,
+   0.131,
+   0.075
+  ]
+ },
+ {
+  "name": "textiles_laundry_basket",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_laundry_basket.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.438,
+   0.597,
+   0.491
+  ],
+  "tris": 10256,
+  "roles": [
+   "wicker"
+  ],
+  "variant_of": null,
+  "notes": "Round wicker laundry basket 0.42 dia x 0.48 m, open top, two side handles at +/-Y. Rim top 0.48 m, inner base at 0.016 m. Pairs with laundry_basket_full. Origin bottom centre.",
+  "bounds_min": [
+   -0.219,
+   -0.298,
+   0.0
+  ],
+  "bounds_max": [
+   0.219,
+   0.298,
+   0.491
+  ]
+ },
+ {
+  "name": "textiles_laundry_basket_full",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_laundry_basket_full.fbx",
+  "category": "furniture",
+  "dims_m": [
+   0.438,
+   0.597,
+   0.664
+  ],
+  "tris": 15440,
+  "roles": [
+   "wicker",
+   "cotton_red",
+   "cotton_white",
+   "cotton_navy",
+   "cotton_grey"
+  ],
+  "variant_of": "textiles_laundry_basket",
+  "notes": "Same wicker basket overflowing: red/white/navy clothes mound above the rim (to ~0.64 m), grey sleeve hanging over the -Y side, sock over the rim. Origin bottom centre.",
+  "bounds_min": [
+   -0.219,
+   -0.298,
+   0.0
+  ],
+  "bounds_max": [
+   0.219,
+   0.298,
+   0.664
+  ]
+ },
+ {
+  "name": "textiles_backpack_closed",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_backpack_closed.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.358,
+   0.252,
+   0.494
+  ],
+  "tris": 6948,
+  "roles": [
+   "nylon_navy",
+   "rubber_black",
+   "cotton_white",
+   "metal_dark",
+   "plastic_black",
+   "cotton_black",
+   "plastic_blue"
+  ],
+  "variant_of": null,
+  "notes": "Navy rucksack upright, zipped, straps tidy against the back (+Y), front pocket and logo on -Y, water bottle in the +X side pocket. 0.37x0.24x0.49 m. Pairs with backpack_open_spilled (messy). Origin bottom centre.",
+  "bounds_min": [
+   -0.179,
+   -0.126,
+   0.0
+  ],
+  "bounds_max": [
+   0.179,
+   0.126,
+   0.494
+  ]
+ },
+ {
+  "name": "textiles_backpack_open_spilled",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_backpack_open_spilled.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.806,
+   0.51,
+   0.392
+  ],
+  "tris": 8408,
+  "roles": [
+   "nylon_olive",
+   "rubber_black",
+   "cotton_white",
+   "metal_dark",
+   "plastic_black",
+   "nylon_navy",
+   "cotton_black",
+   "plastic_blue",
+   "paper_white",
+   "cardboard",
+   "cotton_marl"
+  ],
+  "variant_of": null,
+  "notes": "Olive rucksack lying on its left side, mouth gaping toward -X, unzipped; a blue hardback book, a cardboard notebook and a grey hoodie spill out onto the floor. ~0.85x0.45x0.3 m. Pairs with backpack_closed (tidy). Origin bottom centre.",
+  "bounds_min": [
+   -0.398,
+   -0.266,
+   0.088
+  ],
+  "bounds_max": [
+   0.408,
+   0.244,
+   0.48
+  ]
+ },
+ {
+  "name": "textiles_trainers_tidy",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_trainers_tidy.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.246,
+   0.306,
+   0.131
+  ],
+  "tris": 14856,
+  "roles": [
+   "cotton_grey",
+   "foam_white",
+   "cotton_white",
+   "rubber_gum",
+   "metal_dark"
+  ],
+  "variant_of": null,
+  "notes": "Pair of grey/white low-top trainers side by side, toes to -Y, laces tied in bows. ~0.25x0.29x0.11 m. Pairs with trainers_scattered (messy). Origin bottom centre.",
+  "bounds_min": [
+   -0.123,
+   -0.153,
+   0.0
+  ],
+  "bounds_max": [
+   0.123,
+   0.153,
+   0.131
+  ]
+ },
+ {
+  "name": "textiles_trainers_scattered",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_trainers_scattered.fbx",
+  "category": "clutter",
+  "dims_m": [
+   0.585,
+   0.471,
+   0.282
+  ],
+  "tris": 14664,
+  "roles": [
+   "cotton_grey",
+   "foam_white",
+   "cotton_white",
+   "rubber_gum",
+   "metal_dark",
+   "plastic_black"
+  ],
+  "variant_of": "textiles_trainers_tidy",
+  "notes": "Same trainers kicked off: one upright at an angle with laces trailing on the floor, the other on its side 0.35 m away. ~0.6x0.45x0.12 m. Pairs with trainers_tidy. Origin bottom centre.",
+  "bounds_min": [
+   -0.291,
+   -0.226,
+   0.0
+  ],
+  "bounds_max": [
+   0.294,
+   0.245,
+   0.282
+  ]
+ },
+ {
+  "name": "textiles_curtain_pair",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_curtain_pair.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.48,
+   0.125,
+   1.581
+  ],
+  "tris": 17460,
+  "roles": [
+   "fabric_curtain",
+   "metal_brass",
+   "metal_steel"
+  ],
+  "variant_of": null,
+  "notes": "Two burnt-orange curtains (0.54 m gathered width each, 1.5 m drop) on a 1.3 m brass rod with finials, rings and two wall brackets. Rod axis at z=1.55, y=-0.06; bracket backs touch the wall at y=0 (back = +Y). Hem at z=0 (origin bottom centre of the pair at floor level: place so the hem clears the floor / sill as wanted). Root is an empty with children rod, curtain_L, curtain_R.",
+  "bounds_min": [
+   -0.74,
+   -0.119,
+   -0.001
+  ],
+  "bounds_max": [
+   0.74,
+   0.006,
+   1.58
+  ]
+ },
+ {
+  "name": "textiles_rug",
+  "file": "Assets/Bedsit/Art/Models/textiles/textiles_rug.fbx",
+  "category": "furniture",
+  "dims_m": [
+   1.308,
+   0.8,
+   0.05
+  ],
+  "tris": 13504,
+  "roles": [
+   "fabric_pattern",
+   "fabric_rug_border",
+   "cotton_navy",
+   "cotton_white"
+  ],
+  "variant_of": null,
+  "notes": "Worn 1.2x0.8 m flat-weave rug: beige field, rust border, navy central medallion, cream fringe at the +/-X ends, one corner (+X,+Y) curled up ~3 cm. 12 mm thick. Origin bottom centre.",
+  "bounds_min": [
+   -0.654,
+   -0.4,
+   0.0
+  ],
+  "bounds_max": [
+   0.654,
+   0.4,
+   0.05
+  ]
+ },
+ {
+  "name": "_meta",
+  "family": "textiles",
+  "new_roles": {
+   "cotton_marl": [
+    0.55,
+    0.55,
+    0.56,
+    0.97,
+    0.0
+   ],
+   "cotton_navy": [
+    0.12,
+    0.15,
+    0.26,
+    0.96,
+    0.0
+   ],
+   "cotton_pale_blue": [
+    0.64,
+    0.72,
+    0.82,
+    0.96,
+    0.0
+   ],
+   "fabric_curtain": [
+    0.55,
+    0.32,
+    0.2,
+    0.95,
+    0.0
+   ],
+   "fabric_duvet": [
+    0.4,
+    0.52,
+    0.5,
+    0.96,
+    0.0
+   ],
+   "fabric_rug_border": [
+    0.38,
+    0.17,
+    0.15,
+    0.95,
+    0.0
+   ],
+   "fabric_ticking": [
+    0.82,
+    0.8,
+    0.72,
+    0.92,
+    0.0
+   ],
+   "foam_white": [
+    0.88,
+    0.88,
+    0.86,
+    0.6,
+    0.0
+   ],
+   "knit_mustard": [
+    0.76,
+    0.56,
+    0.16,
+    0.98,
+    0.0
+   ],
+   "nylon_navy": [
+    0.1,
+    0.13,
+    0.26,
+    0.7,
+    0.0
+   ],
+   "nylon_olive": [
+    0.3,
+    0.32,
+    0.2,
+    0.7,
+    0.0
+   ],
+   "rubber_gum": [
+    0.72,
+    0.52,
+    0.3,
+    0.6,
+    0.0
+   ],
+   "terry_teal": [
+    0.14,
+    0.46,
+    0.48,
+    0.98,
+    0.0
+   ],
+   "terry_white": [
+    0.9,
+    0.9,
+    0.87,
+    0.98,
+    0.0
+   ],
+   "wicker": [
+    0.7,
+    0.52,
+    0.3,
+    0.85,
+    0.0
+   ]
+  },
+  "origin": "bottom centre, front -Y (bed set: floor at footprint centre, headboard +Y)"
+ }
+]

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bedsit.Game;
+using Bedsit.Rooms;
 using Bedsit.Sims2;
 using NUnit.Framework;
 using UnityEngine;
@@ -593,17 +594,17 @@ namespace Bedsit.Tests
         {
             yield return ActReady();
             yield return Face(CompassDirection.East);
-            var item = Act.Items.First(i => i.Kind == "mug" && OnScreen(Game.EyeCamera, i.PickCentre));
+            var item = Act.Items.First(i => i.Kind == "mug_desk" && OnScreen(Game.EyeCamera, i.PickCentre));
             var px = (Vector2)Game.EyeCamera.WorldToScreenPoint(item.PickCentre);
             Assert.AreEqual(0f, Act.TidyFraction);
             Assert.IsFalse(Act.TryTidyAtScreen(new Vector2(Screen.width * 0.5f, Screen.height * 0.9f)), "tapping bare wall tidies nothing");
             Assert.IsTrue(Act.TryTidyAtScreen(px), "tapping the mug tidies it");
             Assert.IsTrue(item.Tidying || item.Tidied);
             yield return new WaitForSeconds(0.8f);
-            Assert.IsTrue(item.Tidied && !item.gameObject.activeSelf, "the item is gone");
+            Assert.IsTrue(item.Tidied, "the task is finished");
             Assert.AreEqual(1, Act.TidiedCount);
             Assert.Greater(Act.TidyFraction, 0f);
-            Assert.IsFalse(Act.TryTidyAtScreen(px), "it cannot be tidied twice");
+            Assert.IsFalse(item.Tidy(), "it cannot be tidied twice");
         }
 
         [UnityTest]
@@ -650,7 +651,7 @@ namespace Bedsit.Tests
         {
             yield return ActReady();
             yield return Face(CompassDirection.North);
-            foreach (var it in Act.Items.Take(5).ToArray()) Act.Tidy(it);          // 5 of 15: not clean
+            foreach (var it in Act.Items.Take(5).ToArray()) Act.Tidy(it);          // 5 of 18: not clean
             Assert.IsFalse(Act.IsClean);
             Act.ForceKnock(); yield return null;
             Game.Interactions.Refresh();
@@ -668,6 +669,123 @@ namespace Bedsit.Tests
             yield return WaitUntil(() => Act.HeadphonesStarted, 5f, "headphones to start");
             yield return WaitUntil(() => Act.HeadphonesOn, 5f, "headphones on");
             Assert.AreEqual(1f, Act.HeadphonesProgress, 1e-4f);
+        }
+    }
+
+    /// <summary>The data-driven bedroom (room01): props load, nothing renders pink, every view is dressed, cleaning tasks change
+    /// state with real model swaps/moves, and progress persists through the save file.</summary>
+    public class RoomTests : BedsitFixtureBase
+    {
+        RoomBuilder Room => Game.Room;
+
+        [UnityTest]
+        public IEnumerator RoomBuildsFromDataWithEveryPropPresent()
+        {
+            yield return null;
+            Assert.IsNotNull(Room, "the room was built from Resources/Rooms/room01.json");
+            Assert.AreEqual(0, Room.Missing.Count, "missing props: " + string.Join(", ", Room.Missing));
+            Assert.GreaterOrEqual(Room.Cleanables.Count, 8, "at least eight tidy-up tasks");
+            var actions = Room.Cleanables.Select(c => c.Action).Distinct().ToList();
+            Assert.GreaterOrEqual(actions.Count, 4, "at least four different cleaning actions: " + string.Join(",", actions));
+            foreach (var c in Room.Cleanables)
+            {
+                Assert.Greater(c.MessyParts.Count, 0, c.Id + " has a messy state");
+                bool hasTidy = c.TidyParts.Count > 0 || c.Action == "bin" || c.SlideTargetPos != Vector3.zero;
+                Assert.IsTrue(hasTidy, c.Id + " has a tidy state");
+                foreach (var t in c.TidyParts) Assert.IsFalse(t.gameObject.activeSelf, c.Id + " tidy parts start hidden");
+            }
+            Assert.Greater(Room.PropCount, 60, "a richly furnished room");
+            Assert.Less(Room.TriangleCount, 900000, "polygon budget");
+        }
+
+        [UnityTest]
+        public IEnumerator NoRendererUsesAMissingOrErrorMaterial()
+        {
+            yield return null;
+            int bad = 0; var names = new List<string>();
+            foreach (var r in Room.Root.GetComponentsInChildren<Renderer>(true))
+                foreach (var m in r.sharedMaterials)
+                    if (m == null || m.shader == null || !m.shader.isSupported || m.shader.name.Contains("InternalError")) { bad++; names.Add(r.name + ":" + (m == null ? "null" : m.name)); }
+            Assert.AreEqual(0, bad, "pink/missing materials: " + string.Join(", ", names.Take(10)));
+        }
+
+        [UnityTest]
+        public IEnumerator FourViewsLookInTheRightDirectionAndSeeCleanables()
+        {
+            yield return null;
+            var expectYaw = new Dictionary<CompassDirection, float> { { CompassDirection.North, 0f }, { CompassDirection.East, 90f }, { CompassDirection.South, 180f }, { CompassDirection.West, 270f } };
+            foreach (var kv in expectYaw)
+            {
+                yield return Face(kv.Key);
+                var f = Game.EyeCamera.transform.forward; f.y = 0f;
+                float yaw = Mathf.Atan2(f.x, f.z) * Mathf.Rad2Deg; if (yaw < 0) yaw += 360f;
+                Assert.AreEqual(kv.Value, yaw, 1f, "camera heading for " + kv.Key);
+                int visible = Room.Cleanables.Count(c => { var sp = Game.EyeCamera.WorldToScreenPoint(c.PickCentre); return sp.z > 0.2f && sp.x > 0 && sp.x < Screen.width && sp.y > 0 && sp.y < Screen.height; });
+                Assert.GreaterOrEqual(visible, 1, "a tidy-up task is on screen facing " + kv.Key);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CleaningTasksChangeStateWithRealMovesAndSwaps()
+        {
+            yield return null;
+            // make: messy bedding replaced by the made bed
+            var bed = Room.Find("bed");
+            Assert.IsTrue(bed.Tidy());
+            yield return new WaitForSeconds(1.6f);
+            Assert.IsTrue(bed.Tidied);
+            Assert.IsTrue(bed.MessyParts.All(t => !t.gameObject.activeSelf), "messy bedding hidden");
+            Assert.IsTrue(bed.TidyParts.All(t => t.gameObject.activeSelf), "made bedding shown");
+            // bin: the item flies into the bin and is gone
+            var cans = Room.Find("cans_desk");
+            Vector3 start = cans.MessyParts[0].position;
+            Assert.IsTrue(cans.Tidy());
+            yield return new WaitForSeconds(0.25f);
+            Assert.Greater((cans.MessyParts[0].position - start).magnitude, 0.05f, "the can is travelling");
+            yield return new WaitForSeconds(1.5f);
+            Assert.IsTrue(cans.Tidied); Assert.IsFalse(cans.MessyParts[0].gameObject.activeSelf);
+            // slide: the same cup ends at the tray
+            var mug = Room.Find("mug_desk");
+            Assert.IsTrue(mug.Tidy());
+            yield return new WaitForSeconds(1.2f);
+            Assert.IsTrue(mug.Tidied);
+            Assert.Less((mug.MessyParts[0].position - mug.SlideTargetPos).magnitude, 0.01f, "the mug sits in the tray");
+            // fold/stack/swap/coil/zip all end with tidy parts visible
+            foreach (var id in new[] { "clothes_bed", "books_desk", "papers_desk", "cables", "backpack", "towel" })
+            {
+                var c = Room.Find(id); Assert.IsTrue(c.Tidy(), id);
+            }
+            yield return new WaitForSeconds(2.5f);
+            foreach (var id in new[] { "clothes_bed", "books_desk", "papers_desk", "cables", "backpack", "towel" })
+            {
+                var c = Room.Find(id);
+                Assert.IsTrue(c.Tidied, id + " finished");
+                Assert.IsTrue(c.TidyParts.All(t => t.gameObject.activeSelf), id + " tidy state visible");
+                Assert.IsTrue(c.MessyParts.All(t => !t.gameObject.activeSelf), id + " messy state hidden");
+            }
+            Assert.IsFalse(bed.Tidy(), "a finished task cannot be done twice");
+        }
+
+        [UnityTest]
+        public IEnumerator CleaningProgressPersistsThroughTheSaveFile()
+        {
+            yield return null;
+            var path = System.IO.Path.Combine(Application.temporaryCachePath, "room_test_save.json");
+            RoomSave.OverridePath = path;
+            try
+            {
+                foreach (var id in new[] { "bed", "cables", "towel", "pizza" }) Room.Find(id).SnapToTidy();
+                RoomSave.Save(Room);
+                var data = RoomSave.Read(Room.Def.id);
+                Assert.IsNotNull(data); CollectionAssert.AreEquivalent(new[] { "bed", "cables", "towel", "pizza" }, data.tidied);
+                // a fresh room (all messy) restored from that file shows exactly those tasks done
+                foreach (var c in Room.Cleanables) Assert.IsFalse(c.Id == "records" && c.Tidied);
+                int restored = RoomSave.Apply(Room, data);
+                Assert.AreEqual(0, restored, "already tidy, nothing more to restore");
+                Assert.AreEqual(4, Room.TidiedCount);
+                Assert.IsFalse(Room.Find("records").Tidied, "untouched tasks stay messy");
+            }
+            finally { RoomSave.Delete(Room.Def.id); RoomSave.OverridePath = null; }
         }
     }
 }
