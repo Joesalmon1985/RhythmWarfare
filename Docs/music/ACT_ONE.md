@@ -6,10 +6,10 @@ Enabled together with the music POC (`-music` / `BEDSIT_MUSIC=1`); without the f
 ## The flow
 
 1. **Wake-up** (existing animation) -> the player **puts on headphones**: an earcup slides in on each side of the view and a band across the top, then they pulse gently with the beat.
-   The player's reflection in the mirror gets red over-ear headphones at the same moment. The music starts as they go on.
+   The player's reflection in the mirror gets red over-ear headphones at the same moment. Gatekeeper starts from its first sample about 1 s after they begin to go on.
 2. **Only the player exists.** The three NPCs (east window, west window, corridor) are hidden; the window interactions are disabled. The player is visible only in the mirror (as before).
-3. **The room is messy** (15 pieces of clutter). While the rhythm game runs (first 44 s) and afterwards, the player can look round and **tap items to tidy them away**.
-4. **The knock.** On the recorded drop there are three knocks (beats 0, 1, 2); the door shakes with each, the north compass wedge flashes, and the door's interact cue appears.
+3. **The room is messy** (15 pieces of clutter). While the drums-only rhythm minigame runs (the song's first 25.5 s) and afterwards, the player can look round and **tap items to tidy them away**. Pass the minigame and the song carries on into its next section (44 s, no minigame) which ends in the drop.
+4. **The knock** (when that next section finishes, at the drop). There are three knocks (beats 0, 1, 2); the door shakes with each, the north compass wedge flashes, and the door's interact cue appears.
    Before the knock the door is locked (the top-centre control does nothing facing it).
 5. **Open the door** (top-centre while facing north): the door opens with its original animation. If at least **80 %** of the mess is tidied a **woman** stands there and waves
    (Pleasantview Sim 13); otherwise a **man** is there and reacts with the "surprise" animation (Sim 11). The threshold is `ActOne.CleanThreshold`.

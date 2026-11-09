@@ -149,6 +149,7 @@ namespace Bedsit.Music
             public double PlannedDrop;                               // drop time if every remaining gate passes first time
             public readonly List<JudgeWindow> Windows = new List<JudgeWindow>();   // first-attempt rhythm windows (for the aggregate gate)
             public bool GatePassed = true;
+            public double IntroSeconds, OffsetBeats;                 // opening builds: length of the intro section, loop phase of the custom drums
         }
         Build _build;
 
@@ -175,7 +176,11 @@ namespace Bedsit.Music
                 D = RecTimeOfAnchor(anchor);
                 if (D <= now) { L($"build {songId}:{anchor} rejected: anchor already reached ({D:0.000} <= {now:0.000})"); return false; }
             }
-            else if (_rec == null) D = now + S.startDelaySeconds + total;
+            else if (_rec == null)
+            {
+                if (UseOpening) return TryScheduleOpening(song, anchor, now + S.startDelaySeconds);
+                D = now + S.startDelaySeconds + total;
+            }
             else { L($"build {songId}:{anchor} rejected: a different recording is playing"); return false; }
 
             double start = D - total;
@@ -209,13 +214,13 @@ namespace Bedsit.Music
             RunPhase(b, 0, start, 0);
         }
 
-        void CreateStemVoices(double start)
+        void CreateStemVoices(double start, double clipOffsetSeconds = 0)
         {
             _stemVoices.Clear(); _muted.Clear(); _hitsSinceMute.Clear();
             foreach (var st in _loops.stems)
             {
                 if (!_stemPcm.TryGetValue(st.id, out var clip)) continue;
-                var v = Mixer.Play("stem:" + st.id, clip, start, 0, 0f, loop: true, role: "custom");
+                var v = Mixer.Play("stem:" + st.id, clip, start, clipOffsetSeconds, 0f, loop: true, role: "custom");
                 _stemVoices[st.id] = v; _muted[st.id] = false; _hitsSinceMute[st.id] = 0;
             }
         }
@@ -351,6 +356,123 @@ namespace Bedsit.Music
             }
         }
 
+
+        // ------------------------------------------------------------------------------------------------ opening build (song from the start)
+        //
+        // No recording is playing yet: the recorded song starts from its very first sample. Its first section (clip 0 .. anchor - runInBeats) hosts a
+        // drums-only rhythm minigame (the custom kick/snare loops are phase-locked so that a loop boundary falls on the run-in start, exactly as in the
+        // 128-beat cue grid). Gate (80 %): pass -> the recording simply carries on into its next section (the run-in), the custom drums ease out, the
+        // minigame disappears, and the section ends in the drop (+ door knock). Fail -> the intro section is looped again (recovery, 60 %, at most
+        // maxRecoveryAttempts), after which the run-in starts anyway.
+
+        bool UseOpening => _plan.opening != null && _plan.opening.charted != null && _plan.opening.charted.Length > 0;
+
+        bool TryScheduleOpening(SongDef song, string anchor, double start)
+        {
+            double runIn = _plan.opening.runInBeats > 0 ? _plan.opening.runInBeats : 128;
+            double intro = song.Anchor(anchor) - runIn * song.BeatSeconds;
+            if (intro < 8 * BeatSeconds) { L($"build {song.id}:{anchor} rejected: no intro section before the run-in cue ({intro:0.000}s)"); return false; }
+            ScheduleOpening(song, anchor, start, intro, runIn);
+            return true;
+        }
+
+        void ScheduleOpening(SongDef song, string anchor, double start, double intro, double runIn)
+        {
+            double bs = BeatSeconds;
+            BuildsStarted++;
+            double D = start + song.Anchor(anchor);
+            var b = _build = new Build { Song = song, Anchor = anchor, PlannedDrop = D, IntroSeconds = intro };
+            double introBeats = intro / bs, L32 = _loops.loopBeats;
+            double rem = introBeats % L32;
+            b.OffsetBeats = rem < 1e-3 || L32 - rem < 1e-3 ? 0 : L32 - rem;      // custom loop phase at the intro start so a loop boundary lands on the run-in
+            PendingPlan = $"opening {song.id}:{anchor} start {start:0.000} drop {D:0.000}";
+            L($"BUILD {song.id}:{anchor} scheduled (opening): the song starts at {start:0.000}; intro {intro:0.000}s ({introBeats:0.0} beats) with a drums minigame, then the {runIn:0}-beat run-in, drop {D:0.000}");
+            At(Math.Max(Mixer.Time, start - 8 * bs), "rhythm lead-in", () => { Mode = MusicMode.Rhythm; });
+            RunIntro(b, 0, start, null);
+        }
+
+        void RunIntro(Build b, int attempt, double t, Mixer.Voice previous)
+        {
+            double bs = BeatSeconds, intro = b.IntroSeconds, end = t + intro;
+
+            // the recording (from its first sample; a recovery loop restarts it, cutting the previous pass exactly at the section end)
+            if (previous != null) { Mixer.RampTo(previous, t - 0.03, t, 0f); Mixer.StopAt(previous, t); }
+            var rec = Mixer.Play(b.Song.id, _songPcm[b.Song.id], t, 0.0, 0f, role: "recorded");
+            double fade = attempt == 0 ? S.introFadeInSeconds : 0.03;
+            Mixer.RampTo(rec, t, t + fade, S.recordedGain);
+            b.Rec = rec;
+            At(t, "intro start", () => { _rec = rec; _recSong = b.Song; });
+
+            // custom drums (kick/snare) over the intro, phase-locked to the run-in
+            double offsetSec = b.OffsetBeats * bs;
+            if (attempt > 0) foreach (var kv in _stemVoices) { Mixer.RampTo(kv.Value, t - 0.02, t, 0f); Mixer.StopAt(kv.Value, t); }
+            CreateStemVoices(t, offsetSec);
+            foreach (var kv in _stemVoices)
+            {
+                float target = _plan.opening.audible.Contains(kv.Key) ? S.customGainOverIntro : 0f;
+                Mixer.RampTo(kv.Value, t, t + (attempt == 0 ? S.customFadeInBeats * bs : 0.03), target);
+            }
+
+            // judged notes: the loop pattern as it falls over the intro, never in the last beat
+            var notes = new List<Note>();
+            double L32 = _loops.loopBeats, introBeats = intro / bs;
+            foreach (var stemId in _plan.opening.charted)
+            {
+                var st = _loops.Find(stemId); if (st == null) continue;
+                for (int k = 0; k * L32 - b.OffsetBeats < introBeats; k++)
+                    foreach (var c in st.cues)
+                    {
+                        double beat = c.tick / (double)_loops.ticksPerBeat;
+                        double tb = k * L32 + beat - b.OffsetBeats;
+                        if (tb < 0.0 - 1e-6 || tb > introBeats - 1.0) continue;
+                        notes.Add(new Note { Time = t + tb * bs, Pad = c.pad, Stem = stemId });
+                    }
+            }
+            string label = attempt == 0 ? $"{b.Song.id}:{b.Anchor} intro" : $"recovery#{attempt} {b.Song.id}:{b.Anchor} intro";
+            double threshold = attempt == 0 ? S.threshold : S.recoveryThreshold;
+            var win = Judge.AddWindow(label, t, end - bs, threshold, notes);
+            At(t, "intro window", () =>
+            {
+                CurrentWindow = win; RestoreAllStems(); b.PlannedDrop = t + (b.Song.Anchor(b.Anchor));
+                PendingPlan = $"opening {b.Song.id}:{b.Anchor} - intro{(attempt > 0 ? " (recovery " + attempt + ")" : "")}, drop planned {b.PlannedDrop:0.000}";
+            });
+            At(end - S.evalLeadSeconds, "intro end", () => OnIntroEnd(b, win, rec, end, attempt));
+        }
+
+        void OnIntroEnd(Build b, JudgeWindow win, Mixer.Voice rec, double end, int attempt)
+        {
+            Judge.Update(Mixer.Time);
+            Judge.Close(win);
+            bool pass = win.Accuracy >= win.Threshold;
+            L($"EVAL {win.Label}: {win.Hits}/{win.Total} = {win.Accuracy * 100:0.0}% (threshold {win.Threshold * 100:0}%) -> {(pass ? "PASS" : "FAIL")}");
+            if (!pass && attempt < S.maxRecoveryAttempts)
+            {
+                b.Recoveries++; RecoveryAttempts++;
+                L($"RECOVERY #{attempt + 1}: intro loops again {end:0.000} -> {end + b.IntroSeconds:0.000}");
+                RunIntro(b, attempt + 1, end, rec);
+                return;
+            }
+            if (!pass) L("recovery attempts exhausted: moving on to the run-in anyway (no soft-lock)");
+            b.GatePassed = pass;
+            StartRunIn(b, end);
+        }
+
+        /// <summary>The next section of the song: the recording carries on, the custom drums ease out and the minigame disappears.</summary>
+        void StartRunIn(Build b, double t)
+        {
+            double bs = BeatSeconds;
+            double xf = S.buildupCrossfadeBeats * bs;
+            foreach (var kv in _stemVoices) { Mixer.RampTo(kv.Value, t, t + xf, 0f); Mixer.StopAt(kv.Value, t + xf + 0.01); }
+            double D = Mixer.TimelineOfClipTime(b.Rec, b.Song.Anchor(b.Anchor));
+            L($"run-in: {b.Song.id} carries on into its next section at {t:0.000}; rhythm game off; drop {D:0.000}");
+            At(t, "run-in start", () =>
+            {
+                Mode = MusicMode.Mixing; CurrentWindow = null; b.PlannedDrop = D;
+                PendingPlan = $"run-in {b.Song.id}:{b.Anchor}, drop {D:0.000}";
+            });
+            At(D - S.evalLeadSeconds, "drop", () => FinishBuild(b, b.GatePassed, D));
+        }
+
         // ------------------------------------------------------------------------------------------------ handovers
 
         bool TryScheduleHandover(string from, string fromAnchor, string to, string toAnchor, double now)
@@ -414,8 +536,9 @@ namespace Bedsit.Music
                 var old = _rec;
                 At(endT, "recording ended", () => { if (_rec == old) _rec = null; });
             }
-            double start = endT + 4 * bs, D = start + BuildTotalSeconds;
             L($"REPEAT: restarting {to.id} after the ending at {endT:0.000}");
+            if (UseOpening) return TryScheduleOpening(to, "firstDrop", endT + 4 * bs);
+            double start = endT + 4 * bs, D = start + BuildTotalSeconds;
             ScheduleBuild(to, "firstDrop", D, start);
             return true;
         }

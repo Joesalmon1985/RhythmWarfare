@@ -1,31 +1,22 @@
-131.8s peak -0.2 dBFS, rms -10.3 dB, clipped samples 0, longest silence 6.85s at 3.20s, silences>250ms 1, max sample step 1.23
-mode MIXING   t=135.74s   song gatekeeper  pos 107.08s
-beat 393.7   next anchor gatekeeper:secondDrop in 95.0s
+91.8s peak -0.2 dBFS, rms -10.0 dB, clipped samples 0, longest silence 4.84s at 3.20s, silences>250ms 1, max sample step 1.33
+mode MIXING   t=95.53s   song gatekeeper  pos 87.51s
+beat 277.0   next anchor gatekeeper:secondDrop in 114.6s
 incoming - 
 window -
-stems muted: bass
+stems muted: kick
 plan: plan complete: the recording plays on in MIXING mode
-builds 1/1 passed, recoveries 0, handovers 0, stray taps 0, energy 92%
+builds 1/1 passed, recoveries 0, handovers 0, stray taps 0, energy 90%
 
-[7.040] BUILD gatekeeper:firstDrop scheduled: start 10.040, drop 98.316 (5 phases: drums / bass / drums2 / bass2 / runin)
-[18.411] MISS kick pad 1: stem muted (timeline keeps running)
-[19.371] RECOVERED kick: stem restored at its current musical position
-[20.885] gatekeeper:firstDrop drums: 17/18 = 94.4% (not gated)
-[21.184] MISS bass pad 1: stem muted (timeline keeps running)
-[23.147] RECOVERED bass: stem restored at its current musical position
-[31.915] gatekeeper:firstDrop bass: 11/12 = 91.7% (not gated)
-[37.035] MISS snare pad 4: stem muted (timeline keeps running)
-[39.445] MISS kick pad 1: stem muted (timeline keeps running)
-[39.701] RECOVERED snare: stem restored at its current musical position
-[40.747] RECOVERED kick: stem restored at its current musical position
-[42.944] gatekeeper:firstDrop drums2: 16/18 = 88.9% (not gated)
-[44.629] MISS bass pad 2: stem muted (timeline keeps running)
-[47.296] RECOVERED bass: stem restored at its current musical position
-[53.248] MISS bass pad 4: stem muted (timeline keeps running)
-[53.995] EVAL gatekeeper:firstDrop bass2 (all 4 loops): 53/60 = 88.3% (threshold 80%) -> PASS
-[53.995] run-in: gatekeeper enters at 54.178 (clip 25.517s), eases in over 8 beats; rhythm game off; drop 98.316
-[98.133] DROP gatekeeper:firstDrop at 98.316
-[98.325] plan complete after 1 drop(s): no further builds
+[7.019] BUILD gatekeeper:firstDrop scheduled (opening): the song starts at 8.019; intro 25.517s (74.0 beats) with a drums minigame, then the 128-beat run-in, drop 77.674
+[16.043] MISS kick pad 1: stem muted (timeline keeps running)
+[18.709] RECOVERED kick: stem restored at its current musical position
+[19.840] MISS kick pad 1: stem muted (timeline keeps running)
+[20.779] RECOVERED kick: stem restored at its current musical position
+[31.232] MISS kick pad 1: stem muted (timeline keeps running)
+[33.344] EVAL gatekeeper:firstDrop intro: 38/42 = 90.5% (threshold 80%) -> PASS
+[33.344] run-in: gatekeeper carries on into its next section at 33.536; rhythm game off; drop 77.674
+[77.483] DROP gatekeeper:firstDrop at 77.674
+[77.675] plan complete after 1 drop(s): no further builds
 --- act one ---
 act one ready: 15 pieces of clutter, clean at 80%
 headphones: putting them on
@@ -44,6 +35,6 @@ tidied takeaway (11/15)
 tidied paper (12/15)
 tidied mug (13/15)
 tidied shirt (14/15)
-knock at the door (timeline 98.316)
+knock at the door (timeline 77.674)
 door opened: room clean (14/15) -> a woman is at the door
 screenshot C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\Builds\Windows\Evidence\screenshots\actone_exe_woman.png

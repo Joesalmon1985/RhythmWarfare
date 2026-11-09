@@ -52,6 +52,8 @@ namespace Bedsit.Music
         public double prepMarginBeats = 8, evalLeadSeconds = 0.2, startDelaySeconds = 3.0;
         public double judgePerfectSeconds = 0.045, judgeGoodSeconds = 0.09;
         public float customGain = 0.8f, customGainUnderRecording = 0.6f, recordedGain = 0.9f, knockGain = 1.0f;
+        public float customGainOverIntro = 0.7f;        // the minigame drums over the recording's intro
+        public double introFadeInSeconds = 0.25;         // the recording fades in over this long when it starts from its first sample
     }
 
     /// <summary>One 32-beat phase of a playable build. gate = must reach the threshold to move on (else the phase repeats);
@@ -67,6 +69,12 @@ namespace Bedsit.Music
         public string[] charted, audible;
     }
 
+    /// <summary>Opening build (used when no recording is playing yet, e.g. the first build): the song starts from its first sample, the
+    /// section before the run-in (clip 0 .. anchor - runInBeats) hosts a drums-only rhythm minigame over the recording, a pass (gate) moves
+    /// on to the run-in (no minigame), and the run-in ends in the drop. A failed gate loops the intro section (recovery) up to maxRecoveryAttempts.</summary>
+    [Serializable]
+    public class OpeningDef { public string[] charted, audible; public int runInBeats = 128; }
+
     [Serializable]
     public class LegDef
     {
@@ -81,6 +89,7 @@ namespace Bedsit.Music
         public string format, notes;
         public PlanSettings settings;
         public string[] order;
+        public OpeningDef opening;
         public BuildLoopDef[] buildLoops;
         public LegDef[] legs;
         public int stopAfterLegs;      // >0: after this many drops the plan stops (the music just plays on in MIXING mode); 0 = cycle forever

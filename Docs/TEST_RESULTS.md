@@ -48,17 +48,18 @@ Classes named Baked* repeat the first-person and interaction tests with the BAKE
 
 ## Music POC + Act One additions (branch feature/bedroom-music-poc)
 
-Full suite: **65 tests, 65 passed** (the 37 original + 18 `MusicEngineTests` + 3 `MusicPocSceneTests` + 7 `ActOneSceneTests`).
+Full suite: **66 tests, 66 passed** (the 37 original + 19 `MusicEngineTests` + 3 `MusicPocSceneTests` + 7 `ActOneSceneTests`); in the last full run `FirstPersonTests.ExactlyFourDistinctCompassViewsNinetyDegreesApart` timed out once in cold content loading and passed on immediate rerun.
 A cold-start `Bedsit did not become ready: creating characters` timeout (90 s) occurred in the first live-content test after a recompile in two separate runs; both passed on rerun
 (not diagnosed; see Docs/music/README.md). One run also failed 11 tests because `BEDSIT_MUSIC=1` was left set in the editor process (my own capture session) - unset, all pass.
 
 | Result | Test |
 |---|---|
 | Passed | MusicEngineTests.ActOnePlansOnlyTheFirstDropThenMusicPlaysOn |
-| Passed | MusicEngineTests.AggregateGateToleratesAFewEarlyMissesButNotAWholeLoop |
+| Passed | MusicEngineTests.IntroGateToleratesAFewMissesButFailingItLoopsTheIntroSection |
+| Passed | MusicEngineTests.PlanFileMatchesTheTestConstants |
 | Passed | MusicEngineTests.CuesBeforeTheFileStartAreRejectedNotClamped |
 | Passed | MusicEngineTests.DropIsAThreeKnockDoorCueOnBeatsZeroOneTwo |
-| Passed | MusicEngineTests.FailureGetsRecoveryLoopsThenTheRecordingWithoutRewindOrSilence |
+| Passed | MusicEngineTests.FailureLoopsTheIntroTwiceThenMovesOnAnywayWithoutSilence |
 | Passed | MusicEngineTests.HandoverIntoAnInvalidEntryCueIsRejected |
 | Passed | MusicEngineTests.HandoverNeverSchedulesFromAnAnchorAlreadyReached |
 | Passed | MusicEngineTests.KnockSoundIsAShortLowThumpWithAFastDecay |
@@ -66,7 +67,7 @@ A cold-start `Bedsit did not become ready: creating characters` timeout (90 s) o
 | Passed | MusicEngineTests.MutedStemReturnsInSyncAndOnlyDuringTheMistake |
 | Passed | MusicEngineTests.PadStripRegionsAreFourPadsAboveTheBottomEdgeBetweenTheTurnZones |
 | Passed | MusicEngineTests.PauseFreezesTheTimelineAndSchedulingThenResumesIdentically |
-| Passed | MusicEngineTests.PerfectPlayEnablesTheRecordedDropAtItsAnchor |
+| Passed | MusicEngineTests.PerfectPlayStartsTheSongFromTheOffThenCarriesOnIntoTheNextSectionAndDrops |
 | Passed | MusicEngineTests.RecoveryCanReachAnotherValidAttempt |
 | Passed | MusicEngineTests.RenderDemonstrationsAndAnalyseThem |
 | Passed | MusicEngineTests.SecondBuildReturnsToRhythmWithoutCountingOldNotes |
