@@ -8,6 +8,7 @@ namespace Bedsit.Game
     public static class BedsitLayers
     {
         public const int PlayerMirrorOnly = 8;
+        public const int MirrorGlass = 9;
         public static int PlayerMirrorOnlyMask => 1 << PlayerMirrorOnly;
     }
 }

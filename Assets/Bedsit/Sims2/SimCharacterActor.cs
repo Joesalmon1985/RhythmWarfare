@@ -81,64 +81,102 @@ namespace Bedsit.Sims2
             foreach (var key in SimAnimationLibrary.Definitions.Keys)
             {
                 var res = SimAnimationLibrary.Resolve(key);
-                if (res != null) sim.AdjustInverseKinematicWeightsForAnimation(res.Asset.AnimResource);
+                if (res != null) sim.AdjustInverseKinematicWeightsForAnimations(res.Asset.AnimResource);
             }
             return actor;
         }
 
         // ------------------------------------------------------------------------------------------------ animation
 
+        // Legacy-Animation layers: 0 = neutral pose, 1 = idle overlay, 2 = one-shot gestures. Original Sims 2 animations are
+        // authored over the neutral standing pose, so every Sim keeps that pose running underneath.
+        const int LayerPose = 0, LayerIdle = 1, LayerOneShot = 2;
+
         /// <summary>Ensure the library animation for this key exists as a clip on this actor. Returns the clip name.</summary>
-        string EnsureClip(string key)
+        string EnsureClip(string key, int layer)
         {
             if (_clipNames.TryGetValue(key, out var existing)) return existing;
             var res = SimAnimationLibrary.Resolve(key);
             if (res == null || _animation == null || Sim == null) return null;
-            var clip = res.Asset.CreateClipFromResource(Sim.Scenegraph.BoneNamesToRelativePaths, Sim.Scenegraph.BlendNamesToRelativePaths);
-            clip.wrapMode = res.Def.Loop ? WrapMode.Loop : WrapMode.Once;
+            var clip = res.Asset.CreateClipFromResource(Sim.Scenegraph.BoneNamesToRelativePaths, Sim.Scenegraph.BlendNamesToRelativePaths,
+                minimumDuration: key == AnimationKeys.Pose ? 0.5f : 0f);
+            // The neutral pose is a single frame (length 0): hold it instead of looping it.
+            clip.wrapMode = key == AnimationKeys.Pose ? WrapMode.ClampForever : (res.Def.Loop ? WrapMode.Loop : WrapMode.Once);
             string clipName = res.ResourceName;
             _animation.AddClip(clip, clipName);
+            _animation[clipName].layer = layer;
             _clipNames[key] = clipName;
             return clipName;
         }
 
-        void StartClip(string key, float fade)
+        /// <summary>Activate the IK chains needed by the base pose plus the given animation (they play together).</summary>
+        void SetIk(string key)
         {
-            var clipName = EnsureClip(key);
-            if (clipName == null) return;
+            var pose = SimAnimationLibrary.Resolve(AnimationKeys.Pose);
             var res = SimAnimationLibrary.Resolve(key);
-            Sim.AdjustInverseKinematicWeightsForAnimation(res.Asset.AnimResource);
-            _animation.CrossFade(clipName, fade, PlayMode.StopAll);
-            CurrentKey = key;
+            Sim.AdjustInverseKinematicWeightsForAnimations(pose?.Asset.AnimResource, res?.Asset.AnimResource);
+        }
+
+        void EnsureBasePose()
+        {
+            var pose = EnsureClip(AnimationKeys.Pose, LayerPose);
+            if (pose != null && !_animation.IsPlaying(pose))
+            {
+                _animation.Play(pose);
+                _animation[pose].weight = 1f;
+            }
         }
 
         public void PlayIdle()
         {
+            if (_animation == null) return;
             if (_oneShot != null) { StopCoroutine(_oneShot); _oneShot = null; }
+            if (_activeOneShotClip != null) { _animation.Blend(_activeOneShotClip, 0f, 0.25f); _activeOneShotClip = null; }
             IsPlayingOneShot = false;
-            StartClip(AnimationKeys.Idle, 0.25f);
+            EnsureBasePose();
+            var idle = EnsureClip(AnimationKeys.Idle, LayerIdle);
+            if (idle != null)
+            {
+                SetIk(AnimationKeys.Idle);
+                _animation.CrossFade(idle, 0.25f, PlayMode.StopSameLayer);
+            }
+            CurrentKey = AnimationKeys.Idle;
         }
 
         public bool PlayOneShot(string key)
         {
             if (_animation == null || !SimAnimationLibrary.Has(key)) return false;
-            if (EnsureClip(key) == null) return false;
+            if (EnsureClip(key, LayerOneShot) == null) return false;
             if (_oneShot != null) StopCoroutine(_oneShot);
             _oneShot = StartCoroutine(OneShotRoutine(key));
             return true;
         }
 
+        string _activeOneShotClip;
+
         IEnumerator OneShotRoutine(string key)
         {
             IsPlayingOneShot = true;
-            StartClip(key, 0.15f);
+            EnsureBasePose();
             var clipName = _clipNames[key];
-            yield return null;                                   // let the cross-fade register
-            while (_animation != null && _animation.IsPlaying(clipName)) yield return null;
+            _activeOneShotClip = clipName;
+            SetIk(key);
+            CurrentKey = key;
+            _animation[clipName].time = 0f;
+            _animation.CrossFade(clipName, 0.15f, PlayMode.StopSameLayer);
+            yield return null;
+            var state = _animation[clipName];
+            const float fadeOut = 0.3f;
+            while (_animation != null && _animation.IsPlaying(clipName) && state.time < state.length - fadeOut) yield return null;
+            if (_animation != null) _animation.Blend(clipName, 0f, fadeOut);
+            yield return new WaitForSeconds(fadeOut);
+            if (_animation != null) _animation.Stop(clipName);
+            _activeOneShotClip = null;
             IsPlayingOneShot = false;
             _oneShot = null;
+            SetIk(AnimationKeys.Idle);
+            CurrentKey = AnimationKeys.Idle;
             OneShotFinished?.Invoke(key);
-            StartClip(AnimationKeys.Idle, 0.25f);
         }
 
         // ------------------------------------------------------------------------------------------------ pose + placement

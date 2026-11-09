@@ -1,7 +1,7 @@
 {
     "name": "Bedsit.Core",
     "rootNamespace": "Bedsit",
-    "references": [],
+    "references": ["UnityEngine.UI"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

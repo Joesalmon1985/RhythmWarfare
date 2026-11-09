@@ -96,11 +96,61 @@ namespace Bedsit.Sims2
                 new ResourceKey(name, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_CRES));
         }
 
+        /// <summary>
+        /// Loads a bare shape (SHPE) by resource name and renders it as static geometry in Unity space. Used for objects
+        /// whose full CRES uses scenegraph node types OpenTS2 does not implement (e.g. the mirrors' cViewerRefNode).
+        /// </summary>
+        public static GameObject CreateShapeObject(string shapeName)
+        {
+            var shape = ContentManager.Instance.GetAsset<ScenegraphShapeAsset>(
+                new ResourceKey(shapeName, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_SHPE));
+            if (shape == null) return null;
+            var go = OpenTS2.Components.ScenegraphComponent.CreateStandaloneShapeGameObject(shape);
+            return OpenTS2.Components.ScenegraphComponent.WrapInSimsToUnityTransform(go);
+        }
+
+        static readonly Dictionary<string, Material> MaterialCache = new Dictionary<string, Material>();
+
+        /// <summary>A genuine game material (TXMT) by resource name, e.g. "wall_peachdeco_txmt". Null if missing.</summary>
+        public static Material GetMaterial(string txmtName)
+        {
+            if (MaterialCache.TryGetValue(txmtName, out var m)) return m;
+            try
+            {
+                var def = ContentManager.Instance.GetAsset<ScenegraphMaterialDefinitionAsset>(
+                    new ResourceKey(txmtName, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_TXMT));
+                m = def?.GetAsUnityMaterial();
+            }
+            catch (Exception e) { Debug.LogWarning($"[Sims2Runtime] material {txmtName}: {e.Message}"); }
+            if (m == null) Debug.LogWarning($"[Sims2Runtime] missing material {txmtName}");
+            MaterialCache[txmtName] = m;
+            return m;
+        }
+
+        /// <summary>An opaque game-shader material using a genuine game texture (TXTR) by name, e.g. "terrain_lawn_fulltile_txtr".</summary>
+        public static Material GetTextureMaterial(string txtrName)
+        {
+            var key = "txtr:" + txtrName;
+            if (MaterialCache.TryGetValue(key, out var m)) return m;
+            var tex = ContentManager.Instance.GetAsset<ScenegraphTextureAsset>(
+                new ResourceKey(txtrName, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_TXTR));
+            if (tex != null)
+            {
+                m = new Material(Shader.Find("OpenTS2/StandardMaterial/Opaque")) { name = txtrName };
+                m.mainTexture = tex.GetSelectedImageAsUnityTexture();
+            }
+            MaterialCache[key] = m;
+            return m;
+        }
+
         public static ScenegraphAnimationAsset GetAnimation(string name)
         {
             return ContentManager.Instance.GetAsset<ScenegraphAnimationAsset>(
                 new ResourceKey(name, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_ANIM));
         }
+
+        public static string PackageOfAnimation(string name) =>
+            PackageOf(new ResourceKey(name, GroupIDs.Scenegraph, TypeIDs.SCENEGRAPH_ANIM));
 
         /// <summary>Package file name that holds a resource, for provenance records ("Sims00.package").</summary>
         public static string PackageOf(ResourceKey key)

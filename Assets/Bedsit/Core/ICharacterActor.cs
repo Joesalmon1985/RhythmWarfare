@@ -35,6 +35,7 @@ namespace Bedsit
 
     public static class AnimationKeys
     {
+        public const string Pose = "pose";
         public const string Idle = "idle";
         public const string Wave = "wave";
         public const string Greet = "greet";

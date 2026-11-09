@@ -218,6 +218,26 @@ namespace OpenTS2.Components
             }
         }
 
+        /// <summary>
+        /// UnityBedsitPOC addition (MPL-2.0): activates the UNION of the IK chains used by several simultaneously playing
+        /// animations (e.g. the neutral base pose plus an idle overlay), instead of only the chains of one animation.
+        /// </summary>
+        public void AdjustInverseKinematicWeightsForAnimations(params AnimResourceConstBlock[] anims)
+        {
+            var targets = anims.Select(a => a?.AnimTargets.FirstOrDefault(t => t.TagName.ToLower() == "auskel"))
+                .Where(t => t != null).ToList();
+            foreach (var target in targets) AddInverseKinematicsFromAnimation(target);
+
+            foreach (var rigLayer in _appliedIKChains.Values) rigLayer.active = false;
+            foreach (var target in targets)
+            {
+                foreach (var chain in target.IKChains)
+                {
+                    if (_appliedIKChains.TryGetValue(chain.NameCrc, out var rigLayer)) rigLayer.active = true;
+                }
+            }
+        }
+
         private void AddInverseKinematicsFromAnimation(AnimResourceConstBlock.AnimTarget auSkelTarget)
         {
             AddInverseKinematicsFromIKChains(auSkelTarget.IKChains);

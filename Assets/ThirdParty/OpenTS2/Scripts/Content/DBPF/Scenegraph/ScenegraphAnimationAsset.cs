@@ -17,7 +17,22 @@ namespace OpenTS2.Content.DBPF.Scenegraph
             AnimResource = animResource;
         }
 
+        /// <summary>
+        /// UnityBedsitPOC addition (MPL-2.0): when &gt; 0, every single-keyframe curve is held for this many seconds by
+        /// appending a second, identical key. Needed for one-frame pose clips (e.g. "a-pose-neutral-stand"), because a
+        /// zero-length legacy AnimationClip is not evaluated by Unity's Animation component.
+        /// </summary>
+        private static float _minimumClipDuration;
+
         public AnimationClip CreateClipFromResource(Dictionary<string, string> bonesToRelativePaths,
+            Dictionary<string, List<string>> blendsToRelativePaths, float minimumDuration = 0f)
+        {
+            _minimumClipDuration = minimumDuration;
+            try { return CreateClipFromResourceInternal(bonesToRelativePaths, blendsToRelativePaths); }
+            finally { _minimumClipDuration = 0f; }
+        }
+
+        private AnimationClip CreateClipFromResourceInternal(Dictionary<string, string> bonesToRelativePaths,
             Dictionary<string, List<string>> blendsToRelativePaths)
         {
             var clip = new AnimationClip();
@@ -196,6 +211,12 @@ namespace OpenTS2.Content.DBPF.Scenegraph
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            }
+
+            if (_minimumClipDuration > 0f && unityKeyframes.Length == 1)
+            {
+                var held = unityKeyframes[0];
+                return new[] { held, new Keyframe(_minimumClipDuration, held.value, 0f, 0f) };
             }
 
             return unityKeyframes;

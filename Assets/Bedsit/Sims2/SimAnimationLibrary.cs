@@ -29,6 +29,8 @@ namespace Bedsit.Sims2
 
         public static readonly Dictionary<string, Def> Definitions = new Dictionary<string, Def>
         {
+            [AnimationKeys.Pose] = new Def { Key = AnimationKeys.Pose, Loop = true, Note = "neutral standing pose (base layer every other animation is applied over)",
+                Candidates = new[] { "a-pose-neutral-stand_anim" } },
             [AnimationKeys.Idle] = new Def { Key = AnimationKeys.Idle, Loop = true, Note = "standing idle, weight centred, breathing",
                 Candidates = new[] { "a-idle-neutral-armsSide-wtC-breatheLoop_anim", "a-pose-neutral-stand_anim" } },
             [AnimationKeys.Wave] = new Def { Key = AnimationKeys.Wave, Note = "friendly wave, full body",
