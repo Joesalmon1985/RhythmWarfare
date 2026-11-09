@@ -46,7 +46,11 @@ namespace Bedsit.Game
 
         public readonly List<string> Log = new List<string>();
 
-        void Awake() => Instance = this;
+        void Awake()
+        {
+            Instance = this;
+            if (EvidenceRunner.Requested) gameObject.AddComponent<EvidenceRunner>();
+        }
         void OnDestroy() { if (Instance == this) Instance = null; }
 
         IEnumerator Start()
@@ -179,13 +183,13 @@ namespace Bedsit.Game
         {
             float h = BedsitWorldBuilder.HalfW, d = BedsitWorldBuilder.HalfD;
             DoorTarget = MakeTarget("door", ZoneBedsit, CompassDirection.North, new Vector3(0f, 2.05f, d - 0.25f));
-            EastTarget = MakeTarget("window_east", ZoneBedsit, CompassDirection.East, new Vector3(h - 0.35f, 1.35f, 0.5f));
-            MirrorTarget = MakeTarget("mirror", ZoneBedsit, CompassDirection.South, new Vector3(0f, 1.5f, -d + 0.5f));
-            WestTarget = MakeTarget("window_west", ZoneBedsit, CompassDirection.West, new Vector3(-h + 0.35f, 1.35f, -0.25f));
+            EastTarget = MakeTarget("window_east", ZoneBedsit, CompassDirection.East, new Vector3(h - 0.45f, 2.42f, 0.5f));
+            MirrorTarget = MakeTarget("mirror", ZoneBedsit, CompassDirection.South, new Vector3(0f, 2.58f, -d + 0.6f));
+            WestTarget = MakeTarget("window_west", ZoneBedsit, CompassDirection.West, new Vector3(-h + 0.45f, 2.42f, -0.25f));
             CorridorNpcTarget = MakeTarget("corridor_npc", ZoneCorridor, CompassDirection.North,
-                World.CorridorNpcSpot + new Vector3(0f, 2.15f, 0f));
+                World.CorridorNpcSpot + new Vector3(0f, 2.25f, 0f));
             CorridorBackTarget = MakeTarget("back_to_bedsit", ZoneCorridor, CompassDirection.South,
-                new Vector3(0f, 2.05f, BedsitWorldBuilder.CorridorInnerZ0 + 0.3f));
+                new Vector3(0f, 2.3f, BedsitWorldBuilder.CorridorInnerZ0 + 0.35f));
 
             DoorTarget.Interacted += _ => EnterCorridor();
             EastTarget.Interacted += _ => React(NpcEast, AnimationKeys.Wave, "east window: NPC waves");
@@ -273,7 +277,7 @@ namespace Bedsit.Game
             Zones.EnterZoneImmediate(ZoneBedsit, CompassDirection.West);
             Rig.position = World.BedPillowEye;
             View.YawPivot.rotation = Quaternion.Euler(0f, 270f, 0f);
-            View.SetPitch(-72f);
+            View.SetPitch(-66f);
             Hud.SetFade(1f);
             Input.Locked = true;
             yield return new WaitForSeconds(0.8f);                          // 1. screen begins dark
@@ -288,7 +292,7 @@ namespace Bedsit.Game
                 float k = Mathf.SmoothStep(0f, 1f, t / dur);
                 float lift = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.6f)));      // sit up first, then move out
                 Rig.position = new Vector3(Mathf.Lerp(from.x, to.x, k), Mathf.Lerp(from.y, to.y, lift), Mathf.Lerp(from.z, to.z, k));
-                View.SetPitch(Mathf.Lerp(-72f, 0f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.85f)))));
+                View.SetPitch(Mathf.Lerp(-66f, 0f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.85f)))));
                 View.YawPivot.rotation = Quaternion.Euler(0f, Mathf.Lerp(270f, 360f, k), 0f);
                 yield return null;
             }

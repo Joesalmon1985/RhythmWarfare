@@ -78,14 +78,14 @@ namespace Bedsit.Sims2
             BuildLights(c);
 
             world.BedsitStandpoint = new Vector3(0f, EyeHeight, 0f);
-            world.CorridorStandpoint = new Vector3(0f, EyeHeight, CorridorInnerZ0 + CorridorWidth * 0.5f);
+            world.CorridorStandpoint = new Vector3(0f, EyeHeight, CorridorInnerZ0 + 0.68f);
             world.DoorwayPoint = new Vector3(0f, 0f, HalfD + WallT);
-            world.BedPillowEye = new Vector3(HalfW - 0.45f, 0.62f, -1.25f);
-            world.CorridorNpcSpot = new Vector3(0.45f, 0f, CorridorInnerZ0 + CorridorWidth - 0.55f);
+            world.BedPillowEye = new Vector3(HalfW - 0.7f, 0.86f, -1.25f);
+            world.CorridorNpcSpot = new Vector3(-0.25f, 0f, CorridorInnerZ0 + CorridorWidth - 0.42f);
             world.CorridorNpcLookAt = new Vector3(0f, 0f, 0f);
-            world.EastNpcSpot = new Vector3(HalfW + 3.4f, 0f, 0.55f);
-            world.EastNpcLookAt = new Vector3(0f, 0f, 0.55f);
-            world.WestNpcSpot = new Vector3(-HalfW - 3.2f, 0f, -0.25f);
+            world.EastNpcSpot = new Vector3(HalfW + WallT + 1.55f, 0f, 0.5f);
+            world.EastNpcLookAt = new Vector3(0f, 0f, 0.5f);
+            world.WestNpcSpot = new Vector3(-HalfW - WallT - 1.55f, 0f, -0.25f);
             world.WestNpcLookAt = new Vector3(0f, 0f, -0.25f);
             return world;
         }
@@ -175,14 +175,16 @@ namespace Bedsit.Sims2
             // northern door: wall plane at z = zwall, interior (bedsit) side is south => the object's front faces south
             var door = Place(c, DoorModel, new Vector3(0f, 0, zwall), Vector3.back, 0.5f);
             var simDoor = door.AddComponent<SimDoor>();
-            if (!simDoor.Setup(door, "o-door-open-CCW_anim")) Debug.LogWarning("[BedsitWorldBuilder] door animation not available");
+            simDoor.AjarNormalizedTime = 0.8f;
+            if (!simDoor.Setup(door, "o-door-open-CW_anim")) Debug.LogWarning("[BedsitWorldBuilder] door animation not available");
             c.World.Door = simDoor;
-            c.World.Report.Add($"door: {DoorModel} animated with o-door-open-CCW_anim from {Sims2Runtime.PackageOfAnimation("o-door-open-CCW_anim")}");
+            c.World.Report.Add($"door: {DoorModel} animated with o-door-open-CW_anim from {Sims2Runtime.PackageOfAnimation("o-door-open-CW_anim")}");
 
             // windows (front faces into the room)
             float wall = HalfW + WallT * 0.5f;
-            Place(c, WindowModel, new Vector3(wall, 0, 0.5f), Vector3.left, 0.5f);
-            Place(c, WindowModel, new Vector3(-wall, 0, -0.25f), Vector3.right, 0.5f);
+            var w1 = Place(c, WindowModel, new Vector3(wall, 0, 0.5f), Vector3.left, 0.5f);
+            var w2 = Place(c, WindowModel, new Vector3(-wall, 0, -0.25f), Vector3.right, 0.5f);
+            ThinGlass(w1); ThinGlass(w2);
             c.World.Report.Add($"windows: {WindowModel} x2");
 
             // a second door on the corridor's far wall + a plant for scenery
@@ -191,6 +193,20 @@ namespace Bedsit.Sims2
             Place(c, "doorWalnut_cres", new Vector3(2.7f, 0, zc + WallT * 0.5f), Vector3.back, 0.5f);
             PlaceFree(c, "plantFicus_cres", new Vector3(-3.5f, 0, zc - 0.5f), 0f);
             Place(c, "paintingHorizontalCity_cres", new Vector3(-1.1f, 0, zc + WallT * 0.5f), Vector3.back, 0.5f, 0.0f);
+        }
+
+        /// <summary>The game's window glass is fairly milky; thin its alpha a little so the NPCs outside read clearly.
+        /// (Uses private material copies, so the shared game material is untouched.)</summary>
+        static void ThinGlass(GameObject window)
+        {
+            if (window == null) return;
+            foreach (var r in window.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!r.name.ToLowerInvariant().Contains("glass")) continue;
+                var m = new Material(r.sharedMaterial);
+                if (m.HasProperty("_AlphaMultiplier")) m.SetFloat("_AlphaMultiplier", m.GetFloat("_AlphaMultiplier") * 0.35f);
+                r.sharedMaterial = m;
+            }
         }
 
         // ================================================================================================================ mirror
@@ -235,6 +251,7 @@ namespace Bedsit.Sims2
                 for (int i = 0; i < 6; i++)
                 {
                     float z = -2.0f + i * 0.85f + (float)rng.NextDouble() * 0.3f;
+                    if (z > -1.0f && z < 1.6f) continue;                 // keep the window sightlines clear
                     PlaceFree(c, "shrub4_cres", new Vector3(x0 + side * (float)rng.NextDouble() * 0.2f, -0.02f, z), (float)rng.NextDouble() * 360f);
                 }
                 for (int i = 0; i < 5; i++)
@@ -259,7 +276,7 @@ namespace Bedsit.Sims2
             sun.transform.SetParent(c.Root, false);
             sun.type = LightType.Directional;
             sun.color = new Color(1f, 0.95f, 0.84f);
-            sun.intensity = 1.15f;
+            sun.intensity = 0.95f;
             sun.shadows = LightShadows.Soft;
             sun.transform.rotation = Quaternion.Euler(38f, 78f, 0f);     // from the west, low: reaches the west window and the floor
             c.World.Sun = sun;
@@ -269,9 +286,9 @@ namespace Bedsit.Sims2
             room.type = LightType.Point;
             room.color = new Color(1f, 0.86f, 0.68f);
             room.range = 7f;
-            room.intensity = 0.9f;
+            room.intensity = 1.05f;
             room.shadows = LightShadows.None;
-            room.transform.position = new Vector3(0f, Height - 0.35f, 0f);
+            room.transform.position = new Vector3(0f, Height - 0.7f, 0f);
             c.World.RoomLight = room;
 
             var corr = new GameObject("CorridorLight").AddComponent<Light>();
@@ -281,7 +298,7 @@ namespace Bedsit.Sims2
             corr.range = 7f;
             corr.intensity = 1.0f;
             corr.shadows = LightShadows.None;
-            corr.transform.position = new Vector3(0f, Height - 0.4f, CorridorInnerZ0 + CorridorWidth * 0.5f);
+            corr.transform.position = new Vector3(0f, Height - 0.7f, CorridorInnerZ0 + CorridorWidth * 0.5f);
             c.World.CorridorLight = corr;
 
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;

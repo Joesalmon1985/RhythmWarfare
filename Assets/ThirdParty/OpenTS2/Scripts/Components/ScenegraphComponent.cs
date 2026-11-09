@@ -447,6 +447,14 @@ namespace OpenTS2.Components
                         continue;
                     }
 
+                    // UnityBedsitPOC: a subset can name a material resource that does not exist (seen on some CAS head
+                    // resources). Skip that sub-mesh with a warning rather than aborting the whole graph.
+                    if (material == null)
+                    {
+                        Debug.LogWarning($"Scenegraph subset '{primitive.Key}' has no material; skipping it");
+                        continue;
+                    }
+
                     GameObject primitiveObject;
                     // Make a SkinnedMeshRenderer or a regular renderer depending on if we have blend shapes or bones.
                     if (allowSkinning && primitive.Value.NeedsSkinnedRenderer)

@@ -126,23 +126,37 @@ namespace OpenTS2.Content.DBPF.Scenegraph
                 var curveY = new AnimationCurve(yFrames);
                 var curveZ = new AnimationCurve(zFrames);
 
-                var quatX = new Keyframe[xFrames.Length];
-                var quatY = new Keyframe[xFrames.Length];
-                var quatZ = new Keyframe[xFrames.Length];
-                var quatW = new Keyframe[xFrames.Length];
+                // UnityBedsitPOC fix (MPL-2.0): the three euler components can have different key counts/times (e.g. a
+                // door hinge: X and Y constant, only Z animated). Build the quaternion keys on the UNION of all key times
+                // (the original used only the X component's keys, dropping rotations animated on Y or Z alone), and keep
+                // consecutive quaternions in the same hemisphere so interpolation takes the short way round.
+                var times = new SortedSet<float>();
+                foreach (var k in xFrames) times.Add(k.time);
+                foreach (var k in yFrames) times.Add(k.time);
+                foreach (var k in zFrames) times.Add(k.time);
+
+                var quatX = new Keyframe[times.Count];
+                var quatY = new Keyframe[times.Count];
+                var quatZ = new Keyframe[times.Count];
+                var quatW = new Keyframe[times.Count];
 
                 // Convert from xyz euler rotations to quaternions.
-                for (var i = 0; i < curveX.keys.Length; i++)
+                var previous = Quaternion.identity;
+                var index = 0;
+                foreach (var t in times)
                 {
-                    var xFrame = curveX.keys[i];
-                    var t = xFrame.time;
-                    var (y, z) = (curveY.Evaluate(t), curveZ.Evaluate(t));
-                    var quat = QuaternionSerializer.FromSims2EulerRotationDegrees(xFrame.value, y, z);
+                    var quat = QuaternionSerializer.FromSims2EulerRotationDegrees(curveX.Evaluate(t), curveY.Evaluate(t), curveZ.Evaluate(t));
+                    if (index > 0 && Quaternion.Dot(previous, quat) < 0f)
+                    {
+                        quat = new Quaternion(-quat.x, -quat.y, -quat.z, -quat.w);
+                    }
+                    previous = quat;
 
-                    quatX[i] = new Keyframe(t, quat.x);
-                    quatY[i] = new Keyframe(t, quat.y);
-                    quatZ[i] = new Keyframe(t, quat.z);
-                    quatW[i] = new Keyframe(t, quat.w);
+                    quatX[index] = new Keyframe(t, quat.x);
+                    quatY[index] = new Keyframe(t, quat.y);
+                    quatZ[index] = new Keyframe(t, quat.z);
+                    quatW[index] = new Keyframe(t, quat.w);
+                    index++;
                 }
 
                 curveX = new AnimationCurve(quatX);

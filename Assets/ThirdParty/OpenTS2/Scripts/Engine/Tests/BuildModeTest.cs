@@ -20,7 +20,6 @@ using OpenTS2.UI.Layouts;
 using System.Linq;
 using OpenTS2.Engine;
 using OpenTS2.UI.Layouts.Lot;
-using UnityEditor.SearchService;
 using OpenTS2.Engine.Modes.Build.Tools;
 
 /// <summary>
