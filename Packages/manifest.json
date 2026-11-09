@@ -24,6 +24,7 @@
     "com.unity.modules.unitywebrequestassetbundle": "1.0.0",
     "com.unity.modules.unitywebrequesttexture": "1.0.0",
     "com.unity.modules.video": "1.0.0",
-    "com.unity.modules.vr": "1.0.0"
+    "com.unity.modules.vr": "1.0.0",
+    "com.unity.pipeline": "0.10.0-exp.1"
   }
 }

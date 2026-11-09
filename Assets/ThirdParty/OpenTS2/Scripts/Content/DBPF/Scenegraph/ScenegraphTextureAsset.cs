@@ -191,11 +191,34 @@ namespace OpenTS2.Content.DBPF.Scenegraph
                 }
             }
 
+            // UnityBedsitPOC patch (MPL-2.0): Unity 6 refuses to create a compressed Texture2D whose size is not a
+            // multiple of 4, which is what the tiny 2x2 / 1x1 mip levels of DXT3 textures are. Decode those through a
+            // padded 4x4 block and flatten to the block's average colour/alpha (never visible at that mip size).
+            if (width % 4 != 0 || height % 4 != 0)
+            {
+                var padded = new Texture2D(4, 4, TextureFormat.DXT5, mipChain: false);
+                padded.SetPixelData(data, mipLevel: 0);
+                padded.Apply();
+                var block = padded.GetPixels();
+                UnityEngine.Object.Destroy(padded);
+                float r = 0, g = 0, b = 0, a = 0;
+                foreach (var c in block) { r += c.r; g += c.g; b += c.b; }
+                for (var i = 0; i < 16; i++) a += alphaValues[i] / (float)0xF;
+                var avg = new Color32((byte)(r / 16f * 255f), (byte)(g / 16f * 255f), (byte)(b / 16f * 255f), (byte)(a / 16f * 255f));
+                var tiny = new byte[width * height * 4];
+                for (var i = 0; i < width * height; i++)
+                {
+                    tiny[i * 4] = avg.r; tiny[i * 4 + 1] = avg.g; tiny[i * 4 + 2] = avg.b; tiny[i * 4 + 3] = avg.a;
+                }
+                return tiny;
+            }
+
             var asTexture = new Texture2D(width, height, TextureFormat.DXT5, mipChain: false);
             asTexture.SetPixelData(data, mipLevel: 0);
             asTexture.Apply();
 
             var pixels = asTexture.GetPixels();
+            UnityEngine.Object.Destroy(asTexture);
             for (var i = 0; i < pixels.Length; i++)
             {
                 pixels[i].a = alphaValues[i] / (float)0xF;
@@ -204,7 +227,9 @@ namespace OpenTS2.Content.DBPF.Scenegraph
             var asRgbaTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
             asRgbaTexture.SetPixels(pixels);
             asRgbaTexture.Apply();
-            return asRgbaTexture.GetRawTextureData();
+            var raw = asRgbaTexture.GetRawTextureData();
+            UnityEngine.Object.Destroy(asRgbaTexture);
+            return raw;
         }
     }
 }

@@ -522,6 +522,42 @@ namespace OpenTS2.Components
         }
 
         /// <summary>
+        /// UnityBedsitPOC addition (MPL-2.0, same licence as this file): renders a standalone shape (a clothing/hair
+        /// SHPE from a CAS outfit) as SKINNED meshes bound to THIS component's skeleton, exactly as a shape that is part
+        /// of the component's own composition tree would be. Unlike <see cref="CreateStandaloneShapeGameObject"/> +
+        /// <see cref="TryAttachPart"/> (rigid geometry parented to one bone), the result deforms with the skeleton, so
+        /// original animations can pose a dressed Sim. Returns the created renderer objects (parented under
+        /// <paramref name="parent"/>).
+        /// </summary>
+        public List<GameObject> AddSkinnedShape(ScenegraphShapeAsset shape,
+            Dictionary<string, ScenegraphMaterialDefinitionAsset> materialOverridesBySubset, Transform parent)
+        {
+            var previousOverrides = _materialOverridesBySubset;
+            if (materialOverridesBySubset != null)
+            {
+                _materialOverridesBySubset = materialOverridesBySubset;
+            }
+
+            var created = new List<GameObject>();
+            try
+            {
+                foreach (var primitiveObject in RenderShapePrimitives(shape, allowSkinning: true))
+                {
+                    primitiveObject.transform.SetParent(parent, worldPositionStays: false);
+                    created.Add(primitiveObject);
+                }
+            }
+            finally
+            {
+                _materialOverridesBySubset = previousOverrides;
+            }
+
+            BindBonesInMeshes();
+            GetComponent<AssetReferenceComponent>()?.AddReference(shape);
+            return created;
+        }
+
+        /// <summary>
         /// Grafts <paramref name="objects"/> onto this component's own bone tagged <paramref name="tag"/>,
         /// replacing whatever was already attached there (if anything) - see BoneNamesToAttachedObjects.
         /// This is a simplification of the real engine's AddSkin, which merges/accumulates onto the

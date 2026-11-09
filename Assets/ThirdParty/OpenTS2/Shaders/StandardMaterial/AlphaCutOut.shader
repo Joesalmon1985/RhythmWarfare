@@ -25,7 +25,7 @@ Shader "OpenTS2/StandardMaterial/AlphaCutOut"
         CGPROGRAM
         #pragma surface surf Lambert addshadow fullforwardshadows alphatest:_AlphaCutOff
 
-        #include "Assets/Shaders/StandardMaterial/shader_body.cginc"
+        #include "Assets/ThirdParty/OpenTS2/Shaders/StandardMaterial/shader_body.cginc"
 
         ENDCG
     }

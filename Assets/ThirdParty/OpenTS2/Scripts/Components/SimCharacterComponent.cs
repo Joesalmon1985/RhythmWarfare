@@ -59,6 +59,33 @@ namespace OpenTS2.Components
             return simsComponent;
         }
 
+        /// <summary>
+        /// UnityBedsitPOC addition (MPL-2.0, same licence as this file): wraps an outfit built by
+        /// <see cref="CreatePersonOutfit"/> in a SimCharacterComponent and sets up the animation/IK rig on the outfit's
+        /// own "auskel" skeleton so original Sims 2 animations can drive a fully dressed premade Sim.
+        /// Returns null if the outfit has no skeleton.
+        /// </summary>
+        public static SimCharacterComponent CreateAnimatedFromOutfit(GameObject outfit)
+        {
+            if (outfit == null) return null;
+            ScenegraphComponent skeletonScene = null;
+            foreach (var sc in outfit.GetComponentsInChildren<ScenegraphComponent>(true))
+            {
+                var bones = sc.BoneNamesToTransform;
+                if (bones.ContainsKey("auskel") && bones.ContainsKey("root_trans") &&
+                    bones.ContainsKey("l_handcontrol0") && bones.ContainsKey("r_handcontrol0") &&
+                    bones.ContainsKey("l_foot_ikctr") && bones.ContainsKey("r_foot_ikctr"))
+                { skeletonScene = sc; break; }
+            }
+            if (skeletonScene == null) return null;
+
+            var simCharacterObject = new GameObject("sim_character", typeof(SimCharacterComponent));
+            outfit.transform.SetParent(simCharacterObject.transform, worldPositionStays: false);
+            var simsComponent = simCharacterObject.GetComponent<SimCharacterComponent>();
+            simsComponent.SetupAnimationRig(skeletonScene);
+            return simsComponent;
+        }
+
         public ScenegraphComponent Scenegraph { get; private set; }
 
         /// <summary>
@@ -88,7 +115,7 @@ namespace OpenTS2.Components
             Scenegraph = scene;
             var skeleton = Scenegraph.BoneNamesToTransform["auskel"].gameObject;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && OPENTS2_BONE_DEBUG
             // Add a bone-renderer so we can visualize the sim's bones.
             var boneRenderer = skeleton.AddComponent<BoneRenderer>();
             var boneTransforms = new List<Transform>();
@@ -134,7 +161,7 @@ namespace OpenTS2.Components
 
         private void AddGizmosAroundInverseKinmaticsPositions()
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR && OPENTS2_BONE_DEBUG
             // Add some effectors around the foot control points to see what animations should look like.
             var cubePrimitive = GameObject.CreatePrimitive(PrimitiveType.Cube);
             var cubeMesh = cubePrimitive.GetComponent<MeshFilter>().sharedMesh;
@@ -356,7 +383,7 @@ namespace OpenTS2.Components
         /// rather than being dropped - not correctly posed, but visible.
         /// </summary>
         public static GameObject CreatePersonOutfit(string neighborhoodPrefix, uint userInstanceId,
-            ResourceKey lotObjectGlobalTgi)
+            ResourceKey lotObjectGlobalTgi, bool skinnedParts = false)
         {
             var charactersFolderPath = Path.Combine(Filesystem.UserDataDirectory, $"Neighborhoods/{neighborhoodPrefix}/Characters");
             var characterFullPath = Path.Combine(charactersFolderPath, $"{neighborhoodPrefix}_User{userInstanceId:D5}.package");
@@ -383,6 +410,8 @@ namespace OpenTS2.Components
 
             var partObjects = new List<GameObject>();
             ScenegraphComponent[] skeletonComponents = null;
+            ScenegraphComponent rigScene = null;
+            var deferredShapes = new List<(ScenegraphShapeAsset, Dictionary<string, ScenegraphMaterialDefinitionAsset>)>();
 
             // Body first, since it's what provides the skeleton other parts attach onto.
             var categoriesInAttachmentOrder = appearance.EntryLists
@@ -406,6 +435,19 @@ namespace OpenTS2.Components
                         part = ApplySkinComposite(characterPackage, part.Value, skinMaterial, neighborhoodPrefix, userInstanceId);
                     }
 
+                    // UnityBedsitPOC: bind clothing/hair shapes to the Sim's skeleton as skinned meshes (animatable).
+                    // The rig can live in any CRES part (Body or Face), so shapes seen before it is found are deferred.
+                    if (skinnedParts && part.Value.Key.TypeID == TypeIDs.SCENEGRAPH_SHPE)
+                    {
+                        var skinShape = GetCharacterAsset<ScenegraphShapeAsset>(characterPackage, part.Value.Key);
+                        if (skinShape != null)
+                        {
+                            if (rigScene != null) rigScene.AddSkinnedShape(skinShape, part.Value.MaterialOverridesBySubset, rigScene.transform);
+                            else deferredShapes.Add((skinShape, part.Value.MaterialOverridesBySubset));
+                            continue;
+                        }
+                    }
+
                     var partObject = LoadOutfitPartGameObject(characterPackage, part.Value);
                     if (partObject == null)
                     {
@@ -418,6 +460,18 @@ namespace OpenTS2.Components
                     // and tags can live on any of them, not just the top-level one, so bone-attachment
                     // considers the whole subtree.
                     var partComponents = partObject.GetComponentsInChildren<ScenegraphComponent>(true);
+                    if (skinnedParts && rigScene == null)
+                    {
+                        rigScene = System.Array.Find(partComponents, sc => sc.BoneNamesToTransform.ContainsKey("auskel") &&
+                            sc.BoneNamesToTransform.ContainsKey("l_handcontrol0") && sc.BoneNamesToTransform.ContainsKey("r_handcontrol0") &&
+                            sc.BoneNamesToTransform.ContainsKey("root_trans") && sc.BoneNamesToTransform.ContainsKey("l_foot_ikctr"));
+                        if (rigScene != null)
+                        {
+                            foreach (var (deferredShape, deferredOverrides) in deferredShapes)
+                                rigScene.AddSkinnedShape(deferredShape, deferredOverrides, rigScene.transform);
+                            deferredShapes.Clear();
+                        }
+                    }
                     if (skeletonComponents == null && category == OutfitCategory.Body)
                     {
                         skeletonComponents = partComponents;
@@ -433,6 +487,11 @@ namespace OpenTS2.Components
 
                     partObjects.Add(partObject);
                 }
+            }
+
+            foreach (var (leftoverShape, leftoverOverrides) in deferredShapes)
+            {
+                partObjects.Add(ScenegraphComponent.CreateStandaloneShapeGameObject(leftoverShape, leftoverOverrides));
             }
 
             if (partObjects.Count == 0)

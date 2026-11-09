@@ -39,7 +39,7 @@ Shader "OpenTS2/DirtTerrain"
             // make fog work
             #pragma multi_compile_fog
 
-            #include "Assets/Shaders/opents2_common.cginc"
+            #include "Assets/ThirdParty/OpenTS2/Shaders/opents2_common.cginc"
             #include "UnityCG.cginc"
             #include "opents2_terrain_common.cginc"
 

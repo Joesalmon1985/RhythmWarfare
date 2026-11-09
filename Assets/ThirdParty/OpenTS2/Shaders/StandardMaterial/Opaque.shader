@@ -22,7 +22,7 @@ Shader "OpenTS2/StandardMaterial/Opaque"
         CGPROGRAM
         #pragma surface surf Lambert fullforwardshadows
 
-        #include "Assets/Shaders/StandardMaterial/shader_body.cginc"
+        #include "Assets/ThirdParty/OpenTS2/Shaders/StandardMaterial/shader_body.cginc"
 
         ENDCG
     }

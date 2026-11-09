@@ -33,3 +33,6 @@ crashlytics-build.gradle
 *.dbpf
 # Screenshots of the game contain EA assets: keep local; only curated evidence is committed explicitly
 /Evidence/raw/
+
+# Screenshots contain EA assets - keep local
+/Evidence/screenshots/

@@ -20,7 +20,7 @@ Shader "OpenTS2/Road"
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
-        #include "Assets/Shaders/opents2_common.cginc"
+        #include "Assets/ThirdParty/OpenTS2/Shaders/opents2_common.cginc"
 
         sampler2D _MainTex;
 

@@ -19,7 +19,7 @@ Shader "OpenTS2/StandardMaterial/AlphaBlended"
         CGPROGRAM
         #pragma surface surf Lambert fullforwardshadows alpha:blend
 
-        #include "Assets/Shaders/StandardMaterial/shader_body.cginc"
+        #include "Assets/ThirdParty/OpenTS2/Shaders/StandardMaterial/shader_body.cginc"
 
         ENDCG
     }
