@@ -27,23 +27,19 @@ Reuse the **architecture and data**, not the C#.
 ## Option B: move RW's bedsit to Unity
 Reasonable only if the Sims 2 look is the goal. Cost drivers, in order: (1) **desktop-only content** (below); (2) rewriting the content
 pipeline (RW's JSON maps/hotspots would need Unity importers); (3) losing RW's 82k-check headless suite and Android flow.
-Do not do this before the sprite-baking route (next) is proven.
+The baked-content route (below) now makes it technically possible.
 
-## Making the Sims 2 look available to Android / to the Godot games
-Runtime reading of a Sims 2 install is impossible on a phone and legally awkward to ship. The path that works for both engines:
-1. In this Unity project, **bake each Sim x animation x 8 directions into sprite sheets** at build time on the developer's machine (see
-   `SPRITE_BAKING.md`); likewise bake the room into a few static Unity meshes/textures (or just camera-facing sprites per compass view,
-   which is exactly RW's decal/billboard model: four fixed views, so each wall can be a pre-rendered image + hotspots).
-2. Ship the baked output only to people who own the game / for personal use; **it still derives from EA assets**, so keep it out of public
-   repositories (the repo already excludes it).
-3. RW's `story_crowd.gd` (state -> row, with fallbacks) and DMB's `character_look.gd` (look as a pure function of a stable id) already
-   fit sprite sheets: map `wave`/`clap`/`idle` to rows and choose the Sim by hashing the id.
+## Making the Sims 2 look available on a phone (decided: keep it 3D)
+The owner chose to keep the characters and room as real 3D objects, not sprites. Reading a Sims 2 install at run time is impossible on a phone,
+so the Unity project **bakes** the room and the Sims locally into ordinary Unity assets (meshes, ASTC textures, pre-sampled animation clips;
+see `BAKING.md`). That is done and works on Windows (verified) and builds for Android (not yet run on a device).
+Keep the baked output private: it derives from EA assets. For the Godot games the same baked meshes/clips could be exported (glTF) if a
+3D Sims look is wanted there, but that is a separate piece of work.
 
 ## Concrete next steps (in order)
 1. Decide Option A vs B with the owner (this is the one real fork).
-2. Finish the sprite baker (8 directions, cropped, trimmed, atlas + JSON contract with a validator and fixture, RW style).
-3. Replace the 3D Sims in the four views with baked billboards; keep the real mirror (it needs a live character) or fake it with a pre-baked
-   animation loop mirrored horizontally.
+2. Run the APK on a real phone; measure fps, memory and shader cost; if needed swap baked materials to a cheap mobile shader and lower the mirror cost.
+3. (Optional) export baked meshes/clips for Godot if the 3D Sims look is wanted there.
 4. Add an `InteractionTarget` state machine (idle/available/selected/committed) and art-bounds touch rects (>= 88 px at 1280x720) to match RW.
 5. Add the data layer: one JSON per room (zones, standpoints, targets, NPC cast ids) with a pure validator and tests, mirroring RW's `contract_shapes`.
 6. Phone pass: Android build with baked content, touch regions, 20:9 aspect, thermal/perf, and an honest "verified on device" table.

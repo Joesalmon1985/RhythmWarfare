@@ -17,10 +17,10 @@ visual and interaction architecture of RhythmWarfare and DuelMasterBattle. It do
 | Furnished first-person bedsit, four compass views, one coherent 3D world | yes | `Evidence/screenshots/` (local) |
 | Real planar mirror; player body visible **only** there | yes, test-verified at pixel level | `Docs/TEST_RESULTS.md` |
 | Door opens with the original Sims 2 door animation; first-person walk to the corridor at constant eye height | yes | tests + evidence log |
-| 23 Play Mode tests | **23 / 23 pass** | `Docs/TEST_RESULTS.md` |
-| Windows executable | built and run standalone, full flow verified | `Builds/Windows/` (local), `Evidence/evidence_log_windows_exe.txt` |
-| Android APK | see `Docs/ANDROID.md` (honest status there) | |
-| Directional sprite baking of Sims 2 characters | investigated + prototype, not finished | `Docs/SPRITE_BAKING.md` |
+| 37 Play Mode tests (23 live content + 14 baked-content parity) | **37 / 37 pass** | `Docs/TEST_RESULTS.md` |
+| Windows executable | built, **self-contained** (baked content, no Sims 2 install needed), run standalone, full flow verified | `Builds/Windows/` (local), `Evidence/evidence_log_windows_exe.txt` |
+| Android APK | **built** (35.9 MB, arm64, baked 3D content inside); **not run on a phone** (none connected) | `Docs/ANDROID.md` |
+| Characters / room | real 3D (decision: no sprites); converted locally to ordinary Unity assets for phones | `Docs/BAKING.md` |
 | Played on a phone / by a person with a real mouse | **NOT verified** (machine-verified only) | |
 
 ## Controls (exactly three)
@@ -47,15 +47,23 @@ In the corridor: north = the Sim who greeted you (waves back), south = the doorw
 
 ## Running it
 
-Prerequisite: your own copy of **The Sims 2** (developed against the Legacy Collection, `game/Base`, `EP1..EP9`, `SP1..SP8`).
-No EA content is in this repository or in any build.
+Two ways to run, same game:
+
+* **Baked (no Sims 2 needed at run time)**: Windows exe / Android APK built from `Assets/LocalBaked` (see `Docs/BAKING.md`).
+  Those assets are created on a machine that owns Sims 2 and are EA-derived: keep them private, never commit them.
+* **Live (desktop, reads your own Sims 2 install)**: steps below. This is also how the baker gets its data.
+
+Prerequisite for live/baking: your own copy of **The Sims 2** (developed against the Legacy Collection, `game/Base`, `EP1..EP9`, `SP1..SP8`).
+No EA content is in this repository.
 
 1. `copy config.example.json config.json` and set `game_dir` (the `game` folder containing `Base/`, `EP1/`...) and
    `user_dir` (any writable folder; see step 2).
 2. Premade Sims are read from `<user_dir>/Neighborhoods/N001/Characters/`. Copy the game's own
    `game/Base/TSData/Res/UserData/Neighborhoods/N001/Characters` folder there (that is what `LocalData/` is: git-ignored).
-3. Windows build: run `Builds/Windows/UnityBedsitPOC.exe` (reads `config.json` beside it).
-   Editor: open the project with Unity **6000.3.28f1**, open `Assets/Scenes/Bedsit.unity`, press Play.
+3. Editor: open the project with Unity **6000.3.28f1**, open `Assets/Scenes/Bedsit.unity`, press Play (live content).
+   To create the phone/standalone assets: with the game playing, menu `Bedsit/Bake/Bake live content to local assets (Play mode)`;
+   then `Bedsit/Build/Windows Player` or `Bedsit/Build/Android APK`.
+   Windows build: run `Builds/Windows/UnityBedsitPOC.exe`; it uses baked content unless a `config.json` sits beside it.
 4. Evidence mode (records screenshots of the whole flow through the real input path):
    `UnityBedsitPOC.exe -evidence -quit` (or `BEDSIT_EVIDENCE=1`). Output in `Evidence/` next to the exe.
 
@@ -73,14 +81,15 @@ Assets/Bedsit/Core     (engine-agnostic gameplay + view logic; no Sims 2 / OpenT
                              player layer rendered only by the mirror camera
   ICharacterActor            logical-key animation interface ("idle", "wave", "clap"...)
   InteractionCue / HudOverlay visual-only cues, fade
-Assets/Bedsit/Sims2    (Sims 2 / OpenTS2 binding)
+Assets/Bedsit/Sims2    (Sims 2 / OpenTS2 binding + baked-content loader)
+  BedsitContent              live (OpenTS2) or baked (Unity assets) source for the world and the Sims
   Sims2Runtime               config.json, OpenTS2 init, package mounting, material/texture/shape helpers
   SimAnimationLibrary        logical key -> ORIGINAL ANIM resource (with fallback candidates + provenance)
   SimCharacterActor          dressed premade Sim (CAS outfit + original skeleton + layered original animations)
   SimDoor                    original door model + original door-open animation
   BedsitWorldBuilder         walls/floors (genuine materials), furniture, windows, mirror frame, garden, lights
 Assets/Bedsit/Game     BedsitGame (wiring + wake-up), EvidenceRunner, BedsitLayers
-Assets/Bedsit/Editor   scene setup, build scripts
+Assets/Bedsit/Editor   scene setup, ContentBaker (live -> Unity assets), build scripts
 Assets/Bedsit/Tests    Play Mode tests
 Assets/ThirdParty/OpenTS2  vendored OpenTS2 source (MPL-2.0), patched for Unity 6, see Docs/OPENTS2_PATCHES.md
 ```
@@ -116,9 +125,10 @@ The tests need the local Sims 2 install and skip themselves (Ignore) if `config.
 
 ## Known limitations (honest list)
 
-* **Sims 2 content is read at run time from a desktop install**, so a phone cannot render the scene until characters are
-  baked to sprites and the room to Unity assets (see `Docs/SPRITE_BAKING.md`, `Docs/ANDROID.md`).
-* Characters are 3D skinned models, not baked directional sprites (documented remaining work).
+* Phone: the APK builds and contains the baked 3D content, but it has **not been run on a device**; performance and the OpenTS2
+  surface shaders on a real GPU are unverified (`Docs/ANDROID.md` lists the first things to check).
+* Baked animation clips are 30 fps samples of the original animations (the live path uses the exact keyframes).
+* Baked output derives from EA assets: private use only.
 * Mirror and doors/windows are the originals' geometry; the mirror's glass is our reflection (the game's own mirror node type
   `cViewerRefNodeRecursive` is not implemented by OpenTS2). Window glass alpha is thinned for readability.
 * Some OpenTS2 face resources print a warning (`Bone or blend for animation channel ... not found`: blend shapes for eyes/hair
