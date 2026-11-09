@@ -1,0 +1,1358 @@
+{
+  "id": "room01",
+  "title": "Bedsit - Kit's room",
+  "occupant": "young adult, rave-music fan, first flat",
+  "halfWidth": 2.1,
+  "halfDepth": 2.34,
+  "height": 2.8,
+  "wakeYaw": 180.0,
+  "bedPillowEye": {
+    "x": 1.6,
+    "y": 0.86,
+    "z": 1.9
+  },
+  "shell": {
+    "wallMaterial": "wall_plaster",
+    "floorMaterial": "floor_boards",
+    "ceilingMaterial": "ceiling_white",
+    "skirtingMaterial": "paint_white_gloss"
+  },
+  "hideLegacy": [
+    "bedSingleCheap_cres",
+    "dresserColonial_cres",
+    "bookcaseValue_cres",
+    "paintingHorizontalCity_cres",
+    "posterTeenAngst_cres",
+    "lightingTableValue1_cres",
+    "chairLivingValuePlain_cres",
+    "windowColonialDoubleHung_cres",
+    "FloorBedsit",
+    "CeilingBedsit",
+    "WallSouth*",
+    "WallNorth*",
+    "WallEast*",
+    "WallWest*",
+    "shrub4_cres",
+    "flowerDaisy_cres",
+    "fenceBalustradeWhiteRail_cres@x<0",
+    "treeBirch01_cres@x<0",
+    "treeBirch01_cres@z<0"
+  ],
+  "openings": [
+    {
+      "id": "door",
+      "kind": "door",
+      "wall": "N",
+      "along": 0.0,
+      "sill": 0.0,
+      "width": 1.0,
+      "height": 2.4
+    },
+    {
+      "id": "win_east",
+      "kind": "window",
+      "wall": "E",
+      "along": -0.65,
+      "sill": 1.0,
+      "width": 1.04,
+      "height": 1.62,
+      "frameProp": "furniture_window_frame",
+      "view": "garden"
+    },
+    {
+      "id": "win_south",
+      "kind": "window",
+      "wall": "S",
+      "along": 1.0,
+      "sill": 1.0,
+      "width": 1.04,
+      "height": 1.62,
+      "frameProp": "furniture_window_frame",
+      "view": "shop"
+    },
+    {
+      "id": "win_west",
+      "kind": "window",
+      "wall": "W",
+      "along": 0.1,
+      "sill": 1.0,
+      "width": 1.04,
+      "height": 1.62,
+      "frameProp": "furniture_window_frame",
+      "view": "club"
+    }
+  ],
+  "furniture": [
+    {
+      "prop": "textiles_bed_frame",
+      "pos": {
+        "x": 1.6,
+        "y": 0,
+        "z": 1.3399999999999999
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "bed"
+    },
+    {
+      "prop": "textiles_mattress",
+      "pos": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "mattress",
+      "parent": "bed"
+    },
+    {
+      "prop": "furniture_wardrobe",
+      "pos": {
+        "x": -1.45,
+        "y": 0.0,
+        "z": 2.045
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "wardrobe"
+    },
+    {
+      "prop": "furniture_bedside_table",
+      "pos": {
+        "x": 0.86,
+        "y": 0.0,
+        "z": 2.15
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "bedside"
+    },
+    {
+      "prop": "furniture_lamp_bedside",
+      "pos": {
+        "x": 0,
+        "y": 0.5,
+        "z": 0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "lampbed",
+      "parent": "bedside"
+    },
+    {
+      "prop": "furniture_desk",
+      "pos": {
+        "x": 1.7750000000000001,
+        "y": 0.0,
+        "z": -0.65
+      },
+      "euler": {
+        "x": 0,
+        "y": 270,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "desk"
+    },
+    {
+      "prop": "furniture_desk_chair",
+      "pos": {
+        "x": 1.05,
+        "y": 0,
+        "z": -0.55
+      },
+      "euler": {
+        "x": 0,
+        "y": 100,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "chair"
+    },
+    {
+      "prop": "furniture_tv_stand",
+      "pos": {
+        "x": 1.885,
+        "y": 0.0,
+        "z": -1.85
+      },
+      "euler": {
+        "x": 0,
+        "y": 270,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "tvstand"
+    },
+    {
+      "prop": "furniture_kettle_unit",
+      "pos": {
+        "x": -1.55,
+        "y": 0.0,
+        "z": -2.0349999999999997
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "kitchen"
+    },
+    {
+      "prop": "furniture_mini_fridge",
+      "pos": {
+        "x": -0.78,
+        "y": 0.0,
+        "z": -2.0749999999999997
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "fridge"
+    },
+    {
+      "prop": "furniture_radiator",
+      "pos": {
+        "x": 1.0,
+        "y": 0.0,
+        "z": -2.29
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "radiator"
+    },
+    {
+      "prop": "furniture_dresser",
+      "pos": {
+        "x": -1.86,
+        "y": 0.0,
+        "z": -1.1
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "dresser"
+    },
+    {
+      "prop": "furniture_bookcase",
+      "pos": {
+        "x": -1.9500000000000002,
+        "y": 0.0,
+        "z": 1.2
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "bookcase"
+    },
+    {
+      "prop": "furniture_ceiling_light",
+      "pos": {
+        "x": 0,
+        "y": 2.1999999999999997,
+        "z": 0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "pendant",
+      "castShadows": false
+    }
+  ],
+  "decor": [
+    {
+      "prop": "electronics_monitor_a",
+      "pos": {
+        "x": 0.22,
+        "y": 0.74,
+        "z": -0.1
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_keyboard",
+      "pos": {
+        "x": 0.22,
+        "y": 0.74,
+        "z": 0.14
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_mouse",
+      "pos": {
+        "x": 0.55,
+        "y": 0.74,
+        "z": 0.14
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_pc_tower",
+      "pos": {
+        "x": 0.58,
+        "y": 0.74,
+        "z": -0.2
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "furniture_lamp_desk",
+      "pos": {
+        "x": -0.55,
+        "y": 0.74,
+        "z": -0.22
+      },
+      "euler": {
+        "x": 0,
+        "y": 20,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_speakers_pair_desk",
+      "pos": {
+        "x": 0.22,
+        "y": 0.74,
+        "z": -0.27
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_crt_tv",
+      "pos": {
+        "x": 0.22,
+        "y": 0.45,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "crt",
+      "parent": "tvstand"
+    },
+    {
+      "prop": "electronics_games_console",
+      "pos": {
+        "x": -0.28,
+        "y": 0.45,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "tvstand"
+    },
+    {
+      "prop": "electronics_smartphone_flat",
+      "pos": {
+        "x": 0.9,
+        "y": 0.74,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 15,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "desk"
+    },
+    {
+      "prop": "electronics_turntable",
+      "pos": {
+        "x": 0.24,
+        "y": 0.95,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "dresser"
+    },
+    {
+      "prop": "electronics_dj_mixer",
+      "pos": {
+        "x": -0.2,
+        "y": 0.95,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "dresser"
+    },
+    {
+      "prop": "electronics_headphones_on_stand",
+      "pos": {
+        "x": -0.4,
+        "y": 0.95,
+        "z": 0.12
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "dresser"
+    },
+    {
+      "prop": "electronics_speaker_big",
+      "pos": {
+        "x": -1.78,
+        "y": 0.0,
+        "z": -0.15
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "electronics_alarm_clock",
+      "pos": {
+        "x": 0.1,
+        "y": 0.5,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "bedside"
+    },
+    {
+      "prop": "kitchen_phone_charger_plugged",
+      "pos": {
+        "x": -0.05,
+        "y": 0.5,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "bedside"
+    },
+    {
+      "prop": "kitchen_cup_paper_takeaway",
+      "pos": {
+        "x": 0.15,
+        "y": 0.905,
+        "z": -0.05
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "parent": "kitchen"
+    },
+    {
+      "prop": "kitchen_dish_tray",
+      "pos": {
+        "x": -0.12,
+        "y": 0.905,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "dishtray",
+      "parent": "kitchen"
+    },
+    {
+      "prop": "paper_books_row",
+      "pos": {
+        "x": -1.93,
+        "y": 1.118,
+        "z": 1.18
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "textiles_laundry_basket",
+      "pos": {
+        "x": -1.8,
+        "y": 0.45,
+        "z": 0.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "basket"
+    },
+    {
+      "prop": "furniture_stool",
+      "pos": {
+        "x": -1.8,
+        "y": 0.0,
+        "z": 0.6
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "kitchen_bin_small_a",
+      "pos": {
+        "x": -1.82,
+        "y": 0.0,
+        "z": -2.0
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0,
+      "tag": "bin"
+    },
+    {
+      "prop": "furniture_picture_frame_a",
+      "pos": {
+        "x": 1.45,
+        "y": 1.55,
+        "z": 2.31
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_fairy_lights",
+      "pos": {
+        "x": 1.1,
+        "y": 2.15,
+        "z": 2.3
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_picture_frame_c",
+      "pos": {
+        "x": -2.07,
+        "y": 1.55,
+        "z": 1.2
+      },
+      "euler": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "furniture_wall_clock",
+      "pos": {
+        "x": 0.0,
+        "y": 2.35,
+        "z": 2.3
+      },
+      "euler": {
+        "x": 0,
+        "y": 180,
+        "z": 0
+      },
+      "scale": 1.0
+    },
+    {
+      "prop": "paper_sticky_poster_roll",
+      "pos": {
+        "x": -1.9,
+        "y": 0.0,
+        "z": 0.1
+      },
+      "euler": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": 1.0
+    }
+  ],
+  "cleanables": [
+    {
+      "id": "bed",
+      "label": "Make the bed",
+      "action": "make",
+      "view": "N",
+      "messy": {
+        "prop": "textiles_bedding_messy",
+        "pos": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0.0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      },
+      "radius": 0.5,
+      "height": 0.3,
+      "tidy": {
+        "prop": "textiles_bedding_made",
+        "pos": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0.0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      },
+      "messyExtra": [
+        {
+          "prop": "textiles_pillow_messy_a",
+          "pos": {
+            "x": 0.2,
+            "y": 0.52,
+            "z": -0.75
+          },
+          "euler": {
+            "x": 0,
+            "y": 20,
+            "z": 0
+          },
+          "scale": 1.0,
+          "parent": "bed"
+        },
+        {
+          "prop": "textiles_pillow_messy_b",
+          "pos": {
+            "x": -0.22,
+            "y": 0.52,
+            "z": -0.78
+          },
+          "euler": {
+            "x": 0,
+            "y": -35,
+            "z": 0
+          },
+          "scale": 1.0,
+          "parent": "bed"
+        }
+      ],
+      "tidyExtra": [
+        {
+          "prop": "textiles_pillow_made_a",
+          "pos": {
+            "x": 0.2,
+            "y": 0.52,
+            "z": -0.78
+          },
+          "euler": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": 1.0,
+          "parent": "bed"
+        },
+        {
+          "prop": "textiles_pillow_made_b",
+          "pos": {
+            "x": -0.22,
+            "y": 0.52,
+            "z": -0.78
+          },
+          "euler": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": 1.0,
+          "parent": "bed"
+        }
+      ]
+    },
+    {
+      "id": "clothes_bed",
+      "label": "Fold the clothes",
+      "action": "fold",
+      "view": "N",
+      "messy": {
+        "prop": "textiles_clothes_pile_a",
+        "pos": {
+          "x": 0,
+          "y": 0.56,
+          "z": 0.62
+        },
+        "euler": {
+          "x": 0,
+          "y": 10,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      },
+      "radius": 0.3,
+      "height": 0.2,
+      "tidy": {
+        "prop": "textiles_folded_stack_a",
+        "pos": {
+          "x": 0,
+          "y": 0.56,
+          "z": 0.62
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      }
+    },
+    {
+      "id": "records",
+      "label": "Put the records away",
+      "action": "swap",
+      "view": "N",
+      "messy": {
+        "prop": "paper_records_scattered",
+        "pos": {
+          "x": 0,
+          "y": 0.57,
+          "z": -0.05
+        },
+        "euler": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      },
+      "radius": 0.35,
+      "height": 0.12,
+      "tidy": {
+        "prop": "paper_record_crate",
+        "pos": {
+          "x": 0.0,
+          "y": 0.418,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bookcase"
+      }
+    },
+    {
+      "id": "books_desk",
+      "label": "Stack the books",
+      "action": "stack",
+      "view": "E",
+      "messy": {
+        "prop": "paper_books_scattered_a",
+        "pos": {
+          "x": -0.36,
+          "y": 0.74,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "desk"
+      },
+      "radius": 0.32,
+      "height": 0.15,
+      "tidy": {
+        "prop": "paper_books_stacked_a",
+        "pos": {
+          "x": 0.25,
+          "y": 1.118,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 90,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bookcase"
+      }
+    },
+    {
+      "id": "papers_desk",
+      "label": "Square up the papers",
+      "action": "swap",
+      "view": "E",
+      "messy": {
+        "prop": "paper_papers_scattered_b",
+        "pos": {
+          "x": 0.1,
+          "y": 0.742,
+          "z": 0.02
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "desk"
+      },
+      "radius": 0.3,
+      "height": 0.06,
+      "tidy": {
+        "prop": "paper_papers_neat",
+        "pos": {
+          "x": -0.2,
+          "y": 0.742,
+          "z": 0.1
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "desk"
+      }
+    },
+    {
+      "id": "cables",
+      "label": "Coil the cables",
+      "action": "coil",
+      "view": "E",
+      "messy": {
+        "prop": "kitchen_cables_tangled_a",
+        "pos": {
+          "x": 0.0,
+          "y": 0.45,
+          "z": 0.12
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "tvstand"
+      },
+      "radius": 0.2,
+      "height": 0.06,
+      "tidy": {
+        "prop": "kitchen_cables_coiled",
+        "pos": {
+          "x": 0.0,
+          "y": 0.45,
+          "z": 0.12
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "tvstand"
+      }
+    },
+    {
+      "id": "mug_desk",
+      "label": "Take the mug to the tray",
+      "action": "slide",
+      "view": "E",
+      "messy": {
+        "prop": "kitchen_mug_dirty_a",
+        "pos": {
+          "x": -0.2,
+          "y": 0.74,
+          "z": -0.15
+        },
+        "euler": {
+          "x": 0,
+          "y": 30,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "desk"
+      },
+      "radius": 0.12,
+      "height": 0.1,
+      "tidy": {
+        "prop": "kitchen_mug_dirty_a",
+        "pos": {
+          "x": 0.0,
+          "y": 0.905,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dishtray"
+      }
+    },
+    {
+      "id": "plate_dresser",
+      "label": "Take the plate to the tray",
+      "action": "slide",
+      "view": "W",
+      "messy": {
+        "prop": "kitchen_plate_leftovers_a",
+        "pos": {
+          "x": 0.2,
+          "y": 0.95,
+          "z": 0.15
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dresser"
+      },
+      "radius": 0.18,
+      "height": 0.05,
+      "tidy": {
+        "prop": "kitchen_plate_leftovers_a",
+        "pos": {
+          "x": 0.0,
+          "y": 0.905,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dishtray"
+      }
+    },
+    {
+      "id": "mug_bedside",
+      "label": "Clear the mug",
+      "action": "slide",
+      "view": "N",
+      "messy": {
+        "prop": "kitchen_mug_dirty_b",
+        "pos": {
+          "x": -0.1,
+          "y": 0.5,
+          "z": 0.05
+        },
+        "euler": {
+          "x": 0,
+          "y": -20,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bedside"
+      },
+      "radius": 0.12,
+      "height": 0.11,
+      "tidy": {
+        "prop": "kitchen_mug_dirty_b",
+        "pos": {
+          "x": 0.0,
+          "y": 0.905,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dishtray"
+      }
+    },
+    {
+      "id": "cans_desk",
+      "label": "Bin the cans",
+      "action": "bin",
+      "view": "E",
+      "messy": {
+        "prop": "kitchen_can_c",
+        "pos": {
+          "x": 0.62,
+          "y": 0.74,
+          "z": 0.28
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "desk"
+      },
+      "radius": 0.12,
+      "height": 0.08,
+      "target": "bin"
+    },
+    {
+      "id": "pizza",
+      "label": "Bin the pizza box",
+      "action": "bin",
+      "view": "W",
+      "messy": {
+        "prop": "kitchen_pizza_box_closed",
+        "pos": {
+          "x": 0.3,
+          "y": 0.95,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "dresser"
+      },
+      "radius": 0.25,
+      "height": 0.07,
+      "target": "bin"
+    },
+    {
+      "id": "takeaway",
+      "label": "Bin the takeaway",
+      "action": "bin",
+      "view": "S",
+      "messy": {
+        "prop": "kitchen_takeaway_cartons",
+        "pos": {
+          "x": 0.0,
+          "y": 0.905,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "kitchen"
+      },
+      "radius": 0.2,
+      "height": 0.28,
+      "target": "bin"
+    },
+    {
+      "id": "crisps",
+      "label": "Bin the crisp packet",
+      "action": "bin",
+      "view": "N",
+      "messy": {
+        "prop": "kitchen_crisp_packet_a",
+        "pos": {
+          "x": 0.2,
+          "y": 0.57,
+          "z": 0.1
+        },
+        "euler": {
+          "x": 0,
+          "y": 40,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bed"
+      },
+      "radius": 0.15,
+      "height": 0.05,
+      "target": "bin"
+    },
+    {
+      "id": "backpack",
+      "label": "Zip up the backpack",
+      "action": "zip",
+      "view": "E",
+      "messy": {
+        "prop": "textiles_backpack_open_spilled",
+        "pos": {
+          "x": 0,
+          "y": 0.5,
+          "z": 0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "chair"
+      },
+      "radius": 0.3,
+      "height": 0.4,
+      "tidy": {
+        "prop": "textiles_backpack_closed",
+        "pos": {
+          "x": 0,
+          "y": 0.5,
+          "z": 0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "chair"
+      }
+    },
+    {
+      "id": "towel",
+      "label": "Fold the towel",
+      "action": "fold",
+      "view": "S",
+      "messy": {
+        "prop": "textiles_towel_crumpled",
+        "pos": {
+          "x": 0.0,
+          "y": 0.72,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "radiator"
+      },
+      "radius": 0.25,
+      "height": 0.18,
+      "tidy": {
+        "prop": "textiles_towel_folded",
+        "pos": {
+          "x": 0.0,
+          "y": 0.72,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "radiator"
+      }
+    },
+    {
+      "id": "laundry",
+      "label": "Put the laundry in the basket",
+      "action": "bin",
+      "view": "W",
+      "messy": {
+        "prop": "textiles_clothes_pile_b",
+        "pos": {
+          "x": 0.0,
+          "y": 0.768,
+          "z": 0.0
+        },
+        "euler": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "scale": 1.0,
+        "parent": "bookcase"
+      },
+      "radius": 0.3,
+      "height": 0.2,
+      "target": "basket"
+    }
+  ],
+  "lights": [
+    {
+      "name": "Sun",
+      "type": "directional",
+      "euler": {
+        "x": 24,
+        "y": 95,
+        "z": 0
+      },
+      "color": {
+        "r": 1.0,
+        "g": 0.62,
+        "b": 0.36,
+        "a": 1
+      },
+      "intensity": 0.55,
+      "shadows": "soft",
+      "role": "sun"
+    },
+    {
+      "name": "RoomPendant",
+      "type": "point",
+      "pos": {
+        "x": 0,
+        "y": 2.05,
+        "z": 0
+      },
+      "color": {
+        "r": 1.0,
+        "g": 0.84,
+        "b": 0.62,
+        "a": 1
+      },
+      "intensity": 1.05,
+      "range": 7,
+      "shadows": "none",
+      "role": "room"
+    }
+  ],
+  "exteriors": [],
+  "ground": [],
+  "environment": {
+    "sky": {
+      "r": 0.2,
+      "g": 0.18,
+      "b": 0.34,
+      "a": 1
+    },
+    "ambientSky": {
+      "r": 0.48,
+      "g": 0.5,
+      "b": 0.62,
+      "a": 1
+    },
+    "ambientEquator": {
+      "r": 0.46,
+      "g": 0.42,
+      "b": 0.42,
+      "a": 1
+    },
+    "ambientGround": {
+      "r": 0.28,
+      "g": 0.24,
+      "b": 0.22,
+      "a": 1
+    },
+    "fog": false
+  }
+}

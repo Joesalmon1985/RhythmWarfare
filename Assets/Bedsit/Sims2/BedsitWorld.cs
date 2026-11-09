@@ -9,6 +9,7 @@ namespace Bedsit.Sims2
         public Vector3 BedsitStandpoint;      // fixed eye position inside the bedsit
         public Vector3 CorridorStandpoint;    // fixed eye position in the corridor
         public Vector3 BedPillowEye;          // where the player's eyes are when lying in bed
+        public float WakeYaw = 270f;          // heading (degrees) of the player's view while lying in bed
         public Vector3 DoorwayPoint;          // centre of the northern doorway (floor level)
 
         public SimDoor Door;

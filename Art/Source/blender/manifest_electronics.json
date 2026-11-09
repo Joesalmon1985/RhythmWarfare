@@ -1,0 +1,699 @@
+{
+ "family": "electronics",
+ "front": "-Y",
+ "origin": "bottom centre",
+ "new_roles": [
+  "carpet_black",
+  "cone_paper",
+  "foam_black",
+  "glass_dark",
+  "label_black",
+  "label_blue",
+  "label_red",
+  "label_white",
+  "label_yellow",
+  "metal_alu",
+  "metal_chrome",
+  "metal_red",
+  "pad_rubber",
+  "plastic_beige",
+  "plastic_beige_worn",
+  "plastic_cyan",
+  "plastic_dark",
+  "plastic_orange",
+  "plastic_silver",
+  "rubber_grey",
+  "vinyl_black"
+ ],
+ "props": [
+  {
+   "name": "electronics_alarm_clock",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_alarm_clock.fbx",
+   "category": "clock",
+   "dims_m": [
+    0.1708,
+    0.1561,
+    0.065
+   ],
+   "tris": 2264,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "label_white",
+    "led_red",
+    "plastic_black",
+    "plastic_grey",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Digital bedside alarm clock, sloped front with red LED digits (7:48) as `led_red` geometry. 0.14 x 0.075 x 0.06. Front -Y, cable out the back.",
+   "children": []
+  },
+  {
+   "name": "electronics_audio_interface",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_audio_interface.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.18,
+    0.2476,
+    0.0551
+   ],
+   "tris": 4480,
+   "roles": [
+    "label_black",
+    "label_white",
+    "led_green",
+    "led_red",
+    "metal_chrome",
+    "metal_red",
+    "plastic_dark",
+    "plastic_grey",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "2-in/2-out USB audio interface, red metal box, combo jacks + halo gain knobs on the front. 0.18x0.14x0.05. Front -Y.",
+   "children": []
+  },
+  {
+   "name": "electronics_crt_tv",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_crt_tv.fbx",
+   "category": "tv",
+   "dims_m": [
+    0.3997,
+    0.4608,
+    0.3784
+   ],
+   "tris": 5900,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "label_white",
+    "label_yellow",
+    "led_red",
+    "metal_chrome",
+    "plastic_beige",
+    "plastic_beige_worn",
+    "plastic_dark",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "15 inch CRT portable. Back (tube bulge) is +Y. Screen child `screen` (convex). Top surface ~0.36 m (slightly domed, vents).",
+   "children": [
+    "electronics_crt_tv_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_dj_mixer",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_dj_mixer.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.2999,
+    0.4373,
+    0.1123
+   ],
+   "tris": 9904,
+   "roles": [
+    "label_black",
+    "label_white",
+    "led_green",
+    "led_red",
+    "metal_brass",
+    "metal_chrome",
+    "metal_dark",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_grey",
+    "plastic_red",
+    "plastic_silver",
+    "plastic_white",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "2-channel DJ battle mixer: EQ/gain knobs, two channel faders, crossfader, LED VU meters. 0.30x0.35x0.10. Front -Y (headphone jack on the front face).",
+   "children": []
+  },
+  {
+   "name": "electronics_flatscreen_tv",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_flatscreen_tv.fbx",
+   "category": "tv",
+   "dims_m": [
+    0.6485,
+    0.2408,
+    0.4224
+   ],
+   "tris": 3336,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "label_white",
+    "led_red",
+    "metal_chrome",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_silver",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "28 inch LCD on a stand. Back (ports/vents) is +Y. Screen child `screen` flat. Base footprint 0.30x0.18.",
+   "children": [
+    "electronics_flatscreen_tv_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_games_console",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_games_console.fbx",
+   "category": "console",
+   "dims_m": [
+    0.3005,
+    0.4162,
+    0.0851
+   ],
+   "tris": 5992,
+   "roles": [
+    "label_black",
+    "label_blue",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "led_red",
+    "plastic_black",
+    "plastic_blue",
+    "plastic_dark",
+    "plastic_green",
+    "plastic_grey",
+    "plastic_red",
+    "plastic_white",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Boxy 2000s games console lying flat (0.30 x 0.18 x 0.078) with a wired controller lying in front (-Y). Overall footprint 0.30 x 0.35.",
+   "children": []
+  },
+  {
+   "name": "electronics_headphones_on_stand",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_headphones_on_stand.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.238,
+    0.1718,
+    0.27
+   ],
+   "tris": 9676,
+   "roles": [
+    "foam_black",
+    "leather_black",
+    "metal_alu",
+    "metal_chrome",
+    "metal_dark",
+    "plastic_black",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "DJ headphones (closed cups, coiled cable) hanging on a hook stand. Base r 0.06, 0.29 tall. Cups face +-X; front -Y.",
+   "children": []
+  },
+  {
+   "name": "electronics_keyboard",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_keyboard.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.445,
+    0.2564,
+    0.0363
+   ],
+   "tris": 12480,
+   "roles": [
+    "label_red",
+    "label_white",
+    "led_green",
+    "plastic_beige",
+    "plastic_beige_worn",
+    "plastic_dark",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Full-size yellowed beige keyboard, 0.445 x 0.155, 0.035 high at the back. Front -Y, cable exits back centre. Sits on a desk.",
+   "children": []
+  },
+  {
+   "name": "electronics_laptop_closed",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_laptop_closed.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.3458,
+    0.275,
+    0.0406
+   ],
+   "tris": 11100,
+   "roles": [
+    "label_black",
+    "label_blue",
+    "label_red",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "led_red",
+    "metal_dark",
+    "plastic_black",
+    "plastic_cyan",
+    "plastic_dark",
+    "plastic_grey",
+    "plastic_silver",
+    "rubber_black"
+   ],
+   "variant_of": "electronics_laptop_open",
+   "notes": "Same laptop closed (lid flat, stickers on top). 0.34 x 0.24 x 0.034. Front -Y.",
+   "children": []
+  },
+  {
+   "name": "electronics_laptop_open",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_laptop_open.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.3458,
+    0.3236,
+    0.2476
+   ],
+   "tris": 11288,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "label_blue",
+    "label_red",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "led_red",
+    "metal_dark",
+    "plastic_black",
+    "plastic_cyan",
+    "plastic_dark",
+    "plastic_grey",
+    "plastic_silver",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "15 inch laptop open to 110 degrees, screen child `screen`, stickers on the lid back. Front -Y. Deck height 0.024.",
+   "children": [
+    "electronics_laptop_open_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_midi_controller",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_midi_controller.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.32,
+    0.2819,
+    0.0481
+   ],
+   "tris": 8612,
+   "roles": [
+    "label_black",
+    "label_white",
+    "led_green",
+    "pad_rubber",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_grey",
+    "plastic_white",
+    "rubber_black",
+    "rubber_grey"
+   ],
+   "variant_of": null,
+   "notes": "25-key MIDI controller with a 4x4 pad grid. Pads are 16 child objects `pad_r{row}c{col}` (role pad_rubber) so Unity can light them individually. 0.32x0.20, 0.045 at the back. Front -Y.",
+   "children": [
+    "electronics_midi_controller_body",
+    "pad_r0c0",
+    "pad_r0c1",
+    "pad_r0c2",
+    "pad_r0c3",
+    "pad_r1c0",
+    "pad_r1c1",
+    "pad_r1c2",
+    "pad_r1c3",
+    "pad_r2c0",
+    "pad_r2c1",
+    "pad_r2c2",
+    "pad_r2c3",
+    "pad_r3c0",
+    "pad_r3c1",
+    "pad_r3c2",
+    "pad_r3c3"
+   ]
+  },
+  {
+   "name": "electronics_monitor_a",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_monitor_a.fbx",
+   "category": "monitor",
+   "dims_m": [
+    0.4984,
+    0.2789,
+    0.4322
+   ],
+   "tris": 4176,
+   "roles": [
+    "label_black",
+    "label_white",
+    "led_green",
+    "plastic_black",
+    "plastic_dark",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "22 inch 16:10 LCD on a tilting stand, cable down the back. Back is +Y. Top of panel ~0.44 m.",
+   "children": [
+    "electronics_monitor_a_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_monitor_b",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_monitor_b.fbx",
+   "category": "monitor",
+   "dims_m": [
+    0.3685,
+    0.3099,
+    0.3972
+   ],
+   "tris": 3464,
+   "roles": [
+    "label_black",
+    "label_blue",
+    "label_white",
+    "led_green",
+    "plastic_beige",
+    "plastic_dark",
+    "plastic_silver",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "17 inch 4:3 LCD, early-2000s silver/beige with thick bezel, round base. Back is +Y. Top of panel ~0.40 m.",
+   "children": [
+    "electronics_monitor_b_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_mouse",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_mouse.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.1138,
+    0.2096,
+    0.037
+   ],
+   "tris": 2360,
+   "roles": [
+    "label_black",
+    "plastic_beige",
+    "plastic_beige_worn",
+    "plastic_dark",
+    "rubber_black",
+    "rubber_grey"
+   ],
+   "variant_of": null,
+   "notes": "Ergonomic two-button scroll mouse, cable from the front (-Y). 0.065 x 0.115 x 0.038.",
+   "children": []
+  },
+  {
+   "name": "electronics_mousemat",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_mousemat.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.25,
+    0.21,
+    0.0192
+   ],
+   "tris": 1028,
+   "roles": [
+    "cotton_black",
+    "plastic_cyan"
+   ],
+   "variant_of": null,
+   "notes": "Cloth mouse mat 0.25 x 0.21, 4 mm, one corner curling. Pairs with electronics_mouse on top (mat top z=0.004).",
+   "children": []
+  },
+  {
+   "name": "electronics_pc_tower",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_pc_tower.fbx",
+   "category": "computer",
+   "dims_m": [
+    0.1964,
+    0.5081,
+    0.4266
+   ],
+   "tris": 11404,
+   "roles": [
+    "label_black",
+    "label_blue",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "led_red",
+    "metal_chrome",
+    "metal_dark",
+    "metal_steel",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_green",
+    "plastic_red",
+    "plastic_silver",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Mid-tower PC, silver front / black body. Front -Y, back (+Y) has IO shield, PSU, slot covers and cable stubs. Top surface 0.42 m (can take clutter).",
+   "children": []
+  },
+  {
+   "name": "electronics_phone_on_charger",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_phone_on_charger.fbx",
+   "category": "phone",
+   "dims_m": [
+    0.0935,
+    0.1689,
+    0.1536
+   ],
+   "tris": 1588,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "led_green",
+    "metal_alu",
+    "metal_chrome",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_white",
+    "rubber_black",
+    "rubber_grey",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "Smartphone standing in a charging dock, leaning back 15 deg, screen facing -Y. Dock 0.085 x 0.075, cable out the back.",
+   "children": [
+    "electronics_phone_on_charger_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_radio_cassette",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_radio_cassette.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.45,
+    0.32,
+    0.3923
+   ],
+   "tris": 17532,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "label_red",
+    "label_white",
+    "label_yellow",
+    "led_red",
+    "metal_chrome",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_silver",
+    "plastic_white",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "80s/90s boombox radio-cassette: two speakers, tape deck window, piano keys, tuning dial, carry handle, aerial. 0.45 x 0.20 x 0.25 (handle). Front -Y.",
+   "children": []
+  },
+  {
+   "name": "electronics_router",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_router.fbx",
+   "category": "network",
+   "dims_m": [
+    0.2582,
+    0.2296,
+    0.1866
+   ],
+   "tris": 4280,
+   "roles": [
+    "label_black",
+    "label_blue",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "led_red",
+    "metal_dark",
+    "plastic_black",
+    "plastic_dark",
+    "plastic_grey",
+    "plastic_white",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Home ADSL router with two hinged antennas and a row of LEDs on the front. 0.20 x 0.14 x 0.033 (antennas to ~0.19). Front -Y, ports at the back.",
+   "children": []
+  },
+  {
+   "name": "electronics_smartphone_flat",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_smartphone_flat.fbx",
+   "category": "phone",
+   "dims_m": [
+    0.0716,
+    0.145,
+    0.0094
+   ],
+   "tris": 880,
+   "roles": [
+    "glass_dark",
+    "label_black",
+    "metal_alu",
+    "metal_chrome",
+    "plastic_black",
+    "plastic_dark",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "Smartphone lying face-up (screen +Z, home button toward -Y). 0.07 x 0.145 x 0.009. Screen child `screen`.",
+   "children": [
+    "electronics_smartphone_flat_body",
+    "screen"
+   ]
+  },
+  {
+   "name": "electronics_speaker_big",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_speaker_big.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.403,
+    0.4889,
+    0.7052
+   ],
+   "tris": 8444,
+   "roles": [
+    "carpet_black",
+    "cone_paper",
+    "foam_black",
+    "label_black",
+    "label_red",
+    "label_white",
+    "label_yellow",
+    "metal_dark",
+    "metal_steel",
+    "plastic_black",
+    "plastic_dark",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "PA-style 12 inch 2-way speaker cab, carpet covered, corner protectors, side handles. 0.40x0.35x0.70. Front -Y. Top is flat (clutter ok).",
+   "children": []
+  },
+  {
+   "name": "electronics_speakers_pair_desk",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_speakers_pair_desk.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.4767,
+    0.261,
+    0.203
+   ],
+   "tris": 9948,
+   "roles": [
+    "cone_paper",
+    "foam_black",
+    "label_black",
+    "label_red",
+    "label_white",
+    "label_yellow",
+    "led_green",
+    "metal_alu",
+    "metal_chrome",
+    "metal_dark",
+    "metal_steel",
+    "plastic_black",
+    "plastic_dark",
+    "rubber_black",
+    "wood_light"
+   ],
+   "variant_of": null,
+   "notes": "Pair of 2.0 desktop speakers (wood-effect vinyl, exposed drivers), cabinets 0.11x0.15x0.20 at x=+-0.16. Right one is the active (knob+LED). Cables link rear-to-rear.",
+   "children": []
+  },
+  {
+   "name": "electronics_turntable",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_turntable.fbx",
+   "category": "audio",
+   "dims_m": [
+    0.4568,
+    0.4335,
+    0.171
+   ],
+   "tris": 10856,
+   "roles": [
+    "cotton_grey",
+    "glass_dark",
+    "label_black",
+    "label_red",
+    "label_white",
+    "led_green",
+    "led_red",
+    "metal_alu",
+    "metal_chrome",
+    "metal_dark",
+    "plastic_dark",
+    "plastic_silver",
+    "rubber_black",
+    "vinyl_black"
+   ],
+   "variant_of": null,
+   "notes": "1210-style direct-drive turntable with slipmat + record on the platter, S-tonearm, pitch fader. 0.45x0.35, plinth top 0.085 m, arm top ~0.14 m. Front -Y.",
+   "children": []
+  },
+  {
+   "name": "electronics_wall_socket_double",
+   "file": "Assets/Bedsit/Art/Models/electronics/electronics_wall_socket_double.fbx",
+   "category": "fixture",
+   "dims_m": [
+    0.1455,
+    0.0159,
+    0.0855
+   ],
+   "tris": 928,
+   "roles": [
+    "label_black",
+    "label_red",
+    "metal_chrome",
+    "plastic_grey",
+    "plastic_white"
+   ],
+   "variant_of": null,
+   "notes": "UK double 13A switched socket plate, wall-mounted (back = +Y against the wall). 0.146 x 0.012 x 0.086; place bottom at ~0.45 m. Front -Y.",
+   "children": []
+  }
+ ]
+}

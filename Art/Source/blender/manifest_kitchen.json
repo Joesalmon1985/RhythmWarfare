@@ -1,0 +1,1243 @@
+{
+ "family": "kitchen",
+ "conventions": "1 unit = 1 m; origin = bottom centre; front = -Y (Blender). Roles are bsk material role names. new_roles: role -> [r, g, b, roughness, metallic] (fallback look; Unity library overrides).",
+ "new_roles": {
+  "can_red": [
+   0.72,
+   0.07,
+   0.05,
+   0.3,
+   0.55
+  ],
+  "can_silver": [
+   0.76,
+   0.77,
+   0.78,
+   0.3,
+   0.9
+  ],
+  "can_blue": [
+   0.07,
+   0.22,
+   0.62,
+   0.3,
+   0.55
+  ],
+  "can_black": [
+   0.05,
+   0.05,
+   0.055,
+   0.3,
+   0.55
+  ],
+  "aluminium": [
+   0.8,
+   0.81,
+   0.82,
+   0.28,
+   1.0
+  ],
+  "ceramic_red": [
+   0.6,
+   0.12,
+   0.1,
+   0.2,
+   0.0
+  ],
+  "ceramic_black": [
+   0.06,
+   0.06,
+   0.07,
+   0.2,
+   0.0
+  ],
+  "ceramic_cream": [
+   0.9,
+   0.86,
+   0.74,
+   0.2,
+   0.0
+  ],
+  "stain_coffee": [
+   0.3,
+   0.18,
+   0.08,
+   0.65,
+   0.0
+  ],
+  "stain_tea": [
+   0.55,
+   0.38,
+   0.2,
+   0.65,
+   0.0
+  ],
+  "liquid_milk": [
+   0.92,
+   0.91,
+   0.86,
+   0.1,
+   0.0
+  ],
+  "liquid_tea": [
+   0.35,
+   0.18,
+   0.05,
+   0.1,
+   0.0
+  ],
+  "liquid_cola": [
+   0.07,
+   0.03,
+   0.02,
+   0.08,
+   0.0
+  ],
+  "liquid_water": [
+   0.72,
+   0.84,
+   0.9,
+   0.05,
+   0.0
+  ],
+  "liquid_wine": [
+   0.25,
+   0.03,
+   0.06,
+   0.08,
+   0.0
+  ],
+  "food_beans": [
+   0.7,
+   0.24,
+   0.07,
+   0.35,
+   0.0
+  ],
+  "food_toast": [
+   0.74,
+   0.54,
+   0.28,
+   0.9,
+   0.0
+  ],
+  "food_crust": [
+   0.42,
+   0.24,
+   0.09,
+   0.9,
+   0.0
+  ],
+  "food_chips": [
+   0.86,
+   0.66,
+   0.28,
+   0.7,
+   0.0
+  ],
+  "food_sauce": [
+   0.58,
+   0.05,
+   0.03,
+   0.25,
+   0.0
+  ],
+  "food_cereal": [
+   0.78,
+   0.56,
+   0.26,
+   0.9,
+   0.0
+  ],
+  "food_cheese": [
+   0.92,
+   0.74,
+   0.32,
+   0.55,
+   0.0
+  ],
+  "food_grease": [
+   0.4,
+   0.28,
+   0.12,
+   0.55,
+   0.0
+  ],
+  "food_pepperoni": [
+   0.55,
+   0.12,
+   0.08,
+   0.6,
+   0.0
+  ],
+  "food_rice": [
+   0.9,
+   0.88,
+   0.8,
+   0.8,
+   0.0
+  ],
+  "food_lettuce": [
+   0.35,
+   0.6,
+   0.2,
+   0.7,
+   0.0
+  ],
+  "label_paper": [
+   0.9,
+   0.88,
+   0.8,
+   0.8,
+   0.0
+  ],
+  "label_red": [
+   0.7,
+   0.08,
+   0.06,
+   0.45,
+   0.0
+  ],
+  "label_green": [
+   0.1,
+   0.45,
+   0.2,
+   0.45,
+   0.0
+  ],
+  "label_blue": [
+   0.1,
+   0.3,
+   0.7,
+   0.45,
+   0.0
+  ],
+  "label_black": [
+   0.05,
+   0.05,
+   0.05,
+   0.45,
+   0.0
+  ],
+  "print_red": [
+   0.72,
+   0.12,
+   0.1,
+   0.85,
+   0.0
+  ],
+  "foil_crisps_red": [
+   0.68,
+   0.1,
+   0.08,
+   0.35,
+   0.55
+  ],
+  "foil_crisps_blue": [
+   0.1,
+   0.25,
+   0.62,
+   0.35,
+   0.55
+  ],
+  "foil_purple": [
+   0.36,
+   0.1,
+   0.46,
+   0.35,
+   0.55
+  ],
+  "foil_gold": [
+   0.8,
+   0.62,
+   0.25,
+   0.3,
+   0.85
+  ],
+  "plastic_bag_black": [
+   0.03,
+   0.03,
+   0.035,
+   0.28,
+   0.0
+  ],
+  "plastic_clear": [
+   0.8,
+   0.85,
+   0.88,
+   0.12,
+   0.0
+  ],
+  "plastic_cream": [
+   0.9,
+   0.88,
+   0.8,
+   0.4,
+   0.0
+  ],
+  "cable_white": [
+   0.88,
+   0.88,
+   0.86,
+   0.6,
+   0.0
+  ],
+  "cable_black": [
+   0.05,
+   0.05,
+   0.05,
+   0.6,
+   0.0
+  ],
+  "cable_red": [
+   0.6,
+   0.08,
+   0.06,
+   0.6,
+   0.0
+  ],
+  "velcro_black": [
+   0.1,
+   0.1,
+   0.11,
+   0.95,
+   0.0
+  ],
+  "paper_tissue": [
+   0.94,
+   0.93,
+   0.9,
+   0.95,
+   0.0
+  ],
+  "paper_cup": [
+   0.92,
+   0.9,
+   0.85,
+   0.75,
+   0.0
+  ]
+ },
+ "props": [
+  {
+   "name": "kitchen_mug_dirty_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_mug_dirty_a.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.1175,
+    0.0808,
+    0.095
+   ],
+   "tris": 2156,
+   "roles": [
+    "ceramic_red",
+    "liquid_coffee",
+    "stain_coffee"
+   ],
+   "variant_of": null,
+   "notes": "classic mug, red, cold coffee + tide ring. Handle on +X. Rim at 0.095 m. Tidy partner: kitchen_mug_clean / kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_mug_dirty_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_mug_dirty_b.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.1078,
+    0.0708,
+    0.11
+   ],
+   "tris": 2156,
+   "roles": [
+    "ceramic_black",
+    "liquid_tea",
+    "stain_tea"
+   ],
+   "variant_of": "kitchen_mug_dirty_a",
+   "notes": "tall straight mug, black, tea dregs + tannin ring. Handle on +X. Rim at 0.11 m. Tidy partner: kitchen_mug_clean / kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_mug_dirty_c",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_mug_dirty_c.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.1258,
+    0.0939,
+    0.09
+   ],
+   "tris": 3692,
+   "roles": [
+    "ceramic_cream",
+    "liquid_coffee",
+    "stain_coffee"
+   ],
+   "variant_of": "kitchen_mug_dirty_a",
+   "notes": "wide-bellied mug, cream, coffee dregs + ring. Handle on +X. Rim at 0.09 m. Tidy partner: kitchen_mug_clean / kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_mug_clean",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_mug_clean.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.1175,
+    0.0808,
+    0.095
+   ],
+   "tris": 2108,
+   "roles": [
+    "ceramic_white"
+   ],
+   "variant_of": null,
+   "notes": "Clean white classic mug, handle on +X, 9.5 cm tall. Tidy counterpart of kitchen_mug_dirty_*."
+  },
+  {
+   "name": "kitchen_glass_dirty",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_glass_dirty.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.072,
+    0.072,
+    0.145
+   ],
+   "tris": 1200,
+   "roles": [
+    "glass_clear",
+    "liquid_beer",
+    "stain_tea"
+   ],
+   "variant_of": null,
+   "notes": "Tall hi-ball glass, 14.5 cm, flat beer dregs + tide ring inside. Tidy partner: kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_plate_leftovers_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_plate_leftovers_a.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.3262,
+    0.2616,
+    0.03
+   ],
+   "tris": 3160,
+   "roles": [
+    "ceramic_white",
+    "food_beans",
+    "food_crust",
+    "food_sauce",
+    "food_toast",
+    "metal_steel"
+   ],
+   "variant_of": null,
+   "notes": "26 cm dinner plate with toast crusts, bean/ketchup smear, knife + fork on it. Rim top 2.5 cm. Tidy partner: kitchen_plate_clean / kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_plate_leftovers_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_plate_leftovers_b.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.2907,
+    0.2616,
+    0.025
+   ],
+   "tris": 3160,
+   "roles": [
+    "ceramic_white",
+    "food_chips",
+    "food_sauce",
+    "metal_steel"
+   ],
+   "variant_of": "kitchen_plate_leftovers_a",
+   "notes": "26 cm plate with cold chip remains, ketchup blob and a fork. Tidy partner: kitchen_plate_clean / kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_plate_clean",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_plate_clean.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.2616,
+    0.2616,
+    0.025
+   ],
+   "tris": 1344,
+   "roles": [
+    "ceramic_white"
+   ],
+   "variant_of": null,
+   "notes": "Clean 26 cm white dinner plate, 2.5 cm tall; stackable. Tidy counterpart of kitchen_plate_leftovers_*."
+  },
+  {
+   "name": "kitchen_bowl_cereal",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bowl_cereal.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.1512,
+    0.2062,
+    0.1137
+   ],
+   "tris": 2892,
+   "roles": [
+    "ceramic_blue",
+    "ceramic_white",
+    "food_cereal",
+    "liquid_milk",
+    "metal_steel",
+    "stain_tea"
+   ],
+   "variant_of": null,
+   "notes": "15 cm cereal bowl (blue rim stripe) with milk film, soggy flakes and a spoon resting on the rim (-Y). Rim at 6.5 cm. Tidy partner: kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_cutlery_loose",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cutlery_loose.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.3874,
+    0.2241,
+    0.0181
+   ],
+   "tris": 2300,
+   "roles": [
+    "metal_steel"
+   ],
+   "variant_of": null,
+   "notes": "Loose cutlery dumped on a surface: 2 forks (one face down), knife, spoon, teaspoon, ~0.22 x 0.2 m footprint. Tidy partner: kitchen_dish_tray."
+  },
+  {
+   "name": "kitchen_dish_tray",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_dish_tray.fbx",
+   "category": "dishes",
+   "dims_m": [
+    0.468,
+    0.3169,
+    0.2928
+   ],
+   "tris": 15048,
+   "roles": [
+    "ceramic_white",
+    "glass_clear",
+    "metal_steel",
+    "plastic_grey",
+    "plastic_white"
+   ],
+   "variant_of": null,
+   "notes": "Wire dish rack on a white drip tray, 0.40 x 0.30 m, 0.19 m tall with 2 clean plates, mug and glass upside down, fork in the cutlery cup. The TIDY destination for dirty dishes. Tray top 1.2 cm, rack base 3 cm."
+  },
+  {
+   "name": "kitchen_can_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_can_a.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.066,
+    0.066,
+    0.1165
+   ],
+   "tris": 1776,
+   "roles": [
+    "aluminium",
+    "can_red",
+    "plastic_black"
+   ],
+   "variant_of": null,
+   "notes": "330 ml drinks can standing, red, opened, dented side. 11.6 cm tall, 6.6 cm dia."
+  },
+  {
+   "name": "kitchen_can_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_can_b.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.0648,
+    0.0687,
+    0.055
+   ],
+   "tris": 1776,
+   "roles": [
+    "aluminium",
+    "can_silver",
+    "plastic_black"
+   ],
+   "variant_of": "kitchen_can_a",
+   "notes": "330 ml can stamped flat-ish: 5 cm tall, buckled body, silver. Opened."
+  },
+  {
+   "name": "kitchen_can_c",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_can_c.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1289,
+    0.1016,
+    0.0689
+   ],
+   "tris": 1776,
+   "roles": [
+    "aluminium",
+    "can_blue",
+    "plastic_black"
+   ],
+   "variant_of": "kitchen_can_a",
+   "notes": "330 ml blue can lying on its side (axis ~X), big dent, opened. 6.6 cm high when lying."
+  },
+  {
+   "name": "kitchen_can_d",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_can_d.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.0682,
+    0.0696,
+    0.1315
+   ],
+   "tris": 1776,
+   "roles": [
+    "aluminium",
+    "can_black",
+    "plastic_black"
+   ],
+   "variant_of": "kitchen_can_a",
+   "notes": "330 ml black energy-style can standing slightly tilted, ring-pull lifted up, small dent."
+  },
+  {
+   "name": "kitchen_bottle_beer_green",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bottle_beer_green.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.061,
+    0.061,
+    0.232
+   ],
+   "tris": 2400,
+   "roles": [
+    "glass_green",
+    "label_green",
+    "label_paper",
+    "liquid_beer"
+   ],
+   "variant_of": null,
+   "notes": "330 ml green long-neck beer bottle standing, no cap, dregs inside, paper label facing -Y... (label wraps). 23 cm tall."
+  },
+  {
+   "name": "kitchen_bottle_beer_brown",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bottle_beer_brown.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.232,
+    0.061,
+    0.061
+   ],
+   "tris": 2400,
+   "roles": [
+    "glass_brown",
+    "label_black",
+    "label_red",
+    "liquid_beer"
+   ],
+   "variant_of": "kitchen_bottle_beer_green",
+   "notes": "330 ml brown beer bottle lying on its side (neck +X), red label, dregs. 6 cm high when lying."
+  },
+  {
+   "name": "kitchen_bottle_cola",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bottle_cola.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.065,
+    0.065,
+    0.2265
+   ],
+   "tris": 4208,
+   "roles": [
+    "label_red",
+    "liquid_cola",
+    "plastic_clear",
+    "plastic_red"
+   ],
+   "variant_of": null,
+   "notes": "500 ml PET cola bottle with red ribbed cap and red label band, 2 cm of flat cola left. 22.7 cm tall."
+  },
+  {
+   "name": "kitchen_bottle_water_plastic",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bottle_water_plastic.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1654,
+    0.1242,
+    0.0757
+   ],
+   "tris": 4336,
+   "roles": [
+    "label_blue",
+    "liquid_water",
+    "plastic_blue",
+    "plastic_clear"
+   ],
+   "variant_of": null,
+   "notes": "500 ml ribbed PET water bottle, crumpled/buckled, blue cap, lying on its side."
+  },
+  {
+   "name": "kitchen_bottle_wine",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bottle_wine.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.075,
+    0.075,
+    0.3
+   ],
+   "tris": 2624,
+   "roles": [
+    "glass_green",
+    "label_black",
+    "label_paper",
+    "label_red",
+    "liquid_wine"
+   ],
+   "variant_of": null,
+   "notes": "75 cl green wine bottle, 30 cm, paper label facing -Y, black capsule, red dregs, punt. Standing."
+  },
+  {
+   "name": "kitchen_pizza_box_open",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_pizza_box_open.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.34,
+    0.492,
+    0.3159
+   ],
+   "tris": 5220,
+   "roles": [
+    "cardboard",
+    "food_cheese",
+    "food_crust",
+    "food_grease",
+    "food_pepperoni",
+    "food_pizza",
+    "print_red"
+   ],
+   "variant_of": null,
+   "notes": "33 cm pizza box, lid open ~112 deg leaning back (+Y), greasy inner floor, one slice left + a crust end. Box top edge 4.5 cm; lid rises to ~0.35 m behind."
+  },
+  {
+   "name": "kitchen_pizza_box_closed",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_pizza_box_closed.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.34,
+    0.3346,
+    0.0729
+   ],
+   "tris": 4076,
+   "roles": [
+    "cardboard",
+    "food_grease",
+    "print_red"
+   ],
+   "variant_of": "kitchen_pizza_box_open",
+   "notes": "33 cm closed pizza box, lid slightly ajar, red print on top. 5-8 cm tall; stackable surface at 5 cm."
+  },
+  {
+   "name": "kitchen_takeaway_cartons",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_takeaway_cartons.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.2724,
+    0.1839,
+    0.2887
+   ],
+   "tris": 3020,
+   "roles": [
+    "food_rice",
+    "metal_steel",
+    "paper_white",
+    "print_red"
+   ],
+   "variant_of": null,
+   "notes": "Chinese takeaway cartons: two stacked closed (wire handles, red logo) ~0.26 m tall, one open with rice remains beside them (+X). Footprint ~0.22 x 0.14 m."
+  },
+  {
+   "name": "kitchen_takeaway_tray_foil",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_takeaway_tray_foil.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.2331,
+    0.1943,
+    0.056
+   ],
+   "tris": 4416,
+   "roles": [
+    "foil",
+    "food_rice",
+    "food_sauce",
+    "paper_white"
+   ],
+   "variant_of": null,
+   "notes": "Crinkled foil takeaway tray 18 x 14 x 4.5 cm with rice/sauce remains and its card lid skewed on top."
+  },
+  {
+   "name": "kitchen_kebab_wrapper",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_kebab_wrapper.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.2561,
+    0.23,
+    0.1665
+   ],
+   "tris": 6988,
+   "roles": [
+    "food_crust",
+    "food_grease",
+    "food_lettuce",
+    "food_toast",
+    "paper_white"
+   ],
+   "variant_of": null,
+   "notes": "Greasy kebab wrapper paper opened out (~0.26 m across) with lettuce shreds, meat bits and a pitta end. Lies flat, 7-9 cm tall at the curled edges."
+  },
+  {
+   "name": "kitchen_crisp_packet_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_crisp_packet_a.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.2321,
+    0.1903,
+    0.058
+   ],
+   "tris": 2816,
+   "roles": [
+    "foil",
+    "foil_crisps_red",
+    "label_paper"
+   ],
+   "variant_of": null,
+   "notes": "Crisp packet (red foil, label panel, silver seams) lying flat, half-puffed, 20 x 13 cm."
+  },
+  {
+   "name": "kitchen_crisp_packet_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_crisp_packet_b.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1545,
+    0.1497,
+    0.0526
+   ],
+   "tris": 2816,
+   "roles": [
+    "foil",
+    "foil_crisps_blue",
+    "label_paper"
+   ],
+   "variant_of": "kitchen_crisp_packet_a",
+   "notes": "Crisp packet (blue foil) twisted/scrunched into a ~13 cm wad."
+  },
+  {
+   "name": "kitchen_chocolate_wrapper",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_chocolate_wrapper.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1506,
+    0.0867,
+    0.0313
+   ],
+   "tris": 2352,
+   "roles": [
+    "foil_gold",
+    "foil_purple",
+    "label_paper"
+   ],
+   "variant_of": null,
+   "notes": "Purple/gold chocolate bar wrapper, scrunched and curled, ~15 x 7 cm."
+  },
+  {
+   "name": "kitchen_paper_balls",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_paper_balls.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.2225,
+    0.155,
+    0.0669
+   ],
+   "tris": 3840,
+   "roles": [
+    "paper_white",
+    "paper_yellow"
+   ],
+   "variant_of": null,
+   "notes": "Three crumpled paper balls (two white, one yellow lined), 6-8 cm each, spread over ~0.2 m. Can be used individually by scaling/rotating the prop."
+  },
+  {
+   "name": "kitchen_tissues_used",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_tissues_used.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1939,
+    0.168,
+    0.0399
+   ],
+   "tris": 4152,
+   "roles": [
+    "paper_tissue"
+   ],
+   "variant_of": null,
+   "notes": "Used tissues: two balled up and one loosely crumpled flat, ~0.17 m spread, 4-5 cm tall."
+  },
+  {
+   "name": "kitchen_cup_paper_takeaway",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cup_paper_takeaway.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.0844,
+    0.0844,
+    0.121
+   ],
+   "tris": 2000,
+   "roles": [
+    "cardboard",
+    "liquid_coffee",
+    "paper_cup",
+    "plastic_black",
+    "screen_off",
+    "stain_coffee"
+   ],
+   "variant_of": null,
+   "notes": "Takeaway coffee cup 12 cm with black sip lid and cardboard sleeve, coffee drip stain down one side."
+  },
+  {
+   "name": "kitchen_cup_stack",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cup_stack.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.1676,
+    0.1045,
+    0.0826
+   ],
+   "tris": 2592,
+   "roles": [
+    "plastic_clear",
+    "plastic_white"
+   ],
+   "variant_of": null,
+   "notes": "Four nested plastic party cups toppled over, lying along ~+X, 7 cm high, 13 cm long."
+  },
+  {
+   "name": "kitchen_rubbish_pile_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_rubbish_pile_a.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.5373,
+    0.4061,
+    0.1329
+   ],
+   "tris": 19532,
+   "roles": [
+    "aluminium",
+    "can_blue",
+    "can_red",
+    "can_silver",
+    "cardboard",
+    "foil",
+    "foil_crisps_red",
+    "foil_gold",
+    "foil_purple",
+    "food_grease",
+    "glass_brown",
+    "label_black",
+    "label_paper",
+    "label_red",
+    "liquid_beer",
+    "paper_white",
+    "paper_yellow",
+    "plastic_black",
+    "print_red"
+   ],
+   "variant_of": null,
+   "notes": "Rubbish heap ~0.5 m: closed pizza box as base with crushed/tipped cans, crisp packet, beer bottle and paper balls on and around it. ~0.14 m tall."
+  },
+  {
+   "name": "kitchen_rubbish_pile_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_rubbish_pile_b.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.4905,
+    0.4324,
+    0.2193
+   ],
+   "tris": 24824,
+   "roles": [
+    "aluminium",
+    "can_black",
+    "foil",
+    "foil_crisps_blue",
+    "food_crust",
+    "food_grease",
+    "food_lettuce",
+    "food_rice",
+    "food_sauce",
+    "food_toast",
+    "label_blue",
+    "label_paper",
+    "liquid_water",
+    "metal_steel",
+    "paper_tissue",
+    "paper_white",
+    "plastic_black",
+    "plastic_blue",
+    "plastic_clear",
+    "print_red"
+   ],
+   "variant_of": "kitchen_rubbish_pile_a",
+   "notes": "Rubbish heap ~0.5 m: kebab wrapper, foil tray, takeaway cartons (one tipped), can, crumpled water bottle, tissues, scrunched crisp packet. ~0.14 m tall."
+  },
+  {
+   "name": "kitchen_bin_small_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bin_small_a.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.282,
+    0.3225,
+    0.426
+   ],
+   "tris": 4060,
+   "roles": [
+    "metal_steel",
+    "plastic_black",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "Brushed-steel pedal bin 0.27 m dia x 0.43 m tall, black lid (child `lid`, pivot at the back hinge, opens about +X axis negative), pedal at the front (-Y, child `pedal`), lever rod at the back. Closed."
+  },
+  {
+   "name": "kitchen_bin_small_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bin_small_b.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.282,
+    0.3225,
+    0.426
+   ],
+   "tris": 4060,
+   "roles": [
+    "metal_steel",
+    "plastic_cream",
+    "plastic_grey",
+    "rubber_black"
+   ],
+   "variant_of": "kitchen_bin_small_a",
+   "notes": "Cream plastic pedal bin 0.27 x 0.43 m with grey lid/pedal. Same rig as kitchen_bin_small_a (children `lid`, `pedal`). Closed."
+  },
+  {
+   "name": "kitchen_bin_open_full",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bin_open_full.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.282,
+    0.3866,
+    0.687
+   ],
+   "tris": 19632,
+   "roles": [
+    "aluminium",
+    "can_blue",
+    "can_red",
+    "cardboard",
+    "foil",
+    "foil_crisps_blue",
+    "foil_gold",
+    "foil_purple",
+    "food_cheese",
+    "food_crust",
+    "food_pepperoni",
+    "food_pizza",
+    "label_paper",
+    "metal_steel",
+    "paper_cup",
+    "paper_white",
+    "paper_yellow",
+    "plastic_black",
+    "rubber_black",
+    "screen_off"
+   ],
+   "variant_of": "kitchen_bin_small_a",
+   "notes": "Steel pedal bin with lid open (80 deg) and rubbish overflowing (cans, paper, pizza slice, cup, wrappers) + a paper ball on the floor in front (-Y). Children `lid`, `pedal`, `rubbish`. Pair: kitchen_bin_small_a (tidy)."
+  },
+  {
+   "name": "kitchen_bin_bag_full",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bin_bag_full.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.3878,
+    0.3568,
+    0.4659
+   ],
+   "tris": 5360,
+   "roles": [
+    "plastic_bag_black"
+   ],
+   "variant_of": null,
+   "notes": "Knotted black bin bag, bulging with contents, flattened base, ~0.45 wide x 0.47 m tall."
+  },
+  {
+   "name": "kitchen_bin_bag_empty_roll",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_bin_bag_empty_roll.fbx",
+   "category": "rubbish",
+   "dims_m": [
+    0.145,
+    0.2859,
+    0.072
+   ],
+   "tris": 2064,
+   "roles": [
+    "label_paper",
+    "label_red",
+    "plastic_bag_black"
+   ],
+   "variant_of": "kitchen_bin_bag_full",
+   "notes": "Roll of black bin bags (14.5 cm wide, 7 cm dia) lying along X with the paper band, one bag half unrolled trailing to -Y (~0.25 m). Tidy counterpart of kitchen_bin_bag_full."
+  },
+  {
+   "name": "kitchen_cables_tangled_a",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cables_tangled_a.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.3259,
+    0.2464,
+    0.0416
+   ],
+   "tris": 12464,
+   "roles": [
+    "cable_black",
+    "cable_red",
+    "cable_white",
+    "metal_brass",
+    "metal_steel",
+    "plastic_black",
+    "plastic_grey",
+    "plastic_red",
+    "plastic_white"
+   ],
+   "variant_of": null,
+   "notes": "Tangle of 4 cables (~0.4 m) lying on the floor: white (usb_a->usb_c), mains (uk->iec), aux (jack->jack), red (usb_a->usb_c). Tidy counterpart: kitchen_cables_coiled."
+  },
+  {
+   "name": "kitchen_cables_tangled_b",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cables_tangled_b.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.3614,
+    0.2604,
+    0.0416
+   ],
+   "tris": 12688,
+   "roles": [
+    "cable_black",
+    "cable_white",
+    "metal_brass",
+    "metal_steel",
+    "plastic_black",
+    "plastic_grey",
+    "plastic_white"
+   ],
+   "variant_of": "kitchen_cables_tangled_a",
+   "notes": "Tangle of 4 cables (~0.4 m) lying on the floor: white (usb_c->usb_c), black (usb_a->usb_c), charger (uk_usb->iec), aux (jack->jack). Tidy counterpart: kitchen_cables_coiled."
+  },
+  {
+   "name": "kitchen_cables_coiled",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_cables_coiled.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.1536,
+    0.1531,
+    0.0181
+   ],
+   "tris": 6980,
+   "roles": [
+    "cable_white",
+    "metal_steel",
+    "plastic_black",
+    "plastic_white",
+    "velcro_black"
+   ],
+   "variant_of": null,
+   "notes": "Neatly coiled white USB-A to USB-C cable (6 loops, ~12 cm dia) held with a black velcro strap. 1.3 cm tall. Tidy counterpart of kitchen_cables_tangled_*."
+  },
+  {
+   "name": "kitchen_phone_charger_plugged",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_phone_charger_plugged.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.1754,
+    0.4074,
+    0.352
+   ],
+   "tris": 4284,
+   "roles": [
+    "cable_white",
+    "metal_brass",
+    "metal_dark",
+    "metal_steel",
+    "plastic_black",
+    "plastic_grey",
+    "plastic_white",
+    "screen_off"
+   ],
+   "variant_of": null,
+   "notes": "Smartphone lying face up on the floor charging: white cable runs from the USB-C port, loops on the floor and up the wall to a white UK charger block whose pins face +Y (place the +Y bound of this prop against the wall; socket centre 0.33 m above the floor)."
+  },
+  {
+   "name": "kitchen_extension_lead",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_extension_lead.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.4688,
+    0.3091,
+    0.0572
+   ],
+   "tris": 5272,
+   "roles": [
+    "cable_black",
+    "cable_white",
+    "led_red",
+    "metal_brass",
+    "plastic_black",
+    "plastic_grey",
+    "plastic_red",
+    "plastic_white"
+   ],
+   "variant_of": null,
+   "notes": "4-gang UK extension lead (26.5 x 6.2 x 3.8 cm, white) lying along X with red switch and red LED; its own cable runs to a white plug on its back at +X/-Y; a black plug is inserted in socket 2 with its cable leaving to +Y (cut off; extend/hide as needed)."
+  },
+  {
+   "name": "kitchen_headphones_over_ear",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_headphones_over_ear.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.2182,
+    0.2923,
+    0.2595
+   ],
+   "tris": 12832,
+   "roles": [
+    "cable_black",
+    "cotton_black",
+    "leather_black",
+    "metal_dark",
+    "metal_steel",
+    "plastic_black"
+   ],
+   "variant_of": null,
+   "notes": "Big DJ-style over-ear headphones standing on their cups (band up), 19 x 21 cm, with coiled cable from the left cup to a 3.5 mm jack lying ~0.25 m behind (+Y). Metal rings, leather pads, hinge blocks, padded band."
+  },
+  {
+   "name": "kitchen_headphones_earbuds_tangled",
+   "file": "Assets/Bedsit/Art/Models/kitchen/kitchen_headphones_earbuds_tangled.fbx",
+   "category": "tech",
+   "dims_m": [
+    0.2063,
+    0.2033,
+    0.0181
+   ],
+   "tris": 3628,
+   "roles": [
+    "cable_white",
+    "metal_steel",
+    "plastic_black",
+    "plastic_white",
+    "rubber_black"
+   ],
+   "variant_of": null,
+   "notes": "White wired earbuds in a loose tangle ~0.15 m across: 3.5 mm jack, Y-splitter, two buds with black silicone tips."
+  }
+ ]
+}

@@ -1,0 +1,326 @@
+[
+ {
+  "name": "exterior_parked_car_a",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_parked_car_a.fbx",
+  "category": "vehicle",
+  "dims_m": [
+   2.082,
+   4.185,
+   1.68
+  ],
+  "tris": 3054,
+  "roles": [
+   "car_glass",
+   "car_light_front",
+   "car_light_rear",
+   "car_paint_red",
+   "car_plate_white",
+   "car_plate_yellow",
+   "car_trim_black",
+   "car_wheel_rim",
+   "metal_dark",
+   "rubber_black",
+   "sign_yellow"
+  ],
+  "variant_of": null,
+  "notes": "Hatchback (red) 4.0 m, 1.7 m wide. Bonnet faces -Y. Origin ground centre (tyre contact z=0). Roles car_paint_*, car_glass (transparent), car_light_rear / car_light_front (emissive-capable), car_plate_white/yellow (UK plates).",
+  "previews": [
+   "Art/Source/previews/exterior_parked_car_a_front34.png",
+   "Art/Source/previews/exterior_parked_car_a_back34.png",
+   "Art/Source/previews/exterior_parked_car_a_side.png"
+  ]
+ },
+ {
+  "name": "exterior_parked_car_b",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_parked_car_b.fbx",
+  "category": "vehicle",
+  "dims_m": [
+   2.082,
+   4.785,
+   1.76
+  ],
+  "tris": 3126,
+  "roles": [
+   "car_glass",
+   "car_light_front",
+   "car_light_rear",
+   "car_paint_blue",
+   "car_plate_white",
+   "car_plate_yellow",
+   "car_trim_black",
+   "car_wheel_rim",
+   "metal_dark",
+   "rubber_black",
+   "sign_yellow"
+  ],
+  "variant_of": null,
+  "notes": "Saloon (blue) 4.6 m, 1.7 m wide. Bonnet faces -Y. Origin ground centre (tyre contact z=0). Roles car_paint_*, car_glass (transparent), car_light_rear / car_light_front (emissive-capable), car_plate_white/yellow (UK plates).",
+  "previews": [
+   "Art/Source/previews/exterior_parked_car_b_front34.png",
+   "Art/Source/previews/exterior_parked_car_b_back34.png",
+   "Art/Source/previews/exterior_parked_car_b_side.png"
+  ]
+ },
+ {
+  "name": "exterior_pavement_kerb",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_pavement_kerb.fbx",
+  "category": "street",
+  "dims_m": [
+   4.0,
+   7.15,
+   0.133
+  ],
+  "tris": 692,
+  "roles": [
+   "asphalt",
+   "concrete",
+   "drain_iron",
+   "interior_dark",
+   "kerb_stone",
+   "paving",
+   "paving_dark",
+   "road_paint_yellow",
+   "terracotta"
+  ],
+  "variant_of": null,
+  "notes": "4 m street section, 7.15 m deep: pavement 2.0 m (top z 0.125), kerb 0.15 m, road 5.0 m (z 0). Origin = bottom centre of the whole piece; the BUILDING LINE (back edge of the pavement) is at y=+3.575 - place so that edge touches the facade plane. Roles asphalt / paving / kerb_stone / road_paint_yellow separate for Unity materials. Tile along x in 4 m steps.",
+  "previews": [
+   "Art/Source/previews/exterior_pavement_kerb_front34.png",
+   "Art/Source/previews/exterior_pavement_kerb_top.png"
+  ]
+ },
+ {
+  "name": "exterior_shop_corner",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_shop_corner.fbx",
+  "category": "building",
+  "dims_m": [
+   6.667,
+   9.49,
+   11.2
+  ],
+  "tris": 34524,
+  "roles": [
+   "awning_red",
+   "awning_white",
+   "brick",
+   "brick_dark",
+   "brick_light",
+   "curtain_blue",
+   "curtain_cream",
+   "curtain_red",
+   "glass_shop",
+   "glass_window",
+   "interior_dark",
+   "interior_wall",
+   "led_red",
+   "lino_floor",
+   "metal_brass",
+   "metal_chrome",
+   "metal_dark",
+   "metal_painted_black",
+   "metal_painted_grey",
+   "metal_steel",
+   "mortar",
+   "paper_white",
+   "paper_yellow",
+   "plastic_black",
+   "plastic_grey",
+   "plastic_white",
+   "poster_a",
+   "poster_b",
+   "product_a",
+   "product_b",
+   "product_c",
+   "product_d",
+   "product_e",
+   "render_dark",
+   "screen_on",
+   "shop_light",
+   "sign_blue",
+   "sign_fascia",
+   "sign_letters",
+   "sign_yellow",
+   "slate_roof",
+   "stone_sill",
+   "terracotta",
+   "upvc_white",
+   "window_dark",
+   "window_lit",
+   "window_tv",
+   "wood_dark",
+   "wood_light",
+   "wood_painted_black",
+   "wood_painted_cream",
+   "wood_painted_green"
+  ],
+  "variant_of": null,
+  "notes": "Hero corner shop + flat. Origin ground-level front-centre; front facade plane y=0 (faces -Y); footprint x -3..3, y 0..8; +X side has a 4 m brick return with a door; -X side is a plain party wall for exterior_terrace_a. Eaves 7.2, ridge 9.2, chimney tops 10.1. Shopfront glass at y=0.08 shows a modelled interior (shelves, fridge, counter, paper stand). Fascia sign z 2.95-3.6 (role sign_fascia + sign_letters), awning projects 1.35 m over the pavement at z 2.0-2.4. Lit roles: window_lit/window_tv (upper flat), shop_light (interior strips), led_red (OPEN sign), sign_yellow (logo/alarm).",
+  "previews": [
+   "Art/Source/previews/exterior_shop_corner_front.png",
+   "Art/Source/previews/exterior_shop_corner_front34.png",
+   "Art/Source/previews/exterior_shop_corner_close.png",
+   "Art/Source/previews/exterior_shop_corner_side.png"
+  ]
+ },
+ {
+  "name": "exterior_shop_props",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_shop_props.fbx",
+  "category": "props",
+  "dims_m": [
+   7.502,
+   2.676,
+   1.948
+  ],
+  "tris": 6120,
+  "roles": [
+   "graffiti_white",
+   "interior_dark",
+   "leather_black",
+   "metal_dark",
+   "metal_painted_black",
+   "metal_painted_green",
+   "metal_steel",
+   "paper_white",
+   "plastic_black",
+   "plastic_dark_green",
+   "plastic_grey",
+   "produce_green",
+   "produce_orange",
+   "produce_red",
+   "produce_yellow",
+   "rubber_black",
+   "sign_blue",
+   "sign_fascia",
+   "sign_letters",
+   "wood_light",
+   "wood_painted_black"
+  ],
+  "variant_of": null,
+  "notes": "Pavement clutter for the corner shop. Origin = SAME as exterior_shop_corner origin (drop both at the same point): crates stacked under the window (x -1.9..-0.75, y -0.65..-0.25), A-board at (0.9,-1.25), paper rack by the door (2.35,-0.38), wheelie bins at x 2.4..3.6, bicycle at (-2.9,-1.85) with cable lock reaching the lamp post at (-3.4,-2.05): place exterior_street_lamp there. Pavement is y 0..-2.0.",
+  "previews": [
+   "Art/Source/previews/exterior_shop_props_front.png",
+   "Art/Source/previews/exterior_shop_props_front34.png"
+  ]
+ },
+ {
+  "name": "exterior_street_lamp",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_street_lamp.fbx",
+  "category": "street",
+  "dims_m": [
+   0.4,
+   1.5,
+   5.958
+  ],
+  "tris": 812,
+  "roles": [
+   "lamp_glow",
+   "lamp_housing",
+   "metal_painted_green",
+   "plastic_grey",
+   "sign_blue",
+   "sign_letters",
+   "wood_painted_red"
+  ],
+  "variant_of": null,
+  "notes": "Street lamp 6 m, lantern projects 0.95 m towards -Y (over the road). Lens role lamp_glow at z 5.57 (underside) - put a Unity point/spot light there. Column green painted steel.",
+  "previews": [
+   "Art/Source/previews/exterior_street_lamp_front.png",
+   "Art/Source/previews/exterior_street_lamp_front34.png"
+  ]
+ },
+ {
+  "name": "exterior_terrace_a",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_terrace_a.fbx",
+  "category": "building",
+  "dims_m": [
+   4.14,
+   8.74,
+   10.8
+  ],
+  "tris": 15610,
+  "roles": [
+   "blind_white",
+   "brick",
+   "brick_yellow",
+   "brick_yellow_dark",
+   "curtain_blue",
+   "curtain_cream",
+   "curtain_red",
+   "glass_window",
+   "interior_dark",
+   "lamp_glow",
+   "leaf_dark",
+   "leaf_green",
+   "led_red",
+   "metal_brass",
+   "metal_painted_black",
+   "metal_painted_grey",
+   "mortar",
+   "plastic_black",
+   "plastic_grey",
+   "sign_letters",
+   "sign_yellow",
+   "slate_roof",
+   "stone_sill",
+   "terracotta",
+   "upvc_white",
+   "window_dark",
+   "window_lit",
+   "wood_painted_blue",
+   "wood_painted_cream"
+  ],
+  "variant_of": null,
+  "notes": "Terrace house (London-stock yellow brick) to sit at the -X side of exterior_shop_corner (place at x=-5). Front door no.42 with lit fanlight, porch hood, window box, satellite dish, alarm. Eaves 7.2 / ridge 9.2 shared with the shop. Lit: window_lit, lamp_glow.",
+  "previews": [
+   "Art/Source/previews/exterior_terrace_a_front.png",
+   "Art/Source/previews/exterior_terrace_a_front34.png"
+  ]
+ },
+ {
+  "name": "exterior_terrace_b",
+  "file": "Assets/Bedsit/Art/Models/exterior/exterior_terrace_b.fbx",
+  "category": "building",
+  "dims_m": [
+   4.16,
+   8.99,
+   10.7
+  ],
+  "tris": 10148,
+  "roles": [
+   "blind_white",
+   "brick",
+   "brick_dark",
+   "brick_sooty_light",
+   "corrugated_metal",
+   "curtain_cream",
+   "glass_window",
+   "graffiti_a",
+   "graffiti_white",
+   "interior_dark",
+   "metal_brass",
+   "metal_chrome",
+   "metal_painted_black",
+   "mortar",
+   "plastic_black",
+   "render_dark",
+   "shutter_grey",
+   "sign_blue",
+   "sign_fascia_dark",
+   "sign_letters",
+   "slate_roof",
+   "stone_sill",
+   "terracotta",
+   "window_dark",
+   "window_lit",
+   "wood_painted_black",
+   "wood_painted_cream",
+   "wood_painted_red"
+  ],
+  "variant_of": null,
+  "notes": "Closed barber shop with flat above, dark red brick, to sit at the +X side of exterior_shop_corner (place at x=+5). Roller shutter down with graffiti tag, CUTS/BARBER fascia, barber pole, TO LET board, 2 upper windows (one lit with blind). Eaves 7.2 / ridge 9.2.",
+  "previews": [
+   "Art/Source/previews/exterior_terrace_b_front.png",
+   "Art/Source/previews/exterior_terrace_b_front34.png"
+  ]
+ }
+]

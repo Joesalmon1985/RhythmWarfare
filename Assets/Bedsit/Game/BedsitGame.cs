@@ -36,6 +36,7 @@ namespace Bedsit.Game
         public HudOverlay Hud { get; private set; }
         public MirrorReflectionController Mirror { get; private set; }
         public BedsitWorld World { get; private set; }
+        public RoomBuilder Room { get; private set; }
 
         public SimCharacterActor Player { get; private set; }
         public SimCharacterActor NpcCorridor { get; private set; }
@@ -74,6 +75,14 @@ namespace Bedsit.Game
             World = BedsitContent.CreateWorld();
             if (World == null) { Status = "FAILED: " + Sims2Runtime.LastError; Debug.LogError(Status); yield break; }
             yield return null;
+            Status = "building room";
+            if (RoomBuilder.Enabled)
+            {
+                var roomDef = Bedsit.Rooms.RoomLibrary.Load(Bedsit.Rooms.RoomLibrary.SelectedId);
+                if (roomDef != null) Room = RoomBuilder.Build(World, roomDef);
+                else Debug.LogWarning("[BedsitGame] no room definition '" + Bedsit.Rooms.RoomLibrary.SelectedId + "' - legacy furniture stays");
+            }
+            yield return null;
 
             Status = "creating characters";
             CreateCast();
@@ -84,7 +93,7 @@ namespace Bedsit.Game
             Ready = true;
             Status = "ready";
 
-            if (SkipWakeUp) { StartAtStandpoint(); Hud.SetFade(0f); WakeUpFinished = true; Hud.SetHintsVisible(true); }
+            if (SkipWakeUp || System.Environment.GetEnvironmentVariable("BEDSIT_SKIPWAKE") == "1") { StartAtStandpoint(); Hud.SetFade(0f); WakeUpFinished = true; Hud.SetHintsVisible(true); }
             else yield return WakeUp();
         }
 
@@ -298,7 +307,7 @@ namespace Bedsit.Game
             // Lying in bed: eyes at pillow height, looking up at the ceiling, facing west along the bed.
             Zones.EnterZoneImmediate(ZoneBedsit, CompassDirection.West);
             Rig.position = World.BedPillowEye;
-            View.YawPivot.rotation = Quaternion.Euler(0f, 270f, 0f);
+            View.YawPivot.rotation = Quaternion.Euler(0f, World.WakeYaw, 0f);
             View.SetPitch(-66f);
             Hud.SetFade(1f);
             Input.Locked = true;
@@ -315,7 +324,7 @@ namespace Bedsit.Game
                 float lift = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.6f)));      // sit up first, then move out
                 Rig.position = new Vector3(Mathf.Lerp(from.x, to.x, k), Mathf.Lerp(from.y, to.y, lift), Mathf.Lerp(from.z, to.z, k));
                 View.SetPitch(Mathf.Lerp(-66f, 0f, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / (dur * 0.85f)))));
-                View.YawPivot.rotation = Quaternion.Euler(0f, Mathf.Lerp(270f, 360f, k), 0f);
+                View.YawPivot.rotation = Quaternion.Euler(0f, Mathf.Lerp(World.WakeYaw, World.WakeYaw < 180f ? 0f : 360f, k), 0f);
                 yield return null;
             }
             StartAtStandpoint();                                            // exact standpoint + North, pitch 0
