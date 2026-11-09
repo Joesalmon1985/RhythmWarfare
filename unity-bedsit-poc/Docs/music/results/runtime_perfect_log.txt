@@ -1,0 +1,36 @@
+91.8s peak -0.2 dBFS, rms -10.0 dB, clipped samples 0, longest silence 4.82s at 3.20s, silences>250ms 1, max sample step 1.33
+mode MIXING   t=95.51s   song gatekeeper  pos 87.51s
+beat 277.0   next anchor gatekeeper:secondDrop in 114.6s
+incoming - 
+window -
+stems muted: none
+plan: plan complete: the recording plays on in MIXING mode
+builds 1/1 passed, recoveries 0, handovers 0, stray taps 0, energy 100%
+
+[6.997] BUILD gatekeeper:firstDrop scheduled (opening): the song starts at 7.997; intro 25.517s (74.0 beats) with a drums minigame, then the 128-beat run-in, drop 77.652
+[33.323] EVAL gatekeeper:firstDrop intro: 42/42 = 100.0% (threshold 80%) -> PASS
+[33.323] run-in: gatekeeper carries on into its next section at 33.514; rhythm game off; drop 77.652
+[77.461] DROP gatekeeper:firstDrop at 77.652
+[77.653] plan complete after 1 drop(s): no further builds
+--- act one ---
+act one ready: 15 pieces of clutter, clean at 80%
+headphones: putting them on
+headphones: on
+tidied bag (1/15)
+tidied pizza (2/15)
+tidied shirt (3/15)
+tidied books (4/15)
+tidied mug (5/15)
+tidied bottles (6/15)
+tidied laundry (7/15)
+tidied plate (8/15)
+tidied cups (9/15)
+tidied magazines (10/15)
+tidied takeaway (11/15)
+tidied paper (12/15)
+tidied mug (13/15)
+tidied shirt (14/15)
+tidied trainers (15/15)
+knock at the door (timeline 77.652)
+door opened: room clean (15/15) -> a woman is at the door
+screenshot C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\Builds\Windows\Evidence\screenshots\actone_exe_woman.png

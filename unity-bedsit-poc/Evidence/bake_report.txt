@@ -1,0 +1,15 @@
+skeleton bones sampled: 138
+clip idle: a-idle-neutral-armsSide-wtC-breatheLoop_anim (Sims00.package), 119 frames @ 30 fps, 138 bones
+clip wave: a-react-wave-fullBody_anim (Sims00.package), 78 frames @ 30 fps, 138 bones
+clip clap: a-clapSmall-loop-standing_anim (Sims00.package), 56 frames @ 30 fps, 138 bones
+clip cheer: a-clapBig-loop-standing_anim (Sims00.package), 64 frames @ 30 fps, 138 bones
+clip greet: a-soc-greet-nod_anim (Sims00.package), 47 frames @ 30 fps, 138 bones
+clip surprise: a-hairChange-head-surprise_anim (Sims00.package), 32 frames @ 30 fps, 138 bones
+character prefab Assets/LocalBaked/Resources/Baked/Actor_12.prefab
+character prefab Assets/LocalBaked/Resources/Baked/Actor_11.prefab
+character prefab Assets/LocalBaked/Resources/Baked/Actor_13.prefab
+character prefab Assets/LocalBaked/Resources/Baked/Actor_14.prefab
+door clip length 1.05s, curves 23
+door clip o-door-open-CW_anim
+world prefab Assets/LocalBaked/Resources/Baked/World.prefab
+unique meshes 120, materials 79, textures 64

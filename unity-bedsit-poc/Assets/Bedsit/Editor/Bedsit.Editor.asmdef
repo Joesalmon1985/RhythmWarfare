@@ -1,0 +1,14 @@
+{
+    "name": "Bedsit.Editor",
+    "rootNamespace": "Bedsit.Editor",
+    "references": ["Bedsit.Core", "Bedsit.Sims2", "Bedsit.Game", "Bedsit.Music", "OpenTS2"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

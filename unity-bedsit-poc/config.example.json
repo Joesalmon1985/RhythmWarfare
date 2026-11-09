@@ -1,0 +1,8 @@
+{
+	"game_dir" : "C:/path/to/The.Sims.2.Legacy.Collection/game",
+	"user_dir" : "C:/path/to/UnityBedsitPOC/LocalData/UserData",
+	"dlc" : [
+		"Base", "EP1", "EP2", "EP3", "SP1", "SP2", "EP4", "EP5", "SP4",
+		"SP5", "EP6", "SP6", "EP7", "SP7", "SP8", "EP8", "EP9"
+	]
+}

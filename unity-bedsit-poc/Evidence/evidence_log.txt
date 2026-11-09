@@ -1,0 +1,46 @@
+evidence run started 2026-11-09T10:39:51 resolution 1101x505
+screenshot 01_wakeup_dark.png | zone=bedsit facing=West eye=(1.40, 0.86, -1.25) fade=1.00
+screenshot 02_wakeup_fading_in.png | zone=bedsit facing=West eye=(1.40, 0.86, -1.25) fade=0.54
+screenshot 03_wakeup_rising.png | zone=bedsit facing=West eye=(1.29, 1.01, -1.15) fade=0.00
+wake-up finished: eye (0.00, 1.62, 0.00), facing North
+screenshot 10_view_north.png | zone=bedsit facing=North eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 11_view_east.png | zone=bedsit facing=East eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 12_view_south.png | zone=bedsit facing=South eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 13_view_west.png | zone=bedsit facing=West eye=(0.00, 1.62, 0.00) fade=0.00
+four right turns -> facing North (yaw 0)
+screenshot 20_east_npc_reacts_a.png | zone=bedsit facing=East eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 21_east_npc_reacts_b.png | zone=bedsit facing=East eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 30_mirror_idle.png | zone=bedsit facing=South eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 31_mirror_wave_a.png | zone=bedsit facing=South eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 32_mirror_wave_b.png | zone=bedsit facing=South eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 40_west_npc_reacts.png | zone=bedsit facing=West eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 50_door_before.png | zone=bedsit facing=North eye=(0.00, 1.62, 0.00) fade=0.00
+screenshot 51_corridor_walk_0.png | zone=bedsit facing=North eye=(0.00, 1.62, 0.50) fade=0.00
+screenshot 51_corridor_walk_1.png | zone=bedsit facing=North eye=(0.00, 1.62, 1.25) fade=0.00
+screenshot 51_corridor_walk_2.png | zone=bedsit facing=North eye=(0.00, 1.62, 2.01) fade=0.00
+screenshot 51_corridor_walk_3.png | zone=bedsit facing=North eye=(0.00, 1.62, 2.76) fade=0.00
+arrived in corridor: eye (0.00, 1.62, 3.14) (eye height constant: 1.62..1.62)
+screenshot 55_corridor_north.png | zone=corridor facing=North eye=(0.00, 1.62, 3.14) fade=0.00
+screenshot 56_corridor_east.png | zone=corridor facing=East eye=(0.00, 1.62, 3.14) fade=0.00
+screenshot 57_corridor_south_back_to_bedsit.png | zone=corridor facing=South eye=(0.00, 1.62, 3.14) fade=0.00
+screenshot 58_corridor_west.png | zone=corridor facing=West eye=(0.00, 1.62, 3.14) fade=0.00
+provenance:
+pose: a-pose-neutral-stand_anim | package Sims00.package | 51 auskel channels | ~0.00s | neutral standing pose (base layer every other animation is applied over)
+idle: a-idle-neutral-armsSide-wtC-breatheLoop_anim | package Sims00.package | 51 auskel channels | ~3.96s | standing idle, weight centred, breathing
+wave: a-react-wave-fullBody_anim | package Sims00.package | 61 auskel channels | ~2.60s | friendly wave, full body
+greet: a-soc-greet-nod_anim | package Sims00.package | 3 auskel channels | ~1.55s | greeting nod
+clap: a-clapSmall-loop-standing_anim | package Sims00.package | 51 auskel channels | ~1.88s | standing applause (one pass of the clap loop)
+cheer: a-clapBig-loop-standing_anim | package Sims00.package | 51 auskel channels | ~2.13s | big applause (one pass of the clap loop)
+surprise: a-hairChange-head-surprise_anim | package Sims00.package | 37 auskel channels | ~1.08s | surprised reaction
+stretch: a-idle-neutral-armsSide-wtC-stretchShoulders_anim | package Sims00.package | 51 auskel channels | ~3.96s | shoulder stretch
+
+world: walls: wall_paintneutatlanticsand_k_wh_txmt, wall_victoriangreenstripewainscoting_kcr_md_txmt; floors: floor_loftmahogonyherringbone_txmt, floor_clubredwood_txmt; ceiling: wall_paintneutsnowflake_base_txmt
+world: furniture: bedSingleCheap, dresserColonial, bookcaseValue, plantFicus, paintingHorizontalCity, posterTeenAngst, lightingTableValue1, chairLivingValuePlain
+world: door: doorQuaint_cres animated with o-door-open-CW_anim from Objects00.package
+world: windows: windowColonialDoubleHung_cres x2
+world: mirror frame: mirrorFloorModerate_mirrorfloormoderate_shpe (glass = live planar reflection)
+world: garden: lawn texture terrain_lawn_fulltile_txtr; trees/shrubs/fence from treeBirch01, shrub4, flowerDaisy, fenceBalustradeWhiteRail
+game: east window: NPC waves
+game: mirror: reflected player waves
+game: west window: NPC claps
+game: door: entering corridor

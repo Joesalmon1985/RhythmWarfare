@@ -1,0 +1,80 @@
+{
+  "library_bpm": 174,
+  "ticks_per_beat": 960,
+  "stems": [
+    {
+      "clip": "groove_half_time",
+      "part": "kick",
+      "sound": "kick_half_time",
+      "wav": "LocalAudio/loops/groove_half_time__kick__kick_half_time.wav",
+      "frames": 529655,
+      "seconds": 11.03448,
+      "bars": 8,
+      "key": "",
+      "peak": 0.301,
+      "cue_count": 10,
+      "pads": [
+        1
+      ],
+      "median_onset_minus_midi_ms": 46.0,
+      "max_abs_offset_ms": 46.0,
+      "midi_matches_audio": true,
+      "expected_seconds_8bars": 11.03448
+    },
+    {
+      "clip": "groove_half_time",
+      "part": "snare",
+      "sound": "snare_backbeat",
+      "wav": "LocalAudio/loops/groove_half_time__snare__snare_backbeat.wav",
+      "frames": 529655,
+      "seconds": 11.03448,
+      "bars": 8,
+      "key": "",
+      "peak": 0.316,
+      "cue_count": 8,
+      "pads": [
+        4
+      ],
+      "median_onset_minus_midi_ms": -0.0,
+      "max_abs_offset_ms": 15.0,
+      "midi_matches_audio": true,
+      "expected_seconds_8bars": 11.03448
+    },
+    {
+      "clip": "bass_sub_line",
+      "part": "bass",
+      "sound": "bass_sub_bright",
+      "wav": "LocalAudio/loops/bass_sub_line__bass__bass_sub_bright.wav",
+      "frames": 529655,
+      "seconds": 11.03448,
+      "bars": 8,
+      "key": "F minor",
+      "peak": 0.302,
+      "cue_count": 12,
+      "pads": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "median_onset_minus_midi_ms": 10.0,
+      "max_abs_offset_ms": 51.0,
+      "midi_matches_audio": false,
+      "expected_seconds_8bars": 11.03448
+    },
+    {
+      "clip": "acc_hats_driving",
+      "part": "other",
+      "sound": "hats_driving",
+      "wav": "LocalAudio/loops/acc_hats_driving__other__hats_driving.wav",
+      "frames": 529655,
+      "seconds": 11.03448,
+      "bars": 8,
+      "key": "F minor",
+      "peak": 0.318,
+      "cue_count": 0,
+      "pads": [],
+      "expected_seconds_8bars": 11.03448
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+91.8s peak -0.2 dBFS, rms -10.0 dB, clipped samples 0, longest silence 4.84s at 3.20s, silences>250ms 1, max sample step 1.33
+mode MIXING   t=95.53s   song gatekeeper  pos 87.51s
+beat 277.0   next anchor gatekeeper:secondDrop in 114.6s
+incoming - 
+window -
+stems muted: kick
+plan: plan complete: the recording plays on in MIXING mode
+builds 1/1 passed, recoveries 0, handovers 0, stray taps 0, energy 90%
+
+[7.019] BUILD gatekeeper:firstDrop scheduled (opening): the song starts at 8.019; intro 25.517s (74.0 beats) with a drums minigame, then the 128-beat run-in, drop 77.674
+[16.043] MISS kick pad 1: stem muted (timeline keeps running)
+[18.709] RECOVERED kick: stem restored at its current musical position
+[19.840] MISS kick pad 1: stem muted (timeline keeps running)
+[20.779] RECOVERED kick: stem restored at its current musical position
+[31.232] MISS kick pad 1: stem muted (timeline keeps running)
+[33.344] EVAL gatekeeper:firstDrop intro: 38/42 = 90.5% (threshold 80%) -> PASS
+[33.344] run-in: gatekeeper carries on into its next section at 33.536; rhythm game off; drop 77.674
+[77.483] DROP gatekeeper:firstDrop at 77.674
+[77.675] plan complete after 1 drop(s): no further builds
+--- act one ---
+act one ready: 15 pieces of clutter, clean at 80%
+headphones: putting them on
+headphones: on
+tidied bag (1/15)
+tidied pizza (2/15)
+tidied shirt (3/15)
+tidied books (4/15)
+tidied mug (5/15)
+tidied bottles (6/15)
+tidied laundry (7/15)
+tidied plate (8/15)
+tidied cups (9/15)
+tidied magazines (10/15)
+tidied takeaway (11/15)
+tidied paper (12/15)
+tidied mug (13/15)
+tidied shirt (14/15)
+knock at the door (timeline 77.674)
+door opened: room clean (14/15) -> a woman is at the door
+screenshot C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\Builds\Windows\Evidence\screenshots\actone_exe_woman.png

@@ -1,0 +1,218 @@
+[
+ {
+  "song": "gatekeeper",
+  "anchor": "firstDrop",
+  "beatsBefore": 128,
+  "ownerTime": 25.5421,
+  "time": 25.5171,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "firstDrop",
+  "beatsBefore": 256,
+  "ownerTime": -18.5959,
+  "time": -18.6209,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "firstDrop",
+  "beatsBefore": 384,
+  "ownerTime": -62.7338,
+  "time": -62.7588,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "secondDrop",
+  "beatsBefore": 128,
+  "ownerTime": 157.9521,
+  "time": 157.9306,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "secondDrop",
+  "beatsBefore": 256,
+  "ownerTime": 113.8141,
+  "time": 113.7926,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "secondDrop",
+  "beatsBefore": 384,
+  "ownerTime": 69.6762,
+  "time": 69.6547,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "ending",
+  "beatsBefore": 128,
+  "ownerTime": 268.2921,
+  "time": 268.2759,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "gatekeeper",
+  "anchor": "ending",
+  "beatsBefore": 256,
+  "ownerTime": 224.1541,
+  "time": 224.1379,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "firstDrop",
+  "beatsBefore": 128,
+  "ownerTime": 22.0421,
+  "time": 22.0421,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "firstDrop",
+  "beatsBefore": 256,
+  "ownerTime": -22.0959,
+  "time": -22.0959,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "dropdis",
+  "anchor": "firstDrop",
+  "beatsBefore": 384,
+  "ownerTime": -66.2338,
+  "time": -66.2338,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "dropdis",
+  "anchor": "secondDrop",
+  "beatsBefore": 128,
+  "ownerTime": 132.3921,
+  "time": 132.3921,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "secondDrop",
+  "beatsBefore": 256,
+  "ownerTime": 88.2541,
+  "time": 88.2541,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "secondDrop",
+  "beatsBefore": 384,
+  "ownerTime": 44.1162,
+  "time": 44.1162,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "ending",
+  "beatsBefore": 128,
+  "ownerTime": 220.6721,
+  "time": 220.6721,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "dropdis",
+  "anchor": "ending",
+  "beatsBefore": 256,
+  "ownerTime": 176.5341,
+  "time": 176.5341,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "firstDrop",
+  "beatsBefore": 128,
+  "ownerTime": 0.0121,
+  "time": 0.0121,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "firstDrop",
+  "beatsBefore": 256,
+  "ownerTime": -44.1259,
+  "time": -44.1259,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "levels",
+  "anchor": "firstDrop",
+  "beatsBefore": 384,
+  "ownerTime": -88.2638,
+  "time": -88.2638,
+  "valid": false,
+  "reason": "before the start of the file"
+ },
+ {
+  "song": "levels",
+  "anchor": "secondDrop",
+  "beatsBefore": 128,
+  "ownerTime": 88.2821,
+  "time": 88.2821,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "secondDrop",
+  "beatsBefore": 256,
+  "ownerTime": 44.1441,
+  "time": 44.1441,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "secondDrop",
+  "beatsBefore": 384,
+  "ownerTime": 0.0062,
+  "time": 0.0062,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "ending",
+  "beatsBefore": 128,
+  "ownerTime": 176.5621,
+  "time": 176.5621,
+  "valid": true,
+  "reason": ""
+ },
+ {
+  "song": "levels",
+  "anchor": "ending",
+  "beatsBefore": 256,
+  "ownerTime": 132.4241,
+  "time": 132.4241,
+  "valid": true,
+  "reason": ""
+ }
+]

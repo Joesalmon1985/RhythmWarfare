@@ -1,0 +1,12 @@
+config: C:\Users\joesa\Documents\Cursor\UnityBedsitPOC\config.json
+naked sim: naked-base (amBodyNaked_cres / amHairBald_cres / amFace_cres, auskel skeleton)
+dressed sim: N001_User00012.package (CAS outfit, Casual1)
+max bone rotation change during wave: naked=178.6 deg, dressed=178.6 deg
+--- animation provenance ---
+idle: a-idle-neutral-armsSide-wtC-breatheLoop_anim | package Sims00.package | 51 auskel channels | ~3.96s | standing idle, weight centred, breathing
+wave: a-react-wave-fullBody_anim | package Sims00.package | 61 auskel channels | ~2.60s | friendly wave, full body
+greet: a-soc-greet-nod_anim | package Sims00.package | 3 auskel channels | ~1.55s | greeting nod
+clap: a-clapSmall-start-standing_anim | package Sims00.package | 63 auskel channels | ~0.63s | small standing clap
+cheer: a-clapBig-start-standing_anim | package Sims00.package | 63 auskel channels | ~0.50s | big clap
+surprise: a-hairChange-head-surprise_anim | package Sims00.package | 37 auskel channels | ~1.08s | surprised reaction
+stretch: a-idle-neutral-armsSide-wtC-stretchShoulders_anim | package Sims00.package | 51 auskel channels | ~3.96s | shoulder stretch

@@ -1,0 +1,46 @@
+# Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/.vs/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.apk
+*.aab
+sysinfo.txt
+crashlytics-build.gradle
+# Local machine config (paths to the user's own Sims 2 install)
+/config.json
+# ---- EA / Maxis copyrighted material: NEVER commit ----
+/LocalData/
+/LocalAssets/
+*.package
+*.simpkg
+*.dbpf
+# Screenshots of the game contain EA assets: keep local; only curated evidence is committed explicitly
+/Evidence/raw/
+
+# Screenshots contain EA assets - keep local
+/Evidence/screenshots/
+/Evidence/sprites/
+/Assets/LocalBaked/
+/Assets/LocalBaked.meta
+/.utmp/
+/LocalAudio/
+/Evidence/audio/
+/Evidence/runtime_logs/
+__pycache__/
